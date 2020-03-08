@@ -58,17 +58,25 @@ g 提供以下功能：根据提供的一个或多个属性动画，根据 (doub
 
 文件/类建立原则：无需g-base中的接口，g-base 中的abstract类尽量与g-canvas中的合并
 
-Base -- 用 g-base 中的
+Base -- 用 g-base 中的，抽象
 
-Element -- 用 g-base 中的
+Element -- 用 g-base 中的，抽象
 
-Container -- 用 g-base 中的
+Container -- 用 g-base 中的，抽象
 
-Canvas -- 同 g 中的 Canvas，结合 g-base 和 g-canvas
+CanvasController -- 同 g 中的 Canvas，结合 g-base 和 g-canvas，不抽象
 
-Group -- 结合 g-base 和 g-canvas
+Group -- 结合 g-base 和 g-canvas，不抽象
 
-Shape -- 结合 g-base 和 g-canvas 放在 shape/shape.dart 中
+Shape -- 结合 g-base 和 g-canvas 放在 shape/base.dart 中，不抽象
+
+ShapeBase -- 各种 Shape 构造器的 Map ，两者都放置在shape/shape.dart中
+
+Canvas -- 实际的Widget，提供CustomPaint，Listener等，对应DOM，不抽象
+
+从接口定义和使用情况看，Shape指的是基类，ShapeBase指的是构造器，不过g-canvas中的定义与其相反，我们采用前者，并我防止混淆放置在一个shape.dart文件中
+
+
 
 
 
@@ -124,11 +132,88 @@ onDoubleTap会吃掉点击的位置信息，onLongPress会影响拖动，因此�
 
 EventDetails 实现所有Details类型，保留变量关系，但不要空值检验
 
+# GraphEvent
+
+目前来看，type指的是事件类型，name是代理对象名:事件类型，
+
+~~g 中的传播 propagation 指的是DOM的传播，flutter不具备此功能，不管，使用者可在外面套prevent组件~~
+
+g 中 GraphEvent 同时起到 detail 中的作用，先尝试这样搞一下，把detail作为graphEvent的一个成员，代替x，y等，传递给handler也是传detail
+
+先尝试不要name
+
+bubble好像是canvas内部的，还是要的
+
+target系列感觉应该是element类型
+
+timeStamp 改为 DateTime 类型的 time
+
+propagationXX 好像也是要内部用的，propagationPath内部放的Element
+
+element 的cfg有个字段name，用来标定此元素，应该是可以重名的，起到控制多个的作用。我们这里事件的代理也采用此机制，而不直接传元素，因为这样好像可以控制多个元素，而且更简洁高效。
+
+目前来看，要标定一个事件，必须有name和type两个要素，这样就用一个Event来包装这两个类，并重写 == ，内部都用这个，对外也暴露Event，否则位置参数不太好放，因为对外暴露，所以用比较简短的名字，并且要添加一个静态成员通配符成员all，记号type在前（必需），name在后（非必需）。g中的通配符表示所有事件所有名称，所以也只有一个all
+
+看来 g 和 G2 的确是想将整个GraphEvent交给handler，这样无论图表内部还是用户自定义时都可获取target等，
+
+在g-base中，事件的传递分成 原生Event - GraphEvent两层，事件类型采用web标准，即两层之间并没有对事件类型进行封装，由于这是写在 g-base中的，即也将应用在移动端。
+
+因此这样，事件模型完全采用和g一样的模型，方便后面逻辑编写，在 widget 中组装并触发这些事件
+
+详细文档 https://www.yuque.com/antv/ou292n/pest1f 
+
+由于flutter的机制，不考虑画布外元素与画布的交互
+
+
+
+web的事件模型并不完全适用于flutter，建立一套新的以pointer为基础的，并与web的对应
+
+由于Listener包含各种鼠标未按下的事件，故可处理（flutter也可能遇到有鼠标的情况），模拟底层故取名用click而不是tap
+
+```
+'mousedown',       pointerDown
+'mouseup',         pointerUp
+'dblclick',        doubleClick
+'mouseout',        pointerOut
+'mouseover',       pointerOver
+'mousemove',       pointerMove
+'mouseleave',      pointerLeave
+'mouseenter',      pointerEnter
+'touchstart',      touchStart
+'touchmove',       touchMove
+'touchend',        touchEnd
+'dragenter',       dragEnter
+'dragover',        dragOver
+'dragleave',       dragLeave
+'drop',            drop
+'contextmenu',     secondaryClick
+'mousewheel',      scale
+```
+
+同时将触发事件瞬间的那个Detail 传来作为originalEvent传来
+
+现在关于鼠标进出悬浮等移到MouseRegion中了，但是它对手指操作无效，是用在desktop中的。只能用位置模拟。注意对于Listener，拖动手指移进去不会有任何触发，在里面开始移除去会继续。
+
+先不要手指无法模拟出的事件
+
+PointerEvent 中的timeStamp 是Duration类型，相对于过去的某个时间点，完全可以用来做事件时间比对
 
 
 
 
 
+这样涉及到的类
+EventType 事件的类型
+
+OriginalEvent Listener发送的对象，包含EventType type 和 Object detail 两个字段，detail是PointerEnterEvent等其中之一
+
+EventTag 由EventType type 和String name构成的引擎中事件唯一标识
+
+GraphEvent 等同于g，引擎中完整的事件信息，回调函数的参数
+
+
+
+antv 还有一个叫 g-gesture 的库，根据描述是供g使用的，目前是在G2Plot中使用的
 
 
 
@@ -216,6 +301,8 @@ g中的attrs只有ElementAttrs和ShapeAttrs两个互不相干，拓展一下Shap
 
 因此只搞一个Attrs类不再分子类，为方便mix且动态节省空间，内部存储用map，可拓展一些构造函数，
 
+attrs中的bool类型字段由于可能为null，直接取了判断可能会有问题，可能需要在getter中处理一下，但这样也有可能其它问题，先想想
+
 
 
 
@@ -241,7 +328,76 @@ Cfg采用和Attrs类似的内部存储结构，出于类似attrs的mix的原因�
 
 原则上在g的基础上不再增加文件数量，相应的辅助类放到现有的相关文件中
 
-注意所有类中的 getXX setXX 方法都尽量改用变量名访问器的形式，Base 类中不再有get() set()方法，因为Cfg暴露的是静态的。
+注意所有类中的 getXX setXX 方法都尽量改用变量名访问器的形式，Base 类中不再有get() set()方法，因为Cfg暴露的是字段名是静态的，改为用 this.cfg.xx的形式。
+
+mix还是单参数吧，对于绝大部分情况是单参数的能提升性能，多参数也可以级联
+
+有一些cfg感觉不太适合放在构造函数中，比如parent，canvas，不过也不一定
+
+
+
+# Element <- Base
+
+cfg 在clone的时候不是所有的属性都要clone，有个列表CLONE_CFGS = ['zIndex', 'capture', 'visible', 'type']
+
+attrs中先没有opacity属性，都是1
+
+getGroupBase和 getGroupBase 获取的都是类，先尝试将所有类的都改造成构造方法，其中 Ctor<T> 表示有一个Cfg参数的工厂方法
+
+ShapeBase是一个工厂方法的Map，这里就直接写Map了
+
+parent感觉这里类型应该是Container而不是Group，接口中是Container
+
+attr() 方法只有一种形态，传入新的 Attrs，进行mix，返回this（即element），至于只有一个键时是不是要省略遍历优化性能？先不考虑，感觉这是编译器需要做的。不过内部实际的setAttr要精细处理，因此Attrs对象要暴露[]运算符
+
+afterAttrsChange 传入的是引起变化的 Attrs，即变化量
+
+Attr的指导思想是：本质上就是Map，只不过给外部用户进行了类型包装，在其它类的代码中不可避免直接操作 String Object 键值对。Cfg内部机制类似，不过感觉先不需要暴露直接键值对操作。
+
+BBox类型直接用dart:ui中的Rect
+
+g 中的getClip()方法怪怪的，是不是处理 undefined ?
+
+很多setXX方法有各种返回值，这个还是保留一下
+
+toFront 和 toBack 方法里会获取个el但是没用，不知道干什么的
+
+需不需要搞个AttrSingle()修改单个键值对，减少新建Attr和遍历的开销？先不要过度优化
+
+Matrix4的乘法和g中三阶矩阵的乘法是否相同？
+
+对于移动向量，参与矩阵运算（即g中以vec形式的）用Vector4，对用户暴露的用Offset，占前两位
+
+注意通过element.shapeBase获取到的不一定就是代码中定义的静态shapeBase
+
+在 clone 方法中，只针对 attr 为List和List<List>的情况做深拷贝处理，注意还有个Matrix4要处理
+
+clone 方法的作用：1 复制一份attrs，2新建一个对象，3复制指定的cfg字段。为了返回值的类型限定，每个子类都重写下clone返回子类型，但是复制attrs和复制指定字段的
+
+不如将attrs和cfg的clone移到attrs类和cfg类里，注意cfg只clone需要的字段，由于element是抽象类，所以这里做成抽象函数，由子类去实现。
+
+所有形变方法的接口模仿Canvas类的对应方法
+
+只保留moveTo不保留move
+
+目前来看，新版g摒弃了使用action的transform方法，这个action的结构也很不dart，矩阵的变化函数参考 https://github.com/marcglasberg/matrix4_transform 
+
+矩阵变换时注意尽量保证安全和性能，初始矩阵没有就用单位矩阵，但由于我们是位置参数，不做空值检验，而且不做0值检验，因为调用了这个函数时一般都是有值的，加个判断反而负优化了。
+
+矩阵变换参考 https://www.zhangxinxu.com/wordpress/2012/06/css3-transform-matrix-矩阵/
+
+translate：对应到dart中应该用 leftTranslate
+
+```
+1  0  0  t1
+0  1  0  t2  *  m
+0  0  1  0
+0  0  0  1
+```
+
+rotateAtStart也调用rotateAtPoint方便统一
+
+g中rotate移动时是先负后正，但是matrix4_transform中是先正后负，不知道有没有差别，先按g中的来
 
 
 
@@ -258,3 +414,4 @@ Cfg采用和Attrs类似的内部存储结构，出于类似attrs的mix的原因�
 其中 Canvas为 Widget ，CanvasController 为抽象的类，等价 g 中的Canvas，注意只提供默认构造函数
 
 同理 Chart 为 Widget，ChartController为抽象类
+

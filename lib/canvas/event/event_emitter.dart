@@ -1,134 +1,6 @@
-import 'package:flutter/gestures.dart';
+import 'graph_event.dart' show EventTag, GraphEvent;
 
-// GestureRecognizer types, api refers to flutter 1.12.13
-enum EventType {
-  tap,
-  tapDown,
-  tapUp,
-  tapCancel,
-
-  secondaryTapDown,
-  secondaryTapUp,
-  secondaryTapCancel,
-
-  doubleTap,
-
-  longPress,
-  longPressStart,
-  longPressMoveUpdate,
-  longPressUp,
-  longPressEnd,
-
-  horizontalDragStart,
-  horizontalDragDown,
-  horizontalDragUpdate,
-  horizontalDragEnd,
-  horizontalDragCancel,
-
-  verticalDragStart,
-  verticalDragDown,
-  verticalDragUpdate,
-  verticalDragEnd,
-  verticalDragCancel,
-
-  panStart,
-  panDown,
-  panUpdate,
-  panEnd,
-  panCancel,
-  
-  scaleStart,
-  scaleUpdate,
-  scaleEnd,
-
-  forcePressStart,
-  forcePressUpdate,
-  forcePressPeak,
-  forcePressEnd,
-
-  wildcard,
-}
-
-class EventDetails implements
-  TapDownDetails,
-  TapUpDetails,
-  LongPressStartDetails,
-  LongPressMoveUpdateDetails,
-  LongPressEndDetails,
-  DragStartDetails,
-  DragDownDetails,
-  DragUpdateDetails,
-  DragEndDetails,
-  ScaleStartDetails,
-  ScaleUpdateDetails,
-  ScaleEndDetails,
-  ForcePressDetails
-{
-  EventDetails({
-    this.globalPosition = Offset.zero,
-    Offset localPosition,
-
-    this.offsetFromOrigin = Offset.zero,
-    Offset localOffsetFromOrigin,
-
-    this.velocity = Velocity.zero,
-
-    this.delta = Offset.zero,
-
-    this.focalPoint = Offset.zero,
-    Offset localFocalPoint,
-
-    this.scale = 1.0,
-    this.horizontalScale = 1.0,
-    this.verticalScale = 1.0,
-    this.rotation = 0.0,
-    
-    this.kind,
-    this.pressure,
-    this.primaryDelta,
-    this.primaryVelocity,
-    this.sourceTimeStamp,
-  })
-    : localPosition = localPosition ?? globalPosition,
-      localOffsetFromOrigin = localOffsetFromOrigin ?? offsetFromOrigin,
-      localFocalPoint = localFocalPoint ?? focalPoint;
-
-  final Offset delta;
-
-  final Offset focalPoint;
-
-  final Offset globalPosition;
-
-  final double horizontalScale;
-
-  final PointerDeviceKind kind;
-
-  final Offset localFocalPoint;
-
-  final Offset localOffsetFromOrigin;
-
-  final Offset localPosition;
-
-  final Offset offsetFromOrigin;
-
-  final double pressure;
-
-  final double primaryDelta;
-
-  final double primaryVelocity;
-
-  final double rotation;
-
-  final double scale;
-
-  final Duration sourceTimeStamp;
-
-  final Velocity velocity;
-
-  final double verticalScale;
-}
-
-typedef EventListener = void Function(EventDetails event);
+typedef EventListener = void Function(GraphEvent event);
 
 class EventOperation {
   EventOperation(this.callback, this.once);
@@ -138,10 +10,10 @@ class EventOperation {
 }
 
 abstract class EventEmitter {
-  Map<EventType, List<EventOperation>> _events = {};
+  Map<EventTag, List<EventOperation>> _events = {};
 
   /// Listen to an event.
-  EventEmitter on(EventType evt, EventListener callback, [bool once]) {
+  EventEmitter on(EventTag evt, EventListener callback, [bool once]) {
     _events[evt] ??= [];
     _events[evt].add(EventOperation(
       callback,
@@ -151,13 +23,13 @@ abstract class EventEmitter {
   }
 
   /// Listen to an event for once.
-  EventEmitter once(EventType evt, EventListener callback)
+  EventEmitter once(EventTag evt, EventListener callback)
     => this.on(evt, callback, true);
   
   /// Emit an event.
-  void emit(EventType evt, EventDetails arg) {
+  void emit(EventTag evt, GraphEvent arg) {
     final events = _events[evt] ?? [];
-    final wildcardEvents = _events[EventType.wildcard] ?? [];
+    final wildcardEvents = _events[EventTag.all] ?? [];
 
     // The real handler for emittion.
     final doEmit = (List<EventOperation> es) {
@@ -186,7 +58,7 @@ abstract class EventEmitter {
   }
 
   /// Cancel listening to an event, or a chennel.
-  EventEmitter off([EventType evt, EventListener callback]) {
+  EventEmitter off([EventTag evt, EventListener callback]) {
     if (evt == null) {
       // off() will cancel all.
       _events = {};

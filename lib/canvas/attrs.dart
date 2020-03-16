@@ -64,66 +64,66 @@ class Attrs {
 
   // element attrs
 
-  bool get strokeAppendWidth => _attrs['strokeAppendWidth'] as bool;
-  set strokeAppendWidth(bool value) => _attrs['strokeAppendWidth'] = value;
+  double get strokeAppendWidth => this['strokeAppendWidth'] as double;
+  set strokeAppendWidth(double value) => this['strokeAppendWidth'] = value;
 
-  Matrix4 get matrix => _attrs['matrix'] as Matrix4;
-  set matrix(Matrix4 value) => _attrs['matrix'] = value;
+  Matrix4 get matrix => this['matrix'] as Matrix4;
+  set matrix(Matrix4 value) => this['matrix'] = value;
 
   // shape attrs
 
-  double get x => _attrs['x'] as double;
-  set x(double value) => _attrs['x'] = value;
+  double get x => this['x'] as double;
+  set x(double value) => this['x'] = value;
 
-  double get y => _attrs['y'] as double;
-  set y(double value) => _attrs['y'] = value;
+  double get y => this['y'] as double;
+  set y(double value) => this['y'] = value;
 
-  double get r => _attrs['r'] as double;
-  set r(double value) => _attrs['r'] = value;
+  double get r => this['r'] as double;
+  set r(double value) => this['r'] = value;
 
   // Paint attrs, api refers to flutter 1.12.13
 
-  bool get isAntiAlias => _attrs['isAntiAlias'] as bool;
-  set isAntiAlias(bool value) => _attrs['isAntiAlias'] = value;
+  bool get isAntiAlias => this['isAntiAlias'] as bool;
+  set isAntiAlias(bool value) => this['isAntiAlias'] = value;
 
-  Color get color => _attrs['color'] as Color;
-  set color(Color value) => _attrs['color'] = value;
+  Color get color => this['color'] as Color;
+  set color(Color value) => this['color'] = value;
 
-  BlendMode get blendMode => _attrs['blendMode'] as BlendMode;
-  set blendMode(BlendMode value) => _attrs['blendMode'] = value;
+  BlendMode get blendMode => this['blendMode'] as BlendMode;
+  set blendMode(BlendMode value) => this['blendMode'] = value;
 
-  PaintingStyle get style => _attrs['style'] as PaintingStyle;
-  set style(PaintingStyle value) => _attrs['style'] = value;
+  PaintingStyle get style => this['style'] as PaintingStyle;
+  set style(PaintingStyle value) => this['style'] = value;
 
-  double get strokeWidth => _attrs['strokeWidth'] as double;
-  set strokeWidth(double value) => _attrs['strokeWidth'] = value;
+  double get strokeWidth => this['strokeWidth'] as double;
+  set strokeWidth(double value) => this['strokeWidth'] = value;
 
-  StrokeCap get strokeCap => _attrs['strokeCap'] as StrokeCap;
-  set strokeCap(StrokeCap value) => _attrs['strokeCap'] = value;
+  StrokeCap get strokeCap => this['strokeCap'] as StrokeCap;
+  set strokeCap(StrokeCap value) => this['strokeCap'] = value;
 
-  StrokeJoin get strokeJoin => _attrs['strokeJoin'] as StrokeJoin;
-  set strokeJoin(StrokeJoin value) => _attrs['strokeJoin'] = value;
+  StrokeJoin get strokeJoin => this['strokeJoin'] as StrokeJoin;
+  set strokeJoin(StrokeJoin value) => this['strokeJoin'] = value;
 
-  double get strokeMiterLimit => _attrs['strokeMiterLimit'] as double;
-  set strokeMiterLimit(double value) => _attrs['strokeMiterLimit'] = value;
+  double get strokeMiterLimit => this['strokeMiterLimit'] as double;
+  set strokeMiterLimit(double value) => this['strokeMiterLimit'] = value;
 
-  MaskFilter get maskFilter => _attrs['maskFilter'] as MaskFilter;
-  set maskFilter(MaskFilter value) => _attrs['maskFilter'] = value;
+  MaskFilter get maskFilter => this['maskFilter'] as MaskFilter;
+  set maskFilter(MaskFilter value) => this['maskFilter'] = value;
 
-  FilterQuality get filterQuality => _attrs['filterQuality'] as FilterQuality;
-  set filterQuality(FilterQuality value) => _attrs['filterQuality'] = value;
+  FilterQuality get filterQuality => this['filterQuality'] as FilterQuality;
+  set filterQuality(FilterQuality value) => this['filterQuality'] = value;
 
-  Shader get shader => _attrs['shader'] as Shader;
-  set shader(Shader value) => _attrs['shader'] = value;
+  Shader get shader => this['shader'] as Shader;
+  set shader(Shader value) => this['shader'] = value;
 
-  ColorFilter get colorFilter => _attrs['colorFilter'] as ColorFilter;
-  set colorFilter(ColorFilter value) => _attrs['colorFilter'] = value;
+  ColorFilter get colorFilter => this['colorFilter'] as ColorFilter;
+  set colorFilter(ColorFilter value) => this['colorFilter'] = value;
 
-  ImageFilter get imageFilter => _attrs['imageFilter'] as ImageFilter;
-  set imageFilter(ImageFilter value) => _attrs['imageFilter'] = value;
+  ImageFilter get imageFilter => this['imageFilter'] as ImageFilter;
+  set imageFilter(ImageFilter value) => this['imageFilter'] = value;
 
-  bool get invertColors => _attrs['invertColors'] as bool;
-  set invertColors(bool value) => _attrs['invertColors'] = value;
+  bool get invertColors => this['invertColors'] as bool;
+  set invertColors(bool value) => this['invertColors'] = value;
 
   // Tool members.
 
@@ -146,6 +146,9 @@ class Attrs {
   }
 
   void applyTo(Paint paint) {
+    if (paint == null) {
+      return;
+    }
     if (blendMode != null) {
       paint.blendMode = blendMode;
     }
@@ -192,5 +195,5 @@ class Attrs {
 
   Object operator [](String k) => _attrs[k];
 
-  void operator []=(String k, Object v) => _attrs[k] = v;
+  void operator []=(String k, Object v) => v == null ? _attrs.remove(k) : _attrs[k] = v;
 }

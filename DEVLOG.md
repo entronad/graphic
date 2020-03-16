@@ -1,10 +1,10 @@
 包含两个模块
 
-canvas -- A canvas shape library, also the rendring engine for Aesth.
+canvas -- A canvas shape library, also the rendering engine for Graphic.
 
 chart -- A charting library with the Grammar of Graphics.
 
-一个图形引擎，应该是一个完全抽象的对象，在构造时传入 Canvas 和 ValueNotifier<自己的手势事件类型> ,只管一次绘制，不管需不需要重绘，裸用的时候在 paint 方法中调用
+~~一个图形引擎，应该是一个完全抽象的对象，在构造时传入 Canvas 和 ValueNotifier<自己的手势事件类型> ,只管一次绘制，不管需不需要重绘，裸用的时候在 paint 方法中调用~~
 
 采用完全配置式的？会导致一些真正需要控制的地方不好弄
 
@@ -68,11 +68,13 @@ CanvasController -- 同 g 中的 Canvas，结合 g-base 和 g-canvas，不抽象
 
 Group -- 结合 g-base 和 g-canvas，不抽象
 
-Shape -- 结合 g-base 和 g-canvas 放在 shape/base.dart 中，不抽象
+Shape -- 结合 g-base 和 g-canvas，类型为，不抽象
 
-ShapeBase -- 各种 Shape 构造器的 Map ，两者都放置在shape/shape.dart中
+ShapeBase -- 各种 Shape 构造器的 Map ，以上两者都放在 shape/shape.dart中，否则引用的时候记不得
 
-Canvas -- 实际的Widget，提供CustomPaint，Listener等，对应DOM，不抽象
+Canvas 实际的Widget，提供CustomPaint，Listener等，对应DOM，不抽象
+
+js中的context对应dart中的ui.Canvas
 
 从接口定义和使用情况看，Shape指的是基类，ShapeBase指的是构造器，不过g-canvas中的定义与其相反，我们采用前者，并我防止混淆放置在一个shape.dart文件中
 
@@ -84,7 +86,21 @@ Canvas -- 实际的Widget，提供CustomPaint，Listener等，对应DOM，不抽
 
 附属的类定义尽量放在对应的类的文件夹中，公共的放在types.dart中
 
+
+
+特点：
+
+attrs 和 cfg
+
+事件与图形拾取
+
+context
+
+
+
 ---
+
+在开发过程中，g 和 G2 也在不断的改进，每次注意实时更新，完成后测试前全部对比更新一下
 
 #EventEmitter
 
@@ -354,6 +370,8 @@ afterAttrsChange 传入的是引起变化的 Attrs，即变化量
 
 Attr的指导思想是：本质上就是Map，只不过给外部用户进行了类型包装，在其它类的代码中不可避免直接操作 String Object 键值对。Cfg内部机制类似，不过感觉先不需要暴露直接键值对操作。
 
+attrs 和 cfg 的setter中，当传入空值时都是移除对应属性，为实现这个功能，重写并调用 []= 运算符
+
 BBox类型直接用dart:ui中的Rect
 
 g 中的getClip()方法怪怪的，是不是处理 undefined ?
@@ -399,7 +417,49 @@ rotateAtStart也调用rotateAtPoint方便统一
 
 g中rotate移动时是先负后正，但是matrix4_transform中是先正后负，不知道有没有差别，先按g中的来
 
+cfg和attrs肯定是直接成员，故可直接访问，其它的原则上要赋值后调用，以防是实时访问器
 
+
+
+## Shape <- Element
+
+在g中完整的继承链是 BaseShape <- AbstractShape <- Element 最终的 BaseShape 是可实例化的
+
+BaseShape AbstractShape两者重叠的方法calculateBBox()， isInShape()，使用BaseShape的
+
+g 的cfg中叫canvasBox，感觉还是统一叫 canvasBBox好，和外部接口统一。
+
+在web中，线还是面是通过fill和stroke两个属性是否为空判断的，可同时存在，但在dart中根据PaintingStyle枚举觉得，只能是其中一种，我们采用dart的模式。不过函数的接口还尽量保持假装可以同时存在的样子
+
+flutter中shadow采用的material design的模式，不可直接作为图形属性，也不可计算bbox，故先不要
+
+思考再三，觉得shape基类不应该可实例化，类型中不应该有base
+
+所有的Ctor都不重新定义变量了，要用的地方直接写字面量
+
+refreshElement为名字的函数出现在两个地方，一个是CanvasController的方法，一个是util/draw.ts中的函数，CanvasController的方法好像只要一个参数，util/draw.ts处的调用疑似错了。
+
+js 中的 context 同时起到画布和存储样式的作用，因此建立一个新的类与之对应
+
+antv定义了一套自己的渐变色字符串语法，并且g中有对应的解析器，dart中不需要，可通过自定义 Paint 中的 Shader 来设置
+
+js中path，context要怎么去对应还需要再思考下
+
+js中的save/restore 主要存储三样东西：变形，裁剪，样式属性；dart中canvas本身的save/restore主要存储变形，裁剪，需要模拟样式的栈。
+
+在g中 save/restore 仅仅在clip、兼容模式ellipse等处使用，我们不采用。
+
+感觉我们的绘图机制应该采用更dart的方式，
+
+绘图系统传入的是canvas，描绘图形最重要的是 path matirx paint，但是每个状态可能是不一样的，
+
+通过以下方式实现：
+
+Shape 类有_path 和 _paint 两个成员，避免反复重建销毁，将g中的createPath 和applyAttrsToContext的作用改造为 get path 和 get paint 两个访问器，更新并返回以上两个成员，特别注意g中需要transform的地方，所有applyAttrsToContext分成transform和获取paint两步
+
+原则上每次使用 path 和 paint 的时候都要显式的赋一下值，防止重复计算和副作用
+
+对绘制过程进行一个大简化，不要g中的drawPath，createPath（用path访问器代替），strokeAndFill方法，保留afterDrawPath，_afterDraw方法
 
 # Canvas <- Container
 

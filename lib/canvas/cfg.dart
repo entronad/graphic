@@ -1,3 +1,5 @@
+import 'dart:ui' show Rect;
+
 import 'package:vector_math/vector_math_64.dart' show Matrix4;
 
 import 'attrs.dart' show Attrs;
@@ -24,13 +26,19 @@ class Cfg {
     Pause pause,
     String name,
     Element delegateObject,
+    Rect cacheCanvasBBox,
+    bool hasChanged,
 
     Attrs attrs,
+    Rect bbox,
+    Rect canvasBBox,
 
     bool clearing,
 
     ShapeType type,
     bool isClipShape,
+
+    bool autoDraw,
   })
     : _cfg = {
       if (destroyed != null) 'destroyed': destroyed,
@@ -48,80 +56,102 @@ class Cfg {
       if (pause != null) 'pause': pause,
       if (name != null) 'name': name,
       if (delegateObject != null) 'delegateObject': delegateObject,
+      if (cacheCanvasBBox != null) 'cacheCanvasBBox': cacheCanvasBBox,
+      if (hasChanged != null) 'hasChanged': hasChanged,
       if (attrs != null) 'attrs': attrs,
+      if (bbox != null) 'bbox': bbox,
+      if (canvasBBox != null) 'canvasBBox': canvasBBox,
       if (clearing != null) 'clearing': clearing,
       if (type != null) 'type': type,
       if (isClipShape != null) 'isClipShape': isClipShape,
+      if (autoDraw != null) 'autoDraw': autoDraw,
     };
 
   final Map<String, Object> _cfg;
 
   // base cfg
 
-  bool get destroyed => _cfg['destroyed'] as bool;
-  set destroyed(bool value) => _cfg['destroyed'] = value;
+  bool get destroyed => this['destroyed'] as bool;
+  set destroyed(bool value) => this['destroyed'] = value;
 
   // element cfg
 
-  String get id => _cfg['id'] as String;
-  set id(String value) => _cfg['id'] = value;
+  String get id => this['id'] as String;
+  set id(String value) => this['id'] = value;
 
-  int get zIndex => _cfg['zIndex'] as int;
-  set zIndex(int value) => _cfg['zIndex'] = value;
+  int get zIndex => this['zIndex'] as int;
+  set zIndex(int value) => this['zIndex'] = value;
 
-  bool get visible => _cfg['visible'] as bool;
-  set visible(bool value) => _cfg['visible'] = value;
+  bool get visible => this['visible'] as bool;
+  set visible(bool value) => this['visible'] = value;
 
-  bool get capture => _cfg['capture'] as bool;
-  set capture(bool value) => _cfg['capture'] = value;
+  bool get capture => this['capture'] as bool;
+  set capture(bool value) => this['capture'] = value;
 
-  bool get animable => _cfg['animable'] as bool;
-  set animable(bool value) => _cfg['animable'] = value;
+  bool get animable => this['animable'] as bool;
+  set animable(bool value) => this['animable'] = value;
 
-  bool get animating => _cfg['animating'] as bool;
-  set animating(bool value) => _cfg['animating'] = value;
+  bool get animating => this['animating'] as bool;
+  set animating(bool value) => this['animating'] = value;
 
-  Container get parent => _cfg['parent'] as Container;
-  set parent(Container value) => _cfg['parent'] = value;
+  Container get parent => this['parent'] as Container;
+  set parent(Container value) => this['parent'] = value;
 
-  CanvasController get canvasController => _cfg['canvasController'] as CanvasController;
-  set canvasController(CanvasController value) => _cfg['canvasController'] = value;
+  CanvasController get canvasController => this['canvasController'] as CanvasController;
+  set canvasController(CanvasController value) => this['canvasController'] = value;
 
-  Matrix4 get totalMatrix => _cfg['totalMatrix'] as Matrix4;
-  set totalMatrix(Matrix4 value) => _cfg['totalMatrix'] = value;
+  Matrix4 get totalMatrix => this['totalMatrix'] as Matrix4;
+  set totalMatrix(Matrix4 value) => this['totalMatrix'] = value;
 
-  Matrix4 get parentMatrix => _cfg['parentMatrix'] as Matrix4;
-  set parentMatrix(Matrix4 value) => _cfg['parentMatrix'] = value;
+  Matrix4 get parentMatrix => this['parentMatrix'] as Matrix4;
+  set parentMatrix(Matrix4 value) => this['parentMatrix'] = value;
 
-  Shape get clipShape => _cfg['clipShape'] as Shape;
-  set clipShape(Shape value) => _cfg['clipShape'] = value;
+  Shape get clipShape => this['clipShape'] as Shape;
+  set clipShape(Shape value) => this['clipShape'] = value;
 
-  Pause get pause => _cfg['pause'] as Pause;
-  set pause(Pause value) => _cfg['pause'] = value;
+  Pause get pause => this['pause'] as Pause;
+  set pause(Pause value) => this['pause'] = value;
 
-  String get name => _cfg['name'] as String;
-  set name(String value) => _cfg['name'] = value;
+  String get name => this['name'] as String;
+  set name(String value) => this['name'] = value;
 
-  Element get delegateObject => _cfg['delegateObject'] as Element;
-  set delegateObject(Element value) => _cfg['delegateObject'] = value;
+  Element get delegateObject => this['delegateObject'] as Element;
+  set delegateObject(Element value) => this['delegateObject'] = value;
+
+  Rect get cacheCanvasBBox => this['cacheCanvasBBox'] as Rect;
+  set cacheCanvasBBox(Rect value) => this['cacheCanvasBBox'] = value;
+
+  bool get hasChanged => this['hasChanged'] as bool;
+  set hasChanged(bool value) => this['hasChanged'] = value;
 
   // shape cfg
 
-  Attrs get attrs => _cfg['attrs'] as Attrs;
-  set attrs(Attrs value) => _cfg['attrs'] = value;
+  Attrs get attrs => this['attrs'] as Attrs;
+  set attrs(Attrs value) => this['attrs'] = value;
+
+  Rect get bbox => this['bbox'] as Rect;
+  set bbox(Rect value) => this['bbox'] = value;
+
+  Rect get canvasBBox => this['canvasBBox'] as Rect;
+  set canvasBBox(Rect value) => this['canvasBBox'] = value;
 
   // container cfg
 
-  bool get clearing => _cfg['clearing'] as bool;
-  set clearing(bool value) => _cfg['clearing'] = value;
+  bool get clearing => this['clearing'] as bool;
+  set clearing(bool value) => this['clearing'] = value;
 
   // clip cfg
 
-  ShapeType get type => _cfg['type'] as ShapeType;
-  set type(ShapeType value) => _cfg['type'] = value;
+  ShapeType get type => this['type'] as ShapeType;
+  set type(ShapeType value) => this['type'] = value;
 
-  bool get isClipShape => _cfg['isClipShape'] as bool;
-  set isClipShape(bool value) => _cfg['isClipShape'] = value;
+  bool get isClipShape => this['isClipShape'] as bool;
+  set isClipShape(bool value) => this['isClipShape'] = value;
+
+  // canvas controller cfg
+
+  bool get autoDraw => this['autoDraw'] as bool;
+  set autoDraw(bool value) => this['autoDraw'] = value;
 
   // Tool members.
 
@@ -134,4 +164,8 @@ class Cfg {
     visible: visible,
     type: type,
   );
+
+  Object operator [](String k) => _cfg[k];
+
+  void operator []=(String k, Object v) => v == null ? _cfg.remove(k) : _cfg[k] = v;
 }

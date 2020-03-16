@@ -45,6 +45,9 @@ abstract class Element extends Base {
 
   Attrs attrs;
 
+  // for hack usage of refreshElement
+  Rect cacheCanvasBBox;
+
   @override
   Cfg get defaultCfg => Cfg(
     visible: true,
@@ -87,9 +90,9 @@ abstract class Element extends Base {
 
   Rect get canvasBBox;
 
-  bool isClipped(double refX, double refY) {
+  bool isClipped(Offset refPoint) {
     final clip = this.clip;
-    return (clip != null) && !clip.isHit(refX, refY);
+    return (clip != null) && !clip.isHit(refPoint);
   }
 
   void setAttr(String name, Object value) {

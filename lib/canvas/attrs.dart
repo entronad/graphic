@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:vector_math/vector_math_64.dart' show Matrix4;
 
+import './shape/path_command.dart' show PathCommand;
+
 List<T> _cloneListAttr<T>(List<T> list) {
   if (list is List<List>) {
     final rst = <T>[];
@@ -22,6 +24,8 @@ class Attrs {
     double x,
     double y,
     double r,
+
+    List<PathCommand> pathCommands,
 
     bool isAntiAlias,
     Color color,
@@ -44,6 +48,7 @@ class Attrs {
       if (x != null) 'x': x,
       if (y != null) 'y': y,
       if (r != null) 'r': r,
+      if (pathCommands != null) 'pathCommands': pathCommands,
       if (isAntiAlias != null) 'isAntiAlias': isAntiAlias,
       if (color != null) 'color': color,
       if (blendMode != null) 'blendMode': blendMode,
@@ -80,6 +85,11 @@ class Attrs {
 
   double get r => this['r'] as double;
   set r(double value) => this['r'] = value;
+
+  // path attrs
+
+  List<PathCommand> get pathCommands => this['pathCommands'] as List<PathCommand>;
+  set pathCommands(List<PathCommand> value) => this['pathCommands'] = value;
 
   // Paint attrs, api refers to flutter 1.12.13
 

@@ -1,5 +1,7 @@
 import 'dart:ui' show Rect;
 
+import 'package:flutter/scheduler.dart' show TickerProvider;
+import 'package:flutter/widgets.dart' show UniqueKey;
 import 'package:vector_math/vector_math_64.dart' show Matrix4;
 
 import 'attrs.dart' show Attrs;
@@ -7,12 +9,14 @@ import 'container.dart' show Container;
 import 'canvas_controller.dart' show CanvasController;
 import './shape/shape.dart' show ShapeType, Shape;
 import 'element.dart' show Element, Pause;
+import './animate/animation.dart' show Animation;
+import './animate/timeline.dart' show Timeline;
 
 class Cfg {
   Cfg({
     bool destroyed,
 
-    String id,
+    UniqueKey id,
     int zIndex,
     bool visible,
     bool capture,
@@ -28,17 +32,21 @@ class Cfg {
     Element delegateObject,
     Rect cacheCanvasBBox,
     bool hasChanged,
+    List<Animation> animations,
+    Timeline timeline,
 
     Attrs attrs,
     Rect bbox,
     Rect canvasBBox,
 
     bool clearing,
+    List<Element> children,
 
     ShapeType type,
     bool isClipShape,
 
     bool autoDraw,
+    TickerProvider tickerProvider,
   })
     : _cfg = {
       if (destroyed != null) 'destroyed': destroyed,
@@ -58,13 +66,17 @@ class Cfg {
       if (delegateObject != null) 'delegateObject': delegateObject,
       if (cacheCanvasBBox != null) 'cacheCanvasBBox': cacheCanvasBBox,
       if (hasChanged != null) 'hasChanged': hasChanged,
+      if (animations != null) 'animations': animations,
+      if (timeline != null) 'timeline': timeline,
       if (attrs != null) 'attrs': attrs,
       if (bbox != null) 'bbox': bbox,
       if (canvasBBox != null) 'canvasBBox': canvasBBox,
       if (clearing != null) 'clearing': clearing,
+      if (children != null) 'children': children,
       if (type != null) 'type': type,
       if (isClipShape != null) 'isClipShape': isClipShape,
       if (autoDraw != null) 'autoDraw': autoDraw,
+      if (tickerProvider != null) 'autoDraw': tickerProvider,
     };
 
   final Map<String, Object> _cfg;
@@ -76,8 +88,8 @@ class Cfg {
 
   // element cfg
 
-  String get id => this['id'] as String;
-  set id(String value) => this['id'] = value;
+  UniqueKey get id => this['id'] as UniqueKey;
+  set id(UniqueKey value) => this['id'] = value;
 
   int get zIndex => this['zIndex'] as int;
   set zIndex(int value) => this['zIndex'] = value;
@@ -124,6 +136,12 @@ class Cfg {
   bool get hasChanged => this['hasChanged'] as bool;
   set hasChanged(bool value) => this['hasChanged'] = value;
 
+  List<Animation> get animations => this['animations'] as List<Animation>;
+  set animations(List<Animation> value) => this['animations'] = value;
+
+  Timeline get timeline => this['timeline'] as Timeline;
+  set timeline(Timeline value) => this['timeline'] = value;
+
   // shape cfg
 
   Attrs get attrs => this['attrs'] as Attrs;
@@ -140,6 +158,9 @@ class Cfg {
   bool get clearing => this['clearing'] as bool;
   set clearing(bool value) => this['clearing'] = value;
 
+  List<Element> get children => this['children'] as List<Element>;
+  set children(List<Element> value) => this['children'] = value;
+
   // clip cfg
 
   ShapeType get type => this['type'] as ShapeType;
@@ -152,6 +173,9 @@ class Cfg {
 
   bool get autoDraw => this['autoDraw'] as bool;
   set autoDraw(bool value) => this['autoDraw'] = value;
+
+  TickerProvider get tickerProvider => this['tickerProvider'] as TickerProvider;
+  set tickerProvider(TickerProvider value) => this['tickerProvider'] = value;
 
   // Tool members.
 

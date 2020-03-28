@@ -1,5 +1,6 @@
 import 'dart:ui' show Rect, Offset;
 
+import 'package:flutter/widgets.dart' show UniqueKey;
 import 'package:vector_math/vector_math_64.dart' show Matrix4, Vector4;
 
 import 'attrs.dart' show Attrs;
@@ -10,6 +11,29 @@ import 'container.dart' show Container;
 import './shape/shape.dart' show ShapeType, Shape;
 import 'canvas_controller.dart' show CanvasController;
 import './event/graph_event.dart' show EventType, EventTag, GraphEvent;
+import './animate/animation.dart' show AnimationCfg, OnFrame, Animation;
+
+List<Animation> checkExistedAttrs(List<Animation> animations, Animation animation) {
+  if (animation.onFrame != null) {
+    return animations;
+  }
+  final startTime = animation.startTime;
+  final delay = animation.delay;
+  final duration = animation.duration;
+  animations.forEach((item) {
+    if (
+      startTime + delay < item.startTime + item.delay + item.duration
+      && duration > item.delay
+    ) {
+      animation.toAttrs.keys.forEach((k) {
+        item.toAttrs[k] = null;
+        item.fromAttrs[k] = null;
+      });
+    }
+  });
+
+  return animations;
+}
 
 enum ChangeType {
   changeSize,
@@ -29,7 +53,7 @@ class Pause {
   Pause(this.isPaused, [this.pauseTime]);
 
   final bool isPaused;
-  final DateTime pauseTime;
+  final Duration pauseTime;
 }
 
 abstract class Element extends Base {
@@ -42,6 +66,9 @@ abstract class Element extends Base {
     this.initAttrs(attrs);
     this.initAnimate();
   }
+
+  // Index as child, used for sorting comparison.
+  int index;
 
   Attrs attrs;
 
@@ -59,7 +86,7 @@ abstract class Element extends Base {
     matrix: defaultMatrix,
   );
 
-  Map<ShapeType, Ctor<Shape>> get shpeBase;
+  Map<ShapeType, Ctor<Shape>> get shapeBase;
 
   Ctor<Group> get groupBase;
 
@@ -233,7 +260,7 @@ abstract class Element extends Base {
     final canvasController = this.canvasController;
     Shape clipShape;
     if (clipCfg != null) {
-      final shapeBase = this.shpeBase;
+      final shapeBase = this.shapeBase;
       final shapeType = clipCfg.type;
       final cons = shapeBase[shapeType];
       if (cons != null) {
@@ -264,7 +291,90 @@ abstract class Element extends Base {
 
   bool isAnimatePaused() => cfg.pause.isPaused;
 
-  // TODO 动画系列
+  void animate({
+    Attrs toAttrs,
+    OnFrame onFrame,
+    AnimationCfg animationCfg,
+  }) {
+    cfg.animating = true;
+    var timeline = cfg.timeline;
+    if (timeline == null) {
+      timeline = cfg.canvasController.cfg.timeline;
+      cfg.timeline = timeline;
+    }
+    var animations = cfg.animations ?? [];
+    if (timeline.ticker == null) {
+      timeline.initTicker();
+    }
+    final animation = Animation(
+      cfg: animationCfg,
+      id: UniqueKey(),
+      fromAttrs: attrs.clone(),
+      toAttrs: toAttrs,
+      startTime: timeline.time,
+      pathFormatted: false,
+      onFrame: onFrame,
+      paused: false,
+      pauseTime: null,
+    );
+    if (animations.isNotEmpty) {
+      animations = checkExistedAttrs(animations, animation);
+    } else {
+      timeline.addAnimator(this);
+    }
+    animations.add(animation);
+    cfg.animations = animations;
+    cfg.pause = Pause(false);
+  }
+
+  void stopAnimate([bool toEnd = true]) {
+    final animations = cfg.animations;
+    animations.forEach((animation) {
+      if (toEnd) {
+        if (animation.onFrame != null) {
+          attr(animation.onFrame(1));
+        } else {
+          attr(animation.toAttrs);
+        }
+      }
+      if (animation.onFinish != null) {
+        animation.onFinish();
+      }
+    });
+    cfg.animating = true;
+    cfg.animations = [];
+  }
+
+  Element pauseAnimate() {
+    final timeline = cfg.timeline;
+    final animations = cfg.animations;
+    animations.forEach((animation) {
+      // TODO https://github.com/antvis/g/issues/451
+      if (animation.onPause != null) {
+        animation.onPause();
+      }
+    });
+    cfg.pause = Pause(true, timeline.time);
+    return this;
+  }
+
+  Element resumeAnimate() {
+    final timeline = cfg.timeline;
+    final current = timeline.time;
+    final animations = cfg.animations;
+    final pauseTime = cfg.pause.pauseTime;
+    animations.forEach((animation) {
+      animation.startTime = animation.startTime + (current - pauseTime);
+      animation.paused = false;
+      animation.pauseTime = null;
+      if (animation.onResume != null) {
+        animation.onResume();
+      }
+    });
+    cfg.pause = Pause(false);
+    cfg.animations = animations;
+    return this;
+  }
 
   void emitDelegation(EventType type, GraphEvent eventObj) {
     final paths = eventObj.propagationPath;

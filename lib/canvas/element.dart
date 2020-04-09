@@ -1,4 +1,4 @@
-import 'dart:ui' show Rect, Offset;
+import 'dart:ui' show Rect, Offset, Canvas;
 
 import 'package:flutter/widgets.dart' show UniqueKey;
 import 'package:vector_math/vector_math_64.dart' show Matrix4, Vector4;
@@ -11,7 +11,7 @@ import 'container.dart' show Container;
 import './shape/shape.dart' show ShapeType, Shape;
 import 'canvas_controller.dart' show CanvasController;
 import './event/graph_event.dart' show EventType, EventTag, GraphEvent;
-import './animate/animation.dart' show AnimationCfg, OnFrame, Animation;
+import './animate/animation.dart' show AnimationCfg, Animation;
 
 List<Animation> checkExistedAttrs(List<Animation> animations, Animation animation) {
   if (animation.onFrame != null) {
@@ -20,17 +20,17 @@ List<Animation> checkExistedAttrs(List<Animation> animations, Animation animatio
   final startTime = animation.startTime;
   final delay = animation.delay;
   final duration = animation.duration;
-  animations.forEach((item) {
+  for (var item in animations) {
     if (
       startTime + delay < item.startTime + item.delay + item.duration
       && duration > item.delay
     ) {
-      animation.toAttrs.keys.forEach((k) {
+      for (var k in animation.toAttrs.keys) {
         item.toAttrs[k] = null;
         item.fromAttrs[k] = null;
-      });
+      }
     }
-  });
+  }
 
   return animations;
 }
@@ -92,7 +92,7 @@ abstract class Element extends Base {
 
   void onCanvasChange(ChangeType changeType);
 
-  void initAttrs(Attrs attrs);
+  void initAttrs(Attrs attrs) {}
 
   void initAnimate() {
     cfg.animable = true;
@@ -293,7 +293,7 @@ abstract class Element extends Base {
 
   void animate({
     Attrs toAttrs,
-    OnFrame onFrame,
+    Attrs Function(double) onFrame,
     AnimationCfg animationCfg,
   }) {
     cfg.animating = true;
@@ -329,7 +329,7 @@ abstract class Element extends Base {
 
   void stopAnimate([bool toEnd = true]) {
     final animations = cfg.animations;
-    animations.forEach((animation) {
+    for (var animation in animations) {
       if (toEnd) {
         if (animation.onFrame != null) {
           attr(animation.onFrame(1));
@@ -340,7 +340,7 @@ abstract class Element extends Base {
       if (animation.onFinish != null) {
         animation.onFinish();
       }
-    });
+    }
     cfg.animating = true;
     cfg.animations = [];
   }
@@ -348,13 +348,15 @@ abstract class Element extends Base {
   Element pauseAnimate() {
     final timeline = cfg.timeline;
     final animations = cfg.animations;
-    animations.forEach((animation) {
-      // TODO https://github.com/antvis/g/issues/451
+    final pauseTime = timeline.time;
+    for (var animation in animations) {
+      animation.paused = true;
+      animation.pauseTime = pauseTime;
       if (animation.onPause != null) {
         animation.onPause();
       }
-    });
-    cfg.pause = Pause(true, timeline.time);
+    }
+    cfg.pause = Pause(true, pauseTime);
     return this;
   }
 
@@ -363,14 +365,14 @@ abstract class Element extends Base {
     final current = timeline.time;
     final animations = cfg.animations;
     final pauseTime = cfg.pause.pauseTime;
-    animations.forEach((animation) {
+    for (var animation in animations) {
       animation.startTime = animation.startTime + (current - pauseTime);
       animation.paused = false;
       animation.pauseTime = null;
       if (animation.onResume != null) {
         animation.onResume();
       }
-    });
+    }
     cfg.pause = Pause(false);
     cfg.animations = animations;
     return this;
@@ -436,4 +438,8 @@ abstract class Element extends Base {
     setMatrix(matrix);
     return this;
   }
+
+  void draw(Canvas canvas, [Rect region]);
+
+  void skipDraw();
 }

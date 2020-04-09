@@ -4,7 +4,7 @@ import 'cfg.dart' show Cfg;
 abstract class Base extends EventEmitter {
   Base(Cfg cfg){
     this.cfg = defaultCfg.mix(cfg);
-  } 
+  }
 
   Cfg cfg;
 

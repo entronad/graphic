@@ -32,8 +32,6 @@ class AnimationCfg {
   final VoidCallback onResume;
 }
 
-typedef OnFrame = Attrs Function(double ratio);
-
 class Animation extends AnimationCfg {
   Animation({
     @required AnimationCfg cfg,
@@ -65,7 +63,7 @@ class Animation extends AnimationCfg {
 
   bool pathFormatted;
 
-  OnFrame onFrame;
+  Attrs Function(double) onFrame;
 
   bool paused;
 

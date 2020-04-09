@@ -163,9 +163,9 @@ class Timeline {
   }
 
   void stopAllAnimations([bool toEnd = true]) {
-    animators.forEach((animator) {
+    for (var animator in animators) {
       animator.stopAnimate(toEnd);
-    });
+    }
     animators = [];
     canvasController.draw();
   }

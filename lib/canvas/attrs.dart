@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:vector_math/vector_math_64.dart' show Matrix4;
 
 import './shape/path_command.dart' show PathCommand;
+import './shape/marker.dart' show SymbolType;
 
 List<T> _cloneListAttr<T>(List<T> list) {
   if (list is List<List>) {
@@ -24,8 +25,21 @@ class Attrs {
     double x,
     double y,
     double r,
+    double x1,
+    double y1,
+    double x2,
+    double y2,
+    double width,
+    double height,
+    double radius,
+    double rx,
+    double ry,
 
     List<PathCommand> pathCommands,
+
+    SymbolType symbolType,
+
+    List<Offset> points,
 
     bool isAntiAlias,
     Color color,
@@ -48,7 +62,18 @@ class Attrs {
       if (x != null) 'x': x,
       if (y != null) 'y': y,
       if (r != null) 'r': r,
+      if (x1 != null) 'x1': x1,
+      if (y1 != null) 'y1': y1,
+      if (x2 != null) 'x2': x2,
+      if (y2 != null) 'y2': y2,
+      if (width != null) 'width': width,
+      if (height != null) 'height': height,
+      if (radius != null) 'radius': radius,
+      if (rx != null) 'rx': rx,
+      if (ry != null) 'ry': ry,
       if (pathCommands != null) 'pathCommands': pathCommands,
+      if (symbolType != null) 'symbolType': symbolType,
+      if (points != null) 'points': points,
       if (isAntiAlias != null) 'isAntiAlias': isAntiAlias,
       if (color != null) 'color': color,
       if (blendMode != null) 'blendMode': blendMode,
@@ -86,10 +111,45 @@ class Attrs {
   double get r => this['r'] as double;
   set r(double value) => this['r'] = value;
 
+  double get x1 => this['x1'] as double;
+  set x1(double value) => this['x1'] = value;
+
+  double get y1 => this['y1'] as double;
+  set y1(double value) => this['y1'] = value;
+
+  double get x2 => this['x2'] as double;
+  set x2(double value) => this['x2'] = value;
+
+  double get y2 => this['y2'] as double;
+  set y2(double value) => this['y2'] = value;
+
+  double get width => this['width'] as double;
+  set width(double value) => this['width'] = value;
+
+  double get height => this['height'] as double;
+  set height(double value) => this['height'] = value;
+
+  double get radius => this['radius'] as double;
+  set radius(double value) => this['radius'] = value;
+
+  double get rx => this['rx'] as double;
+  set rx(double value) => this['rx'] = value;
+
+  double get ry => this['ry'] as double;
+  set ry(double value) => this['ry'] = value;
+
   // path attrs
 
   List<PathCommand> get pathCommands => this['pathCommands'] as List<PathCommand>;
   set pathCommands(List<PathCommand> value) => this['pathCommands'] = value;
+
+  // marker attrs
+  SymbolType get symbolType => this['symbolType'] as SymbolType;
+  set symbolType(SymbolType value) => this['symbolType'] = value;
+
+  // polyline polygon attrs
+  List<Offset> get points => this['points'] as List<Offset>;
+  set points(List<Offset> value) => this['points'] = value;
 
   // Paint attrs, api refers to flutter 1.12.13
 

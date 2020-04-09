@@ -12,10 +12,11 @@ import 'package:vector_math/vector_math_64.dart' show Matrix4, Vector4;
 import '../cfg.dart' show Cfg;
 import '../element.dart' show Element, ChangeType;
 import '../attrs.dart' show Attrs;
-import '../bbox/bbox.dart' show getBBoxMethod;
 import '../base.dart' show Ctor;
 import '../group.dart' show Group;
 import '../util/draw.dart' show refreshElement, getMergedRegion;
+import 'Line.dart' show Line;
+import '../util/draw.dart' show applyClip;
 
 abstract class Shape extends Element {
   Shape(Cfg cfg) : super(cfg);
@@ -24,7 +25,11 @@ abstract class Shape extends Element {
 
   final Paint _paint = Paint();
 
-  Path get path => _path;
+  Path get path {
+    _path.reset();
+    createPath(_path);
+    return _path;
+  }
 
   Paint get paint {
     attrs.applyTo(_paint);
@@ -65,16 +70,10 @@ abstract class Shape extends Element {
   }
 
   Rect calculateBBox() {
-    final type = cfg.type;
+    final bbox = _path.getBounds();
     final lineWidth = hitLineWidth;
-    final bboxMethod = getBBoxMethod(type);
-    final bbox = bboxMethod(this);
     final halfLineWidth = lineWidth / 2;
-    final left = bbox.left - halfLineWidth;
-    final top = bbox.top - halfLineWidth;
-    final right = bbox.right + halfLineWidth;
-    final bottom = bbox.bottom + halfLineWidth;
-    return Rect.fromLTRB(left, top, right, bottom);
+    return bbox.inflate(halfLineWidth);
   }
 
   @override
@@ -111,10 +110,9 @@ abstract class Shape extends Element {
   bool get isClipShape => this.cfg.isClipShape;
 
   bool isInShape(Offset refPoint) {
-    final isStroke = this.isStroke;
-    final isFill = this.isFill;
+    final paintingStyle = this.paintingStyle;
     final lineWidth = this.hitLineWidth;
-    return this.isInStrokeOrPath(refPoint, isStroke, isFill, lineWidth);
+    return this.isInStrokeOrPath(refPoint, paintingStyle, lineWidth);
   }
 
   bool get isOnlyHitBBox => false;
@@ -141,7 +139,7 @@ abstract class Shape extends Element {
     ..strokeAppendWidth = 0;
   
   @override
-  Map<ShapeType, Ctor<Shape>> get shpeBase => shapeBase;
+  Map<ShapeType, Ctor<Shape>> get shapeBase => ShapeBase;
 
   @override
   Ctor<Group> get groupBase => (Cfg cfg) => Group(cfg);
@@ -151,22 +149,9 @@ abstract class Shape extends Element {
     refreshElement(this, changeType);
   }
 
-  bool get isFill => attrs.style == PaintingStyle.fill || isClipShape;
+  PaintingStyle get paintingStyle => attrs.style;
 
-  bool get isStroke => attrs.style == PaintingStyle.stroke;
-
-  void _applyClip(Canvas canvas, Shape clip) {
-    if (clip != null) {
-      canvas.save();
-      final clipPath = clip.path;
-      final clipMatrix = clip.matrix;
-      canvas.transform(clipMatrix.storage);
-      canvas.clipPath(clipPath);
-      canvas.restore();
-      clip._afterDraw();
-    }
-  }
-
+  @override
   void draw(Canvas canvas, [Rect region]) {
     final clip = this.clip;
     if (region != null) {
@@ -178,31 +163,34 @@ abstract class Shape extends Element {
     canvas.save();
     final matrix = this.matrix;
     canvas.transform(matrix.storage);
-    _applyClip(canvas, this.clip);
+    applyClip(canvas, this.clip);
     final paint = this.paint;
     final path = this.path;
     canvas.drawPath(path, paint);
     afterDrawPath(canvas);
     canvas.restore();
-    _afterDraw();
+    afterDraw();
   }
 
-  void _afterDraw() {
+  void afterDraw() {
     this.cfg.cacheCanvasBBox = canvasBBox;
     this.cfg.hasChanged = false;
   }
 
+  @override
   void skipDraw() {
     this.cfg.cacheCanvasBBox = null;
     this.cfg.hasChanged = false;
   }
 
+  void createPath(Path path);
+
   void afterDrawPath(Canvas canvas) {}
 
-  bool isInStrokeOrPath(Offset refPoint, bool isStroke, bool isFill, double lineWidth);
+  bool isInStrokeOrPath(Offset refPoint, PaintingStyle style, double lineWidth) => false;
 
   double get hitLineWidth {
-    if (!isStroke) {
+    if (!(paintingStyle == PaintingStyle.stroke)) {
       return 0;
     }
     final attrs = this.attrs;
@@ -223,8 +211,8 @@ enum ShapeType {
   text,
 }
 
-// Shape _baseCtor(Cfg cfg) => Shape(cfg);
+Shape _lineCtor(Cfg cfg) => Line(cfg);
 
-const shapeBase = {
-  // ShapeType.base: _baseCtor,
+const ShapeBase = {
+  ShapeType.line: _lineCtor,
 };

@@ -38,6 +38,8 @@ class Cfg {
     Attrs attrs,
     Rect bbox,
     Rect canvasBBox,
+    double totalLength,
+    List<List<double>> tCache,
 
     bool clearing,
     List<Element> children,
@@ -71,6 +73,8 @@ class Cfg {
       if (attrs != null) 'attrs': attrs,
       if (bbox != null) 'bbox': bbox,
       if (canvasBBox != null) 'canvasBBox': canvasBBox,
+      if (totalLength != null) 'totalLength': totalLength,
+      if (tCache != null) 'tCache': tCache,
       if (clearing != null) 'clearing': clearing,
       if (children != null) 'children': children,
       if (type != null) 'type': type,
@@ -152,6 +156,12 @@ class Cfg {
 
   Rect get canvasBBox => this['canvasBBox'] as Rect;
   set canvasBBox(Rect value) => this['canvasBBox'] = value;
+
+  double get totalLength => this['totalLength'] as double;
+  set totalLength(double value) => this['totalLength'] = value;
+
+  List<List<double>> get tChache => this['tChache'] as List<List<double>>;
+  set tChache(List<List<double>> value) => this['tChache'] = value;
 
   // container cfg
 

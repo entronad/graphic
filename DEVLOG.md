@@ -70,7 +70,7 @@ CanvasController -- 同 g 中的 Canvas，结合 g-base 和 g-canvas，不抽象
 
 Group -- 结合 g-base 和 g-canvas，不抽象
 
-Shape -- 结合 g-base 和 g-canvas，类型为，不抽象
+Shape -- 结合 g-base 和 g-canvas，抽象，各子类不抽象
 
 ShapeBase -- 各种 Shape 构造器的 Map ，以上两者都放在 shape/shape.dart中，否则引用的时候记不得
 
@@ -106,6 +106,8 @@ context
 
 transform Matrix的不同
 
+配合path.contains的stroke拾取检验
+
 
 
 ---
@@ -114,13 +116,25 @@ transform Matrix的不同
 
 ---
 
-如自定义的类名与内置冲突了，原则上给内置包加命名空间，包名_文件名，比如 flutter_animation，并且此命名空间是单独重新引用一下该包文件
+如自定义的类名与内置冲突了，原则上给内置包加命名空间，包名_文件名，比如 flutter_animation，并且此命名空间是单独重新引用一下该包文件，dart:xx 类型的包直接叫 xx
 
 ---
 
-antv中的each()对应forEach
+antv中的each()根据dart的lint建议应该使用for in
+
+原则上只有一个参数，没有泛型的函数不用typedef，参数也不命名
+
+---
+
+先暂定统一不要arrow
+
+---
+
+Text 和 Image 两种类型的 Shape 等到全部完成走通后再做
 
 
+
+WITHOUT arrow、虚线、阴影
 
 TODO 完成后记录并比对从init commit 到那之间 g 的commit 变化
 
@@ -477,7 +491,7 @@ Matrix4的乘法和g中三阶矩阵的乘法是否相同？
 
 clone 方法的作用：1 复制一份attrs，2新建一个对象，3复制指定的cfg字段。为了返回值的类型限定，每个子类都重写下clone返回子类型，但是复制attrs和复制指定字段的
 
-不如将attrs和cfg的clone移到attrs类和cfg类里，注意cfg只clone需要的字段，由于element是抽象类，所以这里做成抽象函数，由子类去实现。
+不如将attrs和cfg的clone移到attrs类和cfg类里，注意cfg只clone需要的字段，由于element是抽象类，所以这里做成抽象函数，由非抽象子类（Group、CanvasController、Shape的子类）去实现。
 
 所有形变方法的接口模仿Canvas类的对应方法
 
@@ -507,6 +521,10 @@ cfg和attrs肯定是直接成员，故可直接访问，其它的原则上要赋
 需要添加一个作为子元素的属性index，作为排序时的默认索引
 
 所有id用Widgets包的UniqeKey
+
+initAttrs只有部分shape的子类要用到，其它是真的要个“空方法”，所以不做成抽象方法而是空方法
+
+在 g-canvas 中 Element还有 draw 和 skipDraw 两个方法
 
 # Shape <- Element
 
@@ -542,13 +560,25 @@ js中的save/restore 主要存储三样东西：变形，裁剪，样式属性�
 
 通过以下方式实现：
 
-Shape 类有_path 和 _paint 两个成员，避免反复重建销毁，将g中的createPath 和applyAttrsToContext的作用改造为 get path 和 get paint 两个访问器，更新并返回以上两个成员，特别注意g中需要transform的地方，所有applyAttrsToContext分成transform和获取paint两步
+Shape 类有_path 和 _paint 两个成员，避免反复重建销毁，将g中的createPath 和applyAttrsToContext的作用改造为 get path 和 get paint 两个访问器，
+
+_paint 的 getter都一样，写在Shape中，特别注意g中需要transform的地方，所有applyAttrsToContext分成transform和获取paint两步
+
+而_path 在Shape中的getter方法都一样子类重写的是 createPath 方法，每次先reset，感觉比每次都新建性能好些
 
 原则上每次使用 path 和 paint 的时候都要显式的赋一下值，防止重复计算和副作用
 
 对绘制过程进行一个大简化，不要g中的drawPath，createPath（用path访问器代替），strokeAndFill方法，保留afterDrawPath，_afterDraw方法
 
-bbox可直接通过 path.getBounds() 获取，主要要用即使计算的访问器
+bbox可直接通过 path.getBounds() 获取，将calculateBBox中的相关代码进行替换，移除bbox文件夹
+
+常量Map的ShapeBase为与成员区别，首字母大写
+
+arrow 的设置定义一个单独的类 ArrowCfg，放在util.arrow中，这个类自带一个默认样式的静态成员
+
+在g中，shape有isFill和isStroke两种，可同时存在，因为web canvas是这个机制，但是dart中这两者互斥的，我们决定为了更dart味，所以也采取互斥的，相关字段和isInStrokeOrPath参数进行调整，字段叫paintingStyle
+
+拾取检验采取的策略是简单的进行计算，复杂的用path.contain，目前用path.contain的是polygon
 
 #Path <- Shape
 
@@ -594,9 +624,119 @@ fillPathByDiff方法中source.splice(index, 0, [].concat(source[index]));注意j
 
 g中的_splitPoints感觉不太合理，按照自己的办法重写一下，g中采用的是在横轴上长度均分，我们采用序列均分
 
+g中的segment的计算过于复杂，好像主要用来计算路径长度、夹角等，看能不能通过PathMetric系列进行计算。将所有涉及 segment 的内容先移除
+
+getSegments()函数仅在shape/path中存在，当计算起点终点夹角、计算是否在stroke上时使用。
+
+注意 moveTo 命令会生成一个新的 sub path ，close 命令只会封闭当前的 sub path 而不是针对整个 pathCommands，所以使用者需要自己保证 close 
+
+
+
+dart 中的贝塞尔曲线：
+
+QuadraticBezierTo 二阶
+
+CubicTo 三阶
+
+ConicTo 二阶带权重
+
+对于stroke拾取问题，和长度问题，好像必须用计算法了，带权重的算不了，先删去，仅做二阶三阶。
+
+math/bezier, quadratic, cubic 中的方法哪怕接口奇怪也先尽量按它的来。
+
+由于不涉及箭头，先不要加pi、tangent等内容
+
+
+
+shape需要的功能，以及shape/path的实现：
+
+createPath 创建 ui.Path：直接顺序添加 pathCommand
+
+isInStroke：顺序计算距离
+
+isInFill：直接用path.contain
+
+totalLength：顺序相加length
+
+getPoint：顺序在tCache上查找
+
+应该将所有pathCommand所需要的不同类型的操作都作为子类的方法，而不用switch判断。
+
+因此需要给每个AbsolutePathCommand添加
+
+inStroke，getLength，getPoint，均需传入 prePoint，formatPath涉及到是否起始点，而且也不是严格意义上的一一对应，不应该做成员方法
+
+对于圆弧
+
+inStroke 近似算法
+
+getLength 用PathMetric计算
+
+getPoint 用PathMetric计算
+
+从g中的 pathToCurve方法看，对于moveTo，是不把其作为curve，不计算其长度的，但每次都会记录其移动的点，作为close的终点，这一点我们在处理函数中也需要记录并处理，因此还要记得把close自带的都返回null，在外面特殊处理（作为LineTo或特殊返回）
+
+圆弧拾取感觉可以用近似的同心圆法。
+
+在起始点处做近似，移动只要垂直于起始点的连线，半径分别加减一半线宽，其它不变
+
+计算公式：dx = (r/r0) * dy0, dy = (r/r0) * dx0，符号规则，当dy0 与dx0同号时，dy与dx异号，
+
+bezier曲线的拾取判断先只看距离不管bbox
+
+
+
+在 shape/path中保存的pathCommands保证是绝对的，通过在\_setPathArr转换，由于在initAttrs和 setAttr中都调用了\_setPathArr，所以可以确保shape/path中能接触到的pathCommands都是绝对的。~~因此，为方便使用，shape/path 添加一个访问器pathCommand进行类型转换。~~ 还是不要了，很多时候出现 final xx = this.cfg或attrs.xx 是为了固定变量使其在下面的逻辑中不再改变，
+
+以上方法也同样用在replaceClose上，即确保没有close。
+
+
+
+path的isPointInStroke也先不管 bbox
+
+g中对待长度技术的策略是全部转换为cubic，称为curve，有相关的字段、缓存和方法，我们先都不要
+
+~~感觉g算tCache的方法（包括polyline）不科学，算了两遍~~ g中的polyline的_方法中调用 getLength 由于有缓存，不会算两遍，而且还能顺带检查更新下缓存，而且在shape/path中， _setTcache 本身就是同时计算并更新 length 和tCache的作用。那我还是觉得不要算两次
+
+设置一个函数，替换pathCommands中的close为lineTo，使逻辑简化
+
+关于path的subpath规则：第一个subpath的初始点是0,0；moveTo 会开启一个新subpath，起始点就是moveTo的点，close也会开始一个新的subpath，起始点置0；
+
+# Marker <- Shape
+
+attrs中的symbol属性先不支持自定义，改名为symbolType
+
+如果不需要箭头的话，感觉也不需要 util/draw 中的 drawPath 方法了
+
+g中的paramsCache目前主要用在drawPath中缓存圆弧参数，我们目前不要用到，移除相关定义
+
+# Line <- Shape
+
+路径类型的shape（line/path/polyline）有totalLength getPoint()两个方法
+
+# Rect <- Shape
+
+当 rect为strike时，采取两个矩形相减的拾取策略
+
+为方便 Rect 统一采用 RRect 处理
+
+# Polyline <- Shape
+
+tCache 指每一个节点的ratio 每段 curve 对应起止点的长度比例列表，形如: [[0, 0.25], [0.25, 0.6]. [0.6, 0.9], [0.9, 1]]
+
 # Container <- Element
 
+getFirst, getLast, getChildByIndex, getCount, contain 虽然可以直接可以从children获取，但考虑到container的性质，还是提供一下包装类
 
+为防止命名重复，此文件开头的函数都加个 _
+
+# Group <- Container
+
+g-base 与 g-canvas 无重合
+
+shape和group中的_applyClip重复了，而且好像不一定作为成员，放到util/draw中
+
+group 的draw 方法中，归根到底是要画的是shape，shape一定会有path和paint，故group中除drawChildren外只要应用个matrix
 
 # Canvas <- Container
 

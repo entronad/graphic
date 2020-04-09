@@ -1,5 +1,16 @@
-import 'dart:ui' show Rect;
+import 'dart:ui' show Rect, Canvas;
 import '../element.dart' show Element, ChangeType;
+import '../shape/shape.dart' show Shape;
+
+void drawChildren(Canvas canvas, List<Element> children, [Rect region]) {
+  for (var child in children) {
+    if (child.cfg.visible) {
+      child.draw(canvas, region);
+    } else {
+      child.skipDraw();
+    }
+  }
+}
 
 void refreshElement(Element element, ChangeType changeType) {
   final canvasController = element.cfg.canvasController;
@@ -36,4 +47,16 @@ Rect getMergedRegion(List<Element> elements) {
   return elements
     .map((element) => getRefreshRegion(element))
     .reduce((region1, region2) => region1.expandToInclude(region2));
+}
+
+void applyClip(Canvas canvas, Shape clip) {
+  if (clip != null) {
+    canvas.save();
+    final clipPath = clip.path;
+    final clipMatrix = clip.matrix;
+    canvas.transform(clipMatrix.storage);
+    canvas.clipPath(clipPath);
+    canvas.restore();
+    clip.afterDraw();
+  }
 }

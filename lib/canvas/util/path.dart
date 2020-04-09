@@ -2,6 +2,23 @@ import 'dart:ui' show Offset;
 
 import '../shape/path_command.dart';
 
+bool isPointInStroke(
+  List<AbsolutePathCommand> pathCommandsWithoutClose,
+  double lineWidth,
+  Offset refPoint,
+) {
+  // the shape.Path will guarantee no Close in pathCommands.
+
+  var prePoint = Offset.zero;
+  for (var command in pathCommandsWithoutClose) {
+    if (command.inStroke(prePoint, lineWidth, refPoint)) {
+      return true;
+    }
+      prePoint = command.points.last;
+  }
+  return false;
+}
+
 List<AbsolutePathCommand> pathToAbsolute(List<PathCommand> pathCommands) {
   if (pathCommands == null || pathCommands.isEmpty) {
     return [MoveTo(0, 0)];
@@ -216,21 +233,6 @@ List<AbsolutePathCommand> formatPath(List<AbsolutePathCommand> fromPath, List<Ab
             fromPath[i] = toPath[i];
           }
           break;
-        case ConicTo:
-          final target = toPath[i] as ConicTo;
-          if (i > 0) {
-            final splitPoints = _splitPoints(points, fromPath[i - 1].points.last, 1);
-            fromPath[i] = ConicTo(
-              splitPoints[0].dx,
-              splitPoints[0].dy,
-              splitPoints[1].dx,
-              splitPoints[1].dy,
-              target.w,
-            );
-          } else {
-            fromPath[i] = toPath[i];
-          }
-          break;
         case CubicTo:
           if (i > 0) {
             final splitPoints = _splitPoints(points, fromPath[i - 1].points.last, 2);
@@ -255,4 +257,17 @@ List<AbsolutePathCommand> formatPath(List<AbsolutePathCommand> fromPath, List<Ab
     }
   }
   return fromPath;
+}
+
+void replaceClose(List<AbsolutePathCommand> pathCommands) {
+  var startPoint = Offset.zero;
+  for (var i = 0; i < pathCommands.length; i++) {
+    final command = pathCommands[i];
+    if (command.runtimeType == MoveTo) {
+      startPoint = command.points.last;
+    } else if (command.runtimeType == Close) {
+      pathCommands[i] = LineTo(startPoint.dx, startPoint.dy);
+      startPoint = command.points.last;
+    }
+  }
 }

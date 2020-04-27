@@ -1,4 +1,4 @@
-import 'dart:ui' show Rect, Offset, Canvas;
+import 'dart:ui' show Rect, Offset, Canvas, Size;
 
 import 'package:flutter/widgets.dart' show UniqueKey;
 import 'package:vector_math/vector_math_64.dart' show Matrix4, Vector4;
@@ -9,7 +9,7 @@ import 'base.dart' show Base, Ctor;
 import 'group.dart' show Group;
 import 'container.dart' show Container;
 import './shape/shape.dart' show ShapeType, Shape;
-import 'canvas_controller.dart' show CanvasController;
+import 'renderer.dart' show Renderer;
 import './event/graph_event.dart' show EventType, EventTag, GraphEvent;
 import './animate/animation.dart' show AnimationCfg, Animation;
 
@@ -61,7 +61,7 @@ abstract class Element extends Base {
     : super(cfg) 
   {
     final attrs = defaultAttrs;
-    attrs.mix(cfg.attrs);
+    attrs.mix(cfg?.attrs);
     this.attrs = attrs;
     this.initAttrs(attrs);
     this.initAnimate();
@@ -90,7 +90,7 @@ abstract class Element extends Base {
 
   Ctor<Group> get groupBase;
 
-  void onCanvasChange(ChangeType changeType);
+  void onRendererChange(ChangeType changeType);
 
   void initAttrs(Attrs attrs) {}
 
@@ -103,7 +103,7 @@ abstract class Element extends Base {
 
   Container get parent => cfg.parent;
 
-  CanvasController get canvasController => cfg.canvasController;
+  Renderer get renderer => cfg.renderer;
 
   Element attr(Attrs attrs) {
     for (var k in attrs.keys) {
@@ -137,18 +137,18 @@ abstract class Element extends Base {
   }
 
   void afterAttrsChange(Attrs targetAttrs) {
-    onCanvasChange(ChangeType.attr);
+    onRendererChange(ChangeType.attr);
   }
 
   Element show() {
     cfg.visible = true;
-    onCanvasChange(ChangeType.show);
+    onRendererChange(ChangeType.show);
     return this;
   }
 
   Element hide() {
     cfg.visible = false;
-    onCanvasChange(ChangeType.hide);
+    onRendererChange(ChangeType.hide);
     return this;
   }
 
@@ -169,7 +169,7 @@ abstract class Element extends Base {
     final children = parent.children;
     children.remove(this);
     children.add(this);
-    onCanvasChange(ChangeType.zIndex);
+    onRendererChange(ChangeType.zIndex);
   }
 
   void toBack() {
@@ -180,7 +180,7 @@ abstract class Element extends Base {
     final children = parent.children;
     children.remove(this);
     children.insert(0, this);
-    onCanvasChange(ChangeType.zIndex);
+    onRendererChange(ChangeType.zIndex);
   }
 
   void remove([bool destroy = true]) {
@@ -188,10 +188,10 @@ abstract class Element extends Base {
     if (parent != null) {
       parent.children.remove(this);
       if (!parent.cfg.clearing) {
-        onCanvasChange(ChangeType.remove);
+        onRendererChange(ChangeType.remove);
       }
     } else {
-      onCanvasChange(ChangeType.remove);
+      onRendererChange(ChangeType.remove);
     }
     if (destroy) {
       this.destroy();
@@ -200,14 +200,14 @@ abstract class Element extends Base {
 
   void resetMatrix() {
     attr(Attrs(matrix: defaultMatrix));
-    onCanvasChange(ChangeType.matrix);
+    onRendererChange(ChangeType.matrix);
   }
 
   Matrix4 get matrix => attrs.matrix;
 
   void setMatrix(Matrix4 m) {
     attr(Attrs(matrix: m));
-    onCanvasChange(ChangeType.matrix);
+    onRendererChange(ChangeType.matrix);
   }
 
   Matrix4 get totalMatrix {
@@ -237,7 +237,7 @@ abstract class Element extends Base {
     cfg.parentMatrix = matrix;
   }
 
-  Matrix4 get defaultMatrix => null;
+  Matrix4 get defaultMatrix => Matrix4.identity();
 
   Vector4 applyToMatrix(Vector4 v) {
     final matrix = attrs.matrix;
@@ -257,7 +257,7 @@ abstract class Element extends Base {
   }
 
   Shape setClip(Cfg clipCfg) {
-    final canvasController = this.canvasController;
+    final renderer = this.renderer;
     Shape clipShape;
     if (clipCfg != null) {
       final shapeBase = this.shapeBase;
@@ -268,12 +268,12 @@ abstract class Element extends Base {
           type: clipCfg.type,
           isClipShape: true,
           attrs: clipCfg.attrs,
-          canvasController: canvasController,
+          renderer: renderer,
         ));
       }
     }
     cfg.clipShape = clipShape;
-    onCanvasChange(ChangeType.clip);
+    onRendererChange(ChangeType.clip);
     return clipShape;
   }
 
@@ -299,7 +299,7 @@ abstract class Element extends Base {
     cfg.animating = true;
     var timeline = cfg.timeline;
     if (timeline == null) {
-      timeline = cfg.canvasController.cfg.timeline;
+      timeline = cfg.renderer.cfg.timeline;
       cfg.timeline = timeline;
     }
     var animations = cfg.animations ?? [];
@@ -439,7 +439,7 @@ abstract class Element extends Base {
     return this;
   }
 
-  void draw(Canvas canvas, [Rect region]);
+  void paint(Canvas canvas, Size size);
 
   void skipDraw();
 }

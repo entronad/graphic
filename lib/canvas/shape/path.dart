@@ -51,6 +51,7 @@ class Path extends Shape {
     }
   }
 
+  @override
   double get totalLength {
     final totalLength = cfg.totalLength;
     if (totalLength == null) {
@@ -60,6 +61,7 @@ class Path extends Shape {
     return cfg.totalLength;
   }
 
+  @override
   Offset getPoint(double ratio) {
     var tCache = cfg.tChache;
     if (tCache == null) {

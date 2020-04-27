@@ -3,7 +3,7 @@ import 'dart:ui' show Color;
 import 'package:flutter/scheduler.dart' show Ticker;
 import 'package:vector_math/vector_math_64.dart' show Matrix4;
 
-import '../canvas_controller.dart' show CanvasController;
+import '../renderer.dart' show Renderer;
 import '../element.dart' show Element;
 import 'animation.dart' show Animation;
 import '../attrs.dart' show Attrs;
@@ -98,9 +98,9 @@ bool update(Element shape, Animation animation, Duration elapsed) {
 }
 
 class Timeline {
-  Timeline(this.canvasController);
+  Timeline(this.renderer);
 
-  CanvasController canvasController;
+  Renderer renderer;
 
   List<Element> animators;
 
@@ -113,7 +113,7 @@ class Timeline {
     Element shape;
     List<Animation> animations;
     Animation animation;
-    ticker = canvasController.cfg.tickerProvider.createTicker((elapsed) {
+    ticker = renderer.cfg.tickerProvider.createTicker((elapsed) {
       current = elapsed;
       if (animators.isNotEmpty) {
         for (var i = animators.length - 1; i >= 0; i--) {
@@ -140,9 +140,9 @@ class Timeline {
             removeAnimator(i);
           }
         }
-        final autoDraw = canvasController.cfg.autoDraw;
+        final autoDraw = renderer.cfg.autoDraw;
         if (!autoDraw) {
-          canvasController.draw();
+          renderer.repaint();
         }
       }
     });
@@ -167,7 +167,7 @@ class Timeline {
       animator.stopAnimate(toEnd);
     }
     animators = [];
-    canvasController.draw();
+    renderer.repaint();
   }
 
   Duration get time => current;

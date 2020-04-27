@@ -8,27 +8,27 @@ import 'element.dart' show Element, ChangeType;
 import 'group.dart' show Group;
 import 'shape/shape.dart' show Shape;
 import 'base.dart' show Ctor, Base;
-import 'canvas_controller.dart' show CanvasController;
+import 'renderer.dart' show Renderer;
 import 'event/graph_event.dart' show OriginalEvent;
 import './animate/timeline.dart' show Timeline;
 
 void _afterAdd(Element element) {
   if (element.isGroup) {
     if ((element as Group).isEntityGroup || element.cfg.children.isNotEmpty) {
-      element.onCanvasChange(ChangeType.add);
+      element.onRendererChange(ChangeType.add);
     }
   } else {
-    element.onCanvasChange(ChangeType.add);
+    element.onRendererChange(ChangeType.add);
   }
 }
 
-void _setCanvasController(Element element, CanvasController canvasController) {
-  element.cfg.canvasController = canvasController;
+void _setRenderer(Element element, Renderer renderer) {
+  element.cfg.renderer = renderer;
   if (element.isGroup) {
     final children = element.cfg.children;
     if (children.isNotEmpty) {
       for (var child in children) {
-        _setCanvasController(child, canvasController);
+        _setRenderer(child, renderer);
       }
     }
   }
@@ -51,7 +51,7 @@ void _removeChild(Container container, Element element, [bool destroy = true]) {
     element.destroy();
   } else {
     element.cfg.parent = null;
-    element.cfg.canvasController = null;
+    element.cfg.renderer = null;
   }
   container.children.remove(element);
 }
@@ -62,7 +62,7 @@ bool _isAllowCapture(Base element) =>
 abstract class Container extends Element {
   Container(Cfg cfg) : super(cfg);
 
-  bool get isCanvasController => false;
+  bool get isRenderer => false;
 
   @override
   Rect get bbox {
@@ -156,14 +156,14 @@ abstract class Container extends Element {
     return group;
   }
 
-  CanvasController get canvasController {
-    CanvasController canvasController;
-    if (isCanvasController) {
-      canvasController = this;
+  Renderer get renderer {
+    Renderer renderer;
+    if (isRenderer) {
+      renderer = this;
     } else {
-      canvasController = this.cfg.canvasController;
+      renderer = this.cfg.renderer;
     }
-    return canvasController;
+    return renderer;
   }
 
   Shape getShape(Offset point, OriginalEvent ev) {
@@ -172,7 +172,7 @@ abstract class Container extends Element {
     }
     final children = this.children;
     Shape shape;
-    if (!isCanvasController) {
+    if (!isRenderer) {
       var v = Vector4.array([point.dx, point.dy, 1]);
       v = invertFromMatrix(v);
       final vPoint = Offset(v.x, v.y);
@@ -204,7 +204,7 @@ abstract class Container extends Element {
   }
 
   void add(Element element) {
-    final canvasController = this.canvasController;
+    final renderer = this.renderer;
     final children = this.children;
     final timeline = cfg.timeline;
     final preParent = element.parent;
@@ -212,8 +212,8 @@ abstract class Container extends Element {
       _removeChild(preParent, element, false);
     }
     element.cfg.parent = this;
-    if (canvasController != null) {
-      _setCanvasController(element, canvasController);
+    if (renderer != null) {
+      _setRenderer(element, renderer);
     }
     if (timeline != null) {
       _setTimeline(element, timeline);
@@ -241,7 +241,7 @@ abstract class Container extends Element {
       final diffZ = child1.cfg.zIndex - child2.cfg.zIndex;
       return diffZ == 0 ? child1.index - child2.index : diffZ;
     });
-    onCanvasChange(ChangeType.sort);
+    onRendererChange(ChangeType.sort);
   }
   
   void clear() {
@@ -254,7 +254,7 @@ abstract class Container extends Element {
       children[i].destroy();
     }
     cfg.children = [];
-    onCanvasChange(ChangeType.clear);
+    onRendererChange(ChangeType.clear);
     cfg.clearing = false;
   }
 

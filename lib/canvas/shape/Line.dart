@@ -39,6 +39,7 @@ class Line extends Shape {
     path.lineTo(x2, y2);
   }
 
+  @override
   double get totalLength {
     final x1 = attrs.x1;
     final y1 = attrs.y1;
@@ -47,6 +48,7 @@ class Line extends Shape {
     return length(x1, y1, x2, y2);
   }
 
+  @override
   Offset getPoint(double ratio) {
     final p1 = Offset(attrs.x1, attrs.y1);
     final p2 = Offset(attrs.x2, attrs.y2);

@@ -58,6 +58,18 @@ g 提供以下功能：根据提供的一个或多个属性动画，根据 (doub
 
 ---
 
+~~注意暴露给外部的类名不要取和 flutter/material 相同的，这在flutter包引用机制下会导致用户比较麻烦~~ 
+
+要实现以上目标貌似不可能，算了，考虑取双单词类名还是加前缀的话，从google/charts的使用上来看更推荐加前缀，决定就用前缀法了
+
+graphic.Canvas
+
+graphic.Renderer
+
+graphic.Chart
+
+
+
 文件/类建立原则：无需g-base中的接口，g-base 中的abstract类尽量与g-canvas中的合并
 
 Base -- 用 g-base 中的，抽象
@@ -66,7 +78,7 @@ Element -- 用 g-base 中的，抽象
 
 Container -- 用 g-base 中的，抽象
 
-CanvasController -- 同 g 中的 Canvas，结合 g-base 和 g-canvas，不抽象
+Renderer -- 同 g 中的 Canvas，结合 g-base 和 g-canvas，不抽象
 
 Group -- 结合 g-base 和 g-canvas，不抽象
 
@@ -94,7 +106,7 @@ js中的context对应dart中的ui.Canvas
 
 attrs 和 cfg
 
-事件与图形拾取
+事件与图形拾取, 自己的竞技场
 
 基于ticker的更底层的动画
 
@@ -107,6 +119,8 @@ context
 transform Matrix的不同
 
 配合path.contains的stroke拾取检验
+
+独特的canvas刷新机制
 
 
 
@@ -131,6 +145,100 @@ antv中的each()根据dart的lint建议应该使用for in
 ---
 
 Text 和 Image 两种类型的 Shape 等到全部完成走通后再做
+
+---
+
+命令式 vs 配置式
+
+命令式的优势：
+
+目前web所有的主要可视化库都是命令式的，或主要逻辑架构是命令式的，canvas的绘制基本逻辑是命令式的
+
+有些场景命令式更有优势，比如异步加载数据，中途更改图表，绑定、解绑事件，中途开关动画
+
+配置式的优势：
+
+目前flutter的所有图表都是配置式的，CustomPaint、CustomPainter是配置式的
+
+对于简单的图表配置式更简明
+
+先看看flutter的CustomPaint、CustomPainter能不能以命令式绘制
+
+
+
+绘图机制：
+
+在CustomPainter中的paint 方法中，调用 controller.paint(canvas, size) 方法
+
+为了使用简洁，CanvasController采用额外新建，传入Canvas构造函数的方式
+
+通过父state的setState通知重绘，提供paint方法
+
+
+
+1.父元素 setState 会导致paint函数执行，shouldRepaint、listener只有在Painter实例发生变化时才发生
+
+什么时候repaint
+
+注意flutter每次update之后，都会重新执行一遍build方法，即build内定义的东西每次都换新的，因此要采用controller-widget的模式，且controller要自己去新建widget不能内部生成controller
+
+你无法指定进行repaint，当父元素update且shouldRepaint为true时会repaint
+
+要不搞个这样的机制，controller有一个布尔shouldRepaint，改变后置true，paint成功后置false
+
+每次执行paint方法，都是一个全新的canvas！我感觉现在 g 中的所谓局部重绘都没有什么意义。。。
+
+如果不加限制，canvas会画到size外面去
+
+
+
+controller只负责配置好paint方法，内部不调用draw方法，animate方法中每一帧通过repaint方法通知重绘
+
+canvas和 size 是draw方法中现取
+
+
+
+这样一个机制？
+
+绘图引擎不需要响应式
+
+Canvas是组件，控制它的是Renderer，参考 https://github.com/spritewidget/spritewidget
+
+Renderer的内部去组织draw方法，仅有几个方法会导致重绘
+
+add
+
+attr
+
+animate
+
+renderer与Canvas的关系，与g中Canvas与el的关系有点不太一样，renderer的作用更主导一些，要将g中canvas持有el的方式，分拆持有
+
+哪些放在cfg中，哪些作为成员？
+
+顾名思义，外部可通过构造函数或访问器进行设置的设为cfg
+
+自己生成，不希望外部修改的设置为成员，尽量搞成内部成员加getter的形式
+
+cfg：
+
+tickerProvider
+
+repaintTrigger
+
+直接成员：
+
+painter
+
+eventArena
+
+
+
+
+
+
+
+
 
 
 
@@ -265,7 +373,208 @@ GraphEvent 等同于g，引擎中完整的事件信息，回调函数的参数
 
 
 
-antv 还有一个叫 g-gesture 的库，根据描述是供g使用的，目前是在G2Plot中使用的
+~~antv 还有一个叫 g-gesture 的库，根据描述是供g使用的，目前是在G2Plot中使用的~~   目前没有使用
+
+# EventController
+
+事件的触发机制不同，为了与g中的EventController类似，要采取xx.addEventListener的形式，只不过这个xx不是el，而是EventArena，EventArena作为中间桥梁
+
+graphic挂载事件时，可以重复，且不存在竞技
+
+最终对用户暴露的最好是和gestureDetector一致的类型，这样感觉中间不需要类比web的事件了，直接从listenerevent到event
+
+```
+// 对象事件，是一个过程，对象由手势开始的对象确定，模仿 gestureDetector 的接口命名，arena直接发出
+tap
+tapDown
+tapUp
+tapCancel
+doubleTap
+
+longPress
+longPressStart
+longPressMoveUpdate
+longPressUp
+longPressEnd
+
+panStart
+panDown
+panUpdate
+panEnd
+panCancel
+
+scaleStart
+scaleUpdate
+scaleEnd
+
+可能需要的先不做
+secondaryTapDown
+secondaryTapUp
+secondaryTapCancel
+
+forcePressStart
+forcePressUpdate
+forcePressPeak
+forcePressEnd
+
+原始事件
+pointerDown
+pointerMove
+pointerUp
+pointerCancel
+pointerSignal
+
+```
+
+
+
+构造函数仅需传入一个renderer
+
+所有 eventObj 相关名称统一改名为 graphEvent
+
+并不需要 _getPointInfo方法，绝对坐标和相对坐标事件里都有
+
+在flutter的eventListener中，如果一个手势的落点不在内部，则不能被侦测到，如果移动到外部，没有任何影响，只是坐标会变负（或超出其中）
+
+现在的事件体系，很不同于g中使用的web事件体系，重新定义一下
+
+drag等同于pan，longPressDrag等同于longPress
+
+所有手势的对象以down的对象为准，
+
+# EventArena
+
+先尽量模拟 GestureDetector 的情况，不行的后面再说，不过它有些定义实在是太扯了。
+
+说明：tap 和 doubleTap 不能共存，不过我觉得down和up是可以立即触发的，等待doubleTap的也作为一种状态
+
+horizontal 和 vertical 感觉不需要，用户自己用xy去判断，scale定义也变化，为两指在的情况，且都以第二指为position，到时候在GraphEvent中添加scale相关的内容
+
+关于 pan 和scale 的讨论https://github.com/flutter/flutter/issues/13101，scale的信息挂在OriginalEvent中，发生scale的事件，pointerEvent的点是导致变化的点，而焦点则是非导致变化的那个点，通过pointerEvent.pointer甄别
+
+tap：tapDow之后，一段时间后未发生doubleTap触发
+tapDown：在无类别的情况下down
+tapUp：附属于tap，条件同tap
+tapCancel：tapDow之后发生了doubleTap或转为其他状态，预示着tapUp和tap都不会发生了
+doubleTap：快速两次点击，距离较近，与tap互斥，预示着tapUp和tap都不会发生了，触发tapCancel
+
+longPress：无类别情况下按下一段时间且位移不大触发，不需抬起
+longPressStart：同longPress
+longPressMoveUpdate：longPress状态下move
+longPressUp：longPress状态下up
+longPressEnd：同longPressUp，longPress没有cancel
+
+panStart：无类别情况下按下一段时间且位移较大触发，这个要等一下，防止他是想要scale
+panDown：在无类别的情况下down
+panUpdate：pan状态下move
+panEnd：pan状态下up
+panCancel：panDown发生后其实进入了tap状态
+
+scaleStart：有手指状态下再发生touch，不等了，人两个手一放回立刻想scale
+scaleUpdate：scale状态下move
+scaleEnd：scale状态下发生up
+
+
+
+listener事件的规则：一般都是down、move、up完整组合
+
+不依赖listener通过时间出发的事件：tapUp之后等double，down之后进入touch状态
+
+
+
+实现机制：
+
+尝试通过状态判断实现，
+
+四类分别存放是不是更方便实现一些
+
+打断关系：除tap系列之外，称之为touch系列 _TouchCategory 只能同时存在一个系列
+
+将以下事件触发时和会否触发以上事件进行对比
+
+逻辑顺序原则：判断，应用事件，改变arena状态
+
+pointerDown：出发各种down事件，
+
+pointerMove,
+
+pointerUp,
+
+pointerCancel,
+
+pointerSignal,
+
+
+
+triggerTap,
+
+triggerTouch,
+
+
+
+scale的规则：
+
+1. 最多两个手指，再多放上去加不进来，没有任何记录
+2. scale时如果up导致只剩一个手指了，进入pan，这样可能比全清和再进入longPress好，在flutter中scale和pan被认为是一类的。
+3. scale开始时，保存个初始offset，每次相对于这个计算，结束时把它置空，虽然焦点会变，但offset一直是后加的-先加的
+
+采用状态式的方式管理Arena
+
+```
+null --(down)-- waitingForTouch --(triggerTouch)-- longPress/pan --(up)-- null
+                                --(down)-- scale --(up)-- pan
+                                --(up)-- waitingForDoubleTap --(triggerDouble)-- waitingForDoubleTap
+```
+
+为方便处理，tap要独立出来，叫onRawTap，只要up时发现上一个down时间很近且为同一个pointer
+
+一个手势有明确的起止、类型不会相互转换：
+
+tap：指一次点击后等待双击或确定是单击的状态
+
+longPress
+
+pan
+
+scale
+
+以上类型通过EventCategory表示竞争结果，null表示还没结果，有值后不能再转换，动作结束后置null，任何可能设置状态的，都要先判断状态是null
+
+只有down事件可能一堆都发出，其它的事件都是互斥的，先不管了，up状态间互斥的，
+
+onScreenPointers只记录down的时候的事，up移除，move不做处理，scale比对的时候，只管对比初始的offset，只管把不是移动中的那个position作为focal
+
+所有的cancel方法都在紧贴状态转换之前，先取消tap再取消pan
+
+感觉无论是语义上还是实现上，都要加个通配符 EventType.all
+
+位移事件
+
+touchMove：只要pointer在范围内移动
+touchEnter：down或从边缘进入
+touchLeave：up或从边缘离开
+
+先不考虑
+
+
+
+各事件系列的fromShape与toShape
+
+tap -- null；null
+
+longPress -- longPressStart时的；当前的
+
+pan -- panStart时的；当前的
+
+scale -- null；null
+
+因此保存一个
+
+
+
+为了方便，添加一个offset，在pan和longPress中表示相对于开始的偏移量，
+
+offset和scale都是在move和end时都有值
 
 
 
@@ -331,6 +640,16 @@ animate方法参数都搞成命名参数，onFrame优先级高于toAttrs，cfg�
 g中stopAnimate中没有将_paused设为true，感觉是个bug，我们加上
 
 感觉 Animation 的所有callBack都有判断，不需要设置noop的初始值
+
+
+
+timeline中初始化过的ticker需要找个时机dispose，目前g中的timeline.stop形同虚设。
+
+注意duration如果是inSeconds 只能返回整数值，故要丝滑需单位尽量小，用microseconds
+
+ticker初始化之后记得要start
+
+注意widget不在屏幕上后，ticker还是存在的
 
 #Base <- EventEvitter
 
@@ -564,6 +883,8 @@ Shape 类有_path 和 _paint 两个成员，避免反复重建销毁，将g中�
 
 _paint 的 getter都一样，写在Shape中，特别注意g中需要transform的地方，所有applyAttrsToContext分成transform和获取paint两步
 
+避免与 paint()方法重名，改名为 _paintObj 和 paintObj
+
 而_path 在Shape中的getter方法都一样子类重写的是 createPath 方法，每次先reset，感觉比每次都新建性能好些
 
 原则上每次使用 path 和 paint 的时候都要显式的赋一下值，防止重复计算和副作用
@@ -579,6 +900,8 @@ arrow 的设置定义一个单独的类 ArrowCfg，放在util.arrow中，这个�
 在g中，shape有isFill和isStroke两种，可同时存在，因为web canvas是这个机制，但是dart中这两者互斥的，我们决定为了更dart味，所以也采取互斥的，相关字段和isInStrokeOrPath参数进行调整，字段叫paintingStyle
 
 拾取检验采取的策略是简单的进行计算，复杂的用path.contain，目前用path.contain的是polygon
+
+为了符合dart，ellipse 改名为oval
 
 #Path <- Shape
 
@@ -738,7 +1061,7 @@ shape和group中的_applyClip重复了，而且好像不一定作为成员，放
 
 group 的draw 方法中，归根到底是要画的是shape，shape一定会有path和paint，故group中除drawChildren外只要应用个matrix
 
-# Canvas <- Container
+# Renderer <- Container
 
 在 g 中 canvas 是一个完全抽象的对象，通过传入 dom 与实际的视图关联。
 
@@ -752,3 +1075,82 @@ group 的draw 方法中，归根到底是要画的是shape，shape一定会有pa
 
 同理 Chart 为 Widget，ChartController为抽象类
 
+g-base 中的方法
+
+initContainer, initDom, createDom, initEvents, initTimeline, setDomSize, changeSize, getRenderer, getCursor, setCursor, getPointByClient, getClientByPoint, draw, removeDom, clearEvents, isCanvas, getParent, destroy
+
+getDefaultCfg, onCanvasChange, getShapeBase, getGroupBase, getPixelRatio, getViewRange, initEvents, createDom, setDOMSize, clear, getShape, _getRefreshRegion, refreshElement, _clearFram, draw, _drawAll, _drawRegion, _startDraw, skipDraw, destroy
+
+我们先按这样的思路做
+
+1 不获取 dom/container 实例
+
+2 width、height肯定不能修改，看能不能完全只在paint中处理，不行再处理，到时候记得处理autoFit的情况 https://juejin.im/post/5c7de33cf265da2d864b5c6f
+
+3 只能自动绘制，先保留 cfg.autoDraw 后续再去除
+
+4 没有局部刷新
+
+
+
+getPointByClient, getClientByPoint 这两个方法是供event里转换全局和局部坐标的，没有用
+
+clearEvents 和 destroy 的逻辑比较怪，先统一放到destroy中，不暴露 clearEvents
+
+所有绘图元素的g中的draw方法改为 paint 方法，签名与paint一致，由于目前暂不考虑局部重绘，所以也不需要region。
+
+而renderer触发重绘的方法改名为repaint
+
+'refreshElements' 系列是为局部重绘准备的，不需要了，相关方法用repaint代替
+
+clearAnimationFrame 好像不需要
+
+'quickHit' 没有找到应用，先不做
+
+canvas.refreshElement 先不用
+
+# Canvas <- StatefulWidget
+
+设计一个机制，Painter应当仅在Renderer实例相同，且通知repaint时，或者Painter实例换掉时
+
+什么情况下会执行paint
+
+1.painter换成了新的，且shouldRepaint为true
+
+2.painter的上下级painter执行了paint，此时shouldRepaint会执行，但不管结果如何都会paint
+
+3.box大小发生了变化，此时shouldRepaint不会执行
+
+注意当CustomPaint变成新的但painter没变时不会判断刷新
+
+因此这样设计：
+
+renderer.repaint 通过 \_CanvasState实例的setState通知\_CanvasState更新，生成新的CustomPaint
+
+CustomPaint的painter参数每次都从renderer取
+
+同时renderer.repaint还会让自己的painter参数变化，这样shouldRepaint中可以通过painter是否是同一个实例判断setState是renderer发起的还是外部导致的，仅在renderer主动发起的情况下重绘
+
+实验来看是成功的
+
+
+
+# Debug
+
+renderer先让其构造函数为空，完全命令式的，chart可以采用定义式的，参考g2
+
+attrs 和 cfg 的干扰信息比较多，但是目前考虑绘图引擎是比较底层的东西，就先这样。
+
+TODO: attrs 中的r, radius 分不清
+
+getPoint 不是所有的shape都有，需要强转一下，感觉所有的Shape的子类都应该用统一的接口，只出现复写的方法，没有的在父类内提示异常 UnimplementedError，避免强转等
+
+好像eventController 中私有的 isDragging没什么用，先注掉
+
+TODO: on 方法中的EventTag感觉怪，还不如直接分开来用命名参数type name
+
+TODO: 对外暴露的函数哪些用命名参数，哪些用位置参数需要好好考虑一下，以及坐标是分x, y 还是用Offset
+
+cfg 和 attrs 中的bool为空时返回false（这是比“默认值”更底层的，相当于js中的null）；这条措施不能滥加，cfg、attrs中该是null的还要是null
+
+defaultMatrix搞个1矩阵

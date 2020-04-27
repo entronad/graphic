@@ -5,22 +5,35 @@ import '../shape/shape.dart' show Shape;
 
 // Simulate web event types.
 enum EventType {
-  pointerDown,
-  pointerUp,
-  doubleClick,
-  pointerMove,
-  touchStart,
-  touchMove,
-  touchEnd,
-  dragEnter,
-  dragOver,
-  dragLeave,
-  drop,
+  tap,
+  tapDown,
+  tapUp,
+  tapCancel,
+  doubleTap,
+
+  longPress,
+  longPressStart,
+  longPressMoveUpdate,
+  longPressUp,
+  longPressEnd,
+
+  panStart,
+  panDown,
+  panUpdate,
+  panCancel,
+  panEnd,
+
+  scaleStart,
+  scaleUpdate,
+  scaleEnd,
+
+  /// wildcard
+  all,
 }
 
 class EventTag {
   /// wildcard
-  static EventTag all = EventTag(null, '*');
+  static EventTag all = EventTag(EventType.all, '*');
 
   EventTag(this.type, [this.name]);
 
@@ -37,11 +50,15 @@ class EventTag {
 }
 
 class OriginalEvent {
-  OriginalEvent(this.type, this.pointerEvent);
+  OriginalEvent(this.type, this.pointerEvent, {this.offset, this.scale});
 
   final EventType type;
 
   final PointerEvent pointerEvent;
+
+  final Offset offset;
+
+  final ScaleUpdateDetails scale;
 }
 
 class GraphEvent {
@@ -56,6 +73,10 @@ class GraphEvent {
   Offset localPosition;
 
   Offset globalPosition;
+
+  Offset offset;
+
+  ScaleUpdateDetails scale;
 
   bool bubbles = true;
 

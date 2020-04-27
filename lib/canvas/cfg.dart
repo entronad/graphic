@@ -6,11 +6,12 @@ import 'package:vector_math/vector_math_64.dart' show Matrix4;
 
 import 'attrs.dart' show Attrs;
 import 'container.dart' show Container;
-import 'canvas_controller.dart' show CanvasController;
+import 'renderer.dart' show Renderer;
 import './shape/shape.dart' show ShapeType, Shape;
 import 'element.dart' show Element, Pause;
 import './animate/animation.dart' show Animation;
 import './animate/timeline.dart' show Timeline;
+import './event/event_controller.dart' show EventController;
 
 class Cfg {
   Cfg({
@@ -23,7 +24,7 @@ class Cfg {
     bool animable,
     bool animating,
     Container parent,
-    CanvasController canvasController,
+    Renderer renderer,
     Matrix4 totalMatrix,
     Matrix4 parentMatrix,
     Shape clipShape,
@@ -49,6 +50,9 @@ class Cfg {
 
     bool autoDraw,
     TickerProvider tickerProvider,
+    void Function() repaintTrigger,
+    bool quickHit,
+    EventController eventController,
   })
     : _cfg = {
       if (destroyed != null) 'destroyed': destroyed,
@@ -59,7 +63,7 @@ class Cfg {
       if (animable != null) 'animable': animable,
       if (animating != null) 'animating': animating,
       if (parent != null) 'parent': parent,
-      if (canvasController != null) 'canvasController': canvasController,
+      if (renderer != null) 'renderer': renderer,
       if (totalMatrix != null) 'totalMatrix': totalMatrix,
       if (parentMatrix != null) 'parentMatrix': parentMatrix,
       if (clipShape != null) 'clipShape': clipShape,
@@ -80,14 +84,17 @@ class Cfg {
       if (type != null) 'type': type,
       if (isClipShape != null) 'isClipShape': isClipShape,
       if (autoDraw != null) 'autoDraw': autoDraw,
-      if (tickerProvider != null) 'autoDraw': tickerProvider,
+      if (tickerProvider != null) 'tickerProvider': tickerProvider,
+      if (repaintTrigger != null) 'repaintTrigger': repaintTrigger,
+      if (quickHit != null) 'quickHit': quickHit,
+      if (eventController != null) 'eventController': eventController,
     };
 
   final Map<String, Object> _cfg;
 
   // base cfg
 
-  bool get destroyed => this['destroyed'] as bool;
+  bool get destroyed => this['destroyed'] as bool ?? false;
   set destroyed(bool value) => this['destroyed'] = value;
 
   // element cfg
@@ -98,23 +105,23 @@ class Cfg {
   int get zIndex => this['zIndex'] as int;
   set zIndex(int value) => this['zIndex'] = value;
 
-  bool get visible => this['visible'] as bool;
+  bool get visible => this['visible'] as bool ?? false;
   set visible(bool value) => this['visible'] = value;
 
-  bool get capture => this['capture'] as bool;
+  bool get capture => this['capture'] as bool ?? false;
   set capture(bool value) => this['capture'] = value;
 
-  bool get animable => this['animable'] as bool;
+  bool get animable => this['animable'] as bool ?? false;
   set animable(bool value) => this['animable'] = value;
 
-  bool get animating => this['animating'] as bool;
+  bool get animating => this['animating'] as bool ?? false;
   set animating(bool value) => this['animating'] = value;
 
   Container get parent => this['parent'] as Container;
   set parent(Container value) => this['parent'] = value;
 
-  CanvasController get canvasController => this['canvasController'] as CanvasController;
-  set canvasController(CanvasController value) => this['canvasController'] = value;
+  Renderer get renderer => this['renderer'] as Renderer;
+  set renderer(Renderer value) => this['renderer'] = value;
 
   Matrix4 get totalMatrix => this['totalMatrix'] as Matrix4;
   set totalMatrix(Matrix4 value) => this['totalMatrix'] = value;
@@ -137,7 +144,7 @@ class Cfg {
   Rect get cacheCanvasBBox => this['cacheCanvasBBox'] as Rect;
   set cacheCanvasBBox(Rect value) => this['cacheCanvasBBox'] = value;
 
-  bool get hasChanged => this['hasChanged'] as bool;
+  bool get hasChanged => this['hasChanged'] as bool ?? false;
   set hasChanged(bool value) => this['hasChanged'] = value;
 
   List<Animation> get animations => this['animations'] as List<Animation>;
@@ -165,7 +172,7 @@ class Cfg {
 
   // container cfg
 
-  bool get clearing => this['clearing'] as bool;
+  bool get clearing => this['clearing'] as bool ?? false;
   set clearing(bool value) => this['clearing'] = value;
 
   List<Element> get children => this['children'] as List<Element>;
@@ -176,20 +183,34 @@ class Cfg {
   ShapeType get type => this['type'] as ShapeType;
   set type(ShapeType value) => this['type'] = value;
 
-  bool get isClipShape => this['isClipShape'] as bool;
+  bool get isClipShape => this['isClipShape'] as bool ?? false;
   set isClipShape(bool value) => this['isClipShape'] = value;
 
-  // canvas controller cfg
+  // renderer cfg
 
-  bool get autoDraw => this['autoDraw'] as bool;
+  bool get autoDraw => this['autoDraw'] as bool ?? false;
   set autoDraw(bool value) => this['autoDraw'] = value;
 
   TickerProvider get tickerProvider => this['tickerProvider'] as TickerProvider;
   set tickerProvider(TickerProvider value) => this['tickerProvider'] = value;
 
+  void Function() get repaintTrigger => this['repaintTrigger'] as void Function();
+  set repaintTrigger(void Function() value) => this['repaintTrigger'] = value;
+
+  bool get quickHit => this['quickHit'] as bool ?? false;
+  set quickHit(bool value) => this['quickHit'] = value;
+
+  EventController get eventController => this['eventController'] as EventController;
+  set eventController(EventController value) => this['eventController'] = value;
+
   // Tool members.
 
-  Cfg mix(Cfg src) => this.._cfg.addAll(src._cfg);
+  Cfg mix(Cfg src) {
+    if (src != null) {
+      this._cfg.addAll(src._cfg);
+    }
+    return this;
+  }
 
   Cfg clone() => Cfg(
     attrs: attrs.clone(),

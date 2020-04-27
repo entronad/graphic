@@ -1,5 +1,3 @@
-import 'dart:ui' show VoidCallback;
-
 import 'package:flutter/animation.dart' show Curve, Curves;
 import 'package:flutter/foundation.dart' show required;
 import 'package:flutter/widgets.dart' show UniqueKey;
@@ -25,11 +23,11 @@ class AnimationCfg {
 
   final bool repeat;
 
-  final VoidCallback onFinish;
+  final void Function() onFinish;
 
-  final VoidCallback onPause;
+  final void Function() onPause;
 
-  final VoidCallback onResume;
+  final void Function() onResume;
 }
 
 class Animation extends AnimationCfg {

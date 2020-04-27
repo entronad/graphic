@@ -1,4 +1,4 @@
-import 'graph_event.dart' show EventTag, GraphEvent;
+import 'graph_event.dart' show EventTag, GraphEvent, EventType;
 
 class EventOperation {
   EventOperation(this.callback, this.once);
@@ -11,7 +11,13 @@ abstract class EventEmitter {
   Map<EventTag, List<EventOperation>> _events = {};
 
   /// Listen to an event.
-  EventEmitter on(EventTag evt, void Function(GraphEvent) callback, [bool once]) {
+  EventEmitter on({
+    EventType type,
+    String name,
+    void Function(GraphEvent) callback,
+    bool once,
+  }) {
+    final evt = EventTag(type, name);
     _events[evt] ??= [];
     _events[evt].add(EventOperation(
       callback,
@@ -21,8 +27,8 @@ abstract class EventEmitter {
   }
 
   /// Listen to an event for once.
-  EventEmitter once(EventTag evt, void Function(GraphEvent) callback)
-    => this.on(evt, callback, true);
+  EventEmitter once({EventType type, String name, void Function(GraphEvent) callback})
+    => this.on(type: type, name: name, callback: callback, once: true);
   
   /// Emit an event.
   void emit(EventTag evt, GraphEvent arg) {
@@ -56,7 +62,8 @@ abstract class EventEmitter {
   }
 
   /// Cancel listening to an event, or a chennel.
-  EventEmitter off([EventTag evt, void Function(GraphEvent) callback]) {
+  EventEmitter off({EventType type, String name, void Function(GraphEvent) callback}) {
+    final evt = EventTag(type, name);
     if (evt == null) {
       // off() will cancel all.
       _events = {};

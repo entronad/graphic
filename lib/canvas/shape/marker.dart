@@ -7,7 +7,6 @@ import 'package:graphic/canvas/element.dart';
 import 'path_command.dart';
 import 'shape.dart' show Shape;
 import '../cfg.dart' show Cfg;
-import '../attrs.dart' show Attrs;
 
 List<AbsolutePathCommand> _circle(Offset p, double r) =>
   [

@@ -153,7 +153,7 @@ class Attrs {
 
   // Paint attrs, api refers to flutter 1.12.13
 
-  bool get isAntiAlias => this['isAntiAlias'] as bool;
+  bool get isAntiAlias => this['isAntiAlias'] as bool ?? false;
   set isAntiAlias(bool value) => this['isAntiAlias'] = value;
 
   Color get color => this['color'] as Color;
@@ -192,14 +192,19 @@ class Attrs {
   ImageFilter get imageFilter => this['imageFilter'] as ImageFilter;
   set imageFilter(ImageFilter value) => this['imageFilter'] = value;
 
-  bool get invertColors => this['invertColors'] as bool;
+  bool get invertColors => this['invertColors'] as bool ?? false;
   set invertColors(bool value) => this['invertColors'] = value;
 
   // Tool members.
 
   Iterable<String> get keys => _attrs.keys;
 
-  Attrs mix(Attrs src) => this.._attrs.addAll(src._attrs);
+  Attrs mix(Attrs src) {
+    if (src != null) {
+      this._attrs.addAll(src._attrs);
+    }
+    return this;
+  }
 
   Attrs clone() {
     final rst = Attrs();

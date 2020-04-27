@@ -1,11 +1,11 @@
 import 'dart:ui' show
   Canvas,
   Offset,
-  Rect,
   PaintingStyle,
-  Path,
-  Paint;
+  Paint,
+  Size;
 import 'dart:math' show min, max;
+import 'dart:ui' as ui show Path, Rect;
 
 import 'package:vector_math/vector_math_64.dart' show Matrix4, Vector4;
 
@@ -14,26 +14,32 @@ import '../element.dart' show Element, ChangeType;
 import '../attrs.dart' show Attrs;
 import '../base.dart' show Ctor;
 import '../group.dart' show Group;
-import '../util/draw.dart' show refreshElement, getMergedRegion;
+import '../util/paint.dart' show refreshElement, applyClip;
+import 'circle.dart' show Circle;
 import 'Line.dart' show Line;
-import '../util/draw.dart' show applyClip;
+import 'marker.dart' show Marker;
+import 'oval.dart' show Oval;
+import 'path.dart' show Path;
+import 'polygon.dart' show Polygon;
+import 'polyline.dart' show Polyline;
+import 'rect.dart' show Rect;
 
 abstract class Shape extends Element {
   Shape(Cfg cfg) : super(cfg);
 
-  final Path _path = Path();
+  final ui.Path _path = ui.Path();
 
-  final Paint _paint = Paint();
+  final Paint _paintObj = Paint();
 
-  Path get path {
+  ui.Path get path {
     _path.reset();
     createPath(_path);
     return _path;
   }
 
-  Paint get paint {
-    attrs.applyTo(_paint);
-    return _paint;
+  Paint get paintObj {
+    attrs.applyTo(_paintObj);
+    return _paintObj;
   }
 
   // AbstractShape
@@ -50,7 +56,7 @@ abstract class Shape extends Element {
   }
 
   @override
-  Rect get bbox {
+  ui.Rect get bbox {
     var bbox = cfg.bbox;
     if (bbox == null) {
       bbox = calculateBBox();
@@ -60,7 +66,7 @@ abstract class Shape extends Element {
   }
 
   @override
-  Rect get canvasBBox {
+  ui.Rect get canvasBBox {
     var canvasBBox = cfg.canvasBBox;
     if (canvasBBox == null) {
       canvasBBox = calculateCanvasBBox();
@@ -69,7 +75,7 @@ abstract class Shape extends Element {
     return canvasBBox;
   }
 
-  Rect calculateBBox() {
+  ui.Rect calculateBBox() {
     final bbox = _path.getBounds();
     final lineWidth = hitLineWidth;
     final halfLineWidth = lineWidth / 2;
@@ -82,7 +88,7 @@ abstract class Shape extends Element {
     this.cfg.canvasBBox = null;
   }
 
-  Rect calculateCanvasBBox() {
+  ui.Rect calculateCanvasBBox() {
     final bbox = this.bbox;
     final totalMatrix = this.totalMatrix;
     var left = bbox.left;
@@ -99,7 +105,7 @@ abstract class Shape extends Element {
       top = [topLeftVector[1], topRightVector[1], bottomLeft[1], bottomRight[1]].reduce(min);
       bottom = [topLeftVector[1], topRightVector[1], bottomLeft[1], bottomRight[1]].reduce(max);
     }
-    return Rect.fromLTRB(left, top, right, bottom);
+    return ui.Rect.fromLTRB(left, top, right, bottom);
   }
 
   void clearCacheBBox() {
@@ -145,26 +151,19 @@ abstract class Shape extends Element {
   Ctor<Group> get groupBase => (Cfg cfg) => Group(cfg);
 
   @override
-  void onCanvasChange(ChangeType changeType) {
+  void onRendererChange(ChangeType changeType) {
     refreshElement(this, changeType);
   }
 
   PaintingStyle get paintingStyle => attrs.style;
 
   @override
-  void draw(Canvas canvas, [Rect region]) {
-    final clip = this.clip;
-    if (region != null) {
-      final bbox = clip != null ? getMergedRegion([this, clip]) : canvasBBox;
-      if (!region.overlaps(bbox)) {
-        return;
-      }
-    }
+  void paint(Canvas canvas, Size size) {
     canvas.save();
     final matrix = this.matrix;
     canvas.transform(matrix.storage);
     applyClip(canvas, this.clip);
-    final paint = this.paint;
+    final paint = this.paintObj;
     final path = this.path;
     canvas.drawPath(path, paint);
     afterDrawPath(canvas);
@@ -183,7 +182,7 @@ abstract class Shape extends Element {
     this.cfg.hasChanged = false;
   }
 
-  void createPath(Path path);
+  void createPath(ui.Path path);
 
   void afterDrawPath(Canvas canvas) {}
 
@@ -196,11 +195,19 @@ abstract class Shape extends Element {
     final attrs = this.attrs;
     return attrs.strokeWidth + attrs.strokeAppendWidth;
   }
+
+  double get totalLength {
+    throw UnimplementedError('${this.runtimeType} has no totalLength getter.');
+  }
+
+  Offset getPoint(double ratio) {
+    throw UnimplementedError('${this.runtimeType} has no getPoint method.');
+  }
 }
 
 enum ShapeType {
   circle,
-  ellipse,
+  oval,
   image,
   line,
   marker,
@@ -211,8 +218,29 @@ enum ShapeType {
   text,
 }
 
+Shape _circleCtor(Cfg cfg) => Circle(cfg);
+
 Shape _lineCtor(Cfg cfg) => Line(cfg);
 
+Shape _markerCtor(Cfg cfg) => Marker(cfg);
+
+Shape _ovalCtor(Cfg cfg) => Oval(cfg);
+
+Shape _pathCtor(Cfg cfg) => Path(cfg);
+
+Shape _polygonCtor(Cfg cfg) => Polygon(cfg);
+
+Shape _polylineCtor(Cfg cfg) => Polyline(cfg);
+
+Shape _rectCtor(Cfg cfg) => Rect(cfg);
+
 const ShapeBase = {
+  ShapeType.circle: _circleCtor,
   ShapeType.line: _lineCtor,
+  ShapeType.marker: _markerCtor,
+  ShapeType.oval: _ovalCtor,
+  ShapeType.path: _pathCtor,
+  ShapeType.polygon: _polygonCtor,
+  ShapeType.polyline: _polylineCtor,
+  ShapeType.rect: _rectCtor,
 };

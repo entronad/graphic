@@ -1,10 +1,10 @@
-import 'dart:ui' show Canvas, Rect;
+import 'dart:ui' show Canvas, Size;
 
 import 'container.dart' show Container;
 import 'cfg.dart' show Cfg;
 import 'base.dart' show Ctor;
 import 'element.dart' show ChangeType;
-import './util/draw.dart' show refreshElement, applyClip, drawChildren;
+import './util/paint.dart' show refreshElement, applyClip, paintChildren;
 import './shape/shape.dart' show ShapeType, Shape, ShapeBase;
 
 class Group extends Container {
@@ -26,7 +26,7 @@ class Group extends Container {
   }
 
   @override
-  void onCanvasChange(ChangeType changeType) {
+  void onRendererChange(ChangeType changeType) {
     refreshElement(this, changeType);
   }
 
@@ -37,14 +37,14 @@ class Group extends Container {
   Ctor<Group> get groupBase => (Cfg cfg) => Group(cfg);
 
   @override
-  void draw(Canvas canvas, [Rect region]) {
+  void paint(Canvas canvas, Size size) {
     final children = this.children;
     if (children.isNotEmpty) {
       canvas.save();
       final matrix = this.matrix;
       canvas.transform(matrix.storage);
       applyClip(canvas, this.clip);
-      drawChildren(canvas, children, region);
+      paintChildren(canvas, children, size);
       canvas.restore();
     }
     cfg.cacheCanvasBBox = canvasBBox;

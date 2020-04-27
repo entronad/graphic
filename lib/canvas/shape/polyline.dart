@@ -48,6 +48,7 @@ class Polyline extends Shape {
     }
   }
 
+  @override
   double get totalLength {
     final totalLength = cfg.totalLength;
     if (totalLength != null) {
@@ -58,6 +59,7 @@ class Polyline extends Shape {
     return cfg.totalLength;
   }
 
+  @override
   Offset getPoint(double ratio) {
     final points = attrs.points;
     var tCache = cfg.tChache;

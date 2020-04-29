@@ -26,7 +26,7 @@ class _DelegateEventPageState extends State<DelegateEventPage> {
         r: 100,
         color: Color(0xff1890ff),
         strokeWidth: 4,
-        style: PaintingStyle.stroke,
+        style: PaintingStyle.fill,
       ),
     ));
 
@@ -37,7 +37,7 @@ class _DelegateEventPageState extends State<DelegateEventPage> {
         circle.attr(graphic.Attrs(color: Color(0xff2fc25b)));
       }
     );
-    circle.on(
+    group.on(
       type: graphic.EventType.longPressEnd,
       name: 'circle',
       callback: (_) {

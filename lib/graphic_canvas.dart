@@ -10,8 +10,8 @@ export './canvas/shape/shape.dart' show
   ShapeType;
 export './canvas/animate/animation.dart' show
   AnimationCfg;
-export './canvas/shape/path_command.dart' show
-  PathCommand,
+export './canvas/shape/path_segment.dart' show
+  PathSegment,
   Close,
   ArcToPoint,
   CubicTo,

@@ -13,7 +13,7 @@ class Rect extends Shape {
     ..y = 0
     ..width = 0
     ..height = 0
-    ..radius = 0;
+    ..r = 0;
 
   @override
   bool isInStrokeOrPath(Offset refPoint, PaintingStyle style, double lineWidth) {
@@ -21,13 +21,13 @@ class Rect extends Shape {
     final top = attrs.y;
     final width = attrs.width;
     final height = attrs.height;
-    final radius = attrs.radius;
+    final r = attrs.r;
     final rrect = RRect.fromLTRBR(
       left,
       top,
       left + width,
       top + height,
-      Radius.circular(radius)
+      Radius.circular(r)
     );
     if (style == PaintingStyle.stroke) {
       final halfWidth = lineWidth / 2;
@@ -43,13 +43,13 @@ class Rect extends Shape {
     final top = attrs.y;
     final width = attrs.width;
     final height = attrs.height;
-    final radius = attrs.radius;
+    final r = attrs.r;
     final rrect = RRect.fromLTRBR(
       left,
       top,
       left + width,
       top + height,
-      Radius.circular(radius)
+      Radius.circular(r)
     );
     path.addRRect(rrect);
   }

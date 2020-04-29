@@ -15,6 +15,26 @@ final pages = <Page>[
     name: 'Shape',
     endPoint: 'shape_page',
   ),
+  Page(
+    name: 'AttributeAnimation',
+    endPoint: 'attribute_animation_page',
+  ),
+  Page(
+    name: 'OnFrameAnimation',
+    endPoint: 'on_frame_animation_page',
+  ),
+  Page(
+    name: 'PathAnimation',
+    endPoint: 'path_animation_page',
+  ),
+  Page(
+    name: 'ShapeEvent',
+    endPoint: 'shape_event_page',
+  ),
+  Page(
+    name: 'DelegateEvent',
+    endPoint: 'delegate_event_page',
+  ),
 ];
 
 class PageCard extends StatelessWidget {

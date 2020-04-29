@@ -9,16 +9,26 @@ class Canvas extends StatefulWidget {
   final Renderer renderer;
 
   @override
-  _CanvasState createState() => _CanvasState();
+  CanvasState createState() => CanvasState();
 }
 
-class _CanvasState extends State<Canvas> with TickerProviderStateMixin {
+class CanvasState extends State<Canvas> with TickerProviderStateMixin {
+  void update() {
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
 
-    widget.renderer.cfg.repaintTrigger = () {setState(() {});};
-    widget.renderer.cfg.tickerProvider = this;
+    widget.renderer.inflate(this);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    widget.renderer.deflate();
   }
 
   @override

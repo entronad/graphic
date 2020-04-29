@@ -7,7 +7,7 @@ import '../renderer.dart' show Renderer;
 import '../element.dart' show Element;
 import 'animation.dart' show Animation;
 import '../attrs.dart' show Attrs;
-import '../shape/path_command.dart' show PathCommand, AbsolutePathCommand;
+import '../shape/path_segment.dart' show PathSegment, AbsolutePathSegment;
 import '../util/path.dart' show pathToAbsolute, fillPathByDiff, formatPath;
 
 void _update(Element shape, Animation animation, double ratio) {
@@ -36,25 +36,25 @@ void _update(Element shape, Animation animation, double ratio) {
         cProps[key] = (toValue - (fromValue as Matrix4)) * ratio + (fromValue as Matrix4);
         continue;
       }
-      if (toValue is List<PathCommand>) {
+      if (toValue is List<PathSegment>) {
         var toPath = pathToAbsolute(toValue);
-        var fromPath = pathToAbsolute(fromValue as List<PathCommand>);
+        var fromPath = pathToAbsolute(fromValue as List<PathSegment>);
         if (toPath.length > fromPath.length) {
           fromPath = fillPathByDiff(fromPath, toPath);
           fromPath = formatPath(fromPath, toPath);
-          animation.fromAttrs.pathCommands = fromPath;
-          animation.toAttrs.pathCommands = fromPath;
+          animation.fromAttrs.segments = fromPath;
+          animation.toAttrs.segments = fromPath;
         } else if (!animation.pathFormatted) {
           fromPath = formatPath(fromPath, toPath);
-          animation.fromAttrs.pathCommands = fromPath;
-          animation.toAttrs.pathCommands = fromPath;
+          animation.fromAttrs.segments = fromPath;
+          animation.toAttrs.segments = fromPath;
           animation.pathFormatted = true;
         }
-        final pathCommands = <AbsolutePathCommand>[];
+        final segments = <AbsolutePathSegment>[];
         for (var i = 0; i < toPath.length; i++) {
-          pathCommands.add(fromPath[i].lerp(toPath[i], ratio));
+          segments.add(fromPath[i].lerp(toPath[i], ratio));
         }
-        cProps[key] = pathCommands;
+        cProps[key] = segments;
         continue;
       }
       cProps[key] = toValue;
@@ -102,9 +102,9 @@ class Timeline {
 
   Renderer renderer;
 
-  List<Element> animators;
+  final List<Element> animators = [];
 
-  Duration current;
+  Duration current = Duration.zero;
 
   Ticker ticker;
 
@@ -113,7 +113,7 @@ class Timeline {
     Element shape;
     List<Animation> animations;
     Animation animation;
-    ticker = renderer.cfg.tickerProvider.createTicker((elapsed) {
+    ticker = renderer.tickerProvider.createTicker((elapsed) {
       current = elapsed;
       if (animators.isNotEmpty) {
         for (var i = animators.length - 1; i >= 0; i--) {
@@ -124,7 +124,7 @@ class Timeline {
           }
           if (!shape.isAnimatePaused()) {
             animations = shape.cfg.animations;
-            for (var j = animations.length - 1; j >= 0; i--) {
+            for (var j = animations.length - 1; j >= 0; j--) {
               animation = animations[j];
               isFinished = update(shape, animation, elapsed);
               if (isFinished) {
@@ -146,6 +146,7 @@ class Timeline {
         }
       }
     });
+    ticker.start();
   }
 
   void addAnimator(Element shape) {
@@ -159,14 +160,18 @@ class Timeline {
   bool get isAnimatiing => animators.isNotEmpty;
 
   void stop() {
-
+    if (ticker != null) {
+      ticker.stop();
+      ticker.dispose();
+      ticker = null;
+    }
   }
 
   void stopAllAnimations([bool toEnd = true]) {
     for (var animator in animators) {
       animator.stopAnimate(toEnd);
     }
-    animators = [];
+    animators.clear();
     renderer.repaint();
   }
 

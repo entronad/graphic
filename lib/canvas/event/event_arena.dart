@@ -124,6 +124,8 @@ class EventArena {
         final scale = _calculateScale(pointerEvent);
         _applyCallbacks(EventType.scaleUpdate, pointerEvent, scale: scale);
         break;
+      case ListenerEventCategory.tap:
+        break;
       default:
         // null
         final bias = (pointerEvent.localPosition - _lastDown.localPosition).distance.abs();
@@ -148,8 +150,8 @@ class EventArena {
         // must be doubleTap
         final bias = (pointerEvent.localPosition - _lastUp.localPosition).distance.abs();
         if (bias < tapBias) {
-          _applyCallbacks(EventType.tapCancel, pointerEvent);
           _applyCallbacks(EventType.doubleTap, pointerEvent);
+          _applyCallbacks(EventType.tapCancel, pointerEvent);
           _currentCagegory = null;
         } else {
           // Without record.
@@ -193,7 +195,7 @@ class EventArena {
 
   void _onTriggerTap(PointerEvent pointerEvent) {
     if (
-      _currentCagegory == null
+      _currentCagegory == ListenerEventCategory.tap
       && pointerEvent.pointer == _lastUp.pointer
     ) {
       _applyCallbacks(EventType.tapUp, pointerEvent);
@@ -208,8 +210,8 @@ class EventArena {
       && _onScreenPointers.length == 1
       && pointerEvent.pointer == _onScreenPointers[0].pointer
     ) {
-      _applyCallbacks(EventType.longPressStart, pointerEvent);
       _applyCallbacks(EventType.longPress, pointerEvent);
+      _applyCallbacks(EventType.longPressStart, pointerEvent);
       _applyCallbacks(EventType.tapCancel, pointerEvent);
       _applyCallbacks(EventType.panCancel, pointerEvent);
       _currentCagegory = ListenerEventCategory.longPress;

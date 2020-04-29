@@ -15,7 +15,7 @@ abstract class EventEmitter {
     EventType type,
     String name,
     void Function(GraphEvent) callback,
-    bool once,
+    bool once = false,
   }) {
     final evt = EventTag(type, name);
     _events[evt] ??= [];

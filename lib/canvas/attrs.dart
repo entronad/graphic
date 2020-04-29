@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:vector_math/vector_math_64.dart' show Matrix4;
 
-import './shape/path_command.dart' show PathCommand;
+import './shape/path_segment.dart' show PathSegment;
 import './shape/marker.dart' show SymbolType;
 
 List<T> _cloneListAttr<T>(List<T> list) {
@@ -31,11 +31,10 @@ class Attrs {
     double y2,
     double width,
     double height,
-    double radius,
     double rx,
     double ry,
 
-    List<PathCommand> pathCommands,
+    List<PathSegment> segments,
 
     SymbolType symbolType,
 
@@ -68,26 +67,26 @@ class Attrs {
       if (y2 != null) 'y2': y2,
       if (width != null) 'width': width,
       if (height != null) 'height': height,
-      if (radius != null) 'radius': radius,
       if (rx != null) 'rx': rx,
       if (ry != null) 'ry': ry,
-      if (pathCommands != null) 'pathCommands': pathCommands,
+      if (segments != null) 'segments': segments,
       if (symbolType != null) 'symbolType': symbolType,
       if (points != null) 'points': points,
-      if (isAntiAlias != null) 'isAntiAlias': isAntiAlias,
-      if (color != null) 'color': color,
-      if (blendMode != null) 'blendMode': blendMode,
-      if (style != null) 'style': style,
-      if (strokeWidth != null) 'strokeWidth': strokeWidth,
-      if (strokeCap != null) 'strokeCap': strokeCap,
-      if (strokeJoin != null) 'strokeJoin': strokeJoin,
-      if (strokeMiterLimit != null) 'strokeMiterLimit': strokeMiterLimit,
-      if (maskFilter != null) 'maskFilter': maskFilter,
-      if (filterQuality != null) 'filterQuality': filterQuality,
-      if (shader != null) 'shader': shader,
-      if (colorFilter != null) 'colorFilter': colorFilter,
-      if (imageFilter != null) 'imageFilter': imageFilter,
-      if (invertColors != null) 'invertColors': invertColors,
+      // paint attrs
+      'isAntiAlias': isAntiAlias != null ? isAntiAlias : true,
+      'color': color != null ? color : Color.fromARGB(255, 0, 0, 0),
+      'blendMode': blendMode != null ? blendMode : BlendMode.srcOver,
+      'style': style != null ? style : PaintingStyle.fill,
+      'strokeWidth': strokeWidth != null ? strokeWidth : 0.0,
+      'strokeCap': strokeCap != null ? strokeCap : StrokeCap.butt,
+      'strokeJoin': strokeJoin != null ? strokeJoin : StrokeJoin.miter,
+      'strokeMiterLimit': strokeMiterLimit != null ? strokeMiterLimit : 0.0,
+      'maskFilter': maskFilter != null ? maskFilter : null,
+      'filterQuality': filterQuality != null ? filterQuality : FilterQuality.none,
+      'shader': shader != null ? shader : null,
+      'colorFilter': colorFilter != null ? colorFilter : null,
+      'imageFilter': imageFilter != null ? imageFilter : null,
+      'invertColors': invertColors != null ? invertColors : false,
     };
 
   final Map<String, Object> _attrs;
@@ -129,9 +128,6 @@ class Attrs {
   double get height => this['height'] as double;
   set height(double value) => this['height'] = value;
 
-  double get radius => this['radius'] as double;
-  set radius(double value) => this['radius'] = value;
-
   double get rx => this['rx'] as double;
   set rx(double value) => this['rx'] = value;
 
@@ -140,8 +136,8 @@ class Attrs {
 
   // path attrs
 
-  List<PathCommand> get pathCommands => this['pathCommands'] as List<PathCommand>;
-  set pathCommands(List<PathCommand> value) => this['pathCommands'] = value;
+  List<PathSegment> get segments => this['segments'] as List<PathSegment>;
+  set segments(List<PathSegment> value) => this['segments'] = value;
 
   // marker attrs
   SymbolType get symbolType => this['symbolType'] as SymbolType;
@@ -221,51 +217,22 @@ class Attrs {
   }
 
   void applyTo(Paint paint) {
-    if (paint == null) {
-      return;
-    }
-    if (blendMode != null) {
-      paint.blendMode = blendMode;
-    }
-    if (color != null) {
-      paint.color = color;
-    }
-    if (colorFilter != null) {
-      paint.colorFilter = colorFilter;
-    }
-    if (filterQuality != null) {
-      paint.filterQuality = filterQuality;
-    }
-    if (imageFilter != null) {
-      paint.imageFilter = imageFilter;
-    }
-    if (invertColors != null) {
-      paint.invertColors = invertColors;
-    }
-    if (isAntiAlias != null) {
-      paint.isAntiAlias = isAntiAlias;
-    }
-    if (maskFilter != null) {
-      paint.maskFilter = maskFilter;
-    }
-    if (shader != null) {
-      paint.shader = shader;
-    }
-    if (strokeCap != null) {
-      paint.strokeCap = strokeCap;
-    }
-    if (strokeJoin != null) {
-      paint.strokeJoin = strokeJoin;
-    }
-    if (strokeMiterLimit != null) {
-      paint.strokeMiterLimit = strokeMiterLimit;
-    }
-    if (strokeWidth != null) {
-      paint.strokeWidth = strokeWidth;
-    }
-    if (style != null) {
-      paint.style = style;
-    }
+    assert(paint != null);
+
+    paint.blendMode = blendMode;
+    paint.color = color;
+    paint.colorFilter = colorFilter;
+    paint.filterQuality = filterQuality;
+    paint.imageFilter = imageFilter;
+    paint.invertColors = invertColors;
+    paint.isAntiAlias = isAntiAlias;
+    paint.maskFilter = maskFilter;
+    paint.shader = shader;
+    paint.strokeCap = strokeCap;
+    paint.strokeJoin = strokeJoin;
+    paint.strokeMiterLimit = strokeMiterLimit;
+    paint.strokeWidth = strokeWidth;
+    paint.style = style;
   }
 
   Object operator [](String k) => _attrs[k];

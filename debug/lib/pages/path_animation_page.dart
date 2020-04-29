@@ -20,7 +20,7 @@ class _PathAnimationPageState extends State<PathAnimationPage> {
     final path = renderer.addShape(graphic.Cfg(
       type: graphic.ShapeType.path,
       attrs: graphic.Attrs(
-        pathCommands: [
+        segments: [
           graphic.MoveTo(100, 300),
           graphic.RelativeLineTo(50, -25),
           graphic.RelativeArcToPoint(Offset(50, -25), radius: Radius.circular(25), rotation: -30, largeArc: false, clockwise: true),

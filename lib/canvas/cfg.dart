@@ -49,8 +49,6 @@ class Cfg {
     bool isClipShape,
 
     bool autoDraw,
-    TickerProvider tickerProvider,
-    void Function() repaintTrigger,
     bool quickHit,
     EventController eventController,
   })
@@ -84,8 +82,6 @@ class Cfg {
       if (type != null) 'type': type,
       if (isClipShape != null) 'isClipShape': isClipShape,
       if (autoDraw != null) 'autoDraw': autoDraw,
-      if (tickerProvider != null) 'tickerProvider': tickerProvider,
-      if (repaintTrigger != null) 'repaintTrigger': repaintTrigger,
       if (quickHit != null) 'quickHit': quickHit,
       if (eventController != null) 'eventController': eventController,
     };
@@ -190,12 +186,6 @@ class Cfg {
 
   bool get autoDraw => this['autoDraw'] as bool ?? false;
   set autoDraw(bool value) => this['autoDraw'] = value;
-
-  TickerProvider get tickerProvider => this['tickerProvider'] as TickerProvider;
-  set tickerProvider(TickerProvider value) => this['tickerProvider'] = value;
-
-  void Function() get repaintTrigger => this['repaintTrigger'] as void Function();
-  set repaintTrigger(void Function() value) => this['repaintTrigger'] = value;
 
   bool get quickHit => this['quickHit'] as bool ?? false;
   set quickHit(bool value) => this['quickHit'] = value;

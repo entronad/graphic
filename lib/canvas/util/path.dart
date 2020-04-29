@@ -1,9 +1,9 @@
 import 'dart:ui' show Offset;
 
-import '../shape/path_command.dart';
+import '../shape/path_segment.dart';
 
 bool isPointInStroke(
-  List<AbsolutePathCommand> pathCommandsWithoutClose,
+  List<AbsolutePathSegment> pathCommandsWithoutClose,
   double lineWidth,
   Offset refPoint,
 ) {
@@ -19,19 +19,19 @@ bool isPointInStroke(
   return false;
 }
 
-List<AbsolutePathCommand> pathToAbsolute(List<PathCommand> pathCommands) {
+List<AbsolutePathSegment> pathToAbsolute(List<PathSegment> pathCommands) {
   if (pathCommands == null || pathCommands.isEmpty) {
     return [MoveTo(0, 0)];
   }
 
-  assert(pathCommands.first is AbsolutePathCommand && !(pathCommands.first is Close));
-  final rst = [pathCommands.first as AbsolutePathCommand];
+  assert(pathCommands.first is AbsolutePathSegment && !(pathCommands.first is Close));
+  final rst = [pathCommands.first as AbsolutePathSegment];
   for (var i = 1; i < pathCommands.length; i++) {
     rst.add(
-      pathCommands[i] is AbsolutePathCommand
+      pathCommands[i] is AbsolutePathSegment
         ? pathCommands[i]
-        : (pathCommands[i] as RelativePathCommand).toAbsolute(
-          (pathCommands[i - 1] as AbsolutePathCommand).points.last
+        : (pathCommands[i] as RelativePathSegment).toAbsolute(
+          rst[i - 1].points.last
         )
       );
   }
@@ -111,7 +111,7 @@ List<List<MinDiff>> levenshteinDistance<T>(
 }
 
 // Only concerns about type and endPoint when fillPathByDiff
-bool _isEqual(AbsolutePathCommand c1, AbsolutePathCommand c2) {
+bool _isEqual(AbsolutePathSegment c1, AbsolutePathSegment c2) {
   if (c1.runtimeType != c2.runtimeType) {
     return false;
   }
@@ -126,7 +126,7 @@ class _Change {
   final int index;
 }
 
-List<AbsolutePathCommand> fillPathByDiff(List<AbsolutePathCommand> source, List<AbsolutePathCommand> target) {
+List<AbsolutePathSegment> fillPathByDiff(List<AbsolutePathSegment> source, List<AbsolutePathSegment> target) {
   final diffMatrix = levenshteinDistance(source, target, _isEqual);
   var sourceLen = source.length;
   final targetLen = target.length;
@@ -195,7 +195,7 @@ List<Offset> _splitPoints(List<Offset> points, Offset formerPoint, int count) {
   return rst;
 }
 
-List<AbsolutePathCommand> formatPath(List<AbsolutePathCommand> fromPath, List<AbsolutePathCommand> toPath) {
+List<AbsolutePathSegment> formatPath(List<AbsolutePathSegment> fromPath, List<AbsolutePathSegment> toPath) {
   if (fromPath.length < 1) {
     return fromPath;
   }
@@ -259,7 +259,7 @@ List<AbsolutePathCommand> formatPath(List<AbsolutePathCommand> fromPath, List<Ab
   return fromPath;
 }
 
-void replaceClose(List<AbsolutePathCommand> pathCommands) {
+void replaceClose(List<AbsolutePathSegment> pathCommands) {
   var startPoint = Offset.zero;
   for (var i = 0; i < pathCommands.length; i++) {
     final command = pathCommands[i];
@@ -267,7 +267,7 @@ void replaceClose(List<AbsolutePathCommand> pathCommands) {
       startPoint = command.points.last;
     } else if (command.runtimeType == Close) {
       pathCommands[i] = LineTo(startPoint.dx, startPoint.dy);
-      startPoint = command.points.last;
+      startPoint = pathCommands[i].points.last;
     }
   }
 }

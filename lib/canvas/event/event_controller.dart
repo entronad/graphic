@@ -111,7 +111,6 @@ class EventController {
         );
         break;
       case EventType.longPress:
-      case EventType.longPressStart:
       case EventType.panStart:
         _emitEvent(
           EventTag(type),
@@ -141,7 +140,9 @@ class EventController {
         );
         _pickedShape = shape;
         break;
+      case EventType.longPressStart:
       case EventType.longPressMoveUpdate:
+      case EventType.longPressUp:
       case EventType.panUpdate:
         _emitEvent(
           EventTag(type),
@@ -168,7 +169,6 @@ class EventController {
           ev.scale,
         );
         break;
-      case EventType.longPressUp:
       case EventType.longPressEnd:
       case EventType.panEnd:
         _emitEvent(

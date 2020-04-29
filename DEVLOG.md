@@ -385,27 +385,30 @@ graphic挂载事件时，可以重复，且不存在竞技
 
 ```
 // 对象事件，是一个过程，对象由手势开始的对象确定，模仿 gestureDetector 的接口命名，arena直接发出
-tap
-tapDown
-tapUp
-tapCancel
-doubleTap
+tapDown,
+tapUp,
+tap,
+doubleTap,
+tapCancel,
 
-longPress
-longPressStart
-longPressMoveUpdate
-longPressUp
-longPressEnd
+longPress,
+longPressStart,
+longPressMoveUpdate,
+longPressUp,
+longPressEnd,
 
-panStart
-panDown
-panUpdate
-panEnd
-panCancel
+panDown,
+panStart,
+panUpdate,
+panEnd,
+panCancel,
 
-scaleStart
-scaleUpdate
-scaleEnd
+scaleStart,
+scaleUpdate,
+scaleEnd,
+
+/// wildcard
+all,
 
 可能需要的先不做
 secondaryTapDown
@@ -1153,4 +1156,33 @@ TODO: 对外暴露的函数哪些用命名参数，哪些用位置参数需要�
 
 cfg 和 attrs 中的bool为空时返回false（这是比“默认值”更底层的，相当于js中的null）；这条措施不能滥加，cfg、attrs中该是null的还要是null
 
+attrs 中的 paint 系列规则特殊，目的是保证不做任何设置时，无论是直接取还是applyToPaint都是默认值。
+
+定一个规则，paint值是不能强行置null，这是合理的，map中一定有paint的键，哪怕是null。访问器和访问操作符的逻辑先不动。
+
 defaultMatrix搞个1矩阵
+
+因为有些逻辑可事先设定，当没充入state时触发，这套体系通过
+
+deflate 需不需要？renderer和state的关系？一个renderer可以被复用，但同一时间只能inflate一个state
+
+与是否充入相关的事情：动画：animate, stopAnimate, pauseAnimate, resumeAnimate，后三个只有在充入时才触发，添加个判断，animate分两种情况，如果充入了，直接动，否则加入reservedAnimations
+
+TODO: transform系列需要再仔细研究研究
+
+内部包括动画触发重绘主要靠attr()方法，其中又分别是通过renderer重写的onChange和shape、group中的refreshElement实现的。内部除了attr() 和 inflate方法外，不出现repaint
+
+目前g的渲染逻辑已经保留了的先不动，
+
+initTicker中最后需要start一下，current需要先设个0值，因为ticker在init之后如果从来没有执行过回调current是0
+
+TODO: destroy deflate 等收尾工作还要再理一理
+
+手势系列中，每一族只能定义一个开始，一个结束，开始的一定要最先发送，结束的要最后结束，这对使用者没有影响，主要是影响 \_pickedShape，原则顺序：down longPress start up end emit， 一个事件的cancel发生在使其终止的事件发生之后，只有longPress, pan, scale的起始终止事件(down不做为起始事件）改变\_pickedShape
+
+将 PathCommand 及相关的类名改名为 PathSegment，使用到的字段改名为简写的 segments
+
+将 attrs 中的 radius 合并到 r
+
+绝大部分引擎叫Ellipse还是改回来吧
+

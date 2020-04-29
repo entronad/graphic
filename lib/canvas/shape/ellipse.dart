@@ -4,12 +4,12 @@ import 'shape.dart' show Shape;
 import '../cfg.dart' show Cfg;
 import '../attrs.dart' show Attrs;
 
-double ovalDistance(double squareX, double squareY, double rx, double ry) {
+double ellipseDistance(double squareX, double squareY, double rx, double ry) {
   return squareX / (rx * rx) + squareY / (ry * ry);
 }
 
-class Oval extends Shape {
-  Oval(Cfg cfg) : super(cfg);
+class Ellipse extends Shape {
+  Ellipse(Cfg cfg) : super(cfg);
 
   @override
   Attrs get defaultAttrs => super.defaultAttrs
@@ -29,11 +29,11 @@ class Oval extends Shape {
     if (style == PaintingStyle.stroke) {
       final halfLineWidth = lineWidth / 2;
       return (
-        ovalDistance(squareX, squareY, rx - halfLineWidth, ry - halfLineWidth) >= 1
-          && ovalDistance(squareX, squareY, rx + halfLineWidth, ry + halfLineWidth) <= 1
+        ellipseDistance(squareX, squareY, rx - halfLineWidth, ry - halfLineWidth) >= 1
+          && ellipseDistance(squareX, squareY, rx + halfLineWidth, ry + halfLineWidth) <= 1
       );
     }
-    return ovalDistance(squareX, squareY, rx, ry) <= 1;
+    return ellipseDistance(squareX, squareY, rx, ry) <= 1;
   }
 
   @override
@@ -50,5 +50,5 @@ class Oval extends Shape {
   }
 
   @override
-  Oval clone() => Oval(cfg.clone());
+  Ellipse clone() => Ellipse(cfg.clone());
 }

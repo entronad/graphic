@@ -56,6 +56,15 @@ class Pause {
   final Duration pauseTime;
 }
 
+class AnimationParam {
+  AnimationParam(this.element, this.toAttrs, this.onFrame, this.animationCfg);
+
+  final Element element;
+  final Attrs toAttrs;
+  final Attrs Function(double) onFrame;
+  final AnimationCfg animationCfg;
+}
+
 abstract class Element extends Base {
   Element(Cfg cfg)
     : super(cfg) 
@@ -296,6 +305,16 @@ abstract class Element extends Base {
     Attrs Function(double) onFrame,
     AnimationCfg animationCfg,
   }) {
+    if (!cfg.renderer.isInflated) {
+      cfg.renderer.reservedAnimations.add(AnimationParam(
+        this,
+        toAttrs,
+        onFrame,
+        animationCfg,
+      ));
+      return;
+    }
+
     cfg.animating = true;
     var timeline = cfg.timeline;
     if (timeline == null) {
@@ -328,6 +347,8 @@ abstract class Element extends Base {
   }
 
   void stopAnimate([bool toEnd = true]) {
+    assert(cfg.renderer.isInflated);
+
     final animations = cfg.animations;
     for (var animation in animations) {
       if (toEnd) {
@@ -346,6 +367,8 @@ abstract class Element extends Base {
   }
 
   Element pauseAnimate() {
+    assert(cfg.renderer.isInflated);
+
     final timeline = cfg.timeline;
     final animations = cfg.animations;
     final pauseTime = timeline.time;
@@ -361,6 +384,8 @@ abstract class Element extends Base {
   }
 
   Element resumeAnimate() {
+    assert(cfg.renderer.isInflated);
+
     final timeline = cfg.timeline;
     final current = timeline.time;
     final animations = cfg.animations;

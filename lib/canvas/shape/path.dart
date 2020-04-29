@@ -4,7 +4,7 @@ import 'dart:ui' as ui show Path;
 import 'shape.dart' show Shape;
 import '../cfg.dart' show Cfg;
 import '../attrs.dart' show Attrs;
-import 'path_command.dart';
+import 'path_segment.dart';
 import '../util/path.dart' show pathToAbsolute, isPointInStroke, replaceClose;
 
 class Path extends Shape {
@@ -12,7 +12,7 @@ class Path extends Shape {
 
   @override
   void initAttrs(Attrs attrs) {
-    _setPathArr(attrs.pathCommands);
+    _setPathArr(attrs.segments);
   }
 
   @override
@@ -23,21 +23,21 @@ class Path extends Shape {
     }
   }
 
-  void _setPathArr(List<PathCommand> pathCommands) {
-    attrs.pathCommands = pathToAbsolute(pathCommands);
-    replaceClose(attrs.pathCommands as List<AbsolutePathCommand>);
+  void _setPathArr(List<PathSegment> segments) {
+    attrs.segments = pathToAbsolute(segments);
+    replaceClose(attrs.segments as List<AbsolutePathSegment>);
     cfg.tChache = null;
     cfg.totalLength = null;
   }
 
   @override
   bool isInStrokeOrPath(Offset refPoint, PaintingStyle style, double lineWidth) {
-    final pathCommands = attrs.pathCommands as List<AbsolutePathCommand>;
+    final segments = attrs.segments as List<AbsolutePathSegment>;
     if (style == PaintingStyle.stroke) {
-      return isPointInStroke(pathCommands, lineWidth, refPoint);
+      return isPointInStroke(segments, lineWidth, refPoint);
     }
     final path = ui.Path();
-    for (var command in pathCommands) {
+    for (var command in segments) {
       command.applyTo(path);
     }
     return path.contains(refPoint);
@@ -45,8 +45,8 @@ class Path extends Shape {
 
   @override
   void createPath(ui.Path path) {
-    final pathCommands = attrs.pathCommands as List<AbsolutePathCommand>;
-    for (var command in pathCommands) {
+    final segments = attrs.segments as List<AbsolutePathSegment>;
+    for (var command in segments) {
       command.applyTo(path);
     }
   }
@@ -83,20 +83,20 @@ class Path extends Shape {
     if (index == null) {
       return null;
     }
-    final pathCommands = attrs.pathCommands as List<AbsolutePathCommand>;
+    final segments = attrs.segments as List<AbsolutePathSegment>;
     if (index == 0) {
-      return pathCommands[0].getPoint(Offset.zero, subT);
+      return segments[0].getPoint(Offset.zero, subT);
     }
-    return pathCommands[index].getPoint(pathCommands[index - 1].points.last, subT);
+    return segments[index].getPoint(segments[index - 1].points.last, subT);
   }
 
   void _setTCache() {
-    final pathCommands = attrs.pathCommands as List<AbsolutePathCommand>;
+    final segments = attrs.segments as List<AbsolutePathSegment>;
 
     var totalLength = 0.0;
     final lengths = <double>[];
     var prePoint = Offset.zero;
-    for (var command in pathCommands) {
+    for (var command in segments) {
       final length = command.getLength(prePoint);
       totalLength += length;
       lengths.add(length);

@@ -94,7 +94,7 @@ abstract class Container extends Element {
     );
     if (children.isNotEmpty) {
       return children
-        .map((element) => canvasBBox)
+        .map((element) => element.canvasBBox)
         .reduce((bbox1, bbox2) => bbox1.expandToInclude(bbox2));
     }
     return Rect.zero;
@@ -173,7 +173,7 @@ abstract class Container extends Element {
     final children = this.children;
     Shape shape;
     if (!isRenderer) {
-      var v = Vector4.array([point.dx, point.dy, 1]);
+      var v = Vector4.array([point.dx, point.dy, 1, 0]);
       v = invertFromMatrix(v);
       final vPoint = Offset(v.x, v.y);
       if (!isClipped(vPoint)) {

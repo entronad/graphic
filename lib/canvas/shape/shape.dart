@@ -18,7 +18,7 @@ import '../util/paint.dart' show refreshElement, applyClip;
 import 'circle.dart' show Circle;
 import 'Line.dart' show Line;
 import 'marker.dart' show Marker;
-import 'oval.dart' show Oval;
+import 'ellipse.dart' show Ellipse;
 import 'path.dart' show Path;
 import 'polygon.dart' show Polygon;
 import 'polyline.dart' show Polyline;
@@ -96,10 +96,10 @@ abstract class Shape extends Element {
     var right = bbox.right;
     var bottom = bbox.bottom;
     if (totalMatrix != null) {
-      final topLeftVector = totalMatrix.transformed(Vector4.array([left, top]));
-      final topRightVector = totalMatrix.transformed(Vector4.array([right, top]));
-      final bottomLeft = totalMatrix.transformed(Vector4.array([left, bottom]));
-      final bottomRight = totalMatrix.transformed(Vector4.array([right, bottom]));
+      final topLeftVector = totalMatrix.transformed(Vector4.array([left, top, 0, 0]));
+      final topRightVector = totalMatrix.transformed(Vector4.array([right, top, 0, 0]));
+      final bottomLeft = totalMatrix.transformed(Vector4.array([left, bottom, 0, 0]));
+      final bottomRight = totalMatrix.transformed(Vector4.array([right, bottom, 0, 0]));
       left = [topLeftVector[0], topRightVector[0], bottomLeft[0], bottomRight[0]].reduce(min);
       right = [topLeftVector[0], topRightVector[0], bottomLeft[0], bottomRight[0]].reduce(max);
       top = [topLeftVector[1], topRightVector[1], bottomLeft[1], bottomRight[1]].reduce(min);
@@ -124,7 +124,7 @@ abstract class Shape extends Element {
   bool get isOnlyHitBBox => false;
 
   bool isHit(Offset point) {
-    var vec = Vector4.array([point.dx, point.dy, 1]);
+    var vec = Vector4.array([point.dx, point.dy, 1, 0]);
     vec = invertFromMatrix(vec);
     final refPoint = Offset(vec.x, vec.y);
     final inBBox = _isInBBox(refPoint);
@@ -207,7 +207,7 @@ abstract class Shape extends Element {
 
 enum ShapeType {
   circle,
-  oval,
+  ellipse,
   image,
   line,
   marker,
@@ -224,7 +224,7 @@ Shape _lineCtor(Cfg cfg) => Line(cfg);
 
 Shape _markerCtor(Cfg cfg) => Marker(cfg);
 
-Shape _ovalCtor(Cfg cfg) => Oval(cfg);
+Shape _ellipseCtor(Cfg cfg) => Ellipse(cfg);
 
 Shape _pathCtor(Cfg cfg) => Path(cfg);
 
@@ -238,7 +238,7 @@ const ShapeBase = {
   ShapeType.circle: _circleCtor,
   ShapeType.line: _lineCtor,
   ShapeType.marker: _markerCtor,
-  ShapeType.oval: _ovalCtor,
+  ShapeType.ellipse: _ellipseCtor,
   ShapeType.path: _pathCtor,
   ShapeType.polygon: _polygonCtor,
   ShapeType.polyline: _polylineCtor,

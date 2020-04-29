@@ -5,14 +5,14 @@ import '../math/cubic.dart' as cubic;
 import '../util/in_stroke/line.dart' show inLine;
 import '../math/line.dart' as line;
 
-abstract class PathCommand {
+abstract class PathSegment {
   void applyTo(Path path);
 }
 
-abstract class AbsolutePathCommand extends PathCommand {
+abstract class AbsolutePathSegment extends PathSegment {
   List<Offset> get points;
 
-  AbsolutePathCommand lerp(AbsolutePathCommand target, double t);
+  AbsolutePathSegment lerp(AbsolutePathSegment target, double t);
 
   bool inStroke(Offset prePoint, double lineWidth, Offset refPoint);
 
@@ -21,11 +21,11 @@ abstract class AbsolutePathCommand extends PathCommand {
   Offset getPoint(Offset prePoint, double ratio);
 }
 
-abstract class RelativePathCommand extends PathCommand {
-  AbsolutePathCommand toAbsolute(Offset prePoint);
+abstract class RelativePathSegment extends PathSegment {
+  AbsolutePathSegment toAbsolute(Offset prePoint);
 }
 
-class Close extends AbsolutePathCommand {
+class Close extends AbsolutePathSegment {
   @override
   void applyTo(Path path) {
     path.close();
@@ -35,7 +35,7 @@ class Close extends AbsolutePathCommand {
   List<Offset> get points => <Offset>[];
 
   @override
-  Close lerp(AbsolutePathCommand target, double t) {
+  Close lerp(AbsolutePathSegment target, double t) {
     assert(target is Close);
     return Close();
   }
@@ -53,7 +53,7 @@ class Close extends AbsolutePathCommand {
   bool inStroke(Offset prePoint, double lineWidth, Offset refPoint) => null;
 }
 
-class ArcToPoint extends AbsolutePathCommand {
+class ArcToPoint extends AbsolutePathSegment {
   ArcToPoint(
     this.arcEnd,
     {this.radius = Radius.zero,
@@ -86,7 +86,7 @@ class ArcToPoint extends AbsolutePathCommand {
   List<Offset> get points => [arcEnd];
 
   @override
-  ArcToPoint lerp(AbsolutePathCommand target, double t) {
+  ArcToPoint lerp(AbsolutePathSegment target, double t) {
     final _target = target as ArcToPoint;
     return ArcToPoint(
       Offset.lerp(arcEnd, _target.arcEnd, t),
@@ -176,7 +176,7 @@ class ArcToPoint extends AbsolutePathCommand {
   }
 }
 
-class CubicTo extends AbsolutePathCommand {
+class CubicTo extends AbsolutePathSegment {
   CubicTo(this.x1, this.y1, this.x2, this.y2, this.x3, this.y3);
 
   final double x1;
@@ -200,7 +200,7 @@ class CubicTo extends AbsolutePathCommand {
   List<Offset> get points => [Offset(x1, y1), Offset(x2, y2), Offset(x3, y3)];
 
   @override
-  CubicTo lerp(AbsolutePathCommand target, double t) {
+  CubicTo lerp(AbsolutePathSegment target, double t) {
     final _target = target as CubicTo;
     return CubicTo(
       lerpDouble(x1, _target.x1, t),
@@ -227,7 +227,7 @@ class CubicTo extends AbsolutePathCommand {
   }
 }
 
-class LineTo extends AbsolutePathCommand {
+class LineTo extends AbsolutePathSegment {
   LineTo(this.x, this.y);
 
   final double x;
@@ -243,7 +243,7 @@ class LineTo extends AbsolutePathCommand {
   List<Offset> get points => [Offset(x, y)];
 
   @override
-  LineTo lerp(AbsolutePathCommand target, double t) {
+  LineTo lerp(AbsolutePathSegment target, double t) {
     final _target = target as LineTo;
     return LineTo(
       lerpDouble(x, _target.x, t),
@@ -262,7 +262,7 @@ class LineTo extends AbsolutePathCommand {
     inLine(prePoint.dx, prePoint.dy, x, y, lineWidth, refPoint.dx, refPoint.dy);
 }
 
-class MoveTo extends AbsolutePathCommand {
+class MoveTo extends AbsolutePathSegment {
   MoveTo(this.x, this.y);
 
   final double x;
@@ -278,7 +278,7 @@ class MoveTo extends AbsolutePathCommand {
   List<Offset> get points => [Offset(x, y)];
 
   @override
-  MoveTo lerp(AbsolutePathCommand target, double t) {
+  MoveTo lerp(AbsolutePathSegment target, double t) {
     final _target = target as MoveTo;
     return MoveTo(
       lerpDouble(x, _target.x, t),
@@ -296,7 +296,7 @@ class MoveTo extends AbsolutePathCommand {
   bool inStroke(Offset prePoint, double lineWidth, Offset refPoint) => false;
 }
 
-class QuadraticBezierTo extends AbsolutePathCommand {
+class QuadraticBezierTo extends AbsolutePathSegment {
   QuadraticBezierTo(this.x1, this.y1, this.x2, this.y2);
 
   final double x1;
@@ -316,7 +316,7 @@ class QuadraticBezierTo extends AbsolutePathCommand {
   List<Offset> get points => [Offset(x1, y1), Offset(x2, y2)];
 
   @override
-  QuadraticBezierTo lerp(AbsolutePathCommand target, double t) {
+  QuadraticBezierTo lerp(AbsolutePathSegment target, double t) {
     final _target = target as QuadraticBezierTo;
     return QuadraticBezierTo(
       lerpDouble(x1, _target.x1, t),
@@ -341,7 +341,7 @@ class QuadraticBezierTo extends AbsolutePathCommand {
   }
 }
 
-class RelativeArcToPoint extends RelativePathCommand {
+class RelativeArcToPoint extends RelativePathSegment {
   RelativeArcToPoint(
     this.arcEnd,
     {this.radius = Radius.zero,
@@ -380,7 +380,7 @@ class RelativeArcToPoint extends RelativePathCommand {
   );
 }
 
-class RelativeCubicTo extends RelativePathCommand {
+class RelativeCubicTo extends RelativePathSegment {
   RelativeCubicTo(this.x1, this.y1, this.x2, this.y2, this.x3, this.y3);
 
   final double x1;
@@ -415,7 +415,7 @@ class RelativeCubicTo extends RelativePathCommand {
   }
 }
 
-class RelativeLineTo extends RelativePathCommand {
+class RelativeLineTo extends RelativePathSegment {
   RelativeLineTo(this.x, this.y);
 
   final double x;
@@ -438,7 +438,7 @@ class RelativeLineTo extends RelativePathCommand {
   }
 }
 
-class RelativeMoveTo extends RelativePathCommand {
+class RelativeMoveTo extends RelativePathSegment {
   RelativeMoveTo(this.x, this.y);
 
   final double x;
@@ -461,7 +461,7 @@ class RelativeMoveTo extends RelativePathCommand {
   }
 }
 
-class RelativeQuadraticBezierTo extends RelativePathCommand {
+class RelativeQuadraticBezierTo extends RelativePathSegment {
   RelativeQuadraticBezierTo(this.x1, this.y1, this.x2, this.y2);
 
   final double x1;

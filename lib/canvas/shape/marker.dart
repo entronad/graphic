@@ -4,18 +4,18 @@ import 'dart:ui';
 
 import 'package:graphic/canvas/element.dart';
 
-import 'path_command.dart';
+import 'path_segment.dart';
 import 'shape.dart' show Shape;
 import '../cfg.dart' show Cfg;
 
-List<AbsolutePathCommand> _circle(Offset p, double r) =>
+List<AbsolutePathSegment> _circle(Offset p, double r) =>
   [
     MoveTo(p.dx - r, p.dy),
     ArcToPoint(p.translate(r, 0), radius: Radius.circular(r)),
     ArcToPoint(p.translate(-r, 0), radius: Radius.circular(r)),
   ];
 
-List<AbsolutePathCommand> _square(Offset p, double r) =>
+List<AbsolutePathSegment> _square(Offset p, double r) =>
   [
     MoveTo(p.dx - r, p.dy - r),
     LineTo(p.dx + r, p.dy - r),
@@ -24,7 +24,7 @@ List<AbsolutePathCommand> _square(Offset p, double r) =>
     Close(),
   ];
 
-List<AbsolutePathCommand> _diamond(Offset p, double r) =>
+List<AbsolutePathSegment> _diamond(Offset p, double r) =>
   [
     MoveTo(p.dx - r, p.dy),
     LineTo(p.dx, p.dy - r),
@@ -33,7 +33,7 @@ List<AbsolutePathCommand> _diamond(Offset p, double r) =>
     Close(),
   ];
 
-List<AbsolutePathCommand> _triangle(Offset p, double r) {
+List<AbsolutePathSegment> _triangle(Offset p, double r) {
   final diffY = r * sin((1 / 3) * pi);
   return [
     MoveTo(p.dx - r, p.dy + diffY),
@@ -43,7 +43,7 @@ List<AbsolutePathCommand> _triangle(Offset p, double r) {
   ];
 }
 
-List<AbsolutePathCommand> _triangleDown(Offset p, double r) {
+List<AbsolutePathSegment> _triangleDown(Offset p, double r) {
   final diffY = r * sin((1 / 3) * pi);
   return [
     MoveTo(p.dx - r, p.dy - diffY),
@@ -61,7 +61,7 @@ enum SymbolType {
   triangleDown,
 }
 
-typedef SymbolCreator = List<AbsolutePathCommand> Function(Offset p, double r);
+typedef SymbolCreator = List<AbsolutePathSegment> Function(Offset p, double r);
 
 const Symbols = <SymbolType, SymbolCreator>{
   SymbolType.circle: _circle,
@@ -79,7 +79,7 @@ class Marker extends Shape {
   @override
   bool get isOnlyHitBBox => true;
 
-  List<AbsolutePathCommand> _getPath() {
+  List<AbsolutePathSegment> _getPath() {
     final attrs = this.attrs;
     final x = attrs.x;
     final y = attrs.y;

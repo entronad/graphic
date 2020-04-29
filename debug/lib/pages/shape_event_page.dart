@@ -23,12 +23,18 @@ class _ShapeEventPageState extends State<ShapeEventPage> {
         r: 100,
         color: Color(0xff1890ff),
         strokeWidth: 4,
-        style: PaintingStyle.stroke,
+        style: PaintingStyle.fill,
       ),
     ));
 
-    circle.on(type: graphic.EventType.longPressStart, callback: (_) {
-      circle.attr(graphic.Attrs(color: Color(0xff2fc25b)));
+    circle.on(type: graphic.EventType.tap, callback: (_) {
+      circle.attr(graphic.Attrs(color: Colors.red));
+    });
+    circle.on(type: graphic.EventType.doubleTap, callback: (_) {
+      circle.attr(graphic.Attrs(color: Colors.yellow));
+    });
+    circle.on(type: graphic.EventType.longPress, callback: (_) {
+      circle.attr(graphic.Attrs(color: Colors.green));
     });
     circle.on(type: graphic.EventType.longPressEnd, callback: (_) {
       circle.attr(graphic.Attrs(color: Color(0xff1890ff)));

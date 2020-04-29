@@ -5,11 +5,11 @@ import '../shape/shape.dart' show Shape;
 
 // Simulate web event types.
 enum EventType {
-  tap,
   tapDown,
   tapUp,
-  tapCancel,
+  tap,
   doubleTap,
+  tapCancel,
 
   longPress,
   longPressStart,
@@ -17,11 +17,11 @@ enum EventType {
   longPressUp,
   longPressEnd,
 
-  panStart,
   panDown,
+  panStart,
   panUpdate,
-  panCancel,
   panEnd,
+  panCancel,
 
   scaleStart,
   scaleUpdate,

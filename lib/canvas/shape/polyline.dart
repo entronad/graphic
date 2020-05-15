@@ -2,12 +2,17 @@ import 'dart:ui' show Offset, PaintingStyle, Path;
 
 import 'shape.dart' show Shape;
 import '../cfg.dart' show Cfg;
+import '../attrs.dart' show Attrs;
 import '../util/in_stroke/polyline.dart' show inPolyline;
 import '../math/polyline.dart' as polyline_util show length;
 import '../math/line.dart' as line_util show length;
 
 class Polyline extends Shape {
   Polyline(Cfg cfg) : super(cfg);
+
+  @override
+  Attrs get defaultAttrs => super.defaultAttrs
+    ..style = PaintingStyle.stroke;
 
   @override
   void onAttrChange(String name, Object value, Object originValue) {

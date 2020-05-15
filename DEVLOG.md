@@ -124,6 +124,22 @@ transform Matrix的不同
 
 
 
+写个 Flutter 绘图引擎（一）：属性的存储
+
+写个 Flutter 绘图引擎（一）：路径命令
+
+写个 Flutter 绘图引擎（一）：绘图触发
+
+写个 Flutter 绘图引擎（一）：动画时间线
+
+写个 Flutter 绘图引擎（一）：独立手势竞技场
+
+写个 Flutter 绘图引擎（一）：变形矩阵 
+
+
+
+
+
 ---
 
 在开发过程中，g 和 G2 也在不断的改进，每次注意实时更新，完成后测试前全部对比更新一下
@@ -232,6 +248,16 @@ painter
 
 eventArena
 
+---
+
+关于用 Offset 还是 x、y，原则上是
+
+1 attrs中的尽量直接用x，y
+
+2 模仿 Dart 本身接口的按 Dart 处理
+
+3 
+
 
 
 
@@ -244,7 +270,11 @@ eventArena
 
 WITHOUT arrow、虚线、阴影
 
-TODO 完成后记录并比对从init commit 到那之间 g 的commit 变化
+
+
+# 校准
+
+2020-02-22 92e372444f204a07bb034b49dfd35e346fe0d68e --> 2020-04-30 a635fefdc377057a2c2b8cb6e0424097d20ca0dd
 
 #EventEmitter
 
@@ -1028,6 +1058,16 @@ g中对待长度技术的策略是全部转换为cubic，称为curve，有相关
 
 关于path的subpath规则：第一个subpath的初始点是0,0；moveTo 会开启一个新subpath，起始点就是moveTo的点，close也会开始一个新的subpath，起始点置0；
 
+
+
+在画圆弧的时候，注意不能分段，分段了最后fill的时候只剩最后一段，需要画逆圆弧
+
+prePoint 和 endPoint 互换
+
+顺逆时针互换
+
+大小弧、半径，旋转角度不变
+
 # Marker <- Shape
 
 attrs中的symbol属性先不支持自定义，改名为symbolType
@@ -1049,6 +1089,38 @@ g中的paramsCache目前主要用在drawPath中缓存圆弧参数，我们目前
 # Polyline <- Shape
 
 tCache 指每一个节点的ratio 每段 curve 对应起止点的长度比例列表，形如: [[0, 0.25], [0.25, 0.6]. [0.6, 0.9], [0.9, 1]]
+
+# Text <- Shape
+
+attrs的设定，为了方便用户今后使用的扩展新，将 TextSpan 作为attrs，其它还有与textPainter相关的属性：
+
+InlineSpan text
+
+TextAlign textAlign
+
+TextDirection textDirection
+
+double textScaleFactor
+
+int maxLines
+
+String ellipsis
+
+Local locale
+
+StrutStyle strutStyle
+
+TextWidthBasis
+
+createPath方法不要搞成抽象方法，image、text中不要用
+
+textDirection 设个默认的ltr
+
+# Image <- Shape
+
+width, height 好像是记录的量不是算的，先不用缓存
+
+提供一个异步的 getAssetImage 方法方便获取 Image，Api 模仿 AssetImage
 
 # Container <- Element
 
@@ -1109,6 +1181,8 @@ clearEvents 和 destroy 的逻辑比较怪，先统一放到destroy中，不暴�
 clearAnimationFrame 好像不需要
 
 'quickHit' 没有找到应用，先不做
+
+是否 quickHit 的区别好像主要是是否要invertFromMatrix，目前也没用，先去掉
 
 canvas.refreshElement 先不用
 
@@ -1176,7 +1250,7 @@ TODO: transform系列需要再仔细研究研究
 
 initTicker中最后需要start一下，current需要先设个0值，因为ticker在init之后如果从来没有执行过回调current是0
 
-TODO: destroy deflate 等收尾工作还要再理一理
+TODO: destroy deflate 等收尾工作还要再理一理，包括 image 的dipose
 
 手势系列中，每一族只能定义一个开始，一个结束，开始的一定要最先发送，结束的要最后结束，这对使用者没有影响，主要是影响 \_pickedShape，原则顺序：down longPress start up end emit， 一个事件的cancel发生在使其终止的事件发生之后，只有longPress, pan, scale的起始终止事件(down不做为起始事件）改变\_pickedShape
 
@@ -1186,3 +1260,26 @@ TODO: destroy deflate 等收尾工作还要再理一理
 
 绝大部分引擎叫Ellipse还是改回来吧
 
+对于 Paint attrs 我们想实现的效果是 \_attrs 中没有键，但是 getter 和 apply 中返回的是默认值，因此在getter处添加默认值（apply也是用的getter），同理textPainter
+
+isGroup 和 isRenderer 都放在 element里是合理的
+
+TODO: 涉及到mouseenter等的很多逻辑要我们定义了touch系列的事件再加
+
+我们事件代理中的name只可以是一个字符串指代一个名字，不可以是数组
+
+移除所有的autoDraw
+
+将draw系列的方法命名改为paint系列，drawPath系列改为paintShape系列
+
+isAllowCapture 没必要存在，直接判断
+
+现在api没有稳定，先不急了搞单元测试，先搞个全面的debug
+
+
+
+注意如果没有设paintStyle为stroke是不会画出线的，因此线类型的shape记得默认加上
+
+Marker的symbol属性应该是一个函数，但也可以从Symbols.circle中取。
+
+TODO: 现在图形是可以绘制到canvas以外的地方的，看需不需要 clip

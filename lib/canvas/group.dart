@@ -52,7 +52,7 @@ class Group extends Container {
   }
 
   @override
-  void skipDraw() {
+  void skipPaint() {
     cfg.cacheCanvasBBox = null;
     cfg.hasChanged = false;
   }

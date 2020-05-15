@@ -110,6 +110,8 @@ abstract class Element extends Base {
 
   bool get isGroup => false;
 
+  bool get isRenderer => false;
+
   Container get parent => cfg.parent;
 
   Renderer get renderer => cfg.renderer;
@@ -260,7 +262,9 @@ abstract class Element extends Base {
     final matrix = attrs.matrix;
     if (matrix != null) {
       final invertMatrix = Matrix4.tryInvert(matrix);
-      return invertMatrix * v;
+      if (invertMatrix != null) {
+        return invertMatrix * v;
+      }
     }
     return v;
   }
@@ -405,19 +409,23 @@ abstract class Element extends Base {
 
   void emitDelegation(EventType type, GraphEvent eventObj) {
     final paths = eventObj.propagationPath;
-    final events = this.events;
     for (var element in paths) {
       final name = element.cfg.name;
       if (name != null) {
-        final eventTag = EventTag(type, name);
-        if (events[eventTag] != null || events[EventTag.all] != null) {
-          eventObj.tag = eventTag;
-          eventObj.currentTarget = element;
-          eventObj.delegateTarget = this;
-          eventObj.delegateObject = element.cfg.delegateObject;
-          emit(eventTag, eventObj);
-        }
+        _emitDelegationEvent(element, name, eventObj);
       }
+    }
+  }
+
+  void _emitDelegationEvent(Element element, String name, GraphEvent eventObj) {
+    final events = this.events;
+    final eventTag = EventTag(eventObj.tag.type, name);
+    if (events[eventTag] != null || events[EventTag.all] != null) {
+      eventObj.tag = eventTag;
+      eventObj.currentTarget = element;
+      eventObj.delegateTarget = this;
+      eventObj.delegateObject = element.cfg.delegateObject;
+      emit(eventTag, eventObj);
     }
   }
 
@@ -466,5 +474,5 @@ abstract class Element extends Base {
 
   void paint(Canvas canvas, Size size);
 
-  void skipDraw();
+  void skipPaint();
 }

@@ -1,9 +1,11 @@
 import 'dart:ui';
 
+import 'package:flutter/painting.dart';
+
 import 'package:vector_math/vector_math_64.dart' show Matrix4;
 
 import './shape/path_segment.dart' show PathSegment;
-import './shape/marker.dart' show SymbolType;
+import './shape/marker.dart' show Symbol;
 
 List<T> _cloneListAttr<T>(List<T> list) {
   if (list is List<List>) {
@@ -36,9 +38,11 @@ class Attrs {
 
     List<PathSegment> segments,
 
-    SymbolType symbolType,
+    Symbol symbol,
 
     List<Offset> points,
+
+    Image image,
 
     bool isAntiAlias,
     Color color,
@@ -54,6 +58,16 @@ class Attrs {
     ColorFilter colorFilter,
     ImageFilter imageFilter,
     bool invertColors,
+
+    InlineSpan text,
+    TextAlign textAlign,
+    TextDirection textDirection,
+    double textScaleFactor,
+    int maxLines,
+    String ellipsis,
+    Locale locale,
+    StrutStyle strutStyle,
+    TextWidthBasis textWidthBasis,
   })
     : _attrs = {
       if (strokeAppendWidth != null) 'strokeAppendWidth': strokeAppendWidth,
@@ -70,23 +84,32 @@ class Attrs {
       if (rx != null) 'rx': rx,
       if (ry != null) 'ry': ry,
       if (segments != null) 'segments': segments,
-      if (symbolType != null) 'symbolType': symbolType,
+      if (symbol != null) 'symbol': symbol,
       if (points != null) 'points': points,
-      // paint attrs
-      'isAntiAlias': isAntiAlias != null ? isAntiAlias : true,
-      'color': color != null ? color : Color.fromARGB(255, 0, 0, 0),
-      'blendMode': blendMode != null ? blendMode : BlendMode.srcOver,
-      'style': style != null ? style : PaintingStyle.fill,
-      'strokeWidth': strokeWidth != null ? strokeWidth : 0.0,
-      'strokeCap': strokeCap != null ? strokeCap : StrokeCap.butt,
-      'strokeJoin': strokeJoin != null ? strokeJoin : StrokeJoin.miter,
-      'strokeMiterLimit': strokeMiterLimit != null ? strokeMiterLimit : 0.0,
-      'maskFilter': maskFilter != null ? maskFilter : null,
-      'filterQuality': filterQuality != null ? filterQuality : FilterQuality.none,
-      'shader': shader != null ? shader : null,
-      'colorFilter': colorFilter != null ? colorFilter : null,
-      'imageFilter': imageFilter != null ? imageFilter : null,
-      'invertColors': invertColors != null ? invertColors : false,
+      if (image != null) 'image': image,
+      if (isAntiAlias != null) 'isAntiAlias': isAntiAlias,
+      if (color != null) 'color': color,
+      if (blendMode != null) 'blendMode': blendMode,
+      if (style != null) 'style': style,
+      if (strokeWidth != null) 'strokeWidth': strokeWidth,
+      if (strokeCap != null) 'strokeCap': strokeCap,
+      if (strokeJoin != null) 'strokeJoin': strokeJoin,
+      if (strokeMiterLimit != null) 'strokeMiterLimit': strokeMiterLimit,
+      if (maskFilter != null) 'maskFilter': maskFilter,
+      if (filterQuality != null) 'filterQuality': filterQuality,
+      if (shader != null) 'shader': shader,
+      if (colorFilter != null) 'colorFilter': colorFilter,
+      if (imageFilter != null) 'imageFilter': imageFilter,
+      if (invertColors != null) 'invertColors': invertColors,
+      if (text != null) 'text': text,
+      if (textAlign != null) 'textAlign': textAlign,
+      if (textDirection != null) 'textDirection': textDirection,
+      if (textScaleFactor != null) 'textScaleFactor': textScaleFactor,
+      if (maxLines != null) 'maxLines': maxLines,
+      if (ellipsis != null) 'ellipsis': ellipsis,
+      if (locale != null) 'locale': locale,
+      if (strutStyle != null) 'strutStyle': strutStyle,
+      if (textWidthBasis != null) 'textWidthBasis': textWidthBasis,
     };
 
   final Map<String, Object> _attrs;
@@ -140,43 +163,47 @@ class Attrs {
   set segments(List<PathSegment> value) => this['segments'] = value;
 
   // marker attrs
-  SymbolType get symbolType => this['symbolType'] as SymbolType;
-  set symbolType(SymbolType value) => this['symbolType'] = value;
+  Symbol get symbol => this['symbol'] as Symbol;
+  set symbol(Symbol value) => this['symbol'] = value;
 
   // polyline polygon attrs
   List<Offset> get points => this['points'] as List<Offset>;
   set points(List<Offset> value) => this['points'] = value;
 
+  // image attrs
+  Image get image => this['image'] as Image;
+  set image(Image value) => this['image'] = value;
+
   // Paint attrs, api refers to flutter 1.12.13
 
-  bool get isAntiAlias => this['isAntiAlias'] as bool ?? false;
+  bool get isAntiAlias => this['isAntiAlias'] as bool ?? true;
   set isAntiAlias(bool value) => this['isAntiAlias'] = value;
 
-  Color get color => this['color'] as Color;
+  Color get color => this['color'] as Color ?? Color.fromARGB(255, 0, 0, 0);
   set color(Color value) => this['color'] = value;
 
-  BlendMode get blendMode => this['blendMode'] as BlendMode;
+  BlendMode get blendMode => this['blendMode'] as BlendMode ?? BlendMode.srcOver;
   set blendMode(BlendMode value) => this['blendMode'] = value;
 
-  PaintingStyle get style => this['style'] as PaintingStyle;
+  PaintingStyle get style => this['style'] as PaintingStyle ?? PaintingStyle.fill;
   set style(PaintingStyle value) => this['style'] = value;
 
-  double get strokeWidth => this['strokeWidth'] as double;
+  double get strokeWidth => this['strokeWidth'] as double ?? 0;
   set strokeWidth(double value) => this['strokeWidth'] = value;
 
-  StrokeCap get strokeCap => this['strokeCap'] as StrokeCap;
+  StrokeCap get strokeCap => this['strokeCap'] as StrokeCap ?? StrokeCap.butt;
   set strokeCap(StrokeCap value) => this['strokeCap'] = value;
 
-  StrokeJoin get strokeJoin => this['strokeJoin'] as StrokeJoin;
+  StrokeJoin get strokeJoin => this['strokeJoin'] as StrokeJoin ?? StrokeJoin.miter;
   set strokeJoin(StrokeJoin value) => this['strokeJoin'] = value;
 
-  double get strokeMiterLimit => this['strokeMiterLimit'] as double;
+  double get strokeMiterLimit => this['strokeMiterLimit'] as double ?? 0;
   set strokeMiterLimit(double value) => this['strokeMiterLimit'] = value;
 
   MaskFilter get maskFilter => this['maskFilter'] as MaskFilter;
   set maskFilter(MaskFilter value) => this['maskFilter'] = value;
 
-  FilterQuality get filterQuality => this['filterQuality'] as FilterQuality;
+  FilterQuality get filterQuality => this['filterQuality'] as FilterQuality ?? FilterQuality.none;
   set filterQuality(FilterQuality value) => this['filterQuality'] = value;
 
   Shader get shader => this['shader'] as Shader;
@@ -190,6 +217,37 @@ class Attrs {
 
   bool get invertColors => this['invertColors'] as bool ?? false;
   set invertColors(bool value) => this['invertColors'] = value;
+
+  // textPainter attrs
+
+  InlineSpan get text => this['text'] as InlineSpan;
+  set text(InlineSpan value) => this['text'] = value;
+
+  TextAlign get textAlign => this['textAlign'] as TextAlign ?? TextAlign.start;
+  set textAlign(TextAlign value) => this['textAlign'] = value;
+
+  // This default value TextDirection.ltr is picked randomly. It dose not mean that we hold
+  // the idea that any sigle language habit in the world should be considered as "default".
+  TextDirection get textDirection => this['textDirection'] as TextDirection ?? TextDirection.ltr;
+  set textDirection(TextDirection value) => this['textDirection'] = value;
+
+  double get textScaleFactor => this['textScaleFactor'] as double ?? 1;
+  set textScaleFactor(double value) => this['textScaleFactor'] = value;
+
+  int get maxLines => this['maxLines'] as int;
+  set maxLines(int value) => this['maxLines'] = value;
+
+  String get ellipsis => this['ellipsis'] as String;
+  set ellipsis(String value) => this['ellipsis'] = value;
+
+  Locale get locale => this['locale'] as Locale;
+  set locale(Locale value) => this['locale'] = value;
+
+  StrutStyle get strutStyle => this['strutStyle'] as StrutStyle;
+  set strutStyle(StrutStyle value) => this['strutStyle'] = value;
+
+  TextWidthBasis get textWidthBasis => this['textWidthBasis'] as TextWidthBasis ?? TextWidthBasis.parent;
+  set textWidthBasis(TextWidthBasis value) => this['textWidthBasis'] = value;
 
   // Tool members.
 
@@ -216,7 +274,7 @@ class Attrs {
     return rst;
   }
 
-  void applyTo(Paint paint) {
+  void applyToPaint(Paint paint) {
     assert(paint != null);
 
     paint.blendMode = blendMode;
@@ -233,6 +291,20 @@ class Attrs {
     paint.strokeMiterLimit = strokeMiterLimit;
     paint.strokeWidth = strokeWidth;
     paint.style = style;
+  }
+
+  void applyToTextPainter(TextPainter textPainter) {
+    assert(textPainter != null);
+
+    textPainter.text = text;
+    textPainter.textAlign = textAlign;
+    textPainter.textDirection = textDirection;
+    textPainter.textScaleFactor = textScaleFactor;
+    textPainter.maxLines = maxLines;
+    textPainter.ellipsis = ellipsis;
+    textPainter.locale = locale;
+    textPainter.strutStyle = strutStyle;
+    textPainter.textWidthBasis = textWidthBasis;
   }
 
   Object operator [](String k) => _attrs[k];

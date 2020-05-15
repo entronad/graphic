@@ -1,6 +1,5 @@
 import 'dart:ui' show Rect;
 
-import 'package:flutter/scheduler.dart' show TickerProvider;
 import 'package:flutter/widgets.dart' show UniqueKey;
 import 'package:vector_math/vector_math_64.dart' show Matrix4;
 
@@ -48,8 +47,6 @@ class Cfg {
     ShapeType type,
     bool isClipShape,
 
-    bool autoDraw,
-    bool quickHit,
     EventController eventController,
   })
     : _cfg = {
@@ -81,8 +78,6 @@ class Cfg {
       if (children != null) 'children': children,
       if (type != null) 'type': type,
       if (isClipShape != null) 'isClipShape': isClipShape,
-      if (autoDraw != null) 'autoDraw': autoDraw,
-      if (quickHit != null) 'quickHit': quickHit,
       if (eventController != null) 'eventController': eventController,
     };
 
@@ -183,12 +178,6 @@ class Cfg {
   set isClipShape(bool value) => this['isClipShape'] = value;
 
   // renderer cfg
-
-  bool get autoDraw => this['autoDraw'] as bool ?? false;
-  set autoDraw(bool value) => this['autoDraw'] = value;
-
-  bool get quickHit => this['quickHit'] as bool ?? false;
-  set quickHit(bool value) => this['quickHit'] = value;
 
   EventController get eventController => this['eventController'] as EventController;
   set eventController(EventController value) => this['eventController'] = value;

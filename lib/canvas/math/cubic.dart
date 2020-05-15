@@ -89,7 +89,7 @@ double _cubicLength(
   double y3,
   double x4,
   double y4,
-  double iterationCount,
+  int iterationCount,
 ) {
   if (iterationCount == 0) {
     return bezier.snapLength([x1, x2, x3, x4], [y1, y2, y3, y4]);
@@ -97,10 +97,8 @@ double _cubicLength(
   final cubics = _divideCubic(x1, y1, x2, y2, x3, y3, x4, y4, 0.5);
   final left = cubics[0];
   final right = cubics[1];
-  left.add(iterationCount - 1);
-  right.add(iterationCount - 1);
-  return _cubicLength(left[0], left[1], left[2], left[3], left[4], left[5], left[6], left[7], left[8])
-    + _cubicLength(right[0], right[1], right[2], right[3], right[4], right[5], right[6], right[7], right[8]);
+  return _cubicLength(left[0], left[1], left[2], left[3], left[4], left[5], left[6], left[7], iterationCount - 1)
+    + _cubicLength(right[0], right[1], right[2], right[3], right[4], right[5], right[6], right[7], iterationCount - 1);
 }
 
 Rect bbox(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
@@ -162,7 +160,7 @@ Offset pointAt(
   double y4,
   double t,
 ) =>
-  Offset(_cubicAt([x1, x2, x3, x4, t]), _cubicAt([y1, y2, y3, x4, t]));
+  Offset(_cubicAt([x1, x2, x3, x4, t]), _cubicAt([y1, y2, y3, y4, t]));
 
 List<List<double>> divide(
   double x1,

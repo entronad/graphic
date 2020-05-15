@@ -23,6 +23,8 @@ import 'path.dart' show Path;
 import 'polygon.dart' show Polygon;
 import 'polyline.dart' show Polyline;
 import 'rect.dart' show Rect;
+import 'text.dart' show Text;
+import 'image.dart' show Image;
 
 abstract class Shape extends Element {
   Shape(Cfg cfg) : super(cfg);
@@ -38,7 +40,7 @@ abstract class Shape extends Element {
   }
 
   Paint get paintObj {
-    attrs.applyTo(_paintObj);
+    attrs.applyToPaint(_paintObj);
     return _paintObj;
   }
 
@@ -161,30 +163,36 @@ abstract class Shape extends Element {
   void paint(Canvas canvas, Size size) {
     canvas.save();
     final matrix = this.matrix;
+    final paint = this.paintObj;
     canvas.transform(matrix.storage);
     applyClip(canvas, this.clip);
-    final paint = this.paintObj;
+
     final path = this.path;
-    canvas.drawPath(path, paint);
-    afterDrawPath(canvas);
+    paintShape(canvas, size, path, paint);
+    afterPaintShape(canvas);
+
     canvas.restore();
-    afterDraw();
+    afterPaint();
   }
 
-  void afterDraw() {
+  void paintShape(Canvas canvas, Size size, ui.Path path, Paint paint) {
+    canvas.drawPath(path, paint);
+  }
+
+  void afterPaint() {
     this.cfg.cacheCanvasBBox = canvasBBox;
     this.cfg.hasChanged = false;
   }
 
   @override
-  void skipDraw() {
+  void skipPaint() {
     this.cfg.cacheCanvasBBox = null;
     this.cfg.hasChanged = false;
   }
 
-  void createPath(ui.Path path);
+  void createPath(ui.Path path) {}
 
-  void afterDrawPath(Canvas canvas) {}
+  void afterPaintShape(Canvas canvas) {}
 
   bool isInStrokeOrPath(Offset refPoint, PaintingStyle style, double lineWidth) => false;
 
@@ -218,21 +226,25 @@ enum ShapeType {
   text,
 }
 
-Shape _circleCtor(Cfg cfg) => Circle(cfg);
+Circle _circleCtor(Cfg cfg) => Circle(cfg);
 
-Shape _lineCtor(Cfg cfg) => Line(cfg);
+Line _lineCtor(Cfg cfg) => Line(cfg);
 
-Shape _markerCtor(Cfg cfg) => Marker(cfg);
+Marker _markerCtor(Cfg cfg) => Marker(cfg);
 
-Shape _ellipseCtor(Cfg cfg) => Ellipse(cfg);
+Ellipse _ellipseCtor(Cfg cfg) => Ellipse(cfg);
 
-Shape _pathCtor(Cfg cfg) => Path(cfg);
+Path _pathCtor(Cfg cfg) => Path(cfg);
 
-Shape _polygonCtor(Cfg cfg) => Polygon(cfg);
+Polygon _polygonCtor(Cfg cfg) => Polygon(cfg);
 
-Shape _polylineCtor(Cfg cfg) => Polyline(cfg);
+Polyline _polylineCtor(Cfg cfg) => Polyline(cfg);
 
-Shape _rectCtor(Cfg cfg) => Rect(cfg);
+Rect _rectCtor(Cfg cfg) => Rect(cfg);
+
+Text _textCtor(Cfg cfg) => Text(cfg);
+
+Image _imageCtor(Cfg cfg) => Image(cfg);
 
 const ShapeBase = {
   ShapeType.circle: _circleCtor,
@@ -243,4 +255,6 @@ const ShapeBase = {
   ShapeType.polygon: _polygonCtor,
   ShapeType.polyline: _polylineCtor,
   ShapeType.rect: _rectCtor,
+  ShapeType.text: _textCtor,
+  ShapeType.image: _imageCtor,
 };

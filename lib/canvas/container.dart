@@ -7,7 +7,7 @@ import 'cfg.dart' show Cfg;
 import 'element.dart' show Element, ChangeType;
 import 'group.dart' show Group;
 import 'shape/shape.dart' show Shape;
-import 'base.dart' show Ctor, Base;
+import 'base.dart' show Ctor;
 import 'renderer.dart' show Renderer;
 import 'event/graph_event.dart' show OriginalEvent;
 import './animate/timeline.dart' show Timeline;
@@ -56,13 +56,8 @@ void _removeChild(Container container, Element element, [bool destroy = true]) {
   container.children.remove(element);
 }
 
-bool _isAllowCapture(Base element) =>
-  element.cfg.visible && element.cfg.capture;
-
 abstract class Container extends Element {
   Container(Cfg cfg) : super(cfg);
-
-  bool get isRenderer => false;
 
   @override
   Rect get bbox {
@@ -167,7 +162,7 @@ abstract class Container extends Element {
   }
 
   Shape getShape(Offset point, OriginalEvent ev) {
-    if (!_isAllowCapture(this)) {
+    if (!(cfg.visible && cfg.capture)) {
       return null;
     }
     final children = this.children;
@@ -189,7 +184,7 @@ abstract class Container extends Element {
     Shape shape;
     for (var i = children.length - 1; i >= 0; i--) {
       final child = children[i];
-      if (_isAllowCapture(child)) {
+      if (child.cfg.visible && child.cfg.capture) {
         if (child.isGroup) {
           shape = (child as Group).getShape(point, ev);
         } else if ((child as Shape).isHit(point)) {

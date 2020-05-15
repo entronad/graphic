@@ -26,3 +26,7 @@ export './canvas/shape/path_segment.dart' show
 export './canvas/event/graph_event.dart' show
   EventType,
   GraphEvent;
+export './canvas/shape/image.dart' show
+  getAssetImage;
+export './canvas/shape/marker.dart' show
+  Symbols;

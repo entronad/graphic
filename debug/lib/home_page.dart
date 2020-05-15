@@ -35,6 +35,10 @@ final pages = <Page>[
     name: 'DelegateEvent',
     endPoint: 'delegate_event_page',
   ),
+  Page(
+    name: 'Transform',
+    endPoint: 'transform_page',
+  ),
 ];
 
 class PageCard extends StatelessWidget {
@@ -67,10 +71,6 @@ class PageCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
                     child: Text(this.package.name, style: titleStyle,),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 4.0),
-                    child: Text('GitHub:  ${this.package.endPoint}'),
                   ),
                 ],
               ),

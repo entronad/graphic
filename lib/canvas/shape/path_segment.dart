@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'dart:math' show sqrt;
 
 import '../math/quadratic.dart' as quadratic;
 import '../math/cubic.dart' as cubic;
@@ -136,7 +137,7 @@ class ArcToPoint extends AbsolutePathSegment {
     final r = lineWidth / 2;
     final dx0 = arcEnd.dx - prePoint.dx;
     final dy0 = arcEnd.dy - prePoint.dy;
-    var k = r / (dx0 * dx0 + dy0 * dy0);
+    var k = r / sqrt(dx0 * dx0 + dy0 * dy0);
     // The sign of k represents "is clockwise".
     k *= clockwise ? 1 : -1;
     // Define "clockwise offset" has a positive dx and a negtive dy.
@@ -162,15 +163,14 @@ class ArcToPoint extends AbsolutePathSegment {
         clockwise: clockwise,
       )
       ..lineTo(outerEnd.dx, outerEnd.dy)
-      ..moveTo(innerPre.dx, innerPre.dy)
-      ..lineTo(outerPre.dx, outerPre.dy)
       ..arcToPoint(
-        outerEnd,
+        outerPre,
         radius: outerRadius,
         rotation: rotation,
         largeArc: largeArc,
-        clockwise: clockwise,
-      );
+        clockwise: !clockwise,
+      )
+      ..close();
 
     return path.contains(refPoint);
   }

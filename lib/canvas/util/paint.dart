@@ -7,7 +7,7 @@ void paintChildren(Canvas canvas, List<Element> children, Size size) {
     if (child.cfg.visible) {
       child.paint(canvas, size);
     } else {
-      child.skipDraw();
+      child.skipPaint();
     }
   }
 }
@@ -19,9 +19,7 @@ void refreshElement(Element element, ChangeType changeType) {
       element.cacheCanvasBBox = element.cfg.cacheCanvasBBox;
     }
     if (!element.cfg.hasChanged) {
-      if (renderer.cfg.autoDraw) {
-        renderer.repaint();
-      }
+      renderer.repaint();
       element.cfg.hasChanged = true;
     }
   }
@@ -35,6 +33,6 @@ void applyClip(Canvas canvas, Shape clip) {
     canvas.transform(clipMatrix.storage);
     canvas.clipPath(clipPath);
     canvas.restore();
-    clip.afterDraw();
+    clip.afterPaint();
   }
 }

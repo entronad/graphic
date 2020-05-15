@@ -98,11 +98,6 @@ class Renderer extends Container {
     paintChildren(canvas, children, size);
   }
 
-  @override
-  Cfg get defaultCfg => super.defaultCfg
-    ..autoDraw = true
-    ..quickHit = false;
-
   void initEvents() {
     final eventController = EventController(this);
     eventController.init();
@@ -160,7 +155,7 @@ class Renderer extends Container {
   }
 
   @override
-  void skipDraw() {
+  void skipPaint() {
   }
 
   @override

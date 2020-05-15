@@ -11,6 +11,10 @@ class Path extends Shape {
   Path(Cfg cfg) : super(cfg);
 
   @override
+  Attrs get defaultAttrs => super.defaultAttrs
+    ..style = PaintingStyle.stroke;
+
+  @override
   void initAttrs(Attrs attrs) {
     _setPathArr(attrs.segments);
   }
@@ -37,8 +41,8 @@ class Path extends Shape {
       return isPointInStroke(segments, lineWidth, refPoint);
     }
     final path = ui.Path();
-    for (var command in segments) {
-      command.applyTo(path);
+    for (var segment in segments) {
+      segment.applyTo(path);
     }
     return path.contains(refPoint);
   }
@@ -46,8 +50,8 @@ class Path extends Shape {
   @override
   void createPath(ui.Path path) {
     final segments = attrs.segments as List<AbsolutePathSegment>;
-    for (var command in segments) {
-      command.applyTo(path);
+    for (var segment in segments) {
+      segment.applyTo(path);
     }
   }
 
@@ -96,11 +100,11 @@ class Path extends Shape {
     var totalLength = 0.0;
     final lengths = <double>[];
     var prePoint = Offset.zero;
-    for (var command in segments) {
-      final length = command.getLength(prePoint);
+    for (var segment in segments) {
+      final length = segment.getLength(prePoint);
       totalLength += length;
       lengths.add(length);
-      prePoint = command.points.last;
+      prePoint = segment.points.last;
     }
 
     final tCache = <List<double>>[];

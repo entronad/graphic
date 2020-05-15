@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart' as graphic;
 
-class ShapePage extends StatefulWidget {
+class TransformPage extends StatefulWidget {
   @override
-  _ShapePageState createState() => _ShapePageState();
+  _TransformPageState createState() => _TransformPageState();
 }
 
-class _ShapePageState extends State<ShapePage> {
+class _TransformPageState extends State<TransformPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   final graphic.Renderer r1 = graphic.Renderer();
@@ -29,19 +29,7 @@ class _ShapePageState extends State<ShapePage> {
       ),
     ));
 
-    r1.addShape(graphic.Cfg(
-      type: graphic.ShapeType.circle,
-      attrs: graphic.Attrs(
-        x: 150,
-        y: 50,
-        r: 50,
-        color: Color(0xff1890ff),
-        strokeWidth: 0.5,
-        style: PaintingStyle.stroke,
-      ),
-    ));
-
-    r1.addShape(graphic.Cfg(
+    final ellipse = r1.addShape(graphic.Cfg(
       type: graphic.ShapeType.ellipse,
       attrs: graphic.Attrs(
         x: 260,
@@ -54,17 +42,9 @@ class _ShapePageState extends State<ShapePage> {
       ),
     ));
 
-    r1.addShape(graphic.Cfg(
-      type: graphic.ShapeType.line,
-      attrs: graphic.Attrs(
-        x1: 20,
-        x2: 300,
-        y2: 300,
-        color: Color(0xff1890ff),
-        strokeWidth: 10,
-        strokeCap: StrokeCap.round,
-      ),
-    ));
+    // ellipse.translate(100, 100);
+    // ellipse.rotateAtPoint(Offset(0, 0), 2);
+    // ellipse.scale(0.5);
 
     // ---------------------------------------
 

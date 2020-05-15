@@ -3,34 +3,34 @@ import 'dart:ui' show Offset;
 import '../shape/path_segment.dart';
 
 bool isPointInStroke(
-  List<AbsolutePathSegment> pathCommandsWithoutClose,
+  List<AbsolutePathSegment> segmentsWithoutClose,
   double lineWidth,
   Offset refPoint,
 ) {
-  // the shape.Path will guarantee no Close in pathCommands.
+  // the shape.Path will guarantee no Close in segments.
 
   var prePoint = Offset.zero;
-  for (var command in pathCommandsWithoutClose) {
-    if (command.inStroke(prePoint, lineWidth, refPoint)) {
+  for (var segment in segmentsWithoutClose) {
+    if (segment.inStroke(prePoint, lineWidth, refPoint)) {
       return true;
     }
-      prePoint = command.points.last;
+      prePoint = segment.points.last;
   }
   return false;
 }
 
-List<AbsolutePathSegment> pathToAbsolute(List<PathSegment> pathCommands) {
-  if (pathCommands == null || pathCommands.isEmpty) {
+List<AbsolutePathSegment> pathToAbsolute(List<PathSegment> segments) {
+  if (segments == null || segments.isEmpty) {
     return [MoveTo(0, 0)];
   }
 
-  assert(pathCommands.first is AbsolutePathSegment && !(pathCommands.first is Close));
-  final rst = [pathCommands.first as AbsolutePathSegment];
-  for (var i = 1; i < pathCommands.length; i++) {
+  assert(segments.first is AbsolutePathSegment && !(segments.first is Close));
+  final rst = [segments.first as AbsolutePathSegment];
+  for (var i = 1; i < segments.length; i++) {
     rst.add(
-      pathCommands[i] is AbsolutePathSegment
-        ? pathCommands[i]
-        : (pathCommands[i] as RelativePathSegment).toAbsolute(
+      segments[i] is AbsolutePathSegment
+        ? segments[i]
+        : (segments[i] as RelativePathSegment).toAbsolute(
           rst[i - 1].points.last
         )
       );
@@ -259,15 +259,15 @@ List<AbsolutePathSegment> formatPath(List<AbsolutePathSegment> fromPath, List<Ab
   return fromPath;
 }
 
-void replaceClose(List<AbsolutePathSegment> pathCommands) {
+void replaceClose(List<AbsolutePathSegment> segments) {
   var startPoint = Offset.zero;
-  for (var i = 0; i < pathCommands.length; i++) {
-    final command = pathCommands[i];
-    if (command.runtimeType == MoveTo) {
-      startPoint = command.points.last;
-    } else if (command.runtimeType == Close) {
-      pathCommands[i] = LineTo(startPoint.dx, startPoint.dy);
-      startPoint = pathCommands[i].points.last;
+  for (var i = 0; i < segments.length; i++) {
+    final segment = segments[i];
+    if (segment.runtimeType == MoveTo) {
+      startPoint = segment.points.last;
+    } else if (segment.runtimeType == Close) {
+      segments[i] = LineTo(startPoint.dx, startPoint.dy);
+      startPoint = segments[i].points.last;
     }
   }
 }

@@ -53,28 +53,18 @@ List<AbsolutePathSegment> _triangleDown(Offset p, double r) {
   ];
 }
 
-enum SymbolType {
-  circle,
-  square,
-  diamond,
-  triangle,
-  triangleDown,
+typedef Symbol = List<AbsolutePathSegment> Function(Offset p, double r);
+
+abstract class Symbols {
+  static const Symbol circle = _circle;
+  static const Symbol square = _square;
+  static const Symbol diamond = _diamond;
+  static const Symbol triangle = _triangle;
+  static const Symbol triangleDown = _triangleDown;
 }
-
-typedef SymbolCreator = List<AbsolutePathSegment> Function(Offset p, double r);
-
-const Symbols = <SymbolType, SymbolCreator>{
-  SymbolType.circle: _circle,
-  SymbolType.square: _square,
-  SymbolType.diamond: _diamond,
-  SymbolType.triangle: _triangle,
-  SymbolType.triangleDown: _triangleDown,
-};
 
 class Marker extends Shape {
   Marker(Cfg cfg) : super(cfg);
-
-  static Map<SymbolType, SymbolCreator> symbols = Symbols;
 
   @override
   bool get isOnlyHitBBox => true;
@@ -84,17 +74,16 @@ class Marker extends Shape {
     final x = attrs.x;
     final y = attrs.y;
     final r = attrs.r;
-    final symbolType = attrs.symbolType ?? SymbolType.circle;
-    final method = Marker.symbols[symbolType];
+    final symbol = attrs.symbol;
     
-    return method(Offset(x, y), r);
+    return symbol(Offset(x, y), r);
   }
 
   @override
   void createPath(Path path) {
-    final pathCommands = _getPath();
-    for (var pathCommand in pathCommands) {
-      pathCommand.applyTo(path);
+    final segments = _getPath();
+    for (var segment in segments) {
+      segment.applyTo(path);
     }
   }
 

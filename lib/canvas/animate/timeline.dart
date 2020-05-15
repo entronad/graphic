@@ -140,10 +140,6 @@ class Timeline {
             removeAnimator(i);
           }
         }
-        final autoDraw = renderer.cfg.autoDraw;
-        if (!autoDraw) {
-          renderer.repaint();
-        }
       }
     });
     ticker.start();

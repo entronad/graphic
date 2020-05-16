@@ -1,7 +1,6 @@
 import 'cfg.dart' show Cfg;
-import 'attrs.dart' show Attrs;
 import 'element.dart' show Element;
-import 'shape.dart' show Shape, shapeCreators;
+import 'shape.dart' show Shape;
 import 'group.dart' show Group;
 
 Comparator<Element> getComparer(Comparator<Element> compare) =>
@@ -17,7 +16,7 @@ abstract class Container extends Element {
 
   Shape addShape(Cfg cfg) {
     final type = cfg.type;
-    final creator = shapeCreators[type];
+    final creator = Shape.creators[type];
     final shape = creator(cfg);
     add(shape);
     return shape;

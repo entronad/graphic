@@ -1,14 +1,24 @@
 # 校准
 
-f2
+**f2**
 
 2020-05-07 53015838e13575236aaba3be1b0ad2ef1e83b4b7
 
-scale
+**scale**
 
 f2的scale版本定格在了 0.1.x版本
 
+branch v0.1.x
+
 2020-03-12 f6830e0d8f63cbd1329afec2082596d65e4851ac
+
+**adust**
+
+tag 0.1.0
+
+2019-02-11 047fb21014b8f1abbbfd648b034d53ff430540c0
+
+
 
 
 
@@ -40,11 +50,15 @@ api设计原则勿增实体，比如 Range 就不要单独建个类型，就用�
 
 
 
-原则上字段都应该放在 cfg 中，只有 外界不会用到、与cfg中的字段重复的才会作为对象字段（比如 _dateFormat)
+原则上字段都应该放在 cfg 中，只有 外界不会用到、与cfg中的字段重复的才会作为对象字段（比如 _dateFormat)，并定义为内部变量
 
 
 
 原则上 api 中明确表达坐标或位移的，用Offset，其它表示两个点的直接用 List<double>
+
+
+
+xxCreators 可尽量放到基类做静态成员
 
 
 
@@ -164,3 +178,14 @@ TODO: attr 的 linear 和 scale 的 linear 之间的关系要再好好理一理�
 
 直角坐标系统一用 Rect 关键字，不用 Cartesian
 
+
+
+## Adjust
+
+用户仅需指定类型，故 cfg 无构造函数
+
+antv/util 中的 merge 就是单层 flattern
+
+processAdjust 不需要返回值，直接就着原数组改
+
+aesth 的 dodge 中 的 Range 用 List<num>代替

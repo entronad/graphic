@@ -2,7 +2,7 @@ import 'dart:ui' show Canvas, Size, Rect;
 
 import 'cfg.dart' show Cfg;
 import 'attrs.dart' show Attrs;
-import 'shape.dart' show Shape, shapeCreators;
+import 'shape.dart' show Shape;
 import 'container.dart' show Container;
 import 'util/matrix.dart' show Matrix, TransAction;
 import 'util/vector2.dart' show Vector2;
@@ -64,7 +64,7 @@ abstract class Element {
     Shape clip;
     if (clipCfg != null) {
       final type = clipCfg.type;
-      final creator = shapeCreators[type];
+      final creator = Shape.creators[type];
       if (creator != null) {
         clip = creator(Cfg(
           type: clipCfg.type,

@@ -20,6 +20,18 @@ import 'shape/sector.dart' show Sector;
 import 'shape/text.dart' show Text;
 
 abstract class Shape extends Element {
+  static final creators = {
+    'arc': (Cfg cfg) => Arc(cfg),
+    'circle': (Cfg cfg) => Circle(cfg),
+    'custom': (Cfg cfg) => Custom(cfg),
+    'line': (Cfg cfg) => Line(cfg),
+    'polygon': (Cfg cfg) => Polygon(cfg),
+    'polyline': (Cfg cfg) => Polyline(cfg),
+    'rect': (Cfg cfg) => Rect(cfg),
+    'sector': (Cfg cfg) => Sector(cfg),
+    'text': (Cfg cfg) => Text(cfg),
+  };
+
   Shape(Cfg cfg) : super(cfg);
 
   final Path _path = Path();
@@ -78,15 +90,3 @@ abstract class Shape extends Element {
 
   void createPath(Path path) {}
 }
-
-final shapeCreators = {
-  'arc': (Cfg cfg) => Arc(cfg),
-  'circle': (Cfg cfg) => Circle(cfg),
-  'custom': (Cfg cfg) => Custom(cfg),
-  'line': (Cfg cfg) => Line(cfg),
-  'polygon': (Cfg cfg) => Polygon(cfg),
-  'polyline': (Cfg cfg) => Polyline(cfg),
-  'rect': (Cfg cfg) => Rect(cfg),
-  'sector': (Cfg cfg) => Sector(cfg),
-  'text': (Cfg cfg) => Text(cfg),
-};

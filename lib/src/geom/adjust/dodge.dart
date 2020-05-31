@@ -28,8 +28,6 @@ class Dodge extends Adjust {
   void processAdjust(List<List<Map<String, Object>>> dataArray) {
     final count = dataArray.length;
     final xField = cfg.xField;
-
-    final rstArray = <List<Map<String, Object>>>[];
     for (var index = 0; index < dataArray.length; index++) {
       final data = dataArray[index];
       for (var i = 0, len = data.length; i < len; i++) {

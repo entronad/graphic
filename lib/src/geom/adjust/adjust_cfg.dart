@@ -1,6 +1,32 @@
 import 'package:graphic/src/util/typed_map_mixin.dart' show TypedMapMixin;
 
-class AdjustCfg<F> with TypedMapMixin {
+enum AdjustType {
+  dodge,
+  stack,
+  symmetric,
+}
+
+class AdjustCfg with TypedMapMixin {
+  AdjustCfg({
+    AdjustType type,
+    double marginRatio,
+    double dodgeRatio,
+    String xField,
+    String yField,
+    bool reverseOrder,
+  }) {
+    this['type'] = type;
+    this['marginRatio'] = marginRatio;
+    this['dodgeRatio'] = dodgeRatio;
+    this['xField'] = xField;
+    this['yField'] = yField;
+    this['reverseOrder'] = reverseOrder;
+  }
+
+  // geom usage
+
+  AdjustType get type => this['type'] as AdjustType;
+  set type(AdjustType value) => this['type'] = value;
 
   // base
 

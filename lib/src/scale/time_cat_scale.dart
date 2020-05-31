@@ -31,7 +31,7 @@ class TimeCatScale<F> extends CatScale<F> {
 
     final values = cfg.values;
     if (cfg.sortable) {
-      values.sort((v1, v2) => _toTimeStamp(v1) - _toTimeStamp(v2));
+      values.sort((v1, v2) => toTimeStamp(v1) - toTimeStamp(v2));
     }
 
     if (cfg.ticks == null) {
@@ -58,8 +58,8 @@ class TimeCatScale<F> extends CatScale<F> {
 
   @override
   num translate(F value) {
-    int valueStamp = _toTimeStamp(value);
-    num index = cfg.values.map(_toTimeStamp).toList().indexOf(valueStamp);
+    int valueStamp = toTimeStamp(value);
+    num index = cfg.values.map(toTimeStamp).toList().indexOf(valueStamp);
 
     if (index == -1) {
       if (value is num && value < cfg.values.length) {
@@ -125,7 +125,7 @@ class TimeCatScale<F> extends CatScale<F> {
     return rst;
   }
 
-  int _toTimeStamp(F value) =>
+  int toTimeStamp(F value) =>
     (value is String) ? this._dateFormat.parse(value).millisecondsSinceEpoch : value;
 
   @override

@@ -1,15 +1,9 @@
 import 'dart:math' show max;
 
+import 'package:graphic/src/util/array.dart' show flattern;
+
 import 'base.dart' show Adjust;
 import 'adjust_cfg.dart' show AdjustCfg;
-
-List<Map<String, Object>> flattern(List<List<Map<String, Object>>> dataArray) {
-  final rst = <Map<String, Object>>[];
-  for (var data in dataArray) {
-    rst.addAll(data);
-  }
-  return rst;
-}
 
 Map<String, Object> maxBy(
   List<Map<String, Object>> data,

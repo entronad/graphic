@@ -12,20 +12,19 @@ class BaseCfg with TypedMapMixin {
   set destroyed(bool value) => this['destroyed'] = value;
 }
 
-abstract class Base with EventEmitter {
-  Base(BaseCfg cfg) {
+abstract class Base<C extends BaseCfg> with EventEmitter {
+  Base(C cfg) {
     this.cfg = defaultCfg;
     this.cfg.mix(cfg);
   }
 
-  BaseCfg cfg;
+  C cfg;
 
-  BaseCfg get defaultCfg;
+  C get defaultCfg;
 
   bool get destroyed => cfg.destroyed;
 
   void destroy() {
-    cfg = BaseCfg();
-    cfg.destroyed = true;
+    cfg = null;
   }
 }

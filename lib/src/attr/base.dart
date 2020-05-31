@@ -2,7 +2,11 @@ import 'dart:math' show min;
 
 import 'package:graphic/src/scale/base.dart' show Scale;
 
-import 'attr_cfg.dart' show AttrCfg, AttrCallback;
+import 'attr_cfg.dart' show AttrType, AttrCfg, AttrCallback;
+import 'color_attr.dart' show ColorAttr;
+import 'position_attr.dart' show PositionAttr;
+import 'shape_attr.dart' show ShapeAttr;
+import 'size_attr.dart' show SizeAttr;
 
 Object _toScaleString<F>(Scale<F> scale, F value) {
   if (value is String) {
@@ -12,6 +16,13 @@ Object _toScaleString<F>(Scale<F> scale, F value) {
 }
 
 abstract class Attr<V> {
+  static final Map<AttrType, Attr Function(AttrCfg)> creators = {
+    AttrType.color: (AttrCfg cfg) => ColorAttr(cfg),
+    AttrType.position: (AttrCfg cfg) => PositionAttr(cfg),
+    AttrType.shape: (AttrCfg cfg) => ShapeAttr(cfg),
+    AttrType.size: (AttrCfg cfg) => SizeAttr(cfg),
+  };
+
   Attr(AttrCfg<V> cfg) {
     AttrCallback mixedCallback;
 

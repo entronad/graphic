@@ -1,5 +1,7 @@
 import 'dart:ui' show Canvas, Size, Rect;
 
+import 'package:graphic/src/base.dart' show Base;
+
 import 'cfg.dart' show Cfg;
 import 'attrs.dart' show Attrs;
 import 'shape.dart' show Shape;
@@ -9,11 +11,8 @@ import 'util/vector2.dart' show Vector2;
 
 const clipShape = ['circle', 'sector', 'polygon', 'rect', 'polyline'];
 
-abstract class Element {
-  Element(Cfg cfg) {
-    this.cfg = defaultCfg;
-    this.cfg.mix(cfg);
-
+abstract class Element extends Base<Cfg> {
+  Element(Cfg cfg) : super(cfg) {
     if (attrs != null) {
       initAttrs(attrs);
     }
@@ -24,10 +23,9 @@ abstract class Element {
   // Index as child, used for sorting comparison.
   int index;
 
-  Cfg cfg;
-
   Attrs get attrs => cfg.attrs;
 
+  @override
   Cfg get defaultCfg => Cfg(
     zIndex: 0,
     visible: true,

@@ -140,7 +140,7 @@ schema --> candle custom
 
 为避免构造函数中传参给父类发生丢失的问题，默认配置最好以 defaultCfg 的形式配置
 
-
+还是采用一个非常抽象的Base类的方案，所有的都从其继承，f2中base的功能分摊给chart和geom各自
 
 ## Scale
 
@@ -276,7 +276,7 @@ Datum还是不要搞成类为好，就用Map<String, Object> 处理，配合一�
 
 为什么用Map<String, Object>而不用Record是因为我们最希望兼容的是用户输入的Map<String, Object>
 
-_processData() 最后的 self.emit('afterprocessdata', { dataArray }); 十分妖，目前看没什么意义，先不管
+_processData() 最后的 self.emit('afterprocessdata', { dataArray }); 十分妖，目前看没什么意义，~~先不管~~，反正现在有了 innerEvents, 把它先添加上。
 
 f2 中的 paint 方法为避讳，改为draw方法，原来的draw方法改为drawData
 
@@ -284,10 +284,12 @@ getCallbackCfg 有一段如果style中某值是函数就调用算出值的逻辑
 
 getCallbackCfg、getDrawCfg 一系方法，最终都是为了得到shapeFactory.drawShape方法中的Cfg，它是个ShapeCfg，因此以此为目标进行考虑
 
-在 drawShape 中关于给engin.shape 的 engin.cfg 添加 origin 的事先不整这事，如果真的需要的话添加个 extra 的Map<String, Object>字段放这些东西
+在 drawShape 中关于给engin.shape 的 engin.cfg 添加 origin 的事先不整这事，如果真的需要的话添加个 extra 的Map<String, Object>字段放这些东西。Area Geom 中的drawData方法中也意思要ShapeCfg中有origin，也先不整这事
 
 这样处理，在geom中传递的，是名为data的Map<String, Object>结构，不仅仅是原始数据，还包括所有丰富的内容，需要思考的是怎么传进去以及怎么获取出来交给 ShapeCfg
 
 _normalizeValues 中对单一值和数组的处理似乎就是x y类型的根源，这里我们统一以数组处理，根据数组元素个数判断
 
 一个geom看来是只能设置一个 adjust 的
+
+line中的drawData在获取points时需要用到splitePoints的艺能

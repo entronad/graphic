@@ -45,4 +45,7 @@ class ShapeCfg with TypedMapMixin {
 
   double get y0 => this['y0'] as double;
   set y0(double value) => this['y0'] = value;
+
+  int get splitedIndex => this['splitedIndex'] as int;
+  set splitedIndex(int value) => this['splitedIndex'] = value;
 }

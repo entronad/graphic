@@ -1,5 +1,6 @@
 import 'dart:ui' show Offset, Rect;
 
+import 'package:graphic/src/base.dart' show Base;
 import 'package:graphic/src/engine/util/matrix.dart' show Matrix;
 import 'package:graphic/src/engine/util/vector2.dart' show Vector2;
 
@@ -7,10 +8,8 @@ import 'coord_cfg.dart' show CoordCfg;
 
 final defaultMatrix = Matrix.identity();
 
-abstract class Coord {
-  Coord(CoordCfg cfg) {
-    this.cfg = defaultCfg.mix(cfg);
-    
+abstract class Coord extends Base<CoordCfg> {
+  Coord(CoordCfg cfg) : super(cfg) {
     Offset start;
     Offset end;
     if (cfg.plot != null) {
@@ -24,10 +23,6 @@ abstract class Coord {
     }
     this.init(start, end);
   }
-
-  CoordCfg cfg;
-
-  CoordCfg get defaultCfg;
 
   void _scale(List<double> scale) {
     final matrix = cfg.matrix;

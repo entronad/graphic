@@ -2,11 +2,12 @@ import 'dart:math' show max, min;
 import 'dart:ui' show Offset;
 
 import 'package:graphic/src/base.dart' show Base;
+import 'package:graphic/src/engine/event/event_emitter.dart' show EventEmitter;
 import 'package:graphic/src/util/field.dart' show parseField;
 import 'package:graphic/src/scale/base.dart' show Scale;
 import 'package:graphic/src/scale/scale_cfg.dart' show ScaleCfg, ScaleType;
 import 'package:graphic/src/scale/time_cat_scale.dart' show TimeCatScale;
-import 'package:graphic/src/attr/attr_cfg.dart' show AttrType, AttrCfg, AttrCallback;
+import 'package:graphic/src/attr/attr_cfg.dart' show AttrType, AttrCfg;
 import 'package:graphic/src/attr/base.dart' show Attr;
 import 'package:graphic/src/geom/adjust/base.dart' show Adjust;
 import 'package:graphic/src/geom/adjust/adjust_cfg.dart' show AdjustType, AdjustCfg;
@@ -28,7 +29,7 @@ const groupAttrs = [
   AttrType.shape,
 ];
 
-abstract class Geom extends Base<GeomCfg> {
+abstract class Geom extends Base<GeomCfg> with EventEmitter {
   Geom(GeomCfg cfg) : super(cfg) {
     // TODO: init attr
   }
@@ -49,6 +50,8 @@ abstract class Geom extends Base<GeomCfg> {
     _initAttrs();
     _processData();
   }
+
+  bool get destroyed => cfg.destroyed;
 
   List<Scale> _getGroupScales() {
     final scales = <Scale>[];
@@ -186,6 +189,7 @@ abstract class Geom extends Base<GeomCfg> {
     }
 
     cfg.dataArray = dataArray;
+    emitInner('afterprocessdata', {'dataArray': dataArray});
     return dataArray;
   }
 
@@ -363,7 +367,7 @@ abstract class Geom extends Base<GeomCfg> {
     return values;
   }
 
-  Object getAttrValue(AttrType attrName, record) {
+  Object getAttrValue(AttrType attrName, Map<String, Object> record) {
     final attr = getAttr(attrName);
     Object rst;
     if (attr != null) {
@@ -671,10 +675,9 @@ abstract class Geom extends Base<GeomCfg> {
   void clear() =>
     clearInner();
 
-  @override
   void destroy() {
     clear();
-    super.destroy();
+    cfg = null;
   }
 
   void _display(bool visible) {

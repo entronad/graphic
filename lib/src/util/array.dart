@@ -59,3 +59,13 @@ List<List<Map<String, Object>>> group(
 
   return array;
 }
+
+List<T> uniq<T>(List<T> arr) {
+  final rst = <T>[];
+  for (var item in arr) {
+    if (!rst.contains(item)) {
+      rst.add(item);
+    }
+  }
+  return rst;
+}

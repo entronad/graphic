@@ -1,5 +1,6 @@
 import 'dart:math' show min;
 
+import 'package:graphic/src/base.dart' show Base;
 import 'package:graphic/src/scale/base.dart' show Scale;
 
 import 'attr_cfg.dart' show AttrType, AttrCfg, AttrCallback;
@@ -15,7 +16,7 @@ Object _toScaleString<F>(Scale<F> scale, F value) {
   return scale.invert(scale.scale(value));
 }
 
-abstract class Attr<V> {
+abstract class Attr<V> extends Base<AttrCfg<V>> {
   static final Map<AttrType, Attr Function(AttrCfg)> creators = {
     AttrType.color: (AttrCfg cfg) => ColorAttr(cfg),
     AttrType.position: (AttrCfg cfg) => PositionAttr(cfg),
@@ -23,7 +24,7 @@ abstract class Attr<V> {
     AttrType.size: (AttrCfg cfg) => SizeAttr(cfg),
   };
 
-  Attr(AttrCfg<V> cfg) {
+  Attr(AttrCfg<V> cfg) : super(cfg) {
     AttrCallback mixedCallback;
 
     if (cfg.callback != null) {
@@ -37,14 +38,12 @@ abstract class Attr<V> {
       };
     }
 
-    this.cfg = defaultCfg.mix(cfg);
     if (mixedCallback != null) {
       this.cfg.callback = mixedCallback;
     }
   }
 
-  AttrCfg<V> cfg;
-
+  @override
   AttrCfg<V> get defaultCfg => AttrCfg<V>(
     values: [],
   )

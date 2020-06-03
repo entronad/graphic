@@ -1,6 +1,6 @@
 import 'dart:ui' show Offset, Color;
 
-import 'package:graphic/src/base.dart' show BaseCfg;
+import 'package:graphic/src/util/typed_map_mixin.dart' show TypedMapMixin;
 import 'package:graphic/src/attr/attr_cfg.dart' show AttrCfg, AttrType;
 import 'package:graphic/src/attr/base.dart' show Attr;
 import 'package:graphic/src/scale/base.dart' show Scale;
@@ -30,7 +30,7 @@ class StyleOption {
   Attrs style;
 }
 
-class GeomCfg extends BaseCfg {
+class GeomCfg with TypedMapMixin {
   GeomCfg({
     GeomType type,
     bool generatePoints,
@@ -63,6 +63,9 @@ class GeomCfg extends BaseCfg {
     this['adjust'] = adjust;
     this['styleOption'] = styleOption;
   }
+
+  bool get destroyed => this['destroyed'] as bool ?? false;
+  set destroyed(bool value) => this['destroyed'] = value;
 
   GeomType get type => this['type'] as GeomType;
   set type(GeomType value) => this['type'] = value;
@@ -123,4 +126,10 @@ class GeomCfg extends BaseCfg {
 
   ShapeFactoryBase get shapeFactory => this['shapeFactory'] as ShapeFactoryBase;
   set shapeFactory(ShapeFactoryBase value) => this['shapeFactory'] = value;
+
+  double get width => this['width'] as double;
+  set width(double value) => this['width'] = value;
+
+  double get defaultSize => this['defaultSize'] as double;
+  set defaultSize(double value) => this['defaultSize'] = value;
 }

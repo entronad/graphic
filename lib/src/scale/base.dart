@@ -1,3 +1,5 @@
+import 'package:graphic/src/base.dart' show Base;
+
 import 'scale_cfg.dart' show ScaleCfg;
 
 class TickObj<F> {
@@ -8,14 +10,12 @@ class TickObj<F> {
   final double value;
 }
 
-abstract class Scale<F> {
-  Scale(ScaleCfg<F> cfg) {
-    this.cfg = defaultCfg.mix(cfg);
+abstract class Scale<F> extends Base<ScaleCfg<F>> {
+  Scale(ScaleCfg<F> cfg) : super(cfg) {
     init();
   }
 
-  ScaleCfg<F> cfg;
-
+  @override
   ScaleCfg<F> get defaultCfg => ScaleCfg<F>(
     range: [0, 1],
     values: [],

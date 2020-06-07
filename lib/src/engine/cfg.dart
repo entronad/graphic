@@ -9,34 +9,11 @@ import 'renderer.dart' show Renderer;
 
 class Cfg with TypedMapMixin{
   Cfg({
-    Attrs attrs,
-    int zIndex,
-    bool visible,
-    bool destroyed,
-    bool isGroup,
-    bool isShape,
-    Container parent,
-    List<Element> children,
-    double x,
-    double y,
-    Renderer renderer,
-
     String type,
-    Rect bbox
+    Attrs attrs,
   }) {
-    this['attrs'] = attrs;
-    this['zIndex'] = zIndex;
-    this['visible'] = visible;
-    this['destroyed'] = destroyed;
-    this['isGroup'] = isGroup;
-    this['isShape'] = isShape;
-    this['parent'] = parent;
-    this['children'] = children;
-    this['x'] = x;
-    this['y'] = y;
-    this['renderer'] = renderer;
-
     this['type'] = type;
+    this['attrs'] = attrs;
   }
 
   // element cfg
@@ -74,6 +51,10 @@ class Cfg with TypedMapMixin{
   Renderer get renderer => this['renderer'] as Renderer;
   set renderer(Renderer value) => this['renderer'] = value;
 
+  // Index as child, used for sorting comparison.
+  int get index => this['index'] as int;
+  set index(int value) => this['index'] = value;
+
   // shape cfg
 
   String get type => this['type'] as String;
@@ -81,4 +62,23 @@ class Cfg with TypedMapMixin{
 
   Rect get bbox => this['bbox'] as Rect;
   set bbox(Rect value) => this['bbox'] = value;
+
+  bool get isClip => this['isClip'] as bool ?? false;
+  set isClip(bool value) => this['isClip'] = value;
+
+  Attrs get endState => this['endState'] as Attrs;
+  set endState(Attrs value) => this['endState'] = value;
+
+  // extra
+
+  // axis
+  String get id => this['id'] as String;
+  set id(String value) => this['id'] = value;
+
+  // axis label
+  bool get top => this['top'] as bool ?? false;
+  set top(bool value) => this['top'] = value;
+
+  double get value => this['value'] as double;
+  set value(double value) => this['value'] = value;
 }

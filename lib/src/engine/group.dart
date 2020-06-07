@@ -9,13 +9,12 @@ class Group extends Container {
   Group(Cfg cfg) : super(cfg);
 
   @override
-  Cfg get defaultCfg => Cfg(
-    zIndex: 0,
-    visible: true,
-    destroyed: false,
-    isGroup: true,
-    children: [],
-  );
+  Cfg get defaultCfg => Cfg()
+    ..zIndex = 0
+    ..visible = true
+    ..destroyed = false
+    ..isGroup = true
+    ..children = [];
 
   @override
   void drawInner(Canvas canvas, Size size) {

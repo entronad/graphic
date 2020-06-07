@@ -64,6 +64,18 @@ xxNum xxStr 这样的变量名一般用户类型强转，取值一般用 xxValue
 
 
 
+TypedMapMixin时候具有null覆盖默认值的功能？好像是具有的，这就实现了某些参数有非null的默认值，但显式的设为null表示没有
+
+
+
+将 engin 中的类也按所有字段都放到cfg中的原则处理，除了内部工具变量，且移除cfg的构造函数中不必要的。chart中新添加的需要用的字段也放在 cfg 中
+
+
+
+# Attrs, Cfg
+
+将paint 和text
+
 ## Element
 
 f2 中只有 text 用到 _afterAttrsSet 我们不需要这个
@@ -94,7 +106,9 @@ shape似乎需要 isClip 和 endState 这两个外挂的成员变量
 
 自定义直接传 path
 
+## Text <- Shape
 
+兼顾富文本和穷文本形式，出现 textSpan 为富文本，text 和 textStyle 为穷文本，富文本优先级高于穷文本
 
 ## Container <- Element
 
@@ -293,3 +307,15 @@ _normalizeValues 中对单一值和数组的处理似乎就是x y类型的根源
 一个geom看来是只能设置一个 adjust 的
 
 line中的drawData在获取points时需要用到splitePoints的艺能
+
+## Axis
+
+结合guide来看，top还是单独做一个参数好
+
+getTextAlignInfo先只管textAlign这一个属性
+
+将 grid 中的type移到 AxisCfg 中，用 AxisType 代替
+
+abstract 中的好几个函数都要传参，但感觉不应该需要传参，直接用 cfg 里的，后面看看为什么
+
+还是把这个 top 加入到 PaintCfg中吧，不过不需要mix到attrs中

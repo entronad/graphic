@@ -20,17 +20,13 @@ abstract class Element extends Base<Cfg> {
     initTransform();
   }
 
-  // Index as child, used for sorting comparison.
-  int index;
-
   Attrs get attrs => cfg.attrs;
 
   @override
-  Cfg get defaultCfg => Cfg(
-    zIndex: 0,
-    visible: true,
-    destroyed: false,
-  );
+  Cfg get defaultCfg => Cfg()
+    ..zIndex = 0
+    ..visible = true
+    ..destroyed = false;
 
   bool get isGroup => cfg.isGroup;
 
@@ -67,9 +63,8 @@ abstract class Element extends Base<Cfg> {
         clip = creator(Cfg(
           type: clipCfg.type,
           attrs: clipCfg.attrs,
-          renderer: cfg.renderer,
-        ));
-        clip.isClip = true;
+        )..renderer = cfg.renderer);
+        clip.cfg.isClip = true;
       }
     }
     attr(Attrs(clip: clip));

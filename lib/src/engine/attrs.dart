@@ -42,7 +42,11 @@ class Attrs with TypedMapMixin {
     ImageFilter imageFilter,
     bool invertColors,
 
-    InlineSpan text,
+    InlineSpan textSpan,
+
+    String text,
+    TextStyle textStyle,
+
     TextAlign textAlign,
     TextDirection textDirection,
     double textScaleFactor,
@@ -86,7 +90,11 @@ class Attrs with TypedMapMixin {
     this['imageFilter'] = imageFilter;
     this['invertColors'] = invertColors;
 
+    this['textSpan'] = textSpan;
+
     this['text'] = text;
+    this['textStyle'] = textStyle;
+
     this['textAlign'] = textAlign;
     this['textDirection'] = textDirection;
     this['textScaleFactor'] = textScaleFactor;
@@ -199,8 +207,14 @@ class Attrs with TypedMapMixin {
 
   // textPainter attrs, api refers to flutter 1.12.13
 
-  InlineSpan get text => this['text'] as InlineSpan;
-  set text(InlineSpan value) => this['text'] = value;
+  InlineSpan get textSpan => this['textSpan'] as InlineSpan;
+  set textSpan(InlineSpan value) => this['textSpan'] = value;
+
+  String get text => this['text'] as String;
+  set text(String value) => this['text'] = value;
+
+  TextStyle get textStyle => this['textStyle'] as TextStyle;
+  set textStyle(TextStyle value) => this['textStyle'] = value;
 
   TextAlign get textAlign => this['textAlign'] as TextAlign ?? TextAlign.start;
   set textAlign(TextAlign value) => this['textAlign'] = value;
@@ -252,7 +266,7 @@ class Attrs with TypedMapMixin {
   void applyToTextPainter(TextPainter textPainter) {
     assert(textPainter != null);
 
-    textPainter.text = text;
+    textPainter.text = textSpan ?? TextSpan(text: text, style: textStyle);
     textPainter.textAlign = textAlign;
     textPainter.textDirection = textDirection;
     textPainter.textScaleFactor = textScaleFactor;
@@ -262,4 +276,163 @@ class Attrs with TypedMapMixin {
     textPainter.strutStyle = strutStyle;
     textPainter.textWidthBasis = textWidthBasis;
   }
+}
+
+class PaintCfg with TypedMapMixin {
+  PaintCfg({
+    bool isAntiAlias,
+    Color color,
+    BlendMode blendMode,
+    PaintingStyle style,
+    double strokeWidth,
+    StrokeCap strokeCap,
+    StrokeJoin strokeJoin,
+    double strokeMiterLimit,
+    MaskFilter maskFilter,
+    FilterQuality filterQuality,
+    Shader shader,
+    ColorFilter colorFilter,
+    ImageFilter imageFilter,
+    bool invertColors,
+
+    bool top,
+  }) {
+    this['isAntiAlias'] = isAntiAlias;
+    this['color'] = color;
+    this['blendMode'] = blendMode;
+    this['style'] = style;
+    this['strokeWidth'] = strokeWidth;
+    this['strokeCap'] = strokeCap;
+    this['strokeJoin'] = strokeJoin;
+    this['strokeMiterLimit'] = strokeMiterLimit;
+    this['maskFilter'] = maskFilter;
+    this['filterQuality'] = filterQuality;
+    this['shader'] = shader;
+    this['colorFilter'] = colorFilter;
+    this['imageFilter'] = imageFilter;
+    this['invertColors'] = invertColors;
+
+    this['top'] = top;
+  }
+
+  bool get isAntiAlias => this['isAntiAlias'] as bool ?? true;
+  set isAntiAlias(bool value) => this['isAntiAlias'] = value;
+
+  Color get color => this['color'] as Color ?? Color.fromARGB(255, 0, 0, 0);
+  set color(Color value) => this['color'] = value;
+
+  BlendMode get blendMode => this['blendMode'] as BlendMode ?? BlendMode.srcOver;
+  set blendMode(BlendMode value) => this['blendMode'] = value;
+
+  PaintingStyle get style => this['style'] as PaintingStyle ?? PaintingStyle.fill;
+  set style(PaintingStyle value) => this['style'] = value;
+
+  double get strokeWidth => this['strokeWidth'] as double ?? 0;
+  set strokeWidth(double value) => this['strokeWidth'] = value;
+
+  StrokeCap get strokeCap => this['strokeCap'] as StrokeCap ?? StrokeCap.butt;
+  set strokeCap(StrokeCap value) => this['strokeCap'] = value;
+
+  StrokeJoin get strokeJoin => this['strokeJoin'] as StrokeJoin ?? StrokeJoin.miter;
+  set strokeJoin(StrokeJoin value) => this['strokeJoin'] = value;
+
+  double get strokeMiterLimit => this['strokeMiterLimit'] as double ?? 0;
+  set strokeMiterLimit(double value) => this['strokeMiterLimit'] = value;
+
+  MaskFilter get maskFilter => this['maskFilter'] as MaskFilter;
+  set maskFilter(MaskFilter value) => this['maskFilter'] = value;
+
+  FilterQuality get filterQuality => this['filterQuality'] as FilterQuality ?? FilterQuality.none;
+  set filterQuality(FilterQuality value) => this['filterQuality'] = value;
+
+  Shader get shader => this['shader'] as Shader;
+  set shader(Shader value) => this['shader'] = value;
+
+  ColorFilter get colorFilter => this['colorFilter'] as ColorFilter;
+  set colorFilter(ColorFilter value) => this['colorFilter'] = value;
+
+  ImageFilter get imageFilter => this['imageFilter'] as ImageFilter;
+  set imageFilter(ImageFilter value) => this['imageFilter'] = value;
+
+  bool get invertColors => this['invertColors'] as bool ?? false;
+  set invertColors(bool value) => this['invertColors'] = value;
+
+  // for some chart usage, will not mix to attrs
+  bool get top => this['top'] as bool ?? false;
+  set top(bool value) => this['top'] = value;
+}
+
+class TextCfg with TypedMapMixin {
+  TextCfg({
+    InlineSpan textSpan,
+
+    String text,
+    TextStyle textStyle,
+
+    TextAlign textAlign,
+    TextDirection textDirection,
+    double textScaleFactor,
+    int maxLines,
+    String ellipsis,
+    Locale locale,
+    StrutStyle strutStyle,
+    TextWidthBasis textWidthBasis,
+
+    bool top,
+  }) {
+    this['textSpan'] = textSpan;
+
+    this['text'] = text;
+    this['textStyle'] = textStyle;
+
+    this['textAlign'] = textAlign;
+    this['textDirection'] = textDirection;
+    this['textScaleFactor'] = textScaleFactor;
+    this['maxLines'] = maxLines;
+    this['ellipsis'] = ellipsis;
+    this['locale'] = locale;
+    this['strutStyle'] = strutStyle;
+    this['textWidthBasis'] = textWidthBasis;
+
+    this['top'] = top;
+  }
+
+  InlineSpan get textSpan => this['textSpan'] as InlineSpan;
+  set textSpan(InlineSpan value) => this['textSpan'] = value;
+
+  String get text => this['text'] as String;
+  set text(String value) => this['text'] = value;
+
+  TextStyle get textStyle => this['textStyle'] as TextStyle;
+  set textStyle(TextStyle value) => this['textStyle'] = value;
+
+  TextAlign get textAlign => this['textAlign'] as TextAlign ?? TextAlign.start;
+  set textAlign(TextAlign value) => this['textAlign'] = value;
+
+  // This default value TextDirection.ltr is picked randomly. It dose not mean we hold
+  // the idea that any sigle language habit in the world should be considered as "default".
+  TextDirection get textDirection => this['textDirection'] as TextDirection ?? TextDirection.ltr;
+  set textDirection(TextDirection value) => this['textDirection'] = value;
+
+  double get textScaleFactor => this['textScaleFactor'] as double ?? 1;
+  set textScaleFactor(double value) => this['textScaleFactor'] = value;
+
+  int get maxLines => this['maxLines'] as int;
+  set maxLines(int value) => this['maxLines'] = value;
+
+  String get ellipsis => this['ellipsis'] as String;
+  set ellipsis(String value) => this['ellipsis'] = value;
+
+  Locale get locale => this['locale'] as Locale;
+  set locale(Locale value) => this['locale'] = value;
+
+  StrutStyle get strutStyle => this['strutStyle'] as StrutStyle;
+  set strutStyle(StrutStyle value) => this['strutStyle'] = value;
+
+  TextWidthBasis get textWidthBasis => this['textWidthBasis'] as TextWidthBasis ?? TextWidthBasis.parent;
+  set textWidthBasis(TextWidthBasis value) => this['textWidthBasis'] = value;
+
+  // for some chart usage, will not mix to attrs
+  bool get top => this['top'] as bool ?? false;
+  set top(bool value) => this['top'] = value;
 }

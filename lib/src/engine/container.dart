@@ -6,7 +6,7 @@ import 'group.dart' show Group;
 Comparator<Element> getComparer(Comparator<Element> compare) =>
   (left, right) {
     final result = compare(left, right);
-    return result == 0 ? left.index - right.index : result;
+    return result == 0 ? left.cfg.index - right.cfg.index : result;
   };
 
 abstract class Container extends Element {
@@ -35,7 +35,7 @@ abstract class Container extends Element {
 
   void sort() {
     for (var i = 0; i < children.length; i++) {
-      children[i].index = i;
+      children[i].cfg.index = i;
     }
 
     children.sort(getComparer(

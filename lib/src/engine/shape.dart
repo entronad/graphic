@@ -51,18 +51,13 @@ abstract class Shape extends Element {
 
   PaintingStyle get paintingStyle => attrs.style;
 
-  bool isClip = false;
-
-  Attrs endState;
-
   @override
-  Cfg get defaultCfg => Cfg(
-    zIndex: 0,
-    visible: true,
-    destroyed: false,
-    isShape: true,
-    attrs: Attrs(),
-  );
+  Cfg get defaultCfg => Cfg()
+    ..zIndex = 0
+    ..visible = true
+    ..destroyed = false
+    ..isShape = true
+    ..attrs = Attrs();
 
   String get type => cfg.type;
 

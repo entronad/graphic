@@ -1,23 +1,18 @@
-import 'dart:ui' show
-  Path,
-  Paint,
-  Canvas,
-  PaintingStyle,
-  Size;
-import 'dart:ui' as ui show Rect;
+import 'dart:ui';
+import 'dart:ui' as ui;
 
-import 'cfg.dart' show Cfg;
-import 'attrs.dart' show Attrs;
-import 'element.dart' show Element;
-import 'shape/arc.dart' show Arc;
-import 'shape/circle.dart' show Circle;
-import 'shape/custom.dart' show Custom;
-import 'shape/line.dart' show Line;
-import 'shape/polygon.dart' show Polygon;
-import 'shape/polyline.dart' show Polyline;
-import 'shape/rect.dart' show Rect;
-import 'shape/sector.dart' show Sector;
-import 'shape/text.dart' show Text;
+import 'cfg.dart';
+import 'attrs.dart';
+import 'element.dart';
+import 'shape/arc.dart';
+import 'shape/circle.dart';
+import 'shape/custom.dart';
+import 'shape/line.dart';
+import 'shape/polygon.dart';
+import 'shape/polyline.dart';
+import 'shape/rect.dart';
+import 'shape/sector.dart';
+import 'shape/text.dart';
 
 abstract class Shape extends Element {
   static final creators = {

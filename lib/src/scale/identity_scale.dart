@@ -1,5 +1,4 @@
-import 'base.dart' show Scale;
-import 'scale_cfg.dart' show ScaleCfg, ScaleType;
+import 'base.dart';
 
 class IdentityScale<F> extends Scale<F> {
   IdentityScale(ScaleCfg<F> cfg) : super(cfg);

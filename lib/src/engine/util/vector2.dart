@@ -4,12 +4,12 @@
 
 import 'dart:typed_data';
 import 'dart:math' as math;
-import 'dart:ui' show Offset;
+import 'dart:ui';
 
-import 'package:vector_math/vector_math_64.dart' show Vector;
+import 'package:vector_math/vector_math_64.dart';
 import 'package:vector_math/hash.dart' as quiver;
 
-import 'matrix.dart' show Matrix;
+import 'matrix.dart';
 
 /// 2D column vector.
 class Vector2 implements Vector {

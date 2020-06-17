@@ -1,13 +1,9 @@
-import 'dart:ui' show
-  Canvas,
-  Offset,
-  Rect,
-  Size;
+import 'dart:ui';
 
-import 'package:flutter/painting.dart' show TextPainter, TextDirection;
-import '../cfg.dart' show Cfg;
-import '../attrs.dart' show Attrs;
-import '../shape.dart' show Shape;
+import 'package:flutter/painting.dart';
+import '../cfg.dart';
+import '../attrs.dart';
+import '../shape.dart';
 
 class Text extends Shape {
   Text(Cfg cfg) : super(cfg) {

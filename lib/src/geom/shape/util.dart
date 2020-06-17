@@ -1,4 +1,4 @@
-import 'dart:ui' show Offset;
+import 'dart:ui';
 
 List<Offset> splitPoints(List<double> x, List<double> y) {
   final points = <Offset>[];

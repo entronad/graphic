@@ -1,4 +1,4 @@
-import 'event_arena.dart' show EventType, Event;
+import 'event_arena.dart';
 
 mixin EventEmitter {
   final _events = <EventType, List<void Function(Event)>>{};

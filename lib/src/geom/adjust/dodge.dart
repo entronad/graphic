@@ -1,5 +1,4 @@
-import 'base.dart' show Adjust;
-import 'adjust_cfg.dart' show AdjustCfg;
+import 'base.dart';
 
 const marginRatio = 1 / 2;
 const dodgeRatio = 1 / 2;

@@ -1,6 +1,6 @@
-import 'dart:ui' show Rect, Offset;
+import 'dart:ui';
 
-import 'vector2.dart' show Vector2;
+import 'vector2.dart';
 
 class SmoothDest {
   SmoothDest(this.cp1, this.cp2, this.p);

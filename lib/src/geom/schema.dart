@@ -1,6 +1,5 @@
-import 'base.dart' show Geom;
-import 'geom_cfg.dart' show GeomCfg, GeomType;
-import 'mixin/size_mixin.dart' show SizeMixin;
+import 'base.dart';
+import 'mixin/size_mixin.dart';
 
 class Schema extends Geom with SizeMixin {
   Schema(GeomCfg cfg) : super(cfg);

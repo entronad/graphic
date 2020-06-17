@@ -1,7 +1,6 @@
-import 'dart:ui' show Offset;
+import 'dart:ui';
 
-import 'base.dart' show Attr;
-import 'attr_cfg.dart' show AttrCfg, AttrType;
+import 'base.dart';
 
 class PositionAttr extends Attr<double> {
   PositionAttr(AttrCfg<double> cfg) : super(cfg);
@@ -13,7 +12,7 @@ class PositionAttr extends Attr<double> {
 
   @override
   List mapping(List params) {
-    if (params?.length < 2) {
+    if (params?.length != null && params.length < 2) {
       return [];
     }
     var x = params[0];

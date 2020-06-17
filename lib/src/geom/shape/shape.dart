@@ -1,25 +1,66 @@
-import 'dart:ui' show Offset;
+import 'dart:ui';
 
-import 'package:graphic/src/engine/container.dart' show Container;
-import 'package:graphic/src/engine/shape.dart' as engine_shape show Shape;
-import 'package:graphic/src/coord/base.dart' show Coord;
+import 'package:graphic/src/engine/container.dart';
+import 'package:graphic/src/engine/shape.dart' as engine_shape;
+import 'package:graphic/src/coord/base.dart';
+import 'package:graphic/src/global.dart';
+import 'package:graphic/src/util/typed_map_mixin.dart';
+import 'package:graphic/src/engine/attrs.dart';
 
-import '../geom_cfg.dart' show GeomType;
-import 'shape_cfg.dart' show ShapeCfg;
-import 'area.dart' as area show AreaFactory, AreaShape, SmoothShape;
-import 'interval.dart' as interval show
-  IntervalFactory,
-  RectShape,
-  PyramidShape,
-  FunnelShape;
-import 'line.dart' as line show LineFactory, LineShape, SmoothShape;
-import 'point.dart' as point show
-  PointFactory,
-  CircleShape,
-  HollowCircleShape,
-  RectShape;
-import 'polygon.dart' as polygon show PolygonFactory, PolygonShape;
-import 'schema.dart' as schema show SchemaFactory, CanleShape;
+import '../base.dart';
+import 'area.dart' as area;
+import 'interval.dart' as interval;
+import 'line.dart' as line;
+import 'point.dart' as point;
+import 'polygon.dart' as polygon;
+import 'schema.dart' as schema;
+
+class ShapeCfg with TypedMapMixin {
+
+  // attr
+
+  Color get color => this['color'] as Color;
+  set color(Color value) => this['color'] = value;
+
+  List<double> get x => this['x'] as List<double>;
+  set x(List<double> value) => this['x'] = value;
+
+  List<double> get y => this['y'] as List<double>;
+  set y(List<double> value) => this['y'] = value;
+
+  String get shape => this['shape'] as String;
+  set shape(String value) => this['shape'] = value;
+
+  double get size => this['size'] as double;
+  set size(double value) => this['size'] = value;
+
+  // others
+
+  bool get isInCircle => this['isInCircle'] as bool ?? false;
+  set isInCircle(bool value) => this['isInCircle'] = value;
+
+  bool get isStack => this['isStack'] as bool ?? false;
+  set isStack(bool value) => this['isStack'] = value;
+
+  // one x can have multiple points
+  List<List<Offset>> get points => this['points'] as List<List<Offset>>;
+  set points(List<List<Offset>> value) => this['points'] = value;
+
+  List<Offset> get nextPoints => this['nextPoints'] as List<Offset>;
+  set nextPoints(List<Offset> value) => this['nextPoints'] = value;
+
+  Attrs get style => this['style'] as Attrs;
+  set style(Attrs value) => this['style'] = value;
+
+  Offset get center => this['center'] as Offset;
+  set center(Offset value) => this['center'] = value;
+
+  double get y0 => this['y0'] as double;
+  set y0(double value) => this['y0'] = value;
+
+  int get splitedIndex => this['splitedIndex'] as int;
+  set splitedIndex(int value) => this['splitedIndex'] = value;
+}
 
 abstract class ShapeBase {
   Coord coord;
@@ -94,7 +135,9 @@ abstract class ShapeFactoryBase {
 
   List<engine_shape.Shape> drawShape(String type, ShapeCfg cfg, Container container) {
     final shape = this.getShape(type);
-    // TODO: set default color to Global
+    if (cfg.color == null) {
+      cfg.color = Global.theme.colors.first;
+    }
     return shape.draw(cfg, container);
   }
 }

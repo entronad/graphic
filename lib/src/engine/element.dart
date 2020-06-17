@@ -1,13 +1,13 @@
-import 'dart:ui' show Canvas, Size, Rect;
+import 'dart:ui';
 
-import 'package:graphic/src/base.dart' show Base;
+import 'package:graphic/src/base.dart';
 
-import 'cfg.dart' show Cfg;
-import 'attrs.dart' show Attrs;
-import 'shape.dart' show Shape;
-import 'container.dart' show Container;
-import 'util/matrix.dart' show Matrix, TransAction;
-import 'util/vector2.dart' show Vector2;
+import 'cfg.dart';
+import 'attrs.dart';
+import 'shape.dart';
+import 'container.dart';
+import 'util/matrix.dart';
+import 'util/vector2.dart';
 
 const clipShape = ['circle', 'sector', 'polygon', 'rect', 'polyline'];
 

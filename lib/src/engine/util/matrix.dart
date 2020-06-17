@@ -127,6 +127,26 @@ class Matrix extends Vector {
     _matstorage[i] = v;
   }
 
+  /// Returns new matrix -this
+  Matrix operator -() => clone()..negate();
+
+  /// Returns new matrix after component wise [this] + [arg]
+  Matrix operator +(Matrix arg) => clone()..add(arg);
+
+  /// Returns new matrix after component wise [this] - [arg]
+  Matrix operator -(Matrix arg) => clone()..sub(arg);
+
+  /// Returns a new vector or matrix by multiplying [this] with [arg].
+  dynamic operator *(dynamic arg) {
+    if (arg is double) {
+      return clone()..times(arg);
+    }
+    if (arg is Matrix) {
+      return clone()..multiply(arg);
+    }
+    throw new ArgumentError(arg);
+  }
+
   /// Create a copy of [this].
   Matrix clone() => new Matrix.copy(this);
 
@@ -162,6 +182,38 @@ class Matrix extends Vector {
     _matstorage[5] = array[offset + 5];
   }
 
+  /// Adds [o] to [this].
+  void add(Matrix o) {
+    final Float64List oStorage = o._matstorage;
+    _matstorage[0] = _matstorage[0] + oStorage[0];
+    _matstorage[1] = _matstorage[1] + oStorage[1];
+    _matstorage[2] = _matstorage[2] + oStorage[2];
+    _matstorage[3] = _matstorage[3] + oStorage[3];
+    _matstorage[4] = _matstorage[4] + oStorage[4];
+    _matstorage[5] = _matstorage[5] + oStorage[5];
+  }
+
+  /// Subtracts [o] from [this].
+  void sub(Matrix o) {
+    final Float64List oStorage = o._matstorage;
+    _matstorage[0] = _matstorage[0] - oStorage[0];
+    _matstorage[1] = _matstorage[1] - oStorage[1];
+    _matstorage[2] = _matstorage[2] - oStorage[2];
+    _matstorage[3] = _matstorage[3] - oStorage[3];
+    _matstorage[4] = _matstorage[4] - oStorage[4];
+    _matstorage[5] = _matstorage[5] - oStorage[5];
+  }
+
+  /// Negate [this].
+  void negate() {
+    _matstorage[0] = -_matstorage[0];
+    _matstorage[1] = -_matstorage[1];
+    _matstorage[2] = -_matstorage[2];
+    _matstorage[3] = -_matstorage[3];
+    _matstorage[4] = -_matstorage[4];
+    _matstorage[5] = -_matstorage[5];
+  }
+
   void multiply(Matrix arg) {
     final m1 = _matstorage;
     final m2 = arg._matstorage;
@@ -172,6 +224,15 @@ class Matrix extends Vector {
     final dx = m1[0] * m2[4] + m1[2] * m2[5] + m1[4];
     final dy = m1[1] * m2[4] + m1[3] * m2[5] + m1[5];
     this.setValues(m11, m12, m21, m22, dx, dy);
+  }
+
+  void times(num arg) {
+    _matstorage[0] = _matstorage[0] * arg;
+    _matstorage[1] = _matstorage[1] * arg;
+    _matstorage[2] = _matstorage[2] * arg;
+    _matstorage[3] = _matstorage[3] * arg;
+    _matstorage[4] = _matstorage[4] * arg;
+    _matstorage[5] = _matstorage[5] * arg;
   }
 
   void scale(Vector2 v) {

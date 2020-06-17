@@ -1,6 +1,5 @@
-import 'base.dart' show Geom;
-import 'geom_cfg.dart' show GeomCfg, GeomType;
-import 'mixin/size_mixin.dart' show SizeMixin;
+import 'base.dart';
+import 'mixin/size_mixin.dart';
 
 class Interval extends Geom with SizeMixin {
   Interval(GeomCfg cfg) : super(cfg);

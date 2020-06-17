@@ -1,7 +1,6 @@
-import 'base.dart' show Geom;
-import 'geom_cfg.dart' show GeomCfg, GeomType;
-import 'shape/shape.dart' show ShapeFactoryBase;
-import 'shape/util.dart' show spliteArray;
+import 'base.dart';
+import 'shape/shape.dart';
+import 'shape/util.dart';
 
 class Area extends Geom {
   Area(GeomCfg cfg) : super(cfg);

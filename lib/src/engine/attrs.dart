@@ -1,10 +1,10 @@
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/util/typed_map_mixin.dart' show TypedMapMixin;
+import 'package:graphic/src/util/typed_map_mixin.dart';
 
-import 'shape.dart' show Shape;
-import 'util/matrix.dart' show Matrix;
+import 'shape.dart';
+import 'util/matrix.dart';
 
 class Attrs with TypedMapMixin {
   Attrs({
@@ -56,53 +56,53 @@ class Attrs with TypedMapMixin {
     StrutStyle strutStyle,
     TextWidthBasis textWidthBasis,
   }) {
-    this['clip'] = clip;
-    this['matrix'] = matrix;
-    this['x'] = x;
-    this['y'] = y;
-    this['x1'] = x1;
-    this['y1'] = y1;
-    this['x2'] = x2;
-    this['y2'] = y2;
-    this['r'] = r;
-    this['r0'] = r0;
-    this['startAngle'] = startAngle;
-    this['endAngle'] = endAngle;
-    this['clockwise'] = clockwise;
-    this['points'] = points;
-    this['smooth'] = smooth;
-    this['width'] = width;
-    this['height'] = height;
-    this['path'] = path;
+    if (clip != null) this['clip'] = clip;
+    if (matrix != null) this['matrix'] = matrix;
+    if (x != null) this['x'] = x;
+    if (y != null) this['y'] = y;
+    if (x1 != null) this['x1'] = x1;
+    if (y1 != null) this['y1'] = y1;
+    if (x2 != null) this['x2'] = x2;
+    if (y2 != null) this['y2'] = y2;
+    if (r != null) this['r'] = r;
+    if (r0 != null) this['r0'] = r0;
+    if (startAngle != null) this['startAngle'] = startAngle;
+    if (endAngle != null) this['endAngle'] = endAngle;
+    if (clockwise != null) this['clockwise'] = clockwise;
+    if (points != null) this['points'] = points;
+    if (smooth != null) this['smooth'] = smooth;
+    if (width != null) this['width'] = width;
+    if (height != null) this['height'] = height;
+    if (path != null) this['path'] = path;
 
-    this['isAntiAlias'] = isAntiAlias;
-    this['color'] = color;
-    this['blendMode'] = blendMode;
-    this['style'] = style;
-    this['strokeWidth'] = strokeWidth;
-    this['strokeCap'] = strokeCap;
-    this['strokeJoin'] = strokeJoin;
-    this['strokeMiterLimit'] = strokeMiterLimit;
-    this['maskFilter'] = maskFilter;
-    this['filterQuality'] = filterQuality;
-    this['shader'] = shader;
-    this['colorFilter'] = colorFilter;
-    this['imageFilter'] = imageFilter;
-    this['invertColors'] = invertColors;
+    if (isAntiAlias != null) this['isAntiAlias'] = isAntiAlias;
+    if (color != null) this['color'] = color;
+    if (blendMode != null) this['blendMode'] = blendMode;
+    if (style != null) this['style'] = style;
+    if (strokeWidth != null) this['strokeWidth'] = strokeWidth;
+    if (strokeCap != null) this['strokeCap'] = strokeCap;
+    if (strokeJoin != null) this['strokeJoin'] = strokeJoin;
+    if (strokeMiterLimit != null) this['strokeMiterLimit'] = strokeMiterLimit;
+    if (maskFilter != null) this['maskFilter'] = maskFilter;
+    if (filterQuality != null) this['filterQuality'] = filterQuality;
+    if (shader != null) this['shader'] = shader;
+    if (colorFilter != null) this['colorFilter'] = colorFilter;
+    if (imageFilter != null) this['imageFilter'] = imageFilter;
+    if (invertColors != null) this['invertColors'] = invertColors;
 
-    this['textSpan'] = textSpan;
+    if (textSpan != null) this['textSpan'] = textSpan;
 
-    this['text'] = text;
-    this['textStyle'] = textStyle;
+    if (text != null) this['text'] = text;
+    if (textStyle != null) this['textStyle'] = textStyle;
 
-    this['textAlign'] = textAlign;
-    this['textDirection'] = textDirection;
-    this['textScaleFactor'] = textScaleFactor;
-    this['maxLines'] = maxLines;
-    this['ellipsis'] = ellipsis;
-    this['locale'] = locale;
-    this['strutStyle'] = strutStyle;
-    this['textWidthBasis'] = textWidthBasis;
+    if (textAlign != null) this['textAlign'] = textAlign;
+    if (textDirection != null) this['textDirection'] = textDirection;
+    if (textScaleFactor != null) this['textScaleFactor'] = textScaleFactor;
+    if (maxLines != null) this['maxLines'] = maxLines;
+    if (ellipsis != null) this['ellipsis'] = ellipsis;
+    if (locale != null) this['locale'] = locale;
+    if (strutStyle != null) this['strutStyle'] = strutStyle;
+    if (textWidthBasis != null) this['textWidthBasis'] = textWidthBasis;
   }
   
   // element attrs
@@ -297,22 +297,22 @@ class PaintCfg with TypedMapMixin {
 
     bool top,
   }) {
-    this['isAntiAlias'] = isAntiAlias;
-    this['color'] = color;
-    this['blendMode'] = blendMode;
-    this['style'] = style;
-    this['strokeWidth'] = strokeWidth;
-    this['strokeCap'] = strokeCap;
-    this['strokeJoin'] = strokeJoin;
-    this['strokeMiterLimit'] = strokeMiterLimit;
-    this['maskFilter'] = maskFilter;
-    this['filterQuality'] = filterQuality;
-    this['shader'] = shader;
-    this['colorFilter'] = colorFilter;
-    this['imageFilter'] = imageFilter;
-    this['invertColors'] = invertColors;
+    if (isAntiAlias != null) this['isAntiAlias'] = isAntiAlias;
+    if (color != null) this['color'] = color;
+    if (blendMode != null) this['blendMode'] = blendMode;
+    if (style != null) this['style'] = style;
+    if (strokeWidth != null) this['strokeWidth'] = strokeWidth;
+    if (strokeCap != null) this['strokeCap'] = strokeCap;
+    if (strokeJoin != null) this['strokeJoin'] = strokeJoin;
+    if (strokeMiterLimit != null) this['strokeMiterLimit'] = strokeMiterLimit;
+    if (maskFilter != null) this['maskFilter'] = maskFilter;
+    if (filterQuality != null) this['filterQuality'] = filterQuality;
+    if (shader != null) this['shader'] = shader;
+    if (colorFilter != null) this['colorFilter'] = colorFilter;
+    if (imageFilter != null) this['imageFilter'] = imageFilter;
+    if (invertColors != null) this['invertColors'] = invertColors;
 
-    this['top'] = top;
+    if (top != null) this['top'] = top;
   }
 
   bool get isAntiAlias => this['isAntiAlias'] as bool ?? true;
@@ -380,21 +380,21 @@ class TextCfg with TypedMapMixin {
 
     bool top,
   }) {
-    this['textSpan'] = textSpan;
+    if (textSpan != null) this['textSpan'] = textSpan;
 
-    this['text'] = text;
-    this['textStyle'] = textStyle;
+    if (text != null) this['text'] = text;
+    if (textStyle != null) this['textStyle'] = textStyle;
 
-    this['textAlign'] = textAlign;
-    this['textDirection'] = textDirection;
-    this['textScaleFactor'] = textScaleFactor;
-    this['maxLines'] = maxLines;
-    this['ellipsis'] = ellipsis;
-    this['locale'] = locale;
-    this['strutStyle'] = strutStyle;
-    this['textWidthBasis'] = textWidthBasis;
+    if (textAlign != null) this['textAlign'] = textAlign;
+    if (textDirection != null) this['textDirection'] = textDirection;
+    if (textScaleFactor != null) this['textScaleFactor'] = textScaleFactor;
+    if (maxLines != null) this['maxLines'] = maxLines;
+    if (ellipsis != null) this['ellipsis'] = ellipsis;
+    if (locale != null) this['locale'] = locale;
+    if (strutStyle != null) this['strutStyle'] = strutStyle;
+    if (textWidthBasis != null) this['textWidthBasis'] = textWidthBasis;
 
-    this['top'] = top;
+    if (top != null) this['top'] = top;
   }
 
   InlineSpan get textSpan => this['textSpan'] as InlineSpan;

@@ -1,5 +1,4 @@
-import 'base.dart' show Geom;
-import 'geom_cfg.dart' show GeomCfg, GeomType;
+import 'base.dart';
 
 class Polygon extends Geom {
   Polygon(GeomCfg cfg) : super(cfg);

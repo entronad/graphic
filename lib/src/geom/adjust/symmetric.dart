@@ -1,9 +1,8 @@
-import 'dart:math' show max;
+import 'dart:math';
 
-import 'package:graphic/src/util/array.dart' show flattern;
+import 'package:graphic/src/util/collection.dart';
 
-import 'base.dart' show Adjust;
-import 'adjust_cfg.dart' show AdjustCfg;
+import 'base.dart';
 
 Map<String, Object> maxBy(
   List<Map<String, Object>> data,

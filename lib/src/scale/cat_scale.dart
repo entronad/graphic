@@ -1,6 +1,5 @@
-import 'base.dart' show Scale;
-import 'scale_cfg.dart' show ScaleCfg, ScaleType;
-import './auto/cat.dart' show catAuto;
+import 'base.dart';
+import './auto/cat.dart';
 
 class CatScale<F> extends Scale<F> {
   CatScale(ScaleCfg<F> cfg) : super(cfg);

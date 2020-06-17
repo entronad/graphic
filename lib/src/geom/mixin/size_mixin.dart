@@ -1,12 +1,13 @@
-import 'dart:ui' show Offset;
-import 'dart:math' show sqrt, pow;
+import 'dart:ui';
+import 'dart:math';
 
-import 'package:graphic/src/chart/const.dart' show eventAfterSizeChange;
-import 'package:graphic/src/util/array.dart' show uniq;
-import 'package:graphic/src/attr/attr_cfg.dart' show AttrType;
+import 'package:graphic/src/chart/const.dart';
+import 'package:graphic/src/util/collection.dart';
+import 'package:graphic/src/attr/base.dart';
+import 'package:graphic/src/global.dart';
 
-import '../adjust/adjust_cfg.dart' show AdjustType;
-import '../base.dart' show Geom;
+import '../adjust/base.dart';
+import '../base.dart';
 
 mixin SizeMixin on Geom {
   void initEvent() {
@@ -29,10 +30,20 @@ mixin SizeMixin on Geom {
       final count = values.length;
       final range = xScale.cfg.range;
       var normalizeSize = 1 / count;
-      var widthRatio = 1;
+      var widthRatio = 1.0;
 
-      // TODO: set normalizeSize and widthRatio accoring to Global theme
-
+      if (coord != null && coord.cfg.isPolar) {
+        if (coord.cfg.transposed && count > 1) {
+          widthRatio = Global.theme.widthRatio['multiplePie'];
+        } else {
+          widthRatio = Global.theme.widthRatio['rose'];
+        }
+      } else {
+        if (xScale.cfg.isLinear) {
+          normalizeSize *= (range.last - range.first);
+        }
+        widthRatio = Global.theme.widthRatio['column'];
+      }
       normalizeSize *= widthRatio;
       if(hasAdjust(AdjustType.dodge)) {
         normalizeSize = normalizeSize / dataArray.length;

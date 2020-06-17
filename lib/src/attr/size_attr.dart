@@ -1,5 +1,4 @@
-import 'base.dart' show Attr;
-import 'attr_cfg.dart' show AttrCfg, AttrType;
+import 'base.dart';
 
 class SizeAttr extends Attr<double> {
   SizeAttr(AttrCfg<double> cfg) : super(cfg);

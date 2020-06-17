@@ -1,8 +1,7 @@
-import 'package:intl/intl.dart' show DateFormat;
-import 'cat_scale.dart' show CatScale;
-import 'scale_cfg.dart' show ScaleCfg, ScaleType;
-import 'auto/cat.dart' show catAuto;
-import 'base.dart' show TickObj;
+import 'package:intl/intl.dart';
+import 'cat_scale.dart';
+import 'base.dart';
+import 'auto/cat.dart';
 
 // F could only be formatted String or timestamp int
 class TimeCatScale<F> extends CatScale<F> {
@@ -111,11 +110,11 @@ class TimeCatScale<F> extends CatScale<F> {
   }
 
   @override
-  List<TickObj<F>> getTicks() {
+  List<Tick<F>> getTicks() {
     final ticks = cfg.ticks;
-    final rst = <TickObj<F>>[];
+    final rst = <Tick<F>>[];
     ticks?.forEach((tick) {
-      final obj = TickObj<F>(
+      final obj = Tick<F>(
         this.getText(tick),
         tick,
         this.scale(tick),

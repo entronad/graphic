@@ -1,11 +1,10 @@
-import 'dart:ui' show Offset;
+import 'dart:ui';
 
-import 'package:graphic/src/engine/util/vector2.dart' show Vector2;
-import 'package:graphic/src/engine/attrs.dart' show PaintCfg, Attrs;
-import 'package:graphic/src/engine/cfg.dart' show Cfg;
+import 'package:graphic/src/engine/util/vector2.dart';
+import 'package:graphic/src/engine/attrs.dart';
+import 'package:graphic/src/engine/cfg.dart';
 
-import 'abstract.dart' show Axis;
-import 'axis_cfg.dart' show AxisCfg;
+import 'base.dart';
 
 class LineAxis extends Axis {
   LineAxis(AxisCfg cfg) : super(cfg);

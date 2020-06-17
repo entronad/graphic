@@ -1,15 +1,15 @@
-import 'dart:ui' show Offset;
-import 'dart:math' show min, max, pi;
+import 'dart:ui';
+import 'dart:math';
 
-import 'package:graphic/src/engine/container.dart' show Container;
-import 'package:graphic/src/engine/cfg.dart' show Cfg;
-import 'package:graphic/src/engine/attrs.dart' show Attrs;
-import 'package:graphic/src/engine/shape.dart'  show Shape;
-import 'package:graphic/src/engine/util/vector2.dart' show Vector2;
+import 'package:graphic/src/engine/container.dart';
+import 'package:graphic/src/engine/cfg.dart';
+import 'package:graphic/src/engine/attrs.dart';
+import 'package:graphic/src/engine/shape.dart' ;
+import 'package:graphic/src/engine/util/vector2.dart';
+import 'package:graphic/src/global.dart';
 
-import 'shape.dart' show ShapeBase, ShapeFactoryBase;
-import 'shape_cfg.dart' show ShapeCfg;
-import '../geom_cfg.dart' show GeomType;
+import 'shape.dart' show ShapeBase, ShapeFactoryBase, ShapeCfg;
+import '../base.dart';
 
 List<Offset> getRectPoints(ShapeCfg cfg) {
   final x = cfg.x;
@@ -84,7 +84,7 @@ List<Shape> drawPolygon(ShapeCfg cfg, Container container, ShapeBase self, Strin
     color: cfg.color,
     points: polygonPoints,
   )
-    ..mix(null)    // TODO: global theme
+    ..mix(Global.theme.shape[GeomType.interval])
     ..mix(cfg.style);
   
   return [container.addShape(Cfg(
@@ -110,7 +110,7 @@ class RectShape extends ShapeBase {
   List<Shape> draw(ShapeCfg cfg, Container container) {
     final points = parsePoints(cfg.points.map((e) => e.first));
     final style = Attrs(color: cfg.color)
-      ..mix(null) // TODO: global theme
+      ..mix(Global.theme.shape[GeomType.interval])
       ..mix(cfg.style);
     if (cfg.isInCircle) {
       var newPoints = [...points];

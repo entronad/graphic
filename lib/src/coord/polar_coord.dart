@@ -1,15 +1,10 @@
-import 'dart:ui' show Offset;
-import 'dart:math' show
-  pi,
-  min,
-  sin,
-  cos;
+import 'dart:ui';
+import 'dart:math';
 
-import 'package:graphic/src/engine/util/matrix.dart' show Matrix;
-import 'package:graphic/src/engine/util/vector2.dart' show Vector2;
+import 'package:graphic/src/engine/util/matrix.dart';
+import 'package:graphic/src/engine/util/vector2.dart';
 
-import 'base.dart' show Coord;
-import 'coord_cfg.dart' show CoordCfg, CoordType;
+import 'base.dart';
 
 class PolarCoord extends Coord {
   PolarCoord(CoordCfg cfg) : super(cfg);

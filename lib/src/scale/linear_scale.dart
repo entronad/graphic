@@ -1,6 +1,5 @@
-import 'base.dart' show Scale;
-import 'scale_cfg.dart' show ScaleCfg, ScaleType;
-import 'auto/number.dart' show numberAuto;
+import 'base.dart';
+import 'auto/number.dart';
 
 class LinearScale extends Scale<double> {
   LinearScale(ScaleCfg<double> cfg) : super(cfg);

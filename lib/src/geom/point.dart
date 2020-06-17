@@ -1,7 +1,6 @@
-import 'base.dart' show Geom;
-import 'geom_cfg.dart' show GeomCfg, GeomType;
-import 'adjust/adjust_cfg.dart' show AdjustType;
-import 'shape/shape.dart' show ShapeFactoryBase;
+import 'base.dart';
+import 'adjust/base.dart';
+import 'shape/shape.dart';
 
 class Point extends Geom {
   Point(GeomCfg cfg) : super(cfg);

@@ -72,9 +72,19 @@ TypedMapMixin时候具有null覆盖默认值的功能？好像是具有的，这
 
 
 
+关于 event、animate、plugin的理解：plugin是f2的重要机制，event、animate的拓展都依赖于它。
+
+
+
+内部的 XXCfg 尽量用级联的构造函数，确保所有字段统一。
+
+
+
 # Attrs, Cfg
 
-将paint 和text
+将paintCfg和TextCfg单独出来搞
+
+deepMix 只处理
 
 ## Element
 
@@ -127,6 +137,16 @@ add 方法仅作添加一个使用的，故不需要做数组的处理了。
 ## Animator
 
 缓动函数采用 curve
+
+f2的动画分为群组动画和精细动画，我们只需要精细动画
+
+f2中是通过原型链为chart 和 shape 等添加 animate 方法的，
+
+动画机制觉得还是采用g中的比较好，进行一定的简化去除暂停功能
+
+f2中动画的onStart, onUpdate, onEnd 感觉比较比较多余，还是和g一样仅保留onFinish
+
+全局对象Animate类似于Shape是一个用来
 
 
 
@@ -319,3 +339,73 @@ getTextAlignInfo先只管textAlign这一个属性
 abstract 中的好几个函数都要传参，但感觉不应该需要传参，直接用 cfg 里的，后面看看为什么
 
 还是把这个 top 加入到 PaintCfg中吧，不过不需要mix到attrs中
+
+## ChartController
+
+感觉plot就是个Rect，不需要单独的类
+
+plot,rangePlot 指的是Rect
+
+fontPlot，middlePlot，backPlot 指的是感觉应该都是Group
+
+感觉plot和rangePlot 一样的，先统一成一个plot
+
+独立的 chart.[geomType]方法改为合并到 addGeom中
+
+chart.coord()方法仅有cfg参数，type包含在其中
+
+render(), repaint() 似乎是给外部用户用的，回头需要看看合理性
+
+DataFilter参数不加index了，dart中针对list的参数一般不带index
+
+## Theme
+
+采用 Theme 为可实例化的类，Global为其实例的形式
+
+scales好像没用，先不搞
+
+padding 为null时是auto，zero为0
+
+shapes、sizes等是作为默认的Attr的
+
+TODO: 要处理好Cfg中非null默认值的问题
+
+## ScaleController
+
+综合使用和性能来看，chart.scale方法的参数为Map<String, ScaleCfg>
+
+_getScaleCfg 这个方法里的的某些条件判断似乎是为了不同形参表准备的，可能存在问题
+
+## AxisController
+
+由于涉及到 circle 的问题，axis position 就先用字符串类型
+
+dimType 似乎只在 AxisController 内部使用，先用字符串类型
+
+TODO: f2中常常强调textAlign 和 textBaseline，要看一看这个 textBaseline 怎么处理
+
+## Chart, ChartState, ChartController, Renderer
+
+一个 ChartState持有一个 chartController，chartController在initRenderer方法中新建一个Renderer，state、controller、renderer三者是一一对应的关系
+
+在参数设置上，将Widget本身就作为一个Cfg
+
+chart的animate可以仅用一个bool，具体的动画具体配置
+
+ChartCfg中的参数名先也用缩写。
+
+绝大部分情况不需要repaint，repaint需要一个标志判断是否触发，这个称为 mounted ,方法mount
+
+ChartCfg 与 ChartControllerCfg 需相互独立开，但需校验一下保证字段对应一致
+
+先按必须手动输入 width，height 的方式来，changeSize系列也回头再研究
+
+renderer的drawInner，bbox可以和group一起合并到container中，paint主要通过drawInner实现
+
+ChartController 作为中间桥梁，renderer
+
+renderer中第一次赋值 _painter 先放到 mount 中
+
+所有主动修改的方法都为 renderer.repaint()
+
+ChartController的构造函数也传入ChartCfg

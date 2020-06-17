@@ -1,8 +1,8 @@
-import 'dart:ui' show Path;
+import 'dart:ui';
 
-import '../cfg.dart' show Cfg;
-import '../attrs.dart' show Attrs;
-import '../shape.dart' show Shape;
+import '../cfg.dart';
+import '../attrs.dart';
+import '../shape.dart';
 
 class Polygon extends Shape {
   Polygon(Cfg cfg) : super(cfg);

@@ -1,19 +1,19 @@
-import 'dart:ui' show Rect;
+import 'dart:ui';
 
-import 'package:graphic/src/util/typed_map_mixin.dart' show TypedMapMixin;
+import 'package:graphic/src/util/typed_map_mixin.dart';
 
-import 'attrs.dart' show Attrs;
-import 'container.dart' show Container;
-import 'element.dart' show Element;
-import 'renderer.dart' show Renderer;
+import 'attrs.dart';
+import 'container.dart';
+import 'element.dart';
+import 'renderer.dart';
 
 class Cfg with TypedMapMixin{
   Cfg({
     String type,
     Attrs attrs,
   }) {
-    this['type'] = type;
-    this['attrs'] = attrs;
+    if (type != null) this['type'] = type;
+    if (attrs != null) this['attrs'] = attrs;
   }
 
   // element cfg

@@ -1,5 +1,4 @@
-import 'base.dart' show Attr;
-import 'attr_cfg.dart' show AttrCfg, AttrType;
+import 'base.dart';
 
 class ShapeAttr extends Attr<String> {
   ShapeAttr(AttrCfg<String> cfg) : super(cfg);

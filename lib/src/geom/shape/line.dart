@@ -1,13 +1,13 @@
-import 'dart:ui' show Offset;
+import 'dart:ui';
 
-import 'package:graphic/src/engine/container.dart' show Container;
-import 'package:graphic/src/engine/cfg.dart' show Cfg;
-import 'package:graphic/src/engine/attrs.dart' show Attrs;
-import 'package:graphic/src/engine/shape.dart'  show Shape;
+import 'package:graphic/src/engine/container.dart';
+import 'package:graphic/src/engine/cfg.dart';
+import 'package:graphic/src/engine/attrs.dart';
+import 'package:graphic/src/engine/shape.dart' ;
+import 'package:graphic/src/global.dart';
 
-import 'shape.dart' show ShapeBase, ShapeFactoryBase;
-import 'shape_cfg.dart' show ShapeCfg;
-import '../geom_cfg.dart' show GeomType;
+import 'shape.dart' show ShapeBase, ShapeFactoryBase, ShapeCfg;
+import '../base.dart';
 
 Attrs getStyle(ShapeCfg cfg) {
   final style = Attrs(
@@ -18,7 +18,7 @@ Attrs getStyle(ShapeCfg cfg) {
   }
   style.mix(cfg.style);
 
-  return Attrs().mix(null).mix(style);   // TODO: global theme
+  return Attrs().mix(Global.theme.shape[GeomType.line]).mix(style);
 }
 
 List<Shape> drawLines(

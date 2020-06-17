@@ -1,7 +1,6 @@
-import 'dart:ui' show Offset;
+import 'dart:ui';
 
-import 'base.dart' show Coord;
-import 'coord_cfg.dart' show CoordCfg, CoordType;
+import 'base.dart';
 
 class RectCoord extends Coord {
   RectCoord(CoordCfg cfg) : super(cfg);

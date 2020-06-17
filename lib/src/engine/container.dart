@@ -1,7 +1,11 @@
-import 'cfg.dart' show Cfg;
-import 'element.dart' show Element;
-import 'shape.dart' show Shape;
-import 'group.dart' show Group;
+import 'dart:ui';
+import 'dart:math';
+
+import 'cfg.dart';
+import 'element.dart';
+import 'shape.dart';
+import 'group.dart';
+import 'util/vector2.dart';
 
 Comparator<Element> getComparer(Comparator<Element> compare) =>
   (left, right) {
@@ -14,6 +18,50 @@ abstract class Container extends Element {
 
   List<Element> get children => cfg.children;
 
+  @override
+  void drawInner(Canvas canvas, Size size) {
+    for (var child in children) {
+      child.paint(canvas, size);
+    }
+  }
+
+  @override
+  Rect get bbox {
+    var minX = double.infinity;
+    var maxX = double.negativeInfinity;
+    var minY = double.infinity;
+    var maxY = double.negativeInfinity;
+    for (var child in children) {
+      if (child.cfg.visible) {
+        final bbox = child.bbox;
+        if (bbox == null) {
+          continue;
+        }
+
+        final topLeft = Vector2.fromOffset(bbox.topLeft);
+        final bottomLeft = Vector2.fromOffset(bbox.bottomLeft);
+        final topRight = Vector2.fromOffset(bbox.topRight);
+        final bottomRight = Vector2.fromOffset(bbox.bottomRight);
+        final matrix = child.attrs.matrix;
+
+        topLeft.transformMat2d(matrix);
+        bottomLeft.transformMat2d(matrix);
+        topRight.transformMat2d(matrix);
+        bottomRight.transformMat2d(matrix);
+
+        final candidatesX = [topLeft.x, bottomLeft.x, topRight.x, bottomRight.x, minX, maxX];
+        final candidatesY = [topLeft.y, bottomLeft.y, topRight.y, bottomRight.y, minY, maxY];
+
+        minX = candidatesX.reduce(min);
+        maxX = candidatesX.reduce(max);
+        minY = candidatesY.reduce(min);
+        maxY = candidatesY.reduce(max);
+      }
+    }
+
+    return Rect.fromLTRB(minX, minY, maxX, maxY);
+  }
+
   Shape addShape(Cfg cfg) {
     final type = cfg.type;
     final creator = Shape.creators[type];
@@ -22,7 +70,8 @@ abstract class Container extends Element {
     return shape;
   }
 
-  Group addGroup(Cfg cfg) {
+  Group addGroup([Cfg cfg]) {
+    cfg = cfg ?? Cfg();
     cfg.renderer = this.cfg.renderer;
     cfg.parent = this;
     final group = Group(cfg);

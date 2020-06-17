@@ -1,9 +1,9 @@
-import 'dart:ui' show Path, Offset, Rect;
+import 'dart:ui';
 
-import '../cfg.dart' show Cfg;
-import '../attrs.dart' show Attrs;
-import '../shape.dart' show Shape;
-import '../util/smooth.dart' as smooth_util show smooth;
+import '../cfg.dart';
+import '../attrs.dart';
+import '../shape.dart';
+import '../util/smooth.dart' as smooth_util;
 
 List<Offset> _filterPoints(List<Offset> points) {
   final filteredPoints = <Offset>[];

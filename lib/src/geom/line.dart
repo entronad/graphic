@@ -1,9 +1,7 @@
-import 'base.dart' show Geom;
-import 'geom_cfg.dart' show GeomCfg, GeomType;
-import 'shape/shape_cfg.dart' show ShapeCfg;
-import 'adjust/adjust_cfg.dart' show AdjustType;
-import 'shape/shape.dart' show ShapeFactoryBase;
-import 'shape/util.dart' show spliteArray, splitPoints;
+import 'base.dart';
+import 'shape/shape.dart';
+import 'adjust/base.dart';
+import 'shape/util.dart';
 
 class Line extends Geom {
   Line(GeomCfg cfg) : super(cfg);

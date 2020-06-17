@@ -1,7 +1,6 @@
-import 'dart:ui' show Color;
+import 'dart:ui';
 
-import 'base.dart' show Attr;
-import 'attr_cfg.dart' show AttrCfg, AttrType;
+import 'base.dart';
 
 class ColorAttr extends Attr<Color> {
   ColorAttr(AttrCfg<Color> cfg) : super(cfg);

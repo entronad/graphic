@@ -1,5 +1,4 @@
-import 'base.dart' show Adjust;
-import 'adjust_cfg.dart' show AdjustCfg;
+import 'base.dart';
 
 class Stack extends Adjust {
   Stack(AdjustCfg cfg) : super(cfg);

@@ -1,4 +1,4 @@
-import 'dart:math' as math show min, max;
+import 'dart:math' as math;
 
 import './util.dart';
 

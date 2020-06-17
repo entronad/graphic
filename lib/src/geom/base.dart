@@ -1,24 +1,28 @@
-import 'dart:math' show max, min;
-import 'dart:ui' show Offset;
+import 'dart:math';
+import 'dart:ui';
 
-import 'package:graphic/src/base.dart' show Base;
-import 'package:graphic/src/engine/event/event_emitter.dart' show EventEmitter;
-import 'package:graphic/src/util/field.dart' show parseField;
-import 'package:graphic/src/scale/base.dart' show Scale;
-import 'package:graphic/src/scale/scale_cfg.dart' show ScaleCfg, ScaleType;
-import 'package:graphic/src/scale/time_cat_scale.dart' show TimeCatScale;
-import 'package:graphic/src/attr/attr_cfg.dart' show AttrType, AttrCfg;
-import 'package:graphic/src/attr/base.dart' show Attr;
-import 'package:graphic/src/geom/adjust/base.dart' show Adjust;
-import 'package:graphic/src/geom/adjust/adjust_cfg.dart' show AdjustType, AdjustCfg;
-import 'package:graphic/src/util/array.dart' show group, flattern;
-import 'package:graphic/src/coord/coord_cfg.dart' show CoordType;
-import 'package:graphic/src/engine/attrs.dart' show Attrs;
-import 'package:graphic/src/engine/container.dart' show Container;
+import 'package:graphic/src/base.dart';
+import 'package:graphic/src/engine/event/event_emitter.dart';
+import 'package:graphic/src/util/field.dart';
+import 'package:graphic/src/scale/base.dart';
+import 'package:graphic/src/scale/time_cat_scale.dart';
+import 'package:graphic/src/attr/base.dart';
+import 'package:graphic/src/geom/adjust/base.dart';
+import 'package:graphic/src/util/collection.dart';
+import 'package:graphic/src/coord/base.dart';
+import 'package:graphic/src/engine/attrs.dart';
+import 'package:graphic/src/engine/container.dart';
+import 'package:graphic/src/global.dart';
+import 'package:graphic/src/util/typed_map_mixin.dart';
+import 'package:graphic/src/chart/chart_controller.dart';
 
-import 'geom_cfg.dart' show GeomCfg, StyleOption;
-import 'shape/shape.dart' show Shape, ShapeFactoryBase;
-import 'shape/shape_cfg.dart' show ShapeCfg;
+import 'shape/shape.dart';
+import 'area.dart';
+import 'interval.dart';
+import 'line.dart';
+import 'point.dart';
+import 'polygon.dart';
+import 'schema.dart';
 
 // Datum Map<String, Object>
 // aditional keys: 'x', 'y', 'points', 'nextPoints', '_origin', '_originY'
@@ -29,7 +33,137 @@ const groupAttrs = [
   AttrType.shape,
 ];
 
+class StyleOption {
+  StyleOption({this.field, this.style});
+
+  String field;
+
+  Attrs style;
+}
+
+enum GeomType {
+  area,
+  interval,
+  line,
+  point,
+  polygon,
+  schema,
+}
+
+class GeomCfg with TypedMapMixin {
+  GeomCfg({
+    GeomType type,
+    bool generatePoints,
+    bool sortable,
+    bool startOnZero,
+    bool connectNulls,
+
+    AttrCfg<double> position,
+    AttrCfg<double> size,
+    AttrCfg<Color> color,
+    AttrCfg<String> shape,
+    
+    AdjustCfg adjust,
+    StyleOption styleOption,
+    // TODO: animation
+  }) {
+    if (type != null) this['type'] = type;
+    if (generatePoints != null) this['generatePoints'] = generatePoints;
+    if (sortable != null) this['sortable'] = sortable;
+    if (startOnZero != null) this['startOnZero'] = startOnZero;
+    if (connectNulls != null) this['connectNulls'] = connectNulls;
+
+    this['attrOptions'] = {
+      AttrType.position: position,
+      AttrType.size: size,
+      AttrType.color: color,
+      AttrType.shape: shape,
+    };
+
+    if (adjust != null) this['adjust'] = adjust;
+    if (styleOption != null) this['styleOption'] = styleOption;
+  }
+
+  bool get destroyed => this['destroyed'] as bool ?? false;
+  set destroyed(bool value) => this['destroyed'] = value;
+
+  GeomType get type => this['type'] as GeomType;
+  set type(GeomType value) => this['type'] = value;
+
+  List<Map<String, Object>> get data => this['data'] as List<Map<String, Object>>;
+  set data(List<Map<String, Object>> value) => this['data'] = value;
+
+  List<List<Map<String, Object>>> get dataArray => this['dataArray'] as List<List<Map<String, Object>>>;
+  set dataArray(List<List<Map<String, Object>>> value) => this['dataArray'] = value;
+
+  Map<AttrType, Attr> get attrs => this['attrs'] as Map<AttrType, Attr>;
+  set attrs(Map<AttrType, Attr> value) => this['attrs'] = value;
+
+  Map<AttrType, AttrCfg> get attrOptions => this['attrOptions'] as Map<AttrType, AttrCfg>;
+  set attrOptions(Map<AttrType, AttrCfg> value) => this['attrOptions'] = value;
+
+  Map<String, Scale> get scales => this['scales'] as Map<String, Scale>;
+  set scales(Map<String, Scale> value) => this['scales'] = value;
+
+  Container get container => this['container'] as Container;
+  set container(Container value) => this['container'] = value;
+
+  AdjustCfg get adjust => this['adjust'] as AdjustCfg;
+  set adjust(AdjustCfg value) => this['adjust'] = value;
+
+  StyleOption get styleOption => this['styleOption'] as StyleOption;
+  set styleOption(StyleOption value) => this['styleOption'] = value;
+
+  ChartController get chart => this['chart'] as ChartController;
+  set chart(ChartController value) => this['chart'] = value;
+
+  bool get generatePoints => this['generatePoints'] as bool ?? false;
+  set generatePoints(bool value) => this['generatePoints'] = value;
+
+  bool get sortable => this['sortable'] as bool ?? false;
+  set sortable(bool value) => this['sortable'] = value;
+
+  bool get hasSorted => this['hasSorted'] as bool ?? false;
+  set hasSorted(bool value) => this['hasSorted'] = value;
+
+  bool get startOnZero => this['startOnZero'] as bool ?? false;
+  set startOnZero(bool value) => this['startOnZero'] = value;
+
+  bool get visible => this['visible'] as bool ?? false;
+  set visible(bool value) => this['visible'] = value;
+
+  bool get connectNulls => this['connectNulls'] as bool ?? false;
+  set connectNulls(bool value) => this['connectNulls'] = value;
+
+  bool get ignoreEmptyGroup => this['ignoreEmptyGroup'] as bool ?? false;
+  set ignoreEmptyGroup(bool value) => this['ignoreEmptyGroup'] = value;
+
+  Map<String, ScaleCfg> get colDefs => this['colDefs'] as Map<String, ScaleCfg>;
+  set colDefs(Map<String, ScaleCfg> value) => this['colDefs'] = value;
+
+  Coord get coord => this['coord'] as Coord;
+  set coord(Coord value) => this['coord'] = value;
+
+  ShapeFactoryBase get shapeFactory => this['shapeFactory'] as ShapeFactoryBase;
+  set shapeFactory(ShapeFactoryBase value) => this['shapeFactory'] = value;
+
+  double get width => this['width'] as double;
+  set width(double value) => this['width'] = value;
+
+  double get defaultSize => this['defaultSize'] as double;
+  set defaultSize(double value) => this['defaultSize'] = value;
+}
+
 abstract class Geom extends Base<GeomCfg> with EventEmitter {
+  static final Map<GeomType, Geom Function(GeomCfg)> creators = {
+    GeomType.area: (GeomCfg cfg) => Area(cfg),
+    GeomType.interval: (GeomCfg cfg) => Interval(cfg),
+    GeomType.line: (GeomCfg cfg) => Line(cfg),
+    GeomType.point: (GeomCfg cfg) => Point(cfg),
+    GeomType.polygon: (GeomCfg cfg) => Polygon(cfg),
+    GeomType.schema: (GeomCfg cfg) => Schema(cfg),
+  };
+
   Geom(GeomCfg cfg) : super(cfg) {
     // TODO: init attr
   }
@@ -637,14 +771,14 @@ abstract class Geom extends Base<GeomCfg> with EventEmitter {
     _setAttrOption(AttrType.position, cfg);
 
   void color(AttrCfg cfg) =>
-    _createAttrOption(AttrType.color, cfg, null);    // TODO: global theme
+    _createAttrOption(AttrType.color, cfg, Global.theme.colors);
 
   void size(AttrCfg cfg) =>
-    _createAttrOption(AttrType.size, cfg, null);    // TODO: global theme
+    _createAttrOption(AttrType.size, cfg, Global.theme.sizes);
   
   void shape(AttrCfg cfg) {
     final type = cfg.type;
-    final shapes = <String>[];    // TODO: global theme
+    final shapes = Global.theme.shapes[type] ?? <String>[];
     _createAttrOption(AttrType.shape, cfg, shapes);
   }
 

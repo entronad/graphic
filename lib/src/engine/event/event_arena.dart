@@ -1,6 +1,6 @@
-import 'dart:ui' show Offset;
+import 'dart:ui';
 
-import 'package:flutter/gestures.dart' show PointerEvent, ScaleUpdateDetails;
+import 'package:flutter/gestures.dart';
 
 enum EventType {
   tapDown,
@@ -47,7 +47,7 @@ const touchDelay = Duration(milliseconds: 250);
 const panBias = 10;
 const tapBias = 10;
 
-enum _ListenerEventType {
+enum ListenerEventType {
   pointerDown,
   pointerMove,
   pointerUp,
@@ -58,10 +58,10 @@ enum _ListenerEventType {
   triggerTouch,
 }
 
-class _ListenerEvent {
-  _ListenerEvent(this.type, this.pointerEvent);
+class ListenerEvent {
+  ListenerEvent(this.type, this.pointerEvent);
 
-  final _ListenerEventType type;
+  final ListenerEventType type;
 
   final PointerEvent pointerEvent;
 }
@@ -98,27 +98,27 @@ class EventArena {
 
   void removeAllEventListener() => _callbacksMap.clear();
 
-  void emit(_ListenerEvent listenerEvent) {
+  void emit(ListenerEvent listenerEvent) {
     switch (listenerEvent.type) {
-      case _ListenerEventType.pointerDown:
+      case ListenerEventType.pointerDown:
         _onPointerDown(listenerEvent.pointerEvent);
         break;
-      case _ListenerEventType.pointerMove:
+      case ListenerEventType.pointerMove:
         _onPointerMove(listenerEvent.pointerEvent);
         break;
-      case _ListenerEventType.pointerUp:
+      case ListenerEventType.pointerUp:
         _onPointerUp(listenerEvent.pointerEvent);
         break;
-      case _ListenerEventType.pointerCancel:
+      case ListenerEventType.pointerCancel:
         _onPointerCancel(listenerEvent.pointerEvent);
         break;
-      case _ListenerEventType.pointerSignal:
+      case ListenerEventType.pointerSignal:
         _onPointerSignal(listenerEvent.pointerEvent);
         break;
-      case _ListenerEventType.triggerTap:
+      case ListenerEventType.triggerTap:
         _onTriggerTap(listenerEvent.pointerEvent);
         break;
-      case _ListenerEventType.triggerTouch:
+      case ListenerEventType.triggerTouch:
         _onTriggerTouch(listenerEvent.pointerEvent);
         break;
       default:
@@ -283,12 +283,12 @@ class EventArena {
 
   void _waitForTap(PointerEvent pointerEvent) async {
     await Future.delayed(tapDelay);
-    emit(_ListenerEvent(_ListenerEventType.triggerTap, pointerEvent));
+    emit(ListenerEvent(ListenerEventType.triggerTap, pointerEvent));
   }
 
   void _waitForTouch(PointerEvent pointerEvent) async {
     await Future.delayed(touchDelay);
-    emit(_ListenerEvent(_ListenerEventType.triggerTouch, pointerEvent));
+    emit(ListenerEvent(ListenerEventType.triggerTouch, pointerEvent));
   }
 
   void _applyCallbacks(

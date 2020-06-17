@@ -1,9 +1,9 @@
-import 'dart:math' show pi;
-import 'dart:ui' show Path, Rect, Offset;
+import 'dart:math';
+import 'dart:ui';
 
-import '../cfg.dart' show Cfg;
-import '../attrs.dart' show Attrs;
-import '../shape.dart' show Shape;
+import '../cfg.dart';
+import '../attrs.dart';
+import '../shape.dart';
 
 class Arc extends Shape {
   Arc(Cfg cfg) : super(cfg);

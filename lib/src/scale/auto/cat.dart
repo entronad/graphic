@@ -1,4 +1,4 @@
-import 'dart:math' show min;
+import 'dart:math';
 
 const _maxCount = 8;
 const _subCount = 4;

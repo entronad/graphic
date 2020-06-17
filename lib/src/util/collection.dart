@@ -1,3 +1,5 @@
+import 'typed_map_mixin.dart';
+
 List<Map<String, Object>> flattern(List<List<Map<String, Object>>> dataArray) {
   final rst = <Map<String, Object>>[];
   for (var data in dataArray) {
@@ -65,6 +67,67 @@ List<T> uniq<T>(List<T> arr) {
   for (var item in arr) {
     if (!rst.contains(item)) {
       rst.add(item);
+    }
+  }
+  return rst;
+}
+
+void deepMix(Map dist, Map src, [int level = 0]) {
+  const maxLevel = 5;
+  for (final key in src.keys) {
+    final value = src[key];
+    if (value is Map) {
+      if (!(dist[key] is Map)) {
+        dist[key] = {};
+      }
+      if (level < maxLevel) {
+        deepMix(dist[key], value, level + 1);
+      } else {
+        dist[key] = src[key];
+      }
+    } else if(value is TypedMapMixin) {
+      dist[key] = dist[key].deepMix(value);
+    } else if(value is List) {
+      dist[key] = [...value];
+    } else if(value != null) {
+      dist[key] = value;
+    }
+  }
+}
+
+Object firstValue(List<Map<String, Object>> data, String name) {
+  Object rst;
+  for (var obj in data) {
+    final value = obj[name];
+    if (value != null) {
+      if (value is List) {
+        rst = value.first;
+      } else {
+        rst = value;
+      }
+      break;
+    }
+  }
+  return rst;
+}
+
+List values(List<Map<String, Object>> data, String name) {
+  final rst = [];
+  final tmpMap = <Object, bool>{};
+  for (var obj in data) {
+    final value = obj[name];
+    if (value != null) {
+      if (!tmpMap[value]) {
+        rst.add(value);
+        tmpMap[value] = true;
+      }
+    } else {
+      for (var val in value) {
+        if (!tmpMap[val]) {
+          rst.add(val);
+          tmpMap[val] = true;
+        }
+      }
     }
   }
   return rst;

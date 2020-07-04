@@ -484,7 +484,7 @@ chart和controller的沟通应该不应该保留renderer
 
 必须要props的理由：
 
-存在大量“仅保存props”，“追加混入props”的理由
+存在大量“仅保存props”，“追加混入props”的需求
 
 严格区分props和cfg，cfg是immutable的
 
@@ -513,6 +513,26 @@ engine中destroy方法的作用：1. 从父节点上移除自身，2.解除对�
 关于remove方法，就是简单的解除在父元素中的引用，因此element中就是从parent.children中remove，而container的clear方法就是children.clear()
 
 将group和container合并，称为group
+
+diff感觉仅仅cfg需要用到
+
+clip我感觉仅需要path就行了，顶多设置的时候可以以Attrs为参数，而且它的形变应该和它本身的形变一致，这样Element 也不需要额外的setClip方法了，clip设置直接也用attr()方法
+
+由于dart中的构造函数不可继承，所以感觉对于仅给参数赋值的构造函数，并不需要在抽象类中实现
+
+所有有可实例化子类的Component的type也在props里，RenderShape的类型是由Attrs决定的，故要增添个加到props里的方法
+
+对于子类普遍需要实现的方法，应该父类方法抽象，特殊的子类去空实现。防止误写super.xxx()
+
+所有props中的集合类型成员的处理有两种原则：一是初始化时就默认有个空数组，使用时无需判断null，还有一种是默认为null，仅在添加第一个元素是没有就创建，使用时无需判断null。我们采用第一种，因为f2总体也用的第一种，需要用null的几种情况感觉也主要是attrs和cfg需要
+
+flutter/painting 中似乎又有dart:ui又有vector_math,不过我们现在还是仅在小范围使用
+
+判断1矩阵还用 == 吧，比较直观，不差那点性能
+
+canvas的transform是应用到绘制完的图形上的，而path的transform仅作用到路径上，即path的变形不会影响线宽等表现。
+
+我总的来讲还是使用canvas的变形，bbox的计算粗略一点。
 
 
 

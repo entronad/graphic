@@ -11,6 +11,10 @@
   1.不得出现值为null的记录，这点通过 setter、 构造函数、赋值运算符进行确保
 
   2.b中出现的记录覆盖a中的记录（不管a有没有），b中未出现的和a一致
+  
+- deepMix的定义：其它直接mix，map和TypedMap混入
+
+- typedMap.deepMix 和 map_util.deepMix 都有可能含有混入值的引用
 
 **members**
 
@@ -28,7 +32,11 @@
 
 `void operator []=(String k, Object v)`
 
-## Component<P extends TypedMap, C extends TypedMap>
+`bool operator ==(Object other)`
+
+这其实就是diff方法，规则，遇到Map和Iterable就遍历
+
+## Component<P extends TypedMap>
 
 *abstract*
 
@@ -43,9 +51,9 @@
 
 **constructors**
 
-`Component([C cfg])`
+`Component([TypedMap cfg])`
 
-将defaultProps赋值给props，并混入cfg，cfg为可选的
+将defaultProps赋值给props，并混入cfg，cfg为可选的，且类型随意，重点是混入的过程
 
 **methods**
 

@@ -10,7 +10,7 @@
 
 `A attrs`
 
-渲染属性，由于container也需要clip、matrix等，因此attrs放在基类中
+渲染属性，由于group也需要clip、matrix等，因此attrs放在基类中
 
 `int zIndex`
 
@@ -20,7 +20,7 @@
 
 是否可见
 
-`Container parent`
+`Group parent`
 
 渲染树中的父节点
 
@@ -40,7 +40,7 @@
 
 **entries**
 
-`RenderShape clip`
+`Path clip`
 
 裁剪
 
@@ -54,11 +54,19 @@
 
 **notes**
 
+**constructor**
+
+将props中的attrs设为defaultAttrs混入cfg.attrs
+
 **methods**
 
 `A get attrs`
 
-获取attrs的访问器
+直接获取attrs的访问器
+
+`set attrs(A attrs)`
+
+直接设置attrs的访问器
 
 `A get defaultAttrs`
 
@@ -70,11 +78,7 @@
 
 `Rect get bbox`
 
-获取包围盒
-
-`Plot setClip(Attrs)`
-
-根据Attrs新建一个Plot，将其isClip设为true
+获取包围盒，无论是shape还是group，我们需要的包围盒是变形之后的，所以在计算包围盒时就需要加上变形，为求精确，我们全部用变形法。
 
 `void paint(Canvas canvas)`
 
@@ -108,7 +112,7 @@ canvas.restore()
 
 旋转
 
-`void scale(double sx, double sy)`
+`void scale(double x, double y)`
 
 拉伸
 
@@ -154,7 +158,7 @@ paint 相关的，默认值与paint相同
 
 复用避免反复重建
 
-`final Paint _paintStyle`
+`final Paint _stylePaint`
 
 复用避免反复重建
 
@@ -164,7 +168,7 @@ paint 相关的，默认值与paint相同
 
 重置、create、返回 _path
 
-`Paint get paintStyle`
+`Paint get stylePaint`
 
 将attrs应用到 _paintStyle 并返回
 
@@ -184,13 +188,15 @@ canvas.drawPath
 
 创建path的方法，会传入重置好的 _path ，由各子类实现
 
+## GroupProps extends ElementProps<ElementAttrs>
+
+**entries**
+
+`List<Element> children`
+
 ## Group extends Element
 
 **methods**
-
-`Rect get bbox`
-
-根据子元素和变形进行相应的计算
 
 `RenderShape addShape(RenderShapeAttrs attrs)`
 
@@ -199,6 +205,12 @@ canvas.drawPath
 `Group addGroup()`
 
 新建并添加分组
+
+`void _add(Element element)`
+
+将元素挂载到渲染树上，f2中还要移除this同级的element，不知道为什么，先不弄，也先不设置renderer
+
+初始化时的空children已经确保了children不为空
 
 `void sort()`
 

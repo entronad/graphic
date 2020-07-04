@@ -12,6 +12,7 @@ dependencies:
     sdk: flutter
   vector_math: ^2.0.8
   intl: ^0.16.1
+  meta: ^1.1.8
 
 dev_dependencies:
   flutter_test:

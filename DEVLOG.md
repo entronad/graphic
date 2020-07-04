@@ -80,6 +80,10 @@ TypedMapMixin时候具有null覆盖默认值的功能？好像是具有的，这
 
 
 
+TypedMapMixin 需要一个与Map连接的方法，此方法只可以set，不可以mix，只有TypedMapMixin可以mix，先不加，但感觉会需要用到
+
+
+
 # Attrs, Cfg
 
 将paintCfg和TextCfg单独出来搞
@@ -328,6 +332,8 @@ _normalizeValues 中对单一值和数组的处理似乎就是x y类型的根源
 
 line中的drawData在获取points时需要用到splitePoints的艺能
 
+在 _createAttr方法中，geom将scales传给了它的attr
+
 ## Axis
 
 结合guide来看，top还是单独做一个参数好
@@ -339,6 +345,8 @@ getTextAlignInfo先只管textAlign这一个属性
 abstract 中的好几个函数都要传参，但感觉不应该需要传参，直接用 cfg 里的，后面看看为什么
 
 还是把这个 top 加入到 PaintCfg中吧，不过不需要mix到attrs中
+
+createAxis方法中循环的时候new Axis但不返回好像是因为 Axis的构造函数里有draw()，但在我们的架构下这样行不行？
 
 ## ChartController
 
@@ -409,3 +417,113 @@ renderer中第一次赋值 _painter 先放到 mount 中
 所有主动修改的方法都为 renderer.repaint()
 
 ChartController的构造函数也传入ChartCfg
+
+
+
+
+
+f2的element中的attrs的初始化不太好，感觉就用最朴素的方法的就可以了
+
+
+
+1. 引擎和controller分离
+2. paint 和 addShape 分离
+3. component 持有关系需厘清
+
+
+
+采用"同位参数"的方式解决参数类型的灵活性：
+
+目前好像就一个地方：padding 和 autoPadding 的地方，内部 assert 不能同时存在以提示使用
+
+插件注册通过同位参数传入 creator的方式处理
+
+有限改造内容：
+
+1.实体名称：XXX, XXXComponent
+
+2.坐标 Rect 改为 Cartesian
+
+3.参数泛型
+
+4.同位参数
+
+5.shape的register机制改为传入creator的同位参数
+
+6.Component和Renderer职责分离
+
+7.theme放到chart参数中
+
+8.Datum的读取
+
+package:meta/meta.dart 中的 protected, required 注解很有用 
+
+
+
+命名改动：绘图引擎称为 engine ，因为它既是一个与chart业务无关，又是抽象的不是flutter渲染机制的东西，它提供实际的 painter , repaint 函数
+
+所有的东西称为 XXXComponent，XXXProps，XXXCfg，chart中XXXCfg 直接称为XXX 为方便用户使用，
+
+Chart本身的参数直接用命名参数，不打包成对象，主要是为了接口更简洁更符合常例
+
+engine中尽量使用Renderer的词汇，（painter容易与系统混淆），chart中尽量使用Component，Controller的词汇
+
+cfg，props，delegate可能要分开，感觉delegate名字比renderer好，因为不是所有的都要render，比如attr，coord，scale
+
+
+
+通过CustomXXXChildLayout 和 XXXChildLayoutDelegate 可以设置和获取子元素的位置、大小，解决自动布局问题，chart不再有width、height参数，通过父元素限制，也一定是autoFit
+
+chart和controller的沟通应该不应该保留renderer
+
+方位使用 Alignment 表示
+
+事件分为Gesture、LifeCicle，分别管理
+
+需要研究一下是否需要props，从为什么要props的角度考虑（构造函数可以不用参数，是否需要clone？遍历props）
+
+必须要props的理由：
+
+存在大量“仅保存props”，“追加混入props”的理由
+
+严格区分props和cfg，cfg是immutable的
+
+engine中的attrs方法依然叫这个吧，因为主流引擎都叫这个
+
+engine中的shape改名为RenderShape
+
+所有element都需要attrs，因为有clip，matrix等container也需要
+
+engine中destroy方法的作用：1. 从父节点上移除自身，2.解除对当前props的引用，改为一个只有destroyed = true的props。
+
+我觉得我们没有必要有此 destroy方法和destroyed 类，只要有remove就行了，此外renderer要有一个一定会被执行的dipose方法，在widget的dipose中调用，处理ticker等东西
+
+暂时不觉得element里需要renderer
+
+凡是构建RenderShape的函数，都只需要Attrs，并以Attrs的类型确定RenderShape类型
+
+给component设置访问器需审慎，尽量直接通过props操作
+
+对于matrix不搞transaction这一套东西了
+
+变形还是用回Matrix4吧
+
+所有方法要有意识的确定是归于“设置”还是“执行”
+
+关于remove方法，就是简单的解除在父元素中的引用，因此element中就是从parent.children中remove，而container的clear方法就是children.clear()
+
+将group和container合并，称为group
+
+
+
+## API
+
+api 中的类使用段名字，实体类加后缀
+
+笛卡尔坐标系用 Cartesian
+
+数据感觉还是要采用List<Datum>的形式，并需要 fieldMapper
+
+允许用户输入的数值泛型应当是 num, 然后内部需要double的时候用 num.toDouble
+
+!!!: 泛型是很重要的，但要用好

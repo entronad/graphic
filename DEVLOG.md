@@ -420,6 +420,20 @@ ChartController的构造函数也传入ChartCfg
 
 
 
+## API
+
+api 中的类使用段名字，实体类加后缀
+
+笛卡尔坐标系用 Cartesian
+
+数据感觉还是要采用List<Datum>的形式，并需要 fieldMapper
+
+允许用户输入的数值泛型应当是 num, 然后内部需要double的时候用 num.toDouble
+
+!!!: 泛型是很重要的，但要用好
+
+
+
 
 
 f2的element中的attrs的初始化不太好，感觉就用最朴素的方法的就可以了
@@ -534,16 +548,52 @@ canvas的transform是应用到绘制完的图形上的，而path的transform仅�
 
 我总的来讲还是使用canvas的变形，bbox的计算粗略一点。
 
+给本文件内的类使用的函数，命名为内部函数
 
+smooth的时候constraint为什么是1,1？
 
-## API
+由于TextSpan, TextStyle, StrutStyle 都定义了等号，可不拆开来，拆开来太麻烦了
 
-api 中的类使用段名字，实体类加后缀
+同位参数的检查仅在构造函数中使用，原则上只防外部使用者
 
-笛卡尔坐标系用 Cartesian
+引擎的基本架构思路是，以attrs为渲染的基础，用attr()方法会触发重算，需要重算的放在onAttr中
 
-数据感觉还是要采用List<Datum>的形式，并需要 fieldMapper
+~~尽量避免父类中出现空的方法体，这是为了避免是否需要调用super.xx()父类方法时困扰，同时实现时起到提醒的作用，不过这样做如果父类的方法要实现了，记得思考下子类要不要加super.xx()~~
 
-允许用户输入的数值泛型应当是 num, 然后内部需要double的时候用 num.toDouble
+原则上有返回值的函数，父类不要有空的函数体（返回null）；没有返回值的函数可以有空的方法体，子类加上super.xx()
 
-!!!: 泛型是很重要的，但要用好
+zIndex 和什么时候排序需要再研究一下。
+
+不想为空的属性尽量通过在构造函数中的required规约，减少不必要的默认值赋值，仅规约用户的行为
+
+通过path.getBounds 计算bbox，在弧线设置了startAngle的时候、贝塞尔曲线段数多了之后会有误差
+
+polyline中是否需要filterPoints 存疑？
+
+smooth方法中，points的很多点要重复用到，先转换好避免重复转换
+
+coord的scale貌似从来没有被用到，先不管
+
+区分x、y两个维度变量的命名采用 xxX, xxY
+
+更新的本质是有一些props关联依赖于另一个的props，而又不希望每次取用时重新计算，类似于缓存，只有当props改变时通知重新计算，这类要注意一点就是props要是比较“基本的”，不是很引用的变了不会通知到，比如children。
+
+取消attrs，只要props，
+
+取名props，state，component更接近react
+
+不需要作为state的要么做成内部变量，关联变量，要么做成getter
+
+外界要想触发重算，需通过setState，或add等方法
+
+内部全部或某个方法需要改变的，用
+
+state的标准：外部要设置/访问，持久化存储，不可由其他state推导出
+
+type一律在子类中写死getter，不属于state，props中有
+
+输入参数的校验尽量在props中用required，但如果必须参数不出现在props中，则在component的构造函数校验，构造函数的输入都为任意typedMap，不与props有类型上的联系
+
+update 内部使用和外部使用还需要考虑一下
+
+所有cache尽量用内部变量加getter的方式获取，防止修改

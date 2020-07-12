@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'home.dart';
-import 'pages/basic.dart';
+import 'pages/render_shape.dart';
 
 final routes = {
   '/': (context) => HomePage(),
-  '/demos/basic': (context) => Basic(),
+  '/demos/render_shape': (context) => RenderShape(),
 };
 
 class MyApp extends StatelessWidget {

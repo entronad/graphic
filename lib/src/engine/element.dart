@@ -3,28 +3,19 @@ import 'dart:ui';
 import 'package:meta/meta.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:graphic/src/common/typed_map.dart';
-import 'package:graphic/src/common/component.dart';
+import 'package:graphic/src/common/base_classes.dart';
 
 import 'group.dart';
 
-// Also used by instantiable subclass Group, so not abstract.
-class ElementAttrs with TypedMap {
+abstract class ElementState with TypedMap {
   Path get clip => this['clip'] as Path;
   set clip(Path value) => this['clip'] = value;
 
   Matrix4 get matrix => this['matrix'] as Matrix4;
   set matrix(Matrix4 value) => this['matrix'] = value;
-}
-
-abstract class ElementProps<A extends ElementAttrs> with TypedMap {
-  A get attrs => this['attrs'] as A;
-  set attrs(A value) => this['attrs'] = value;
 
   int get zIndex => this['zIndex'] as int;
   set zIndex(int value) => this['zIndex'] = value;
-
-  int get siblingIndex => this['siblingIndex'] as int;
-  set siblingIndex(int value) => this['siblingIndex'] = value;
 
   bool get visible => this['visible'] as bool ?? false;
   set visible(bool value) => this['visible'] = value;
@@ -33,43 +24,21 @@ abstract class ElementProps<A extends ElementAttrs> with TypedMap {
   set parent(Group value) => this['parent'] = value;
 }
 
-abstract class Element<P extends ElementProps, A extends ElementAttrs> extends Component<P> {
-  Element([TypedMap cfg]) : super(cfg) {
-    attrs = originalAttrs;
-    initDefaultAttrs();
-    if (cfg != null) {
-      attrs.mix(cfg['attrs'] as TypedMap);
-    }
-
-    if (attrs.matrix == null) {
-      attrs.matrix = Matrix4.identity();
-    }
-  }
+abstract class Element<S extends ElementState> extends Component<S> {
+  Element([TypedMap props]) : super(props);
   
   @override
-  void initDefaultProps() {
-    props.zIndex = 0;
-    props.visible = true;
-  }
-  
-  A get attrs => props.attrs;
-
-  set attrs(A attrs) => props.attrs = attrs;
-
-  @protected
-  A get originalAttrs;
-
-  @protected
-  void initDefaultAttrs() {}
-
-  void attr(A attrs) {
-    this.attrs.mix(attrs);
+  void initDefaultState() {
+    super.initDefaultState();
+    state
+      ..zIndex = 0
+      ..visible = true;
   }
 
   Rect get bbox;
 
   void paint(Canvas canvas) {
-    if (!props.visible) {
+    if (!state.visible) {
       return;
     }
 
@@ -81,13 +50,15 @@ abstract class Element<P extends ElementProps, A extends ElementAttrs> extends C
   void _setCanvas(Canvas canvas) {
     canvas.save();
 
-    final matrix = attrs.matrix;
+    final matrix = state.matrix;
     if (matrix != Matrix4.identity()) {
       canvas.transform(matrix.storage);
     }
 
-    final clip = attrs.clip;
-    canvas.clipPath(clip);
+    final clip = state.clip;
+    if (clip != null) {
+      canvas.clipPath(clip);
+    }
   }
 
   @protected
@@ -98,7 +69,7 @@ abstract class Element<P extends ElementProps, A extends ElementAttrs> extends C
   }
 
   void remove() {
-    final siblings = props.parent?.props?.children;
+    final siblings = state.parent?.state?.children;
     if (siblings != null) {
       siblings.remove(this);
     }
@@ -108,7 +79,9 @@ abstract class Element<P extends ElementProps, A extends ElementAttrs> extends C
     if (matrix == null || matrix == Matrix4.identity()) {
       return;
     }
-    attrs.matrix.multiply(matrix);
+    state.matrix.multiply(matrix);
+
+    onUpdate();
   }
 
   void translate({double x = 0, double y = 0}) {
@@ -118,7 +91,9 @@ abstract class Element<P extends ElementProps, A extends ElementAttrs> extends C
     if (x == 0 && y == 0) {
       return;
     }
-    attrs.matrix.leftTranslate(x, y);
+    state.matrix.leftTranslate(x, y);
+
+    onUpdate();
   }
 
   void scale({double x = 1, double y = 1, Offset origin}) {
@@ -129,13 +104,15 @@ abstract class Element<P extends ElementProps, A extends ElementAttrs> extends C
       return;
     }
     if ((origin == null) || (origin.dx == 0.0 && origin.dy == 0.0)) {
-      attrs.matrix.multiply(Matrix4.identity()..scale(x, y));
+      state.matrix.multiply(Matrix4.identity()..scale(x, y));
       return;
     }
-    attrs.matrix
+    state.matrix
       ..translate(origin.dx, origin.dy)
       ..multiply(Matrix4.identity()..scale(x, y))
       ..translate(-origin.dx, -origin.dy);
+
+    onUpdate();
   }
 
   void rotate(double angleRadians, {Offset origin}) {
@@ -143,12 +120,14 @@ abstract class Element<P extends ElementProps, A extends ElementAttrs> extends C
       return;
     }
     if ((origin == null) || (origin.dx == 0.0 && origin.dy == 0.0)) {
-      attrs.matrix.rotateZ(angleRadians);
+      state.matrix.rotateZ(angleRadians);
       return;
     }
-    attrs.matrix
+    state.matrix
       ..translate(origin.dx, origin.dy)
       ..multiply(Matrix4.rotationZ(angleRadians))
       ..translate(-origin.dx, -origin.dy);
+
+    onUpdate();
   }
 }

@@ -4,40 +4,31 @@ import 'dart:math';
 import 'package:flutter/painting.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:graphic/src/common/typed_map.dart';
+import 'package:graphic/src/common/base_classes.dart';
 
 import 'element.dart';
 import 'render_shape/base.dart';
 
-int compareElementOrder(Element a, Element b) {
-  var rst = a.props.zIndex - b.props.zIndex;
-  if (rst == 0) {
-    rst = a.props.siblingIndex - b.props.siblingIndex;
-  }
-  return rst;
-}
-
-class GroupProps extends ElementProps<ElementAttrs> {
+class GroupState extends ElementState {
   List<Element> get children => this['children'] as List<Element>;
   set children(List<Element> value) => this['children'] = value;
 }
 
-class Group extends Element<GroupProps, ElementAttrs> {
-  Group([TypedMap cfg]) : super(cfg);
+class Group extends Element<GroupState> {
+  Group([TypedMap props]) : super(props);
 
   @override
-  GroupProps get originalProps => GroupProps();
+  GroupState get originalState => GroupState();
 
   @override
-  ElementAttrs get originalAttrs => ElementAttrs();
-
-  @override
-  void initDefaultProps() {
-    super.initDefaultProps();
-    props.children = [];
+  void initDefaultState() {
+    super.initDefaultState();
+    state
+      ..children = [];
   }
 
-  RenderShape addShape(RenderShapeAttrs attrs) {
-    final shape = RenderShape.create(attrs);
+  RenderShape addShape(Props<RenderShapeType> props) {
+    final shape = RenderShape.create(props);
     _add(shape);
     return shape;
   }
@@ -49,39 +40,54 @@ class Group extends Element<GroupProps, ElementAttrs> {
   }
 
   void _add(Element element) {
-    element.props.parent = this;
+    element.state.parent = this;
 
-    props.children.add(element);
+    state.children.add(element);
+    _onAdd();
   }
 
-  void sort() {
-    final children = props.children;
+  void _onAdd() {
+    _sort();
+  }
+
+  void _sort() {
+    final children = state.children;
+
+    final siblingOrders = <Element, int>{};
     for (var i = 0; i < children.length; i++) {
-      children[i].props.siblingIndex = i;
+      siblingOrders[children[i]] = i;
     }
 
-    children.sort(compareElementOrder);
+    children.sort((a, b) {
+      var rst = a.state.zIndex - b.state.zIndex;
+      if (rst == 0) {
+        rst = siblingOrders[a] - siblingOrders[b];
+      }
+      return rst;
+    });
   }
 
   void clear() {
-    props.children.clear();
+    state.children.clear();
   }
 
   @override
   void draw(Canvas canvas) {
-    for (var child in props.children) {
+    for (var child in state.children) {
       child.paint(canvas);
     }
   }
 
+  // The child's bbox changing is unknow,
+  // so the calculation has to be jit. 
   @override
   Rect get bbox {
-    final children = props.children;
+    final children = state.children;
     if (children.isEmpty) {
       return null;
     }
 
-    final matrix = attrs.matrix;
+    final matrix = state.matrix;
     final isTransfromed = matrix != Matrix4.identity();
 
     var minX = double.infinity;

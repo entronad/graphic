@@ -1,5 +1,3 @@
-# Element
-
 ## ElementProps<A extends ElementAttrs> with TypedMap
 
 *props, abstract*
@@ -66,15 +64,15 @@
 
 `set attrs(A attrs)`
 
-直接设置attrs的访问器
-
-`A get defaultAttrs`
-
 获取初始化的attrs
 
 `void attr(A attrs)`
 
 更改attr的属性，并触发相关操作，仅可通过此方法对attrs进行操作
+
+`void onAttrsSet()`
+
+所有在attrs设置了之后要执行的操作放在这里，构造方法、attr()、变形方法中会执行一次，注意addShape/addGroup不会执行，group的属性获取还是需要即时计算
 
 `Rect get bbox`
 
@@ -120,8 +118,6 @@ canvas.restore()
 
 ---
 
-# RenderShape
-
 ## RenderShapeProps<A extends RenderShapeAttrs> extends ElementProps<RenderShapeAttrs>
 
 *props, abstract*
@@ -141,6 +137,8 @@ canvas.restore()
 **entries**
 
 paint 相关的，默认值与paint相同
+
+text除外，text中同位参数的优先级是textSpan高于text和textStyle
 
 **method**
 
@@ -182,11 +180,13 @@ canvas.drawPath
 
 `Rect calculateBBox()`
 
-计算bbox，目前先用 _path.getBounds 统一实现
+计算bbox，目前先用 path.getBounds 统一实现。开头调用path访问器确保先计算一遍path
 
 `void createPath(Path path)`
 
 创建path的方法，会传入重置好的 _path ，由各子类实现
+
+---
 
 ## GroupProps extends ElementProps<ElementAttrs>
 
@@ -212,13 +212,17 @@ canvas.drawPath
 
 初始化时的空children已经确保了children不为空
 
-`void sort()`
+添加完了需sort，这样感觉sort应该是内部函数
+
+`void _sort()`
 
 根据元素的 zIndex 和 siblingIndex 进行排序
 
 `void clear()`
 
 清空child
+
+---
 
 ## Renderer extends Group
 

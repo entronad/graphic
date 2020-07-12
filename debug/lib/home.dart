@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 
-class Page {
-  Page({
-    this.name,
-    this.endPoint,
-  });
+import 'main.dart';
 
-  final String name;
-  final String endPoint;
+class Page {
+  Page(String route) {
+    final endPoint = route.split('/').last;
+    name = endPoint;
+    this.endPoint = endPoint;
+  }
+
+  String name;
+  String endPoint;
 }
 
-final pages = <Page>[
-  Page(
-    name: 'Basic',
-    endPoint: 'basic',
-  ),
-];
+final pages = routes.keys.map((route) => Page(route)).where((page) => page.endPoint != null || page.endPoint != '');
 
 class PageCard extends StatelessWidget {
   PageCard({Key key, @required this.package, @required this.onPressed}):super(key: key);

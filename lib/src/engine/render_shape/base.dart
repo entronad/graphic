@@ -1,11 +1,21 @@
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
+import 'package:graphic/src/common/base_classes.dart';
 import 'package:meta/meta.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:graphic/src/common/typed_map.dart';
 
 import '../element.dart';
+import 'arc.dart';
+import 'circle.dart';
+import 'custom.dart';
+import 'line.dart';
+import 'polygon.dart';
+import 'polyline.dart';
+import 'rect.dart';
+import 'sector.dart';
+import 'text.dart';
 
 enum RenderShapeType {
   arc,
@@ -20,7 +30,7 @@ enum RenderShapeType {
   custom,
 }
 
-abstract class RenderShapeAttrs extends ElementAttrs {
+abstract class RenderShapeState extends ElementState {
   // Paint attrs, api refers to flutter 1.12.13
 
   bool get isAntiAlias => this['isAntiAlias'] as bool ?? true;
@@ -83,45 +93,48 @@ abstract class RenderShapeAttrs extends ElementAttrs {
     paint.strokeWidth = strokeWidth;
     paint.style = style;
   }
-
-  RenderShapeType get type;
 }
 
-class RenderShapeProps<A extends RenderShapeAttrs> extends ElementProps<RenderShapeAttrs> {
-  Rect get bbox => this['bbox'] as Rect;
-  set bbox(Rect value) => this['bbox'] = value;
-
-  // All components' type is got form props.type
-  // RenderShapeType is determined by attrs type, but can be got from props.type
-  RenderShapeType _type;
-  RenderShapeType get type => _type;
-}
-
-abstract class RenderShape<P extends RenderShapeProps, A extends RenderShapeAttrs> extends Element<P, A> {
-  static RenderShape create(RenderShapeAttrs attrs) {
-
+abstract class RenderShape<S extends RenderShapeState> extends Element<S> {
+  static RenderShape create(Props props) {
+    switch (props.type) {
+      case RenderShapeType.arc:
+        return ArcRenderShape(props);
+      case RenderShapeType.circle:
+        return CircleRenderShape(props);
+      case RenderShapeType.custom:
+        return CustomRenderShape(props);
+      case RenderShapeType.line:
+        return LineRenderShape(props);
+      case RenderShapeType.polygon:
+        return PolygonRenderShape(props);
+      case RenderShapeType.polyline:
+        return PolylineRenderShape(props);
+      case RenderShapeType.rect:
+        return RectRenderShape(props);
+      case RenderShapeType.sector:
+        return SectorRenderShape(props);
+      case RenderShapeType.text:
+        return TextRenderShape(props);
+      default: return null;
+    }
   }
 
-  RenderShape([TypedMap cfg]) : super(cfg) {
-    props._type = attrs.type;
-  }
+  RenderShape([TypedMap props]) : super(props);
 
   final Path _path = Path();
 
   final Paint _stylePaint = Paint();
 
-  Path get path {
-    _path.reset();
-    createPath(_path);
-    return _path;
-  }
+  @protected
+  Rect shapeBBox;
 
-  Paint get stylePaint {
-    attrs.applyToPaint(_stylePaint);
-    return _stylePaint;
-  }
+  Path get path => _path;
 
-  void createPath(Path path);
+  Paint get stylePaint => _stylePaint;
+
+  @override
+  Rect get bbox => shapeBBox;
 
   @override
   void draw(Canvas canvas) {
@@ -129,22 +142,27 @@ abstract class RenderShape<P extends RenderShapeProps, A extends RenderShapeAttr
   }
 
   @override
-  Rect get bbox {
-    var bbox = props.bbox;
-    if (bbox == null) {
-      bbox = calculateBBox();
-      props.bbox = bbox;
-    }
-    return bbox;
+  void onUpdate() {
+    super.onUpdate();
+
+    _path.reset();
+    createPath(_path);
+
+    state.applyToPaint(_stylePaint);
+
+    shapeBBox = calculateBBox();
   }
+
+  @protected
+  void createPath(Path path);
 
   @protected
   Rect calculateBBox() {
     var bbox = _path.getBounds();
-    if (attrs.style == PaintingStyle.stroke) {
-      bbox = bbox.inflate(attrs.strokeWidth / 2);
+    if (state.style == PaintingStyle.stroke) {
+      bbox = bbox.inflate(state.strokeWidth / 2);
     }
-    final matrix = attrs.matrix;
+    final matrix = state.matrix;
     if (matrix != Matrix4.identity()) {
       bbox = MatrixUtils.transformRect(matrix, bbox);
     }

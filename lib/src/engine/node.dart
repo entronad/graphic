@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:graphic/src/util/transform.dart';
 import 'package:meta/meta.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:graphic/src/common/typed_map.dart';
@@ -7,7 +8,7 @@ import 'package:graphic/src/common/base_classes.dart';
 
 import 'group.dart';
 
-abstract class ElementState with TypedMap {
+abstract class NodeState with TypedMap {
   Path get clip => this['clip'] as Path;
   set clip(Path value) => this['clip'] = value;
 
@@ -24,15 +25,16 @@ abstract class ElementState with TypedMap {
   set parent(Group value) => this['parent'] = value;
 }
 
-abstract class Element<S extends ElementState> extends Component<S> {
-  Element([TypedMap props]) : super(props);
+abstract class Node<S extends NodeState> extends Component<S> {
+  Node([TypedMap props]) : super(props);
   
   @override
   void initDefaultState() {
     super.initDefaultState();
     state
       ..zIndex = 0
-      ..visible = true;
+      ..visible = true
+      ..matrix = Matrix4.identity();
   }
 
   Rect get bbox;
@@ -51,7 +53,7 @@ abstract class Element<S extends ElementState> extends Component<S> {
     canvas.save();
 
     final matrix = state.matrix;
-    if (matrix != Matrix4.identity()) {
+    if (!matrixIsIdentity(matrix)) {
       canvas.transform(matrix.storage);
     }
 
@@ -76,13 +78,16 @@ abstract class Element<S extends ElementState> extends Component<S> {
   }
 
   void transform(Matrix4 matrix) {
-    if (matrix == null || matrix == Matrix4.identity()) {
+    if (matrix == null || matrixIsIdentity(matrix)) {
       return;
     }
     state.matrix.multiply(matrix);
 
-    onUpdate();
+    onTransform();
   }
+
+  @protected
+  void onTransform() {}
 
   void translate({double x = 0, double y = 0}) {
     x ??= 0;
@@ -93,7 +98,7 @@ abstract class Element<S extends ElementState> extends Component<S> {
     }
     state.matrix.leftTranslate(x, y);
 
-    onUpdate();
+    onTransform();
   }
 
   void scale({double x = 1, double y = 1, Offset origin}) {
@@ -112,7 +117,7 @@ abstract class Element<S extends ElementState> extends Component<S> {
       ..multiply(Matrix4.identity()..scale(x, y))
       ..translate(-origin.dx, -origin.dy);
 
-    onUpdate();
+    onTransform();
   }
 
   void rotate(double angleRadians, {Offset origin}) {
@@ -128,6 +133,6 @@ abstract class Element<S extends ElementState> extends Component<S> {
       ..multiply(Matrix4.rotationZ(angleRadians))
       ..translate(-origin.dx, -origin.dy);
 
-    onUpdate();
+    onTransform();
   }
 }

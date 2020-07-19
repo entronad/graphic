@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart' as graphic;
+import 'package:graphic/src/engine/node.dart';
 
 class RenderShape extends StatefulWidget {
   @override
@@ -33,23 +34,28 @@ class _RenderShapeState extends State<RenderShape> {
     //   color: Colors.green,
     // ))..props.zIndex = 1;
 
-    // final rect = r1.addShape(graphic.RectAttrs(
-    //   x: 5,
-    //   y: 5,
-    //   width: 10,
-    //   height: 10,
-    //   style: PaintingStyle.stroke,
-    //   strokeWidth: 4,
-    // ))..props.zIndex = 10;
+    final rect = r1.addShape(graphic.RectRenderShapeProps(
+      x: 50,
+      y: 50,
+      width: 50,
+      height: 50,
+      style: PaintingStyle.stroke,
+      strokeWidth: 4,
+    ))..state.zIndex = 10;
 
-    // final bbox1 = rect.bbox;
-    // r1.addShape(graphic.RectAttrs(
-    //   x: bbox1.topLeft.dx,
-    //   y: bbox1.topLeft.dy,
-    //   width: bbox1.width,
-    //   height: bbox1.height,
-    //   color: Colors.green,
-    // ))..props.zIndex = 1;
+    final bbox1 = rect.bbox;
+    r1.addShape(graphic.RectRenderShapeProps(
+      x: bbox1.topLeft.dx,
+      y: bbox1.topLeft.dy,
+      width: bbox1.width,
+      height: bbox1.height,
+      color: Colors.green,
+    ))..state.zIndex = 1;
+
+    
+    // rect.translate(x: 50, y: 50);
+    rect.rotate(0.8, origin: Offset(75, 75));
+    // rect.scale(x: 0.5, y: 0.5, origin: Offset(50, 50));
 
     // final shape = r1.addShape(graphic.CircleAttrs(
     //   x: 10,
@@ -82,27 +88,29 @@ class _RenderShapeState extends State<RenderShape> {
     //   color: Colors.green,
     // ))..props.zIndex = 1;
 
-    final shape = r1.addShape(graphic.PolylineAttrs(
-      points: [
-        Offset(10, 500),
-        Offset(50, 600),
-        Offset(100, 550),
-        Offset(150, 200),
-        Offset(200, 400),
-        Offset(250, 200),
-        Offset(300, 700),
-      ],
-      smooth: true,
-    ))..props.zIndex = 10;
+    // final shape = r1.addShape(graphic.PolylineRenderShapeProps(
+    //   points: [
+    //     Offset(10, 500),
+    //     Offset(50, 600),
+    //     Offset(100, 550),
+    //     Offset(150, 200),
+    //     Offset(200, 400),
+    //     Offset(250, 200),
+    //     Offset(300, 700),
+    //   ],
+    //   smooth: true,
+    // ))..state.zIndex = 10;
 
-    final bbox1 = shape.bbox;
-    r1.addShape(graphic.RectAttrs(
-      x: bbox1.topLeft.dx,
-      y: bbox1.topLeft.dy,
-      width: bbox1.width,
-      height: bbox1.height,
-      color: Colors.green,
-    ))..props.zIndex = 1;
+    // final bbox1 = shape.bbox;
+    // r1.addShape(graphic.RectRenderShapeProps(
+    //   x: bbox1.topLeft.dx,
+    //   y: bbox1.topLeft.dy,
+    //   width: bbox1.width,
+    //   height: bbox1.height,
+    //   color: Colors.green,
+    // ))..state.zIndex = 1;
+
+    // shape.translate(x: 0, y: 90);
 
 
     r1.mount(() { setState(() {}); });

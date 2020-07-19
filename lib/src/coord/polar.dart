@@ -1,8 +1,9 @@
 import 'dart:ui';
 import 'dart:math';
 
-import 'package:graphic/src/common/typed_map.dart';
+import 'package:vector_math/vector_math_64.dart';
 import 'package:graphic/src/common/base_classes.dart';
+import 'package:graphic/src/util/transform.dart';
 
 import 'base.dart';
 
@@ -45,13 +46,14 @@ class PolarCoordState extends CoordState {
 }
 
 class PolarCoordComponent extends CoordComponent<PolarCoordState> {
-  PolarCoordComponent(TypedMap cfg) : super(cfg);
+  PolarCoordComponent([PolarCoord props]) : super(props);
 
   @override
   PolarCoordState get originalState => PolarCoordState();
 
   @override
   void initDefaultState() {
+    super.initDefaultState();
     state
       ..radius = 1
       ..innerRadius = 0
@@ -78,13 +80,13 @@ class PolarCoordComponent extends CoordComponent<PolarCoordState> {
   ];
 
   @override
-  Offset convertPoint(Offset point) {
+  Offset convertPoint(Offset abstractPoint) {
     final transposed = state.transposed;
     final xDim = transposed ? _getY : _getX;
     final yDim = transposed ? _getX : _getY;
 
-    final angle = rangeX.first + (rangeX.last - rangeX.first) * xDim(point);
-    final radius = rangeY.first + (rangeY.last - rangeY.first) * yDim(point);
+    final angle = rangeX.first + (rangeX.last - rangeX.first) * xDim(abstractPoint);
+    final radius = rangeY.first + (rangeY.last - rangeY.first) * yDim(abstractPoint);
 
     return Offset(
       _center.dx + cos(angle) * radius,
@@ -93,8 +95,30 @@ class PolarCoordComponent extends CoordComponent<PolarCoordState> {
   }
 
   @override
-  Offset invertPoint(Offset point) {
+  Offset invertPoint(Offset renderPoint) {
+    final axisX = Vector3(1, 0, 0);
+    final startMatrix = Matrix4.rotationZ(rangeX.first);
+    final startVector = startMatrix.transformed3(axisX);
+    final pointVector = Vector3(
+      renderPoint.dx - _center.dx,
+      renderPoint.dy - _center.dy,
+      0,
+    );
+    if (vectorIsZero(pointVector)) {
+      return Offset.zero;
+    }
 
+    var theta = vectorAngle(startVector, pointVector);
+    if ((theta - pi * 2).abs() < 0.001) {
+      theta = 0;
+    }
+    final length = pointVector.length;
+    final rangeXSwipe = (rangeX.last - rangeX.first).abs();
+    final ratioX = theta / rangeXSwipe;
+    final ratioY = (length - rangeY.first) / (rangeY.last - rangeY.first);
+    return state.transposed
+      ? Offset(ratioY, ratioX)
+      : Offset(ratioX, ratioY);
   }
 
   @override

@@ -597,3 +597,61 @@ type一律在子类中写死getter，不属于state，props中有
 update 内部使用和外部使用还需要考虑一下
 
 所有cache尽量用内部变量加getter的方式获取，防止修改
+
+~~可能还是要vector2表示点，vector3没必要，vector4没有左乘操作。所有具象的旋转等只针对matrix，根据Vector2变换的需要选择合理的vector。~~
+
+注意vector_math中的postMultiply是旋转的逆，而应用到矩阵就是正常的乘号，m4可乘以v3，故矩阵一律使用m4，点用v3
+
+m4的angleToSigned的计算结果与z轴的正负向有关。Dart中的三维坐标是左手坐标系（与标准的右手坐标系不同），即z轴正向指向纸面
+
+注意vector_math本身的angleToSigned只能计算 -pi 到 pi，因此需要包装工具类
+
+要把vector、matrix等是否为0，单位矩阵都写在工具里，按需写
+
+所有的setter/onSet全部一事一议，包括构造函数中是否调用，没有关联变量的直接可设置不需要setter/onSet
+
+element的变形的更新还有优化的空间
+
+给所有中间变量赋值的函数称之为 assign() ,如果出现一般构造函数中需要调用
+
+coord的plot一律设置，不好通过构造函数设置，构造函数传入props
+
+可实例化的component要注意一下构造函数的要求
+
+私有成员不应当被测试，因为测试不关心实现
+
+需要有一个Accessor，获取值，值的类型泛型用V表示，数据项的泛型用D表示：
+
+field 指字段的字符串标识，String
+
+value指通过Accessor从Datum中获取的值，V
+
+scaled指scale计算结果，0-1，double
+
+text值value在坐标轴label上展示的文字，String
+
+V的类型只许两种，String（cat， identity）和num（linear）其它的在 accessor中转换。这样是合理的因为：可视化只接受可表示的数据即String，linear用num是利用了其线性计算，并且可方便的转换为String，对于scale的算法无需区分double和int，time_cat相当于添加了些日期操作的工具函数。
+
+scale 中tick都是指的value，要用到的tickObject中的其它信息通过scale就地获取
+
+参数比较多的内部函数为表达清晰，尽量使用命名参数
+
+scale中numberAutoTicks 中的maxLimit, minLimit 好像是完全不需要的
+
+IdentityScale的作用是处理未设置的字段
+
+LinearScale中的snapArray好像不需要
+
+对于数字类型的，在判断端可能出现三种情况，null, infinity, finity, 原则上在计算时，只判断是否为null，防止程序异常，只有在绘制图形时，才对infinity进行处理，原则上当为null时也返回null
+
+对于所有的scale，是无法限制传入的值的（null, 不在类目中，不合法的时间字符串，nan）所有这一切都返回null，在消费处处理，invert认为传入的scaled都是合法的，不判断null
+
+所有的层级的state要有自己的类，哪怕不增加新内容了，也要定义个空的子类，比如 CartesianCoordState
+
+运算符命名：逻辑用动词加介词，运算直接用动词
+
+由于不能保证formatter中用户的行为，所以干脆 scale.getText() 不保证非null
+
+autoTicks方法要抽取出来，放在可实例化的子类中实现
+
+state中的项是可更改的。onSet中的处理，一定要坚持其处理仅根据当前state，而不依赖于传入props的特征的原则，因此当需要根据某项值是否为null进行处理时，set前要清除，否则mix后还是原来的值

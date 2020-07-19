@@ -13,8 +13,6 @@ class Page {
   String endPoint;
 }
 
-final pages = routes.keys.map((route) => Page(route)).where((page) => page.endPoint != null || page.endPoint != '');
-
 class PageCard extends StatelessWidget {
   PageCard({Key key, @required this.package, @required this.onPressed}):super(key: key);
 
@@ -59,6 +57,7 @@ class PageCard extends StatelessWidget {
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final pages = routes.keys.toList().sublist(1).map((route) => Page(route));
     return Scaffold(
       appBar: AppBar(
         title: Text('Chart Packages'),

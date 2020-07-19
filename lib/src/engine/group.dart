@@ -6,15 +6,15 @@ import 'package:vector_math/vector_math_64.dart';
 import 'package:graphic/src/common/typed_map.dart';
 import 'package:graphic/src/common/base_classes.dart';
 
-import 'element.dart';
+import 'node.dart';
 import 'render_shape/base.dart';
 
-class GroupState extends ElementState {
-  List<Element> get children => this['children'] as List<Element>;
-  set children(List<Element> value) => this['children'] = value;
+class GroupState extends NodeState {
+  List<Node> get children => this['children'] as List<Node>;
+  set children(List<Node> value) => this['children'] = value;
 }
 
-class Group extends Element<GroupState> {
+class Group extends Node<GroupState> {
   Group([TypedMap props]) : super(props);
 
   @override
@@ -39,7 +39,7 @@ class Group extends Element<GroupState> {
     return group;
   }
 
-  void _add(Element element) {
+  void _add(Node element) {
     element.state.parent = this;
 
     state.children.add(element);
@@ -53,7 +53,7 @@ class Group extends Element<GroupState> {
   void _sort() {
     final children = state.children;
 
-    final siblingOrders = <Element, int>{};
+    final siblingOrders = <Node, int>{};
     for (var i = 0; i < children.length; i++) {
       siblingOrders[children[i]] = i;
     }

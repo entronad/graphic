@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:vector_math/vector_math_64.dart';
+import 'package:graphic/src/util/transform.dart';
 
 class BezierSegment {
   BezierSegment(this.cp1, this.cp2, this.p);
@@ -11,12 +12,6 @@ class BezierSegment {
   final Offset p;
 }
 
-Vector2 _pointToVector2(Offset point) =>
-  Vector2(point.dx, point.dy);
-
-Offset _vector2ToPoint(Vector2 vector) =>
-  Offset(vector.x, vector.y);
-
 List<Offset> _getControlPoints(
   List<Offset> points,
   double ratio,
@@ -24,25 +19,25 @@ List<Offset> _getControlPoints(
   [Rect constraint,]
 ) {
   final hasConstraint = (constraint != null);
-  final vectors = points.map((point) => _pointToVector2(point)).toList();
+  final vectors = points.map((point) =>pointToVector(point)).toList();
 
   final cps = <Offset>[];
-  Vector2 prevVector;
-  Vector2 nextVector;
-  Vector2 min;
-  Vector2 max;
+  Vector3 prevVector;
+  Vector3 nextVector;
+  Vector3 min;
+  Vector3 max;
 
   // real constraint box is the bigger one of constraint and bbox of points
   if (hasConstraint) {
-    min = Vector2(double.infinity, double.infinity);
-    max = Vector2(double.negativeInfinity, double.negativeInfinity);
+    min = Vector3(double.infinity, double.infinity, 0);
+    max = Vector3(double.negativeInfinity, double.negativeInfinity, 0);
 
     for (var vector in vectors) {
-      Vector2.min(min, vector, min);
-      Vector2.max(max, vector, max);
+      Vector3.min(min, vector, min);
+      Vector3.max(max, vector, max);
     }
-    Vector2.min(min, _pointToVector2(constraint.topLeft), min);
-    Vector2.max(max, _pointToVector2(constraint.bottomRight), max);
+    Vector3.min(min,pointToVector(constraint.topLeft), min);
+    Vector3.max(max,pointToVector(constraint.bottomRight), max);
   }
 
   final len = points.length;
@@ -78,14 +73,14 @@ List<Offset> _getControlPoints(
     final cp1 = vector + v2;
 
     if (hasConstraint) {
-      Vector2.max(cp0, min, cp0);
-      Vector2.min(cp0, max, cp0);
-      Vector2.max(cp1, min, cp1);
-      Vector2.min(cp1, max, cp1);
+      Vector3.max(cp0, min, cp0);
+      Vector3.min(cp0, max, cp0);
+      Vector3.max(cp1, min, cp1);
+      Vector3.min(cp1, max, cp1);
     }
 
-    cps.add(_vector2ToPoint(cp0));
-    cps.add(_vector2ToPoint(cp1));
+    cps.add(vectorToPoint(cp0));
+    cps.add(vectorToPoint(cp1));
   }
 
   if (isLoop) {

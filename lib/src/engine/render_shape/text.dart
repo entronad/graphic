@@ -142,7 +142,7 @@ class TextRenderShape extends RenderShape<TextRenderShapeState> {
   }
 
   @override
-  void onUpdate() {
+  void assign() {
     state.applyToTextPainter(_textPainter);
     _textPainter.layout(
       minWidth: state.minWidth,

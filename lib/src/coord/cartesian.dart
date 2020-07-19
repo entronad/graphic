@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:graphic/src/common/typed_map.dart';
 import 'package:graphic/src/common/base_classes.dart';
 
 import 'base.dart';
@@ -16,13 +15,14 @@ class CartesianCoord extends Props<CoordType> {
   CoordType get type => CoordType.cartesian;
 }
 
-// No additional states, so just use CoordState
-class CartesianCoordComponent extends CoordComponent<CoordState> {
-  CartesianCoordComponent(TypedMap props) : super(props);
+class CartesianCoordState extends CoordState {}
+
+class CartesianCoordComponent extends CoordComponent<CartesianCoordState> {
+  CartesianCoordComponent([CartesianCoord props]) : super(props);
 
   // Dosen't need specific state subclass.
   @override
-  CoordState get originalState => CoordState();
+  CartesianCoordState get originalState => CartesianCoordState();
 
   @override
   List<double> get rangeX => [
@@ -37,21 +37,21 @@ class CartesianCoordComponent extends CoordComponent<CoordState> {
   ];
 
   @override
-  Offset convertPoint(Offset point) {
+  Offset convertPoint(Offset abstractPoint) {
     final transposed = state.transposed;
     final xDim = transposed ? (Offset p) => p.dy : (Offset p) => p.dx;
     final yDim = transposed ? (Offset p) => p.dx : (Offset p) => p.dy;
     return Offset(
-      rangeX.first + (rangeX.last - rangeX.first) * xDim(point),
-      rangeY.first + (rangeY.last - rangeY.first) * yDim(point),
+      rangeX.first + (rangeX.last - rangeX.first) * xDim(abstractPoint),
+      rangeY.first + (rangeY.last - rangeY.first) * yDim(abstractPoint),
     );
   }
 
   @override
-  Offset invertPoint(Offset point) {
+  Offset invertPoint(Offset renderPoint) {
     final transposed = state.transposed;
-    final x = (point.dx - rangeX.first) / (rangeX.last - rangeX.first);
-    final y = (point.dy - rangeY.first) / (rangeY.last - rangeY.first);
+    final x = (renderPoint.dx - rangeX.first) / (rangeX.last - rangeX.first);
+    final y = (renderPoint.dy - rangeY.first) / (rangeY.last - rangeY.first);
     return transposed ? Offset(y, x) : Offset(x, y);
   }
 }

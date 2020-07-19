@@ -36,26 +36,32 @@
 
 这其实就是diff方法，规则，遇到Map和Iterable就遍历
 
-## Component<P extends TypedMap>
+## Component<S extends TypedMap>
 
 *abstract*
 
-**note**
-
-- 所有的Component都从此类继承，包括engine.Element
-- 所有需要持久化存储的成员都放到props中，本身仅包含访问器和内部成员
-
 **members**
 
-`P props`
+`S state`
 
 **constructors**
 
-`Component([TypedMap cfg])`
+`Component([TypedMap props])`
 
-将defaultProps赋值给props，并混入cfg，cfg为可选的，且类型随意，重点是混入的过程
+将originalState赋值给state，混入默认state，混入props
+
+构造函数是否需要传入props根据实际情况而定
 
 **methods**
 
-`P get defaultProps`
+`S get originalState`
 
+*protected*
+
+子类需要实例化具体的state类型，通过重写此方法实现
+
+`void initDefaultState() {}`
+
+*protected*
+
+混入默认值，一般在此方法中保证那些需要的state不为null

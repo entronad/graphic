@@ -6,7 +6,7 @@ import 'package:meta/meta.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:graphic/src/common/typed_map.dart';
 
-import '../element.dart';
+import '../node.dart';
 import 'arc.dart';
 import 'circle.dart';
 import 'custom.dart';
@@ -30,7 +30,7 @@ enum RenderShapeType {
   custom,
 }
 
-abstract class RenderShapeState extends ElementState {
+abstract class RenderShapeState extends NodeState {
   // Paint attrs, api refers to flutter 1.12.13
 
   bool get isAntiAlias => this['isAntiAlias'] as bool ?? true;
@@ -95,7 +95,7 @@ abstract class RenderShapeState extends ElementState {
   }
 }
 
-abstract class RenderShape<S extends RenderShapeState> extends Element<S> {
+abstract class RenderShape<S extends RenderShapeState> extends Node<S> {
   static RenderShape create(Props props) {
     switch (props.type) {
       case RenderShapeType.arc:
@@ -120,7 +120,9 @@ abstract class RenderShape<S extends RenderShapeState> extends Element<S> {
     }
   }
 
-  RenderShape([TypedMap props]) : super(props);
+  RenderShape([TypedMap props]) : super(props) {
+    assign();
+  }
 
   final Path _path = Path();
 
@@ -141,15 +143,31 @@ abstract class RenderShape<S extends RenderShapeState> extends Element<S> {
     canvas.drawPath(path, stylePaint);
   }
 
-  @override
-  void onUpdate() {
-    super.onUpdate();
+  void setProps(Props<RenderShapeType> props) {
+    state.mix(props);
+    onSetProps();
+  }
 
+  @protected
+  void onSetProps() {
+    assign();
+  }
+
+  @protected
+  void assign() {
     _path.reset();
     createPath(_path);
 
     state.applyToPaint(_stylePaint);
 
+    shapeBBox = calculateBBox();
+  }
+
+  @override
+  void onTransform() {
+    super.onTransform();
+
+    // Transform only affects bbox.
     shapeBBox = calculateBBox();
   }
 

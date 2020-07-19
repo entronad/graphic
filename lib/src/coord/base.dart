@@ -9,7 +9,7 @@ enum CoordType {
   polar,
 }
 
-class CoordState with TypedMap {
+abstract class CoordState with TypedMap {
   Rect get plot => this['plot'] as Rect;
   set plot(Rect value) => this['plot'] = value;
 
@@ -18,9 +18,7 @@ class CoordState with TypedMap {
 }
 
 abstract class CoordComponent<S extends CoordState> extends Component<S> {
-  CoordComponent([TypedMap props]) : super(props) {
-    assert(state.plot != null);
-  }
+  CoordComponent([TypedMap props]) : super(props);
   
   @protected
   List<double> get rangeX;
@@ -28,9 +26,9 @@ abstract class CoordComponent<S extends CoordState> extends Component<S> {
   @protected
   List<double> get rangeY;
 
-  Offset convertPoint(Offset point);
+  Offset convertPoint(Offset abstractPoint);
 
-  Offset invertPoint(Offset point);
+  Offset invertPoint(Offset renderPoint);
 
   void setPlot(Rect plot) {
     state.plot = plot;

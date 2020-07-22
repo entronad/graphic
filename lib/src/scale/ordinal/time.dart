@@ -11,7 +11,7 @@ class TimeScale extends Props<ScaleType> {
 
     bool isSorted,
 
-    List<String> values,
+    List<DateTime> values,
     bool isRounding,
 
     String Function(DateTime) formatter,
@@ -23,6 +23,10 @@ class TimeScale extends Props<ScaleType> {
     assert(
       testParamRedundant([mask, formatter]),
       paramRedundantWarning('mask, formatter'),
+    );
+    assert(
+      scaledRange == null || scaledRange.length == 2,
+      'range can only has 2 items'
     );
 
     this['mask'] = mask;

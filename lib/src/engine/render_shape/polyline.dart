@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:graphic/src/common/base_classes.dart';
 import 'package:meta/meta.dart';
-import 'package:graphic/src/common/typed_map.dart';
 
 import 'base.dart';
 import '../util/smooth.dart' as smooth_util;
@@ -72,7 +71,7 @@ class PolylineRenderShapeState extends RenderShapeState {
 }
 
 class PolylineRenderShape extends RenderShape<PolylineRenderShapeState> {
-  PolylineRenderShape([TypedMap cfg]) : super(cfg);
+  PolylineRenderShape([PolylineRenderShapeProps props]) : super(props);
 
   @override
   PolylineRenderShapeState get originalState => PolylineRenderShapeState();

@@ -14,6 +14,11 @@ class CatScale extends Props<ScaleType> {
     int tickCount,
     List<String> ticks,
   }) {
+    assert(
+      scaledRange == null || scaledRange.length == 2,
+      'range can only has 2 items'
+    );
+
     this['values'] = values;
     this['isRounding'] = isRounding;
     this['formatter'] = formatter;

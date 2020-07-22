@@ -25,6 +25,10 @@ class LinearScale extends Props<ScaleType> {
       max == null || min == null || max >= min,
       'max: $max should not be less than min: $min',
     );
+    assert(
+      scaledRange == null || scaledRange.length == 2,
+      'range can only has 2 items'
+    );
 
     this['nice'] = nice;
     this['min'] = min;

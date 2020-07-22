@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:graphic/src/scale/linear/num.dart';
 
 main() {
@@ -95,7 +94,7 @@ main() {
       nice: true,
     ));
 
-    test('cfg', () {
+    test('state', () {
       expect(scale.state.min, isNot(3));
       expect(scale.state.max, isNot(97));
     });
@@ -112,8 +111,8 @@ main() {
 
     test('ticks', () {
       final ticks = scale.state.ticks;
-      expect(ticks.first > 3, true);
-      expect(ticks.last< 97, true);
+      expect(ticks.first < 3, true);
+      expect(ticks.last > 97, true);
     });
   });
 

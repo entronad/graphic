@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:meta/meta.dart';
-import 'package:graphic/src/common/typed_map.dart';
 import 'package:graphic/src/common/base_classes.dart';
 
 import 'base.dart';
@@ -73,7 +72,7 @@ class RectRenderShapeState extends RenderShapeState {
 }
 
 class RectRenderShape extends RenderShape<RectRenderShapeState> {
-  RectRenderShape([TypedMap cfg]) : super(cfg);
+  RectRenderShape([RectRenderShapeProps props]) : super(props);
 
   @override
   RectRenderShapeState get originalState => RectRenderShapeState();

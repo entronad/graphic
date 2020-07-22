@@ -62,18 +62,20 @@ abstract class ScaleComponent<S extends ScaleState<V>, V> extends Component<S> {
   List<V> getAutoTicks();
 
   void setProps(Props<ScaleType> props) {
+    state.ticks = null;
+
     state.mix(props);
     onSetProps();
   }
 
   @protected
   void onSetProps() {
-    state.ticks = null;
     assign();
   }
 
+  // subclass must assign ticks.
   @protected
-  void assign() {}
+  void assign();
 
   double scale(V value);
 

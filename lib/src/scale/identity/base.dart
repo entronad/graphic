@@ -13,11 +13,16 @@ abstract class IdentityScaleComponent<S extends IdentityScaleState<V>, V>
   IdentityScaleComponent([Props<ScaleType> props]) : super(props);
 
   @override
+  void assign() {
+    state.ticks = [state.value];
+  }
+
+  @override
   List<V> getAutoTicks() => [state.value];
 
   @override
   double scale(V value) =>
-    value == null ? null : state.scaledRange.first;
+    value == state.value ? state.scaledRange.first : null;
 
   @override
   V invert(double scaled) => state.value;

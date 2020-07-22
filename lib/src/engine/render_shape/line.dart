@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:graphic/src/common/base_classes.dart';
 import 'package:meta/meta.dart';
-import 'package:graphic/src/common/typed_map.dart';
 
 import 'base.dart';
 
@@ -68,7 +67,7 @@ class LineRenderShapeState extends RenderShapeState {
 }
 
 class LineRenderShape extends RenderShape<LineRenderShapeState> {
-  LineRenderShape([TypedMap cfg]) : super(cfg);
+  LineRenderShape([LineRenderShapeProps props]) : super(props);
 
   @override
   LineRenderShapeState get originalState => LineRenderShapeState();

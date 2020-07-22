@@ -2,7 +2,6 @@ import 'dart:ui';
 import 'dart:math';
 
 import 'package:meta/meta.dart';
-import 'package:graphic/src/common/typed_map.dart';
 import 'package:graphic/src/common/base_classes.dart';
 
 import 'base.dart';
@@ -84,7 +83,7 @@ class SectorRenderShapeState extends RenderShapeState {
 }
 
 class SectorRenderShape extends RenderShape<SectorRenderShapeState> {
-  SectorRenderShape([TypedMap cfg]) : super(cfg);
+  SectorRenderShape([SectorRenderShapeProps props]) : super(props);
 
   @override
   SectorRenderShapeState get originalState => SectorRenderShapeState();

@@ -9,4 +9,4 @@ bool testParamRedundant(List params) {
 }
 
 String paramRedundantWarning(String params) =>
-  'Only one in $params is needed';
+  'Only one in ($params) is needed';

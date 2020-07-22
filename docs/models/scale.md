@@ -8,6 +8,12 @@
 
 这个分类是与类型无关的，我们先每一个找一种代表性的，并将props定义为比较常用名称的。
 
+对于scale()传值的特殊情况：
+
+null：返回null
+
+identity、category、ordinal中无法匹配values的情况：返回null，因为你无法知道其位置（哪怕知道顺序）
+
 ## ScaleState<V> with TypedMap
 
 **entris**

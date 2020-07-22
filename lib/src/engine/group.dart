@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:flutter/painting.dart';
 import 'package:vector_math/vector_math_64.dart';
-import 'package:graphic/src/common/typed_map.dart';
 import 'package:graphic/src/common/base_classes.dart';
 
 import 'node.dart';
@@ -15,8 +14,6 @@ class GroupState extends NodeState {
 }
 
 class Group extends Node<GroupState> {
-  Group([TypedMap props]) : super(props);
-
   @override
   GroupState get originalState => GroupState();
 

@@ -35,8 +35,6 @@ abstract class LinearScaleComponent<S extends LinearScaleState<V>, V>
 
   @override
   void assign() {
-    super.assign();
-
     if (state.ticks == null) {
       _assignTicks();
     } else {

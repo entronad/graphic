@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/painting.dart';
 import 'package:meta/meta.dart';
-import 'package:graphic/src/common/typed_map.dart';
 import 'package:graphic/src/common/base_classes.dart';
 import 'package:graphic/src/util/exception.dart';
 
@@ -126,7 +125,7 @@ class TextRenderShapeState extends RenderShapeState {
 }
 
 class TextRenderShape extends RenderShape<TextRenderShapeState> {
-  TextRenderShape([TypedMap cfg]) : super(cfg);
+  TextRenderShape([TextRenderShapeProps props]) : super(props);
 
   TextPainter _textPainter = TextPainter();
 

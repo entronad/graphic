@@ -655,3 +655,9 @@ LinearScale中的snapArray好像不需要
 autoTicks方法要抽取出来，放在可实例化的子类中实现
 
 state中的项是可更改的。onSet中的处理，一定要坚持其处理仅根据当前state，而不依赖于传入props的特征的原则，因此当需要根据某项值是否为null进行处理时，set前要清除，否则mix后还是原来的值
+
+shapeAttr中的shape指的是geom.shape ，我们也用枚举，同时
+
+shapeAttr先不做，等到geom确定下来再说
+
+数组range型的需要判断一下长度

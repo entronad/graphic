@@ -35,8 +35,6 @@ abstract class CategoryScaleComponent<S extends CategoryScaleState<V>, V>
 
   @override
   void assign() {
-    super.assign();
-
     // Do not return. subclass may reuse.
     if (state.ticks == null) {
       final values = state.values;
@@ -62,7 +60,7 @@ abstract class CategoryScaleComponent<S extends CategoryScaleState<V>, V>
     final rangeMin = state.scaledRange.first;
     final rangeMax = state.scaledRange.last;
 
-    // The same as identity.
+    // when values has one item and that is value, The same as identity.
     if (intervalsCount < 1) {
       return rangeMin;
     }

@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:meta/meta.dart';
-import 'package:graphic/src/common/typed_map.dart';
 import 'package:graphic/src/common/base_classes.dart';
 
 import 'base.dart';
@@ -53,7 +52,7 @@ class PolygonRenderShapeState extends RenderShapeState {
 }
 
 class PolygonRenderShape extends RenderShape<PolygonRenderShapeState> {
-  PolygonRenderShape([TypedMap cfg]) : super(cfg);
+  PolygonRenderShape([PolygonRenderShapeProps props]) : super(props);
 
   @override
   PolygonRenderShapeState get originalState => PolygonRenderShapeState();

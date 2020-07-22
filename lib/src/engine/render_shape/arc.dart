@@ -2,7 +2,6 @@ import 'dart:ui';
 import 'dart:math';
 
 import 'package:meta/meta.dart';
-import 'package:graphic/src/common/typed_map.dart';
 import 'package:graphic/src/common/base_classes.dart';
 
 import 'base.dart';
@@ -79,7 +78,7 @@ class ArcRenderShapeState extends RenderShapeState {
 }
 
 class ArcRenderShape extends RenderShape<ArcRenderShapeState> {
-  ArcRenderShape([TypedMap cfg]) : super(cfg);
+  ArcRenderShape([ArcRenderShapeProps props]) : super(props);
 
   @override
   ArcRenderShapeState get originalState => ArcRenderShapeState();

@@ -1,8 +1,6 @@
-import 'package:graphic/src/common/base_classes.dart';
-
 import '../base.dart';
 
-abstract class LinearScaleState<V> extends ScaleState<V> {
+abstract class LinearScaleState<V, D> extends ScaleState<V, D> {
   bool get nice => this['nice'] as bool ?? false;
   set nice(bool value) => this['nice'] = value;
 
@@ -16,10 +14,10 @@ abstract class LinearScaleState<V> extends ScaleState<V> {
   set tickInterval(V value) => this['tickInterval'] = value;
 }
 
-abstract class LinearScaleComponent<S extends LinearScaleState<V>, V>
-  extends ScaleComponent<S, V>
+abstract class LinearScaleComponent<S extends LinearScaleState<V, D>, V, D>
+  extends ScaleComponent<S, V, D>
 {
-  LinearScaleComponent([Props<ScaleType> props]) : super(props);
+  LinearScaleComponent([Scale props]) : super(props);
 
   // operations
 

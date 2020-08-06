@@ -1,12 +1,11 @@
 import 'dart:ui';
 
 import 'package:meta/meta.dart';
-import 'package:graphic/src/common/base_classes.dart';
 
 import 'base.dart';
 
-class RectRenderShapeProps extends Props<RenderShapeType> {
-  RectRenderShapeProps({
+class RectRenderShape extends RenderShape {
+  RectRenderShape({
     @required double x,
     @required double y,
     @required double width,
@@ -71,8 +70,10 @@ class RectRenderShapeState extends RenderShapeState {
   set radius(Radius value) => this['radius'] = value;
 }
 
-class RectRenderShape extends RenderShape<RectRenderShapeState> {
-  RectRenderShape([RectRenderShapeProps props]) : super(props);
+class RectRenderShapeComponent
+  extends RenderShapeComponent<RectRenderShapeState>
+{
+  RectRenderShapeComponent([RectRenderShape props]) : super(props);
 
   @override
   RectRenderShapeState get originalState => RectRenderShapeState();

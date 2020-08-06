@@ -2,7 +2,6 @@ import 'dart:ui';
 import 'dart:math';
 
 import 'package:vector_math/vector_math_64.dart';
-import 'package:graphic/src/common/base_classes.dart';
 import 'package:graphic/src/util/transform.dart';
 
 import 'base.dart';
@@ -11,7 +10,7 @@ double _getX(Offset point) => point.dx;
 
 double _getY(Offset point) => point.dy;
 
-class PolarCoord extends Props<CoordType> {
+class PolarCoord extends Coord {
   PolarCoord({
     bool transposed,
 
@@ -66,6 +65,8 @@ class PolarCoordComponent extends CoordComponent<PolarCoordState> {
   double get radiusLength => _radiusLength;
 
   Offset _center;
+
+  Offset get center => _center;
 
   @override
   List<double> get rangeX => [
@@ -122,20 +123,20 @@ class PolarCoordComponent extends CoordComponent<PolarCoordState> {
   }
 
   @override
-  void onSetPlot() {
-    super.onSetPlot();
+  void onSetRegion() {
+    super.onSetRegion();
 
-    final plot = state.plot;
+    final region = state.region;
     double maxRadiusLength;
     Offset center;
     if (state.startAngle == -pi && state.endAngle == 0) {
       // Special for gauge
 
-      maxRadiusLength = min(plot.width / 2, plot.height);
-      center = Offset(plot.center.dx, plot.bottom);
+      maxRadiusLength = min(region.width / 2, region.height);
+      center = Offset(region.center.dx, region.bottom);
     } else {
-      maxRadiusLength = min(plot.width, plot.height) / 2;
-      center = plot.center;
+      maxRadiusLength = min(region.width, region.height) / 2;
+      center = region.center;
     }
 
     _center = center;

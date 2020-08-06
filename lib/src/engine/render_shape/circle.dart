@@ -1,12 +1,11 @@
 import 'dart:ui';
 
 import 'package:meta/meta.dart';
-import 'package:graphic/src/common/base_classes.dart';
 
 import 'base.dart';
 
-class CircleRenderShapeProps extends Props<RenderShapeType> {
-  CircleRenderShapeProps({
+class CircleRenderShape extends RenderShape {
+  CircleRenderShape({
     @required double x,
     @required double y,
     @required double r,
@@ -61,8 +60,10 @@ class CircleRenderShapeState extends RenderShapeState {
   set r(double value) => this['r'] = value;
 }
 
-class CircleRenderShape extends RenderShape<CircleRenderShapeState> {
-  CircleRenderShape([CircleRenderShapeProps props]) : super(props);
+class CircleRenderShapeComponent
+  extends RenderShapeComponent<CircleRenderShapeState>
+{
+  CircleRenderShapeComponent([CircleRenderShape props]) : super(props);
 
   @override
   CircleRenderShapeState get originalState => CircleRenderShapeState();

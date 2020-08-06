@@ -8,8 +8,7 @@ class BezierSegment {
 
   final Offset cp1;
   final Offset cp2;
-  // to point
-  final Offset p;
+  final Offset p;    // to point
 }
 
 List<Offset> _getControlPoints(

@@ -1,11 +1,10 @@
 import 'package:intl/intl.dart';
-import 'package:graphic/src/common/base_classes.dart';
 import 'package:graphic/src/util/exception.dart';
 
 import '../base.dart';
 import 'base.dart';
 
-class TimeScale extends Props<ScaleType> {
+class TimeScale<D> extends Scale {
   TimeScale({
     String mask,
 
@@ -19,6 +18,8 @@ class TimeScale extends Props<ScaleType> {
     String alias,
     int tickCount,
     List<DateTime> ticks,
+
+    DateTime Function(D) accessor,
   }) {
     assert(
       testParamRedundant([mask, formatter]),
@@ -38,24 +39,25 @@ class TimeScale extends Props<ScaleType> {
     this['alias'] = alias;
     this['tickCount'] = tickCount;
     this['ticks'] = ticks;
+    this['accessor'] = accessor;
   }
 
   @override
   ScaleType get type => ScaleType.time;
 }
 
-class TimeOrdinalScaleState extends OrdinalScaleState<DateTime> {
+class TimeOrdinalScaleState<D> extends OrdinalScaleState<DateTime, D> {
   String get mask => this['mask'] as String;
   set mask(String value) => this['mask'] = value;
 }
 
-class TimeOrdinalScaleComponent
-  extends OrdinalScaleComponent<TimeOrdinalScaleState, DateTime>
+class TimeOrdinalScaleComponent<D>
+  extends OrdinalScaleComponent<TimeOrdinalScaleState<D>, DateTime, D>
 {
   TimeOrdinalScaleComponent([TimeScale props]) : super(props);
 
   @override
-  TimeOrdinalScaleState get originalState => TimeOrdinalScaleState();
+  TimeOrdinalScaleState<D> get originalState => TimeOrdinalScaleState<D>();
 
   @override
   void initDefaultState() {

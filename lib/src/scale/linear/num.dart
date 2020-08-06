@@ -1,10 +1,8 @@
-import 'package:graphic/src/common/base_classes.dart';
-
 import '../base.dart';
 import 'base.dart';
 import '../auto_ticks/num.dart';
 
-class LinearScale extends Props<ScaleType> {
+class LinearScale<D> extends Scale {
   LinearScale({
     bool nice,
     num min,
@@ -16,6 +14,7 @@ class LinearScale extends Props<ScaleType> {
     String alias,
     int tickCount,
     List<num> ticks,
+    num Function(D) accessor,
   }) {
     assert(
       tickCount == null || tickCount > 1,
@@ -39,21 +38,23 @@ class LinearScale extends Props<ScaleType> {
     this['alias'] = alias;
     this['tickCount'] = tickCount;
     this['ticks'] = ticks;
+
+    this['accessor'] = accessor;
   }
 
   @override
   ScaleType get type => ScaleType.linear;
 }
 
-class NumLinearScaleState extends LinearScaleState<num> {}
+class NumLinearScaleState<D> extends LinearScaleState<num, D> {}
 
-class NumLinearScaleComponent
-  extends LinearScaleComponent<NumLinearScaleState, num>
+class NumLinearScaleComponent<D>
+  extends LinearScaleComponent<NumLinearScaleState<D>, num, D>
 {
   NumLinearScaleComponent([LinearScale props]) : super(props);
 
   @override
-  NumLinearScaleState get originalState => NumLinearScaleState();
+  NumLinearScaleState<D> get originalState => NumLinearScaleState<D>();
 
   @override
   int compare(num a, num b) => (a - b).toInt();

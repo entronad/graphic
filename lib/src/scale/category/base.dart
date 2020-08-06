@@ -1,10 +1,9 @@
 import 'package:meta/meta.dart';
-import 'package:graphic/src/common/base_classes.dart';
 
 import '../base.dart';
 import '../auto_ticks/cat.dart';
 
-abstract class CategoryScaleState<V> extends ScaleState<V> {
+abstract class CategoryScaleState<V, D> extends ScaleState<V, D> {
   List<V> get values => this['values'] as List<V>;
   set values(List<V> value) => this['values'] = value;
 
@@ -12,10 +11,10 @@ abstract class CategoryScaleState<V> extends ScaleState<V> {
   set isRounding(bool value) => this['isRounding'] = value;
 }
 
-abstract class CategoryScaleComponent<S extends CategoryScaleState<V>, V>
-  extends ScaleComponent<S, V>
+abstract class CategoryScaleComponent<S extends CategoryScaleState<V, D>, V, D>
+  extends ScaleComponent<S, V, D>
 {
-  CategoryScaleComponent([Props<ScaleType> props]) : super(props) {
+  CategoryScaleComponent([Scale props]) : super(props) {
     assert(state.values.isNotEmpty);
   }
 

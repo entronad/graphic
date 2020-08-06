@@ -6,7 +6,7 @@ import 'package:graphic/src/coord/cartesian.dart';
 main() {
   group('basic', () {
     final plot = Rect.fromLTRB(0, 0, 400, 400);
-    final coord = CartesianCoordComponent()..setPlot(plot);
+    final coord = CartesianCoordComponent()..setRegion(plot);
 
     test('convert point', () {
       Offset p = Offset(0, 0);
@@ -57,7 +57,7 @@ main() {
     final plot = Rect.fromLTRB(0, 0, 400, 400);
     final coord = CartesianCoordComponent(
       CartesianCoord(transposed: true)
-    )..setPlot(plot);
+    )..setRegion(plot);
 
     test('convert point', () {
       Offset p = Offset(0, 0);

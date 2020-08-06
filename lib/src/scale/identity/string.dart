@@ -1,26 +1,27 @@
-import 'package:graphic/src/common/base_classes.dart';
-
 import '../base.dart';
 import 'base.dart';
 
-class IdentityScale extends Props<ScaleType> {
+class IdentityScale<D> extends Scale {
   IdentityScale({
-    String value
+    String value,
+
+    String Function(D) accessor,
   }) {
     this['value'] = value;
+    this['accessor'] = accessor;
   }
 
   @override
   ScaleType get type => ScaleType.identity;
 }
 
-class StringIdentityScaleState extends IdentityScaleState<String> {}
+class StringIdentityScaleState<D> extends IdentityScaleState<String, D> {}
 
-class StringIdentityScaleComponent
-  extends IdentityScaleComponent<StringIdentityScaleState, String>
+class StringIdentityScaleComponent<D>
+  extends IdentityScaleComponent<StringIdentityScaleState<D>, String, D>
 {
   StringIdentityScaleComponent([IdentityScale props]) : super(props);
 
   @override
-  StringIdentityScaleState get originalState => StringIdentityScaleState();
+  StringIdentityScaleState<D> get originalState => StringIdentityScaleState<D>();
 }

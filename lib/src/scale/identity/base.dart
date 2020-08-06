@@ -1,16 +1,14 @@
-import 'package:graphic/src/common/base_classes.dart';
-
 import '../base.dart';
 
-abstract class IdentityScaleState<V> extends ScaleState<V> {
+abstract class IdentityScaleState<V, D> extends ScaleState<V, D> {
   V get value => this['value'] as V;
   set value(V value) => this['value'] = value;
 }
 
-abstract class IdentityScaleComponent<S extends IdentityScaleState<V>, V>
-  extends ScaleComponent<S, V>
+abstract class IdentityScaleComponent<S extends IdentityScaleState<V, D>, V, D>
+  extends ScaleComponent<S, V, D>
 {
-  IdentityScaleComponent([Props<ScaleType> props]) : super(props);
+  IdentityScaleComponent([Scale props]) : super(props);
 
   @override
   void assign() {

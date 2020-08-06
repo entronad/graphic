@@ -1,7 +1,16 @@
 import 'package:meta/meta.dart';
-import 'package:graphic/src/common/typed_map.dart';
 
 import '../base.dart';
+
+abstract class SingleLinearAttr extends Attr {
+  SingleLinearAttr(String field) : super(field) {
+    assert(
+      this['fields'] == null
+        || (this['fields'] as List<String>).length == 1,
+      'SingleLinearAttr only support one field',
+    );
+  }
+}
 
 abstract class SingleLinearAttrState<A> extends AttrState<A> {
   List<A> get values => this['values'] as List<A>;
@@ -14,10 +23,10 @@ abstract class SingleLinearAttrState<A> extends AttrState<A> {
 abstract class SingleLinearAttrComponent<S extends SingleLinearAttrState, A>
   extends AttrComponent<S, A>
 {
-  SingleLinearAttrComponent([TypedMap props]) : super(props);
+  SingleLinearAttrComponent([Attr props]) : super(props);
 
   @override
-  A defaultMap(List<double> scaledValues) {
+  A defaultMapper(List<double> scaledValues) {
     if (scaledValues == null || scaledValues.isEmpty) {
       return null;
     }

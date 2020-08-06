@@ -661,3 +661,86 @@ shapeAttr中的shape指的是geom.shape ，我们也用枚举，同时
 shapeAttr先不做，等到geom确定下来再说
 
 数组range型的需要判断一下长度
+
+各个类型的props还是要定义一个统一的，方便用户接口定义
+
+fields感觉还是需要attr持有的，这也正是geom唯一需要用到的地方，或者说field唯一的用处
+
+accessor可以合并到scale中，这样一是减少概念类别，而是可以规约V的类型，这样在定义时，D通过chart的泛型规约，V通过scale的泛型规约，这样缺点就是scale需要增加个D的泛型了
+
+在chart中控制renderer的配置的相关方法使用render关键词，实际的绘制方法使用paint、draw关键词
+
+表示绘制范围的用 region 表示，绘制的group用plot表示
+
+Paint类型的样式，变量名就用style
+
+包裹多个键值对的类（为了类型）称为Record
+
+RenderShape也应该遵循props最简的命名原则，因为addShape()和Shape中的使用也是配置式的，而node、group、renderer由于没有props就不改了
+
+当Paint属性中style为fill时，strokeWidth就无效了，不会填充到边界
+
+为确保视觉的一致，stroke类的图形size要把线宽减掉
+
+y0的处理：不放在AttrValueRecord中，保持其纯净，以数组形式给出
+
+Shape函数由于需要暴露给用户定义，尽量保证传进来的是好值无需内部处理
+
+y0 用 startPositions 来代替，因为意义更合理方便扩展，而且很可能是取的另一组geom的postions，
+
+Attr中的position是抽象的概念，coord.convertPoint应该放在shape中
+
+极坐标系下的interval这样处理：南丁格尔：所有data均分坐标总角度，半径正常处理，饼图：将x的scaledValue加权分配角度，半径统一。南丁格尔图可堆叠，饼图不可堆叠
+
+funnel 和 pyramid 的唯一区别是一个最后收到0，一个最后保持柱状
+
+他们其实是和柱状图原理一样，但要注意图形填充在坐标之间，最后的效果依赖于坐标轴翻转、对称调整，确保数据层次嵌套
+
+funnel系列也和柱状图一样的处理，position的x位于图形的中间
+
+对坐标系有限定的用assert判断
+
+在目前的思路下，坐标区域的region并不一定就是绘图区域的region，到时候可能需要用bbox之类的东西根据实际确定
+
+为方便，极坐标下的rect也先按直线绘制（和f2一样）
+
+pyramid、rectPolygon等position传进来时，需保证已按顺序排好
+
+position 返回一组Offset，默认的是将前两个scaledValues转变为一个Offset，如需特别的（比如SchemaGeom中）需在formatter中自定义
+
+position中的点与startValues没有关系
+
+schema的特点是在一个图元上显示多个数据
+
+geom 中data是单独的setter/onSet
+
+f2 中geom中区分data的group的标准是：定义了某个非position的attr，这个attr的某些scale是cat类型
+
+因此分group的fields就是：出现在其它attr中并且不在position中（accessor、scale是有默认值的），先只支持一维，先按shape，后按color，后按size
+
+field的根本依据是attr的定义式中的标定，不过最好在scales中有定义，accessor有默认值根据字符串键取Map，根据取到的值的num、String、DataTime不同，确定默认的scale
+
+
+
+Props应当仅起到构造函数和setter传入参数的作用，所有实际持有的应该是state，包括一些附带的东西，比如attr中的fields、scale中的accessor也应该存放在state中
+
+对于Component中间变量的修改，尽量直接修改无返回值型的
+
+先按全部重新计算，不搞中间变量的方式进行计算
+
+adjust比较麻烦，因为对于Datum, 我们没有办法去set它，也没有办法去复制新建它，把它放到不是处理data，而是处理position好像就比较好了
+
+感觉不需要y0了，y0的功能，一部分应该由adjust完成（point，line，area，box），一部分应该由position数组承担（interval），
+
+每个shape传入的position已经是按要求组好的，如何组position的规则根据geom类型不同，由defaultPositionMapper决定，优先级低于 PositionAttr.mapper
+
+box、candle等图形的特殊性完全通过PositionAttr进行处理，传入多个field，如何组织points通过callback定义
+
+interval的定义就是有两端的，分别用数组的start和end
+
+dataGroup的同一组data必须是具有相同的shape，shape的传入参数也是一整条data的records
+
+slopedInterval用多次的方式，因为一般数据数组不会太长。
+
+adjust还是要做成Component的模式，因为在props中设置
+

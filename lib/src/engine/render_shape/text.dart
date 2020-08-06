@@ -2,13 +2,12 @@ import 'dart:ui';
 
 import 'package:flutter/painting.dart';
 import 'package:meta/meta.dart';
-import 'package:graphic/src/common/base_classes.dart';
 import 'package:graphic/src/util/exception.dart';
 
 import 'base.dart';
 
-class TextRenderShapeProps extends Props<RenderShapeType> {
-  TextRenderShapeProps({
+class TextRenderShape extends RenderShape {
+  TextRenderShape({
     @required double x,
     @required double y,
     double maxWidth,
@@ -124,8 +123,10 @@ class TextRenderShapeState extends RenderShapeState {
   }
 }
 
-class TextRenderShape extends RenderShape<TextRenderShapeState> {
-  TextRenderShape([TextRenderShapeProps props]) : super(props);
+class TextRenderShapeComponent
+  extends RenderShapeComponent<TextRenderShapeState>
+{
+  TextRenderShapeComponent([TextRenderShape props]) : super(props);
 
   TextPainter _textPainter = TextPainter();
 

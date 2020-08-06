@@ -1,9 +1,7 @@
-import 'package:graphic/src/common/base_classes.dart';
-
 import '../base.dart';
 import 'base.dart';
 
-class CatScale extends Props<ScaleType> {
+class CatScale<D> extends Scale {
   CatScale({
     List<String> values,
     bool isRounding,
@@ -13,6 +11,8 @@ class CatScale extends Props<ScaleType> {
     String alias,
     int tickCount,
     List<String> ticks,
+
+    String Function(D) accessor,
   }) {
     assert(
       scaledRange == null || scaledRange.length == 2,
@@ -26,19 +26,20 @@ class CatScale extends Props<ScaleType> {
     this['alias'] = alias;
     this['tickCount'] = tickCount;
     this['ticks'] = ticks;
+    this['accessor'] = accessor;
   }
 
   @override
   ScaleType get type => ScaleType.cat;
 }
 
-class StringCategoryScaleState extends CategoryScaleState<String> {}
+class StringCategoryScaleState<D> extends CategoryScaleState<String, D> {}
 
-class StringCategoryScaleComponent
-  extends CategoryScaleComponent<StringCategoryScaleState, String>
+class StringCategoryScaleComponent<D>
+  extends CategoryScaleComponent<StringCategoryScaleState<D>, String, D>
 {
   StringCategoryScaleComponent([CatScale props]) : super(props);
 
   @override
-  StringCategoryScaleState get originalState => StringCategoryScaleState();
+  StringCategoryScaleState<D> get originalState => StringCategoryScaleState<D>();
 }

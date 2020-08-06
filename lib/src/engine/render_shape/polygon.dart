@@ -1,12 +1,11 @@
 import 'dart:ui';
 
 import 'package:meta/meta.dart';
-import 'package:graphic/src/common/base_classes.dart';
 
 import 'base.dart';
 
-class PolygonRenderShapeProps extends Props<RenderShapeType> {
-  PolygonRenderShapeProps({
+class PolygonRenderShape extends RenderShape {
+  PolygonRenderShape({
     @required List<Offset> points,
 
     bool isAntiAlias,
@@ -51,8 +50,10 @@ class PolygonRenderShapeState extends RenderShapeState {
   set points(List<Offset> value) => this['points'] = value;
 }
 
-class PolygonRenderShape extends RenderShape<PolygonRenderShapeState> {
-  PolygonRenderShape([PolygonRenderShapeProps props]) : super(props);
+class PolygonRenderShapeComponent
+  extends RenderShapeComponent<PolygonRenderShapeState>
+{
+  PolygonRenderShapeComponent([PolygonRenderShape props]) : super(props);
 
   @override
   PolygonRenderShapeState get originalState => PolygonRenderShapeState();

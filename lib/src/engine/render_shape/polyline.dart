@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:graphic/src/common/base_classes.dart';
 import 'package:meta/meta.dart';
 
 import 'base.dart';
@@ -19,8 +18,8 @@ List<Offset> _filterPoints(List<Offset> points) {
   return filteredPoints;
 }
 
-class PolylineRenderShapeProps extends Props<RenderShapeType> {
-  PolylineRenderShapeProps({
+class PolylineRenderShape extends RenderShape {
+  PolylineRenderShape({
     @required List<Offset> points,
     bool smooth,
 
@@ -70,8 +69,10 @@ class PolylineRenderShapeState extends RenderShapeState {
   set smooth(bool value) => this['smooth'] = value;
 }
 
-class PolylineRenderShape extends RenderShape<PolylineRenderShapeState> {
-  PolylineRenderShape([PolylineRenderShapeProps props]) : super(props);
+class PolylineRenderShapeComponent
+  extends RenderShapeComponent<PolylineRenderShapeState>
+{
+  PolylineRenderShapeComponent([PolylineRenderShape props]) : super(props);
 
   @override
   PolylineRenderShapeState get originalState => PolylineRenderShapeState();

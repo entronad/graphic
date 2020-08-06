@@ -34,28 +34,28 @@ class _RenderShapeState extends State<RenderShape> {
     //   color: Colors.green,
     // ))..props.zIndex = 1;
 
-    final rect = r1.addShape(graphic.RectRenderShapeProps(
-      x: 50,
-      y: 50,
-      width: 50,
-      height: 50,
-      style: PaintingStyle.stroke,
-      strokeWidth: 4,
-    ))..state.zIndex = 10;
+    // final rect = r1.addShape(graphic.RectRenderShape(
+    //   x: 50,
+    //   y: 50,
+    //   width: 50,
+    //   height: 50,
+    //   style: PaintingStyle.stroke,
+    //   strokeWidth: 4,
+    // ))..state.zIndex = 10;
 
-    final bbox1 = rect.bbox;
-    r1.addShape(graphic.RectRenderShapeProps(
-      x: bbox1.topLeft.dx,
-      y: bbox1.topLeft.dy,
-      width: bbox1.width,
-      height: bbox1.height,
-      color: Colors.green,
-    ))..state.zIndex = 1;
+    // final bbox1 = rect.bbox;
+    // r1.addShape(graphic.RectRenderShape(
+    //   x: bbox1.topLeft.dx,
+    //   y: bbox1.topLeft.dy,
+    //   width: bbox1.width,
+    //   height: bbox1.height,
+    //   color: Colors.green,
+    // ))..state.zIndex = 1;
 
     
-    // rect.translate(x: 50, y: 50);
-    rect.rotate(0.8, origin: Offset(75, 75));
-    // rect.scale(x: 0.5, y: 0.5, origin: Offset(50, 50));
+    // // rect.translate(x: 50, y: 50);
+    // rect.rotate(0.8, origin: Offset(75, 75));
+    // // rect.scale(x: 0.5, y: 0.5, origin: Offset(50, 50));
 
     // final shape = r1.addShape(graphic.CircleAttrs(
     //   x: 10,
@@ -111,6 +111,30 @@ class _RenderShapeState extends State<RenderShape> {
     // ))..state.zIndex = 1;
 
     // shape.translate(x: 0, y: 90);
+
+    final rect = r1.addShape(graphic.RectRenderShape(
+      x: 50,
+      y: 50,
+      width: 50,
+      height: 50,
+      // style: PaintingStyle.stroke,
+      strokeWidth: 10,
+      color: Colors.green,
+    ))..state.zIndex = 10;
+
+    r1.addShape(graphic.CircleRenderShape(
+      x: 50,
+      y: 50,
+      r: 2,
+      color: Colors.red,
+    ))..state.zIndex = 100;
+
+    r1.addShape(graphic.CircleRenderShape(
+      x: 100,
+      y: 100,
+      r: 2,
+      color: Colors.red,
+    ))..state.zIndex = 100;
 
 
     r1.mount(() { setState(() {}); });

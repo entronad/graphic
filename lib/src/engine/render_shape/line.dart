@@ -1,12 +1,11 @@
 import 'dart:ui';
 
-import 'package:graphic/src/common/base_classes.dart';
 import 'package:meta/meta.dart';
 
 import 'base.dart';
 
-class LineRenderShapeProps extends Props<RenderShapeType> {
-  LineRenderShapeProps({
+class LineRenderShape extends RenderShape {
+  LineRenderShape({
     @required double x1,
     @required double y1,
     @required double x2,
@@ -66,8 +65,10 @@ class LineRenderShapeState extends RenderShapeState {
   set y2(double value) => this['y2'] = value;
 }
 
-class LineRenderShape extends RenderShape<LineRenderShapeState> {
-  LineRenderShape([LineRenderShapeProps props]) : super(props);
+class LineRenderShapeComponent
+  extends RenderShapeComponent<LineRenderShapeState>
+{
+  LineRenderShapeComponent([LineRenderShape props]) : super(props);
 
   @override
   LineRenderShapeState get originalState => LineRenderShapeState();

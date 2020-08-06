@@ -10,7 +10,7 @@ bool equal(num v1, num v2) =>
 main() {
   group('basic', () {
     final plot = Rect.fromLTRB(0, 0, 400, 400);
-    final coord = PolarCoordComponent()..setPlot(plot);
+    final coord = PolarCoordComponent()..setRegion(plot);
 
     test('convert point', () {
       Offset p = Offset(0, 0);
@@ -46,7 +46,7 @@ main() {
     final plot = Rect.fromLTRB(0, 0, 400, 400);
     final coord = PolarCoordComponent(
       PolarCoord(innerRadius: 0.5),
-    )..setPlot(plot);
+    )..setRegion(plot);
 
     test('convert point', () {
       Offset p = Offset(0, 0);
@@ -88,7 +88,7 @@ main() {
     final coord = PolarCoordComponent(PolarCoord(
       startAngle: -pi,
       endAngle: 0,
-    ))..setPlot(plot);
+    ))..setRegion(plot);
 
     test('convert point', () {
       final p = coord.convertPoint(Offset(0, 0));
@@ -110,11 +110,11 @@ main() {
   group('set plot', () {
     test('', () {
       final plot1 = Rect.fromLTRB(0, 0, 200, 200);
-      final coord = PolarCoordComponent()..setPlot(plot1);
+      final coord = PolarCoordComponent()..setRegion(plot1);
       expect(coord.radiusLength, 100);
 
       final plot2 = Rect.fromLTRB(0, 0, 400, 500);
-      coord.setPlot(plot2);
+      coord.setRegion(plot2);
       expect(coord.radiusLength, 200);
     });
   });

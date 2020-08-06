@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:flutter/painting.dart';
 import 'package:vector_math/vector_math_64.dart';
-import 'package:graphic/src/common/base_classes.dart';
 
 import 'node.dart';
 import 'render_shape/base.dart';
@@ -24,8 +23,8 @@ class Group extends Node<GroupState> {
       ..children = [];
   }
 
-  RenderShape addShape(Props<RenderShapeType> props) {
-    final shape = RenderShape.create(props);
+  RenderShapeComponent addShape(RenderShape props) {
+    final shape = RenderShapeComponent.create(props);
     _add(shape);
     return shape;
   }

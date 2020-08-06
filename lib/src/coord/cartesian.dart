@@ -1,10 +1,8 @@
 import 'dart:ui';
 
-import 'package:graphic/src/common/base_classes.dart';
-
 import 'base.dart';
 
-class CartesianCoord extends Props<CoordType> {
+class CartesianCoord extends Coord {
   CartesianCoord({
     bool transposed,
   }) {
@@ -26,14 +24,14 @@ class CartesianCoordComponent extends CoordComponent<CartesianCoordState> {
 
   @override
   List<double> get rangeX => [
-    state.plot.left,
-    state.plot.right,
+    state.region.left,
+    state.region.right,
   ];
 
   @override
   List<double> get rangeY => [
-    state.plot.bottom,
-    state.plot.top,
+    state.region.bottom,
+    state.region.top,
   ];
 
   @override

@@ -1,50 +1,43 @@
 import 'dart:ui';
 
-import 'package:graphic/src/common/base_classes.dart';
-import 'package:graphic/src/coord/base.dart';
+import 'package:meta/meta.dart';
 
 import 'base.dart';
 
-class PositionAttr extends Props<AttrType> {
+class PositionAttr extends Attr {
   PositionAttr({
-    String field,
+    @required String field,
 
-    Offset Function(List<double>) callback,
-  })
-    : this.field = field
-  {
-    this['callback'] = callback;
+    List<Offset> Function(List<double>) mapper,
+  }) : super(field) {
+    this['mapper'] = mapper;
   }
 
   @override
   AttrType get type => AttrType.position;
-
-  final String field;
 }
 
-class PositionAttrState extends AttrState<Offset> {
-  CoordComponent get coord => this['coord'] as CoordComponent;
-  set coord(CoordComponent value) => this['coord'] = value;
-}
+class PositionAttrState extends AttrState<List<Offset>> {}
 
 class PositionAttrComponent
-  extends AttrComponent<PositionAttrState, Offset>
+  extends AttrComponent<PositionAttrState, List<Offset>>
 {
   PositionAttrComponent([PositionAttr props]) : super(props);
 
   @override
   PositionAttrState get originalState => PositionAttrState();
 
+  // Only map to abstract position
   @override
-  Offset defaultMap(List<double> scaledValues) {
+  List<Offset> defaultMapper(List<double> scaledValues) {
     if (scaledValues == null || scaledValues.isEmpty) {
       return null;
     }
     assert(scaledValues.length == 2);
 
-    return state.coord.convertPoint(Offset(
+    return [Offset(
       scaledValues[0],
       scaledValues[1],
-    ));
+    )];
   }
 }

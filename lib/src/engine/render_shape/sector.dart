@@ -2,12 +2,11 @@ import 'dart:ui';
 import 'dart:math';
 
 import 'package:meta/meta.dart';
-import 'package:graphic/src/common/base_classes.dart';
 
 import 'base.dart';
 
-class SectorRenderShapeProps extends Props<RenderShapeType> {
-  SectorRenderShapeProps({
+class SectorRenderShape extends RenderShape {
+  SectorRenderShape({
     @required double x,
     @required double y,
     @required double r,
@@ -82,8 +81,10 @@ class SectorRenderShapeState extends RenderShapeState {
   set clockwise(bool value) => this['clockwise'] = value;
 }
 
-class SectorRenderShape extends RenderShape<SectorRenderShapeState> {
-  SectorRenderShape([SectorRenderShapeProps props]) : super(props);
+class SectorRenderShapeComponent
+  extends RenderShapeComponent<SectorRenderShapeState>
+{
+  SectorRenderShapeComponent([SectorRenderShape props]) : super(props);
 
   @override
   SectorRenderShapeState get originalState => SectorRenderShapeState();

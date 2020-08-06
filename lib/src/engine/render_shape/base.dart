@@ -30,6 +30,8 @@ enum RenderShapeType {
   custom,
 }
 
+abstract class RenderShape extends Props<RenderShapeType> {}
+
 abstract class RenderShapeState extends NodeState {
   // Paint attrs, api refers to flutter 1.12.13
 
@@ -95,45 +97,45 @@ abstract class RenderShapeState extends NodeState {
   }
 }
 
-abstract class RenderShape<S extends RenderShapeState> extends Node<S> {
-  static RenderShape create(Props props) {
+abstract class RenderShapeComponent<S extends RenderShapeState> extends Node<S> {
+  static RenderShapeComponent create(RenderShape props) {
     switch (props.type) {
       case RenderShapeType.arc:
-        return ArcRenderShape(props);
+        return ArcRenderShapeComponent(props);
       case RenderShapeType.circle:
-        return CircleRenderShape(props);
+        return CircleRenderShapeComponent(props);
       case RenderShapeType.custom:
-        return CustomRenderShape(props);
+        return CustomRenderShapeComponent(props);
       case RenderShapeType.line:
-        return LineRenderShape(props);
+        return LineRenderShapeComponent(props);
       case RenderShapeType.polygon:
-        return PolygonRenderShape(props);
+        return PolygonRenderShapeComponent(props);
       case RenderShapeType.polyline:
-        return PolylineRenderShape(props);
+        return PolylineRenderShapeComponent(props);
       case RenderShapeType.rect:
-        return RectRenderShape(props);
+        return RectRenderShapeComponent(props);
       case RenderShapeType.sector:
-        return SectorRenderShape(props);
+        return SectorRenderShapeComponent(props);
       case RenderShapeType.text:
-        return TextRenderShape(props);
+        return TextRenderShapeComponent(props);
       default: return null;
     }
   }
 
-  RenderShape([TypedMap props]) : super(props) {
+  RenderShapeComponent([TypedMap props]) : super(props) {
     assign();
   }
 
   final Path _path = Path();
 
-  final Paint _stylePaint = Paint();
+  final Paint _style = Paint();
 
   @protected
   Rect shapeBBox;
 
   Path get path => _path;
 
-  Paint get stylePaint => _stylePaint;
+  Paint get stylePaint => _style;
 
   @override
   Rect get bbox => shapeBBox;
@@ -143,7 +145,7 @@ abstract class RenderShape<S extends RenderShapeState> extends Node<S> {
     canvas.drawPath(path, stylePaint);
   }
 
-  void setProps(Props<RenderShapeType> props) {
+  void setProps(RenderShape props) {
     state.mix(props);
     onSetProps();
   }
@@ -158,7 +160,7 @@ abstract class RenderShape<S extends RenderShapeState> extends Node<S> {
     _path.reset();
     createPath(_path);
 
-    state.applyToPaint(_stylePaint);
+    state.applyToPaint(_style);
 
     shapeBBox = calculateBBox();
   }

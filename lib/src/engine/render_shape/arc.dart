@@ -2,12 +2,11 @@ import 'dart:ui';
 import 'dart:math';
 
 import 'package:meta/meta.dart';
-import 'package:graphic/src/common/base_classes.dart';
 
 import 'base.dart';
 
-class ArcRenderShapeProps extends Props<RenderShapeType> {
-  ArcRenderShapeProps({
+class ArcRenderShape extends RenderShape {
+  ArcRenderShape({
     @required double x,
     @required double y,
     @required double r,
@@ -77,8 +76,10 @@ class ArcRenderShapeState extends RenderShapeState {
   set clockwise(bool value) => this['clockwise'] = value;
 }
 
-class ArcRenderShape extends RenderShape<ArcRenderShapeState> {
-  ArcRenderShape([ArcRenderShapeProps props]) : super(props);
+class ArcRenderShapeComponent
+  extends RenderShapeComponent<ArcRenderShapeState>
+{
+  ArcRenderShapeComponent([ArcRenderShape props]) : super(props);
 
   @override
   ArcRenderShapeState get originalState => ArcRenderShapeState();

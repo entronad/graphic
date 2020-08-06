@@ -14,7 +14,9 @@ enum ScaleType {
   linear,  // NumLinear
 }
 
-abstract class ScaleState<V> with TypedMap {
+abstract class Scale extends Props<ScaleType> {}
+
+abstract class ScaleState<V, D> with TypedMap {
   String Function(V) get formatter => this['formatter'] as String Function(V);
   set formatter(String Function(V) value) => this['formatter'] = value;
 
@@ -29,10 +31,13 @@ abstract class ScaleState<V> with TypedMap {
 
   List<V> get ticks => this['ticks'] as List<V>;
   set ticks(List<V> value) => this['ticks'] = value;
+
+  V Function(D) get accessor => this['accessor'] as V Function(D);
+  set accessor(V Function(D) value) => this['accessor'] = value;
 }
 
-abstract class ScaleComponent<S extends ScaleState<V>, V> extends Component<S> {
-  static ScaleComponent create(Props props) {
+abstract class ScaleComponent<S extends ScaleState<V, D>, V, D> extends Component<S> {
+  static ScaleComponent create(Scale props) {
     switch (props.type) {
       case ScaleType.identity:
         return StringIdentityScaleComponent(props);

@@ -1,17 +1,15 @@
-import 'package:graphic/src/common/base_classes.dart';
-
 import '../base.dart';
 import '../category/base.dart';
 
-abstract class OrdinalScaleState<V> extends CategoryScaleState<V> {
+abstract class OrdinalScaleState<V, D> extends CategoryScaleState<V, D> {
   bool get isSorted => this['isSorted'] as bool ?? false;
   set isSorted(bool value) => this['isSorted'] = value;
 }
 
-abstract class OrdinalScaleComponent<S extends OrdinalScaleState<V>, V>
-  extends CategoryScaleComponent<S, V>
+abstract class OrdinalScaleComponent<S extends OrdinalScaleState<V, D>, V, D>
+  extends CategoryScaleComponent<S, V, D>
 {
-  OrdinalScaleComponent([Props<ScaleType> props]) : super(props);
+  OrdinalScaleComponent([Scale props]) : super(props);
 
   // operations
 

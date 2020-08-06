@@ -9,9 +9,11 @@ enum CoordType {
   polar,
 }
 
+abstract class Coord extends Props<CoordType> {}
+
 abstract class CoordState with TypedMap {
-  Rect get plot => this['plot'] as Rect;
-  set plot(Rect value) => this['plot'] = value;
+  Rect get region => this['region'] as Rect;
+  set region(Rect value) => this['region'] = value;
 
   bool get transposed => this['transposed'] as bool ?? false;
   set transposed(bool value) => this['transposed'] = value;
@@ -30,11 +32,11 @@ abstract class CoordComponent<S extends CoordState> extends Component<S> {
 
   Offset invertPoint(Offset renderPoint);
 
-  void setPlot(Rect plot) {
-    state.plot = plot;
-    onSetPlot();
+  void setRegion(Rect region) {
+    state.region = region;
+    onSetRegion();
   }
 
   @protected
-  void onSetPlot() {}
+  void onSetRegion() {}
 }

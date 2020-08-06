@@ -1,12 +1,11 @@
 import 'dart:ui';
 
 import 'package:meta/meta.dart';
-import 'package:graphic/src/common/base_classes.dart';
 
 import 'base.dart';
 
-class CustomRenderShapeProps extends Props<RenderShapeType> {
-  CustomRenderShapeProps({
+class CustomRenderShape extends RenderShape {
+  CustomRenderShape({
     @required Path path,
 
     bool isAntiAlias,
@@ -51,8 +50,10 @@ class CustomRenderShapeState extends RenderShapeState {
   set path(Path value) => this['path'] = value;
 }
 
-class CustomRenderShape extends RenderShape<CustomRenderShapeState> {
-  CustomRenderShape([CustomRenderShapeProps props]) : super(props);
+class CustomRenderShapeComponent
+  extends RenderShapeComponent<CustomRenderShapeState>
+{
+  CustomRenderShapeComponent([CustomRenderShape props]) : super(props);
 
   @override
   CustomRenderShapeState get originalState => CustomRenderShapeState();

@@ -1,27 +1,21 @@
-import 'package:graphic/src/common/base_classes.dart';
-
 import '../base.dart';
 import 'base.dart';
 
-class SizeAttr extends Props<AttrType> {
+class SizeAttr extends Attr {
   SizeAttr({
     String field,
 
     List<double> values,
     List<double> stops,
-    double Function(List<double>) callback,
-  })
-    : this.field = field
-  {
+    double Function(List<double>) mapper,
+  }) : super(field) {
     this['values'] = values;
     this['stops'] = stops;
-    this['callback'] = callback;
+    this['mapper'] = mapper;
   }
 
   @override
   AttrType get type => AttrType.size;
-
-  final String field;
 }
 
 class SizeSingleLinearAttrState extends SingleLinearAttrState<double> {}

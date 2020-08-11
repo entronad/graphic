@@ -10,6 +10,7 @@ List<T> sublist<T>(
 List<List<D>> group<V, D>(
   List<D> data,
   V Function(D) accessor,
+  List<V> values,
 ) {
   if (accessor == null || data == null || data.isEmpty) {
     return [];
@@ -23,6 +24,10 @@ List<List<D>> group<V, D>(
       tmp[value] = <D>[];
     }
     tmp[value].add(datum);
+  }
+
+  if (values != null) {
+    return values.map((groupValue) => tmp[groupValue]).toList();
   }
 
   return tmp.values.toList();

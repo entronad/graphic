@@ -29,15 +29,8 @@ class PositionAttrComponent
 
   // Only map to abstract position
   @override
-  List<Offset> defaultMapper(List<double> scaledValues) {
-    if (scaledValues == null || scaledValues.isEmpty) {
-      return null;
-    }
-    assert(scaledValues.length == 2);
-
-    return [Offset(
-      scaledValues[0],
-      scaledValues[1],
-    )];
-  }
+  List<Offset> defaultMapper(List<double> scaledValues) =>
+    throw UnimplementedError(
+      'Position default mapper must define in geom.',
+    );
 }

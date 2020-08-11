@@ -744,3 +744,27 @@ slopedInterval用多次的方式，因为一般数据数组不会太长。
 
 adjust还是要做成Component的模式，因为在props中设置
 
+在f2中传递给shape的size比较乱，interval中是归一化的，point中是绝对值。用户设置的values是绝对值，因此我们认为传入的也为绝对值，如需转换为相对值则在shape中结合coord处理。
+
+Adjust调整应该仅与归一化后的position有关，因此仅保留dodgeRatio参数，默认均分
+
+XXX的总数（int）一半用 totalXXX命名
+
+送进adjust中的group里每个list长度要一致，x要对应
+
+感觉reversed不应该作为stack的独特的选项，而是group顺序是按照groupfield的scale的values（如果有）的顺序来的
+
+values的原则是，如果有，则顺序、数量都按照它来，如果没有则按照数据里出现的数量、顺序
+
+stack的关键是要正负分别分组，用第0个point的y作为标志
+
+adjust的规则：将position中的所有均匀分布在y轴两侧，如果只有一个点就前面加个0（这时只有分布的band有意义）
+
+只有一个点的position称为single，有多个点的称为multi，注意area一般是single，经过symmetric之后是multi
+
+对于geom的更新，自身属性引起的更新通过setter中调用render，外部（chart）变化引起的通过外部调用render。先搞个只要变化就全量更新
+
+geom在render后要将持有的renderShape保存，便于下次清除
+
+大型component（包括renderer, geom, chart）持有其他component，且通过传入props构建，何时变更渲染需要精细控制，故不通过构造函数传入props，setter一般只负责更新state和中间变量，不负责render
+

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:meta/meta.dart';
 import 'package:graphic/src/common/typed_map.dart';
 import 'package:graphic/src/common/base_classes.dart';
 import 'package:graphic/src/chart/component.dart';
@@ -10,9 +11,11 @@ import 'package:graphic/src/attr/single_linear/shape.dart';
 import 'package:graphic/src/attr/single_linear/size.dart';
 import 'package:graphic/src/attr/position.dart';
 import 'package:graphic/src/scale/base.dart';
+import 'package:graphic/src/scale/category/base.dart';
 import 'package:graphic/src/util/list.dart';
 
 import 'shape/base.dart';
+import 'adjust/base.dart';
 
 double _scaleDatum<D>(ScaleComponent scale, D datum) =>
   scale.scale(scale.state.accessor(datum));
@@ -25,10 +28,10 @@ class AttrValueRecord {
     this.shape,
   });
 
-  final Color color;
-  final double size;
-  final List<Offset> position;
-  final Shape shape;
+  Color color;
+  double size;
+  List<Offset> position;
+  Shape shape;
 }
 
 enum GeomType {
@@ -49,9 +52,6 @@ abstract class GeomState<D> with TypedMap {
   Group get plot => this['plot'] as Group;
   set plot(Group value) => this['plot'] = value;
 
-  Paint get style => this['style'] as Paint;
-  set style(Paint value) => this['style'] = value;
-
   ColorSingleLinearAttrComponent get color =>
     this['color'] as ColorSingleLinearAttrComponent;
   set color(ColorSingleLinearAttrComponent value) =>
@@ -71,54 +71,78 @@ abstract class GeomState<D> with TypedMap {
     this['position'] as PositionAttrComponent;
   set position(PositionAttrComponent value) =>
     this['position'] = value;
+
+  AdjustComponent get adjust => this['adjust'] as AdjustComponent;
+  set adjust(AdjustComponent value) => this['adjust'] = value;
 }
 
 abstract class GeomComponent<S extends GeomState<D>, D>
   extends Component<S>
 {
-  GeomComponent([TypedMap props]) : super(props);
+  final _shapeComponents = <RenderShapeComponent>[];
+
+  void setColor(ColorAttr color) =>
+    state.color = ColorSingleLinearAttrComponent(color);
+  
+  void setShape(ShapeAttr shape) =>
+    state.shape = ShapeSingleLinearAttrComponent(shape);
+  
+  void setSize(SizeAttr size) =>
+    state.size = SizeSingleLinearAttrComponent(size);
+  
+  void setPosition(PositionAttr position) {
+    final positionComponent = PositionAttrComponent(position);
+    if (positionComponent.state.mapper == null) {
+      positionComponent.state.mapper = defaultPositionMapper;
+    }
+    state.position = positionComponent;
+  }
+
+  // Base implimentation for sigle Point
+  @protected
+  List<Offset> defaultPositionMapper(List<double> scaledValues) {
+    if (scaledValues == null || scaledValues.isEmpty) {
+      return null;
+    }
+    assert(scaledValues.length == 2);
+
+    return [Offset(
+      scaledValues[0],
+      scaledValues[1],
+    )];
+  }
 
   void render() {
-    final shapes = _getRenderShapes();
-    for (var shape in shapes) {
-      state.plot.addShape(shape);
+    if (_shapeComponents.isNotEmpty) {
+      for (var component in _shapeComponents) {
+        component.remove();
+      }
+      _shapeComponents.clear();
+    }
+
+    final renderShapes = _getRenderShapes();
+    for (var renderShape in renderShapes) {
+      final component = state.plot.addShape(renderShape);
+      _shapeComponents.add(component);
     }
   }
 
   List<RenderShape> _getRenderShapes() {
+    final coord = state.chart.state.coord;
+    final recordsGroup = _getRecordsGroup();
+    _adjustRecordsGroup(recordsGroup);
+    
+    final rst = <RenderShape>[];
 
-  }
-
-  String _getGroupField() {
-    final positionFields = state.position.state.fields;
-
-    final shapeField = state.shape.state.fields.first;
-    if (shapeField != null && !positionFields.contains(shapeField)) {
-      return shapeField;
-    }
-    final colorField = state.color.state.fields.first;
-    if (colorField != null && !positionFields.contains(colorField)) {
-      return colorField;
-    }
-    final sizeField = state.size.state.fields.first;
-    if (sizeField != null && !positionFields.contains(sizeField)) {
-      return sizeField;
+    for (var records in recordsGroup) {
+      final shape = records.first.shape;
+      rst.addAll(shape(
+        records,
+        coord,
+      ));
     }
 
-    return null;
-  }
-
-  List<List<D>> _getDataGroup() {
-    final chart = state.chart;
-    final data = chart.state.data;
-    final groupField = _getGroupField();
-
-    if (groupField == null) {
-      return [data];
-    }
-
-    final accessor = chart.state.scales[groupField].state.accessor;
-    return group(data, accessor);
+    return rst;
   }
 
   List<List<AttrValueRecord>> _getRecordsGroup() {
@@ -157,7 +181,49 @@ abstract class GeomComponent<S extends GeomState<D>, D>
     return rst;
   }
 
-  void _adjustRecordsGroup(List<List<AttrValueRecord>> recordsGroup) {
+  List<List<D>> _getDataGroup() {
+    final chart = state.chart;
+    final data = chart.state.data;
+    final groupField = _getGroupField();
 
+    if (groupField == null) {
+      return [data];
+    }
+
+    // only group by category scale
+    final groupScale = chart.state.scales[groupField];
+    if (groupScale is CategoryScaleComponent) {
+      final accessor = groupScale.state.accessor;
+      final values = groupScale.state.values;
+      return group(data, accessor, values);
+    }
+    
+    return [data];
+  }
+
+  String _getGroupField() {
+    final positionFields = state.position.state.fields;
+
+    final shapeField = state.shape.state.fields.first;
+    if (shapeField != null && !positionFields.contains(shapeField)) {
+      return shapeField;
+    }
+    final colorField = state.color.state.fields.first;
+    if (colorField != null && !positionFields.contains(colorField)) {
+      return colorField;
+    }
+    final sizeField = state.size.state.fields.first;
+    if (sizeField != null && !positionFields.contains(sizeField)) {
+      return sizeField;
+    }
+
+    return null;
+  }
+
+  void _adjustRecordsGroup(List<List<AttrValueRecord>> recordsGroup) {
+    final adjust = state.adjust;
+    if (adjust != null) {
+      adjust.adjust(recordsGroup);
+    }
   }
 }

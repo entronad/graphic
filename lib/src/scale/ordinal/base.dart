@@ -1,5 +1,6 @@
-import '../base.dart';
 import '../category/base.dart';
+
+abstract class OrdinalScale<V, D> extends CategoryScale<V, D> {}
 
 abstract class OrdinalScaleState<V, D> extends CategoryScaleState<V, D> {
   bool get isSorted => this['isSorted'] as bool ?? false;
@@ -9,7 +10,7 @@ abstract class OrdinalScaleState<V, D> extends CategoryScaleState<V, D> {
 abstract class OrdinalScaleComponent<S extends OrdinalScaleState<V, D>, V, D>
   extends CategoryScaleComponent<S, V, D>
 {
-  OrdinalScaleComponent([Scale props]) : super(props);
+  OrdinalScaleComponent([OrdinalScale<V, D> props]) : super(props);
 
   // operations
 

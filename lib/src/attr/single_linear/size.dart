@@ -1,16 +1,18 @@
 import '../base.dart';
 import 'base.dart';
 
-class SizeAttr extends Attr {
+class SizeAttr extends SingleLinearAttr<double> {
   SizeAttr({
     String field,
 
     List<double> values,
     List<double> stops,
+    bool isTween,
     double Function(List<double>) mapper,
   }) : super(field) {
     this['values'] = values;
     this['stops'] = stops;
+    this['isTween'] = isTween;
     this['mapper'] = mapper;
   }
 

@@ -3,7 +3,7 @@ import 'package:graphic/src/scale/identity/string.dart';
 
 main() {
   group('scale', () {
-    final scale = StringIdentityScaleComponent(IdentityScale(
+    final scale = StringIdentityScaleComponent(IdentScale(
       value: 'const',
     ));
 
@@ -32,7 +32,7 @@ main() {
     });
 
     test('set props', () {
-      scale.setProps(IdentityScale(
+      scale.setProps(IdentScale(
         value: 'var',
       ));
       expect(scale.scale('var'), 0);

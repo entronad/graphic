@@ -60,6 +60,8 @@ class CustomRenderShapeComponent
 
   @override
   void createPath(Path path) {
-    path.addPath(path, Offset(0, 0));
+    final customPath = state.path;
+
+    path.addPath(customPath, Offset(0, 0));
   }
 }

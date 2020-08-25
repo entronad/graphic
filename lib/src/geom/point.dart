@@ -5,6 +5,7 @@ import 'package:graphic/src/attr/position.dart';
 import 'package:graphic/src/geom/adjust/base.dart';
 
 import 'base.dart';
+import 'shape/point.dart';
 
 class PointGeom extends Geom {
   PointGeom({
@@ -29,5 +30,11 @@ class PointGeomState<D> extends GeomState<D> {}
 
 class PointGeomComponent<D> extends GeomComponent<PointGeomState<D>, D> {
   @override
-  PointGeomState<D> get originalState => PointGeomState();
+  PointGeomState<D> get originalState => PointGeomState<D>();
+
+  @override
+  get defaultShape => circlePoint;
+
+  @override
+  double get defaultSize => 5;
 }

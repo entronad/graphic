@@ -5,16 +5,16 @@ import 'package:graphic/src/common/base_classes.dart';
 import 'category/string.dart';
 import 'identity/string.dart';
 import 'linear/num.dart';
-import 'ordinal/time.dart';
+import 'ordinal/date_time.dart';
 
 enum ScaleType {
-  identity,  // StringIdentity
-  cat,  // StringCategory
-  time,  // DateTimeOrdinal
-  linear,  // NumLinear
+  ident,
+  cat,
+  time,
+  number,
 }
 
-abstract class Scale extends Props<ScaleType> {}
+abstract class Scale<V, D> extends Props<ScaleType> {}
 
 abstract class ScaleState<V, D> with TypedMap {
   String Function(V) get formatter => this['formatter'] as String Function(V);
@@ -37,21 +37,21 @@ abstract class ScaleState<V, D> with TypedMap {
 }
 
 abstract class ScaleComponent<S extends ScaleState<V, D>, V, D> extends Component<S> {
-  static ScaleComponent create(Scale props) {
+  static ScaleComponent create<V, D>(Scale<V, D> props) {
     switch (props.type) {
-      case ScaleType.identity:
-        return StringIdentityScaleComponent(props);
+      case ScaleType.ident:
+        return StringIdentityScaleComponent<D>(props as IdentScale<D>);
       case ScaleType.cat:
-        return StringCategoryScaleComponent(props);
+        return StringCategoryScaleComponent<D>(props as CatScale<D>);
       case ScaleType.time:
-        return TimeOrdinalScaleComponent(props);
-      case ScaleType.linear:
-        return NumLinearScaleComponent(props);
+        return DateTimeOrdinalScaleComponent<D>(props as TimeScale<D>);
+      case ScaleType.number:
+        return NumLinearScaleComponent<D>(props as NumberScale<D>);
       default: return null;
     }
   }
 
-  ScaleComponent([TypedMap props]) : super(props) {
+  ScaleComponent([Scale<V, D> props]) : super(props) {
     assign();
   }
 
@@ -67,8 +67,7 @@ abstract class ScaleComponent<S extends ScaleState<V, D>, V, D> extends Componen
   List<V> getAutoTicks();
 
   void setProps(Props<ScaleType> props) {
-    state.ticks = null;
-
+    state.clear();
     state.mix(props);
     onSetProps();
   }

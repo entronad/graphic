@@ -5,6 +5,7 @@ import 'package:graphic/src/attr/position.dart';
 import 'package:graphic/src/geom/adjust/base.dart';
 
 import 'base.dart';
+import 'shape/area.dart';
 
 class AreaGeom extends Geom {
   AreaGeom({
@@ -29,5 +30,11 @@ class AreaGeomState<D> extends GeomState<D> {}
 
 class AreaGeomComponent<D> extends GeomComponent<AreaGeomState<D>, D> {
   @override
-  AreaGeomState<D> get originalState => AreaGeomState();
+  AreaGeomState<D> get originalState => AreaGeomState<D>();
+
+  @override
+  get defaultShape => area;
+
+  @override
+  double get defaultSize => null;
 }

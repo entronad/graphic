@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart' as graphic;
 import 'package:graphic/src/engine/node.dart';
 
-class RenderShape extends StatefulWidget {
+class RenderShapePage extends StatefulWidget {
   @override
-  _RenderShapeState createState() => _RenderShapeState();
+  _RenderShapePageState createState() => _RenderShapePageState();
 }
 
-class _RenderShapeState extends State<RenderShape> {
+class _RenderShapePageState extends State<RenderShapePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   graphic.Renderer r1 = graphic.Renderer();
@@ -112,29 +112,42 @@ class _RenderShapeState extends State<RenderShape> {
 
     // shape.translate(x: 0, y: 90);
 
-    final rect = r1.addShape(graphic.RectRenderShape(
-      x: 50,
-      y: 50,
-      width: 50,
-      height: 50,
-      // style: PaintingStyle.stroke,
-      strokeWidth: 10,
-      color: Colors.green,
-    ))..state.zIndex = 10;
+    // final group = r1.addGroup();
 
-    r1.addShape(graphic.CircleRenderShape(
-      x: 50,
-      y: 50,
-      r: 2,
-      color: Colors.red,
-    ))..state.zIndex = 100;
+    // final rect = group.addShape(graphic.RectRenderShape(
+    //   x: 50,
+    //   y: 50,
+    //   width: 50,
+    //   height: 50,
+    //   // style: PaintingStyle.stroke,
+    //   strokeWidth: 10,
+    //   color: Colors.green,
+    // ))..state.zIndex = 10;
 
-    r1.addShape(graphic.CircleRenderShape(
-      x: 100,
-      y: 100,
-      r: 2,
+    // group.addShape(graphic.CircleRenderShape(
+    //   x: 50,
+    //   y: 50,
+    //   r: 2,
+    //   color: Colors.red,
+    // ))..state.zIndex = 100;
+
+    // group.addShape(graphic.CircleRenderShape(
+    //   x: 100,
+    //   y: 100,
+    //   r: 2,
+    //   color: Colors.red,
+    // ))..state.zIndex = 100;
+
+    final path = Path();
+    path.moveTo(50, 50);
+    path.lineTo(100, 50);
+    path.lineTo(100, 100);
+    path.close();
+
+    r1.addShape(graphic.CustomRenderShape(
+      path: path,
       color: Colors.red,
-    ))..state.zIndex = 100;
+    ));
 
 
     r1.mount(() { setState(() {}); });

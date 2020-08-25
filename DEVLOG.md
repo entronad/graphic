@@ -768,3 +768,62 @@ geom在render后要将持有的renderShape保存，便于下次清除
 
 大型component（包括renderer, geom, chart）持有其他component，且通过传入props构建，何时变更渲染需要精细控制，故不通过构造函数传入props，setter一般只负责更新state和中间变量，不负责render
 
+目前感觉geom中还是传入整个chart，以保证chart的参数变化后的关联性
+
+
+
+props缺失的情况：
+
+attr没有：chart中每种类型由对应的默认attr，position必须设置
+
+attr没有field：singleLinear返回values的第一个，position必须设置
+
+attrs没有values：color取theme的默认值，shape，size每个geom有默认值
+
+scales没有对应field：任何在attr中定义了的field都必须要有scale，因为需要accessor
+
+categoryScale没有values：必须要有（scale是与data无关的，不建议从data中获取）
+
+
+
+props的继承链还是需要完整的，但是可以不用依赖构造函数的继承链
+
+Attr有两种形态，一种是处理用map处理，一种是返回固定值（values的第一个值），通过是否有fields区别，
+
+colorAttr中的默认values长度，要与对应feild的scale的values的长度进行联动
+
+geom中的defaultSize应该是一个固定值，某些interval不需要size或size需要根据step定，则返回null，然后在shape中处理
+
+SingleLinearAttr一般是和values数组顺次对应的，还有一种gradient是在中间取间值的
+
+要有一个变量表示values是补间的，不过处理是在geom中是否将attr的values补到和scale一样
+
+每种shape可分为仅可绘制cat，仅可绘制linear，和兼容cat和linear
+
+cartisien坐标系下cat类型不靠在边上，是通过默认是通过range，目前scale本身就有这个功能
+
+
+
+目前遇到一个state中两个字段默认值相互联动的问题，主要是scale中的ticks和scaledRange，不仅构造函数中要弄，改变字段时也要弄。感觉对于 setProps用全部清0法比较好
+
+catScale在两边留白的问题：还是必须在scale中处理，因为scaledValues需要与ticks配套，即scale的结果就已经包含了留白，
+
+留白策略由scaledRange控制，values、scaledRange在scale创建时在外面进行检验初始化，cat，cartesian是 [ 1 / count / 2, 1 - 1 / count / 2 ]，polar是[0, 1-1/n]。凡是cat默认会留白，但是用户也可以手动设置scaledRange使其不留白
+
+props和state哪个可以更改还需要再考虑考虑
+
+理论上某个field或scale是无法确知自己在positionAttr中被设为x还是y，
+
+xFields, yFields 由chart持有，主要作用是给axis用，它由所有的geom的对应值合成，每个geom的对应值存放在positionAttr中，每个geom有对应的默认初始化方法，当mapper为null时进行初始化
+
+TypedMap有一个很重要的作用是复写 == 号
+
+有定制style需求的地方：shape、axis的line/tickLine/grid、
+
+每个axis默认的position也需要Controller控制
+
+transpose后那个轴垂直哪个轴水平也由Controller控制，Axis只管视图
+
+Axis中所有的初始值都在Controller中设置
+
+label的位移通过transformLabel方法实现，注意初始位移的公式要考虑文字方向，offset和rotation为null时不位移

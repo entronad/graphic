@@ -146,6 +146,7 @@ abstract class RenderShapeComponent<S extends RenderShapeState> extends Node<S> 
   }
 
   void setProps(RenderShape props) {
+    state.clear();
     state.mix(props);
     onSetProps();
   }

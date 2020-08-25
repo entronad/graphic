@@ -47,4 +47,6 @@ mixin TypedMap {
   Object operator [](String k) => _map[k];
 
   void operator []=(String k, Object v) => v == null ? _map.remove(k) : _map[k] = v;
+
+  void clear() => _map.clear();
 }

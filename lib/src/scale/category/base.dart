@@ -3,6 +3,8 @@ import 'package:meta/meta.dart';
 import '../base.dart';
 import '../auto_ticks/cat.dart';
 
+abstract class CategoryScale<V, D> extends Scale<V, D> {}
+
 abstract class CategoryScaleState<V, D> extends ScaleState<V, D> {
   List<V> get values => this['values'] as List<V>;
   set values(List<V> value) => this['values'] = value;
@@ -14,9 +16,7 @@ abstract class CategoryScaleState<V, D> extends ScaleState<V, D> {
 abstract class CategoryScaleComponent<S extends CategoryScaleState<V, D>, V, D>
   extends ScaleComponent<S, V, D>
 {
-  CategoryScaleComponent([Scale props]) : super(props) {
-    assert(state.values.isNotEmpty);
-  }
+  CategoryScaleComponent([CategoryScale<V, D> props]) : super(props);
 
   @override
   void initDefaultState() {

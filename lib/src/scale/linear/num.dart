@@ -2,8 +2,8 @@ import '../base.dart';
 import 'base.dart';
 import '../auto_ticks/num.dart';
 
-class LinearScale<D> extends Scale {
-  LinearScale({
+class NumberScale<D> extends LinearScale<num, D> {
+  NumberScale({
     bool nice,
     num min,
     num max,
@@ -43,7 +43,7 @@ class LinearScale<D> extends Scale {
   }
 
   @override
-  ScaleType get type => ScaleType.linear;
+  ScaleType get type => ScaleType.number;
 }
 
 class NumLinearScaleState<D> extends LinearScaleState<num, D> {}
@@ -51,7 +51,7 @@ class NumLinearScaleState<D> extends LinearScaleState<num, D> {}
 class NumLinearScaleComponent<D>
   extends LinearScaleComponent<NumLinearScaleState<D>, num, D>
 {
-  NumLinearScaleComponent([LinearScale props]) : super(props);
+  NumLinearScaleComponent([NumberScale<D> props]) : super(props);
 
   @override
   NumLinearScaleState<D> get originalState => NumLinearScaleState<D>();

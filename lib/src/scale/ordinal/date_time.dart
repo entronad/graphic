@@ -4,13 +4,16 @@ import 'package:graphic/src/util/exception.dart';
 import '../base.dart';
 import 'base.dart';
 
-class TimeScale<D> extends Scale {
+const _defaultMask = 'yyyy-MM-dd';
+
+class TimeScale<D> extends OrdinalScale<DateTime, D> {
   TimeScale({
     String mask,
 
     bool isSorted,
 
     List<DateTime> values,
+    List<String> stringValues,
     bool isRounding,
 
     String Function(DateTime) formatter,
@@ -20,7 +23,12 @@ class TimeScale<D> extends Scale {
     List<DateTime> ticks,
 
     DateTime Function(D) accessor,
+    String Function(D) stringAccessor,
   }) {
+    assert(
+      values != null || stringValues != null || formatter != null,
+      'must have values or formatter',
+    );
     assert(
       testParamRedundant([mask, formatter]),
       paramRedundantWarning('mask, formatter'),
@@ -29,35 +37,57 @@ class TimeScale<D> extends Scale {
       scaledRange == null || scaledRange.length == 2,
       'range can only has 2 items'
     );
+    assert(
+      testParamRedundant([values, stringValues]),
+      paramRedundantWarning('values, stringValues'),
+    );
+    assert(
+      testParamRedundant([accessor, stringAccessor]),
+      paramRedundantWarning('accessor, stringAccessor'),
+    );
 
     this['mask'] = mask;
     this['isSorted'] = isSorted;
-    this['values'] = values;
     this['isRounding'] = isRounding;
     this['formatter'] = formatter;
     this['scaledRange'] = scaledRange;
     this['alias'] = alias;
     this['tickCount'] = tickCount;
     this['ticks'] = ticks;
-    this['accessor'] = accessor;
+
+    final dateFormat = DateFormat(mask ?? _defaultMask);
+
+    if (stringValues == null) {
+      this['values'] = values;
+    } else {
+      this['values'] =
+        stringValues.map((s) => dateFormat.parse(s)).toList();
+    }
+
+    if (stringAccessor == null) {
+      this['accessor'] = accessor;
+    } else {
+      this['accessor'] =
+        (D datum) => dateFormat.parse(stringAccessor(datum));
+    }
   }
 
   @override
   ScaleType get type => ScaleType.time;
 }
 
-class TimeOrdinalScaleState<D> extends OrdinalScaleState<DateTime, D> {
+class DateTimeOrdinalScaleState<D> extends OrdinalScaleState<DateTime, D> {
   String get mask => this['mask'] as String;
   set mask(String value) => this['mask'] = value;
 }
 
-class TimeOrdinalScaleComponent<D>
-  extends OrdinalScaleComponent<TimeOrdinalScaleState<D>, DateTime, D>
+class DateTimeOrdinalScaleComponent<D>
+  extends OrdinalScaleComponent<DateTimeOrdinalScaleState<D>, DateTime, D>
 {
-  TimeOrdinalScaleComponent([TimeScale props]) : super(props);
+  DateTimeOrdinalScaleComponent([TimeScale<D> props]) : super(props);
 
   @override
-  TimeOrdinalScaleState<D> get originalState => TimeOrdinalScaleState<D>();
+  DateTimeOrdinalScaleState<D> get originalState => DateTimeOrdinalScaleState<D>();
 
   @override
   void initDefaultState() {
@@ -65,7 +95,7 @@ class TimeOrdinalScaleComponent<D>
     state
       ..tickCount = 5
       ..formatter = null
-      ..mask = 'yyyy-MM-dd';
+      ..mask = _defaultMask;
   }
 
   DateFormat _dateFormat;

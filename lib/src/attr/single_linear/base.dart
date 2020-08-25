@@ -2,7 +2,7 @@ import 'package:meta/meta.dart';
 
 import '../base.dart';
 
-abstract class SingleLinearAttr extends Attr {
+abstract class SingleLinearAttr<A> extends Attr<A> {
   SingleLinearAttr(String field) : super(field) {
     assert(
       this['fields'] == null
@@ -13,11 +13,11 @@ abstract class SingleLinearAttr extends Attr {
 }
 
 abstract class SingleLinearAttrState<A> extends AttrState<A> {
-  List<A> get values => this['values'] as List<A>;
-  set values(List<A> value) => this['values'] = value;
-
   List<double> get stops => this['stops'] as List<double>;
   set stops(List<double> value) => this['stops'] = value;
+
+  bool get isTween => this['isTween'] as bool ?? false;
+  set isTween(bool value) => this['isTween'] = value;
 }
 
 abstract class SingleLinearAttrComponent<S extends SingleLinearAttrState, A>

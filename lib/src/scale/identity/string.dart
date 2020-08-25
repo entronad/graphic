@@ -1,8 +1,8 @@
 import '../base.dart';
 import 'base.dart';
 
-class IdentityScale<D> extends Scale {
-  IdentityScale({
+class IdentScale<D> extends IdentityScale<String, D> {
+  IdentScale({
     String value,
 
     String Function(D) accessor,
@@ -12,7 +12,7 @@ class IdentityScale<D> extends Scale {
   }
 
   @override
-  ScaleType get type => ScaleType.identity;
+  ScaleType get type => ScaleType.ident;
 }
 
 class StringIdentityScaleState<D> extends IdentityScaleState<String, D> {}
@@ -20,7 +20,7 @@ class StringIdentityScaleState<D> extends IdentityScaleState<String, D> {}
 class StringIdentityScaleComponent<D>
   extends IdentityScaleComponent<StringIdentityScaleState<D>, String, D>
 {
-  StringIdentityScaleComponent([IdentityScale props]) : super(props);
+  StringIdentityScaleComponent([IdentScale<D> props]) : super(props);
 
   @override
   StringIdentityScaleState<D> get originalState => StringIdentityScaleState<D>();

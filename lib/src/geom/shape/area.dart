@@ -97,16 +97,25 @@ List<RenderShape> _area(
     // Only with top edge.
 
     final points = <Offset>[];
-    for (var i = 0; i < attrValueRecords.length; i++) {
-      final point = attrValueRecords[i].position.first;
-      points.add(coord.convertPoint(point));
-    }
+    
 
     if (coord is PolarCoordComponent) {
+      
+      // radar
+
+      assert(
+        !coord.state.transposed,
+        'Do not transpose polar coord for area shapes',
+      );
       assert(
         !smooth,
         'smooth area shapes only support cartesian coord',
       );
+
+      for (var record in attrValueRecords) {
+        final point = record.position.first;
+        points.add(coord.convertPoint(point));
+      }
 
       return [PolygonRenderShape(
         points: points,
@@ -114,12 +123,27 @@ List<RenderShape> _area(
       )];
     } else {
       final path = Path();
-      final bottomLeft = Offset(points.first.dx, 0);
-      final bottomRight = Offset(points.last.dx, 0);
 
-      path.moveTo(bottomLeft.dx, bottomLeft.dy);
+      for (var record in attrValueRecords) {
+        final point = record.position.first;
+        points.add(coord.convertPoint(point));
+      }
+
+      // render points
+      Offset bottomStart;
+      Offset bottomEnd;
+      if (coord.state.transposed) {
+        final regionBootom = coord.state.region.left;
+        bottomStart = Offset(regionBootom, points.first.dy);
+        bottomEnd = Offset(regionBootom, points.last.dy);
+      } else {
+        final regionBootom = coord.state.region.bottom;
+        bottomStart = Offset(points.first.dx, regionBootom);
+        bottomEnd = Offset(points.last.dx, regionBootom);
+      }
+
+      path.moveTo(bottomStart.dx, bottomStart.dy);
       path.lineTo(points.first.dx, points.first.dy);
-
       if (smooth) {
         final segments = smooth_util.smooth(
           points,
@@ -141,8 +165,7 @@ List<RenderShape> _area(
           path.lineTo(point.dx, point.dy);
         }
       }
-
-      path.lineTo(bottomRight.dx, bottomRight.dy);
+      path.lineTo(bottomEnd.dx, bottomEnd.dy);
       path.close();
 
       return [CustomRenderShape(

@@ -7,6 +7,9 @@ List<T> sublist<T>(
 ) =>
   list.sublist(start, min(end, list.length));
 
+T get<T>(List<T> list, int i) =>
+  i < list.length ? list[i] : null;
+
 List<List<D>> group<V, D>(
   List<D> data,
   V Function(D) accessor,
@@ -31,4 +34,21 @@ List<List<D>> group<V, D>(
   }
 
   return tmp.values.toList();
+}
+
+List<T> makeup<T>(
+  List<T> list,
+  int length,
+  [T placeholder,]
+) {
+  if (list == null) {
+    return null;
+  }
+
+  if (list.length >= length) {
+    return list.sublist(0, length);
+  }
+
+  placeholder = placeholder ?? list.last;
+  return [...list]..fillRange(list.length, length, placeholder);
 }

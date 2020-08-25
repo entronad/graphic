@@ -10,13 +10,16 @@ enum AttrType {
   size,
 }
 
-abstract class Attr extends Props<AttrType> {
+abstract class Attr<A> extends Props<AttrType> {
   Attr(String field) {
     this['fields'] = parseField(field);
   }
 }
 
 abstract class AttrState<A> with TypedMap {
+  List<A> get values => this['values'] as List<A>;
+  set values(List<A> value) => this['values'] = value;
+
   A Function(List<double>) get mapper =>
     this['mapper'] as A Function(List<double>);
   set mapper(A Function(List<double>) value) =>
@@ -31,10 +34,16 @@ abstract class AttrComponent<S extends AttrState, A>
 {
   AttrComponent([TypedMap props]) : super(props);
 
-  A map(List<double> scaledValues) =>
-    state.mapper == null
+  // With fields: attr.map(scaledValues)
+  // Without fields: attr.map()
+  A map([List<double> scaledValues]) {
+    if (state.fields == null) {
+      return state.values.first;
+    }
+    return state.mapper == null
       ? defaultMapper(scaledValues)
       : state.mapper(scaledValues);
+  }
 
   @protected
   A defaultMapper(List<double> scaledValues);

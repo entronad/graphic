@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
-import 'package:graphic/src/scale/ordinal/time.dart';
+import 'package:graphic/src/scale/ordinal/date_time.dart';
 
 main() {
   group('scale time cat', () {
     final mask = 'yyyy/MM/dd';
-    final scale = TimeOrdinalScaleComponent(TimeScale(
+    final scale = DateTimeOrdinalScaleComponent(TimeScale(
       values: [
         DateTime.fromMillisecondsSinceEpoch(1442937600000),
         DateTime.fromMillisecondsSinceEpoch(1441296000000),
@@ -93,7 +93,7 @@ main() {
     });
 
     test('scale formatter', () {
-      final scale = TimeOrdinalScaleComponent(TimeScale(
+      final scale = DateTimeOrdinalScaleComponent(TimeScale(
       values: [
         DateTime.fromMillisecondsSinceEpoch(1519084800000),
         DateTime.fromMillisecondsSinceEpoch(1519171200000),
@@ -108,7 +108,7 @@ main() {
     });
 
     test('scale scale a value not in scale values', () {
-      final scale = TimeOrdinalScaleComponent(TimeScale(
+      final scale = DateTimeOrdinalScaleComponent(TimeScale(
       values: [
         DateTime.fromMillisecondsSinceEpoch(1519084800000),
         DateTime.fromMillisecondsSinceEpoch(1519171200000),
@@ -120,4 +120,3 @@ main() {
     });
   });
 }
-

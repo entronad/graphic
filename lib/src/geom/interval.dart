@@ -7,6 +7,7 @@ import 'package:graphic/src/attr/position.dart';
 import 'package:graphic/src/geom/adjust/base.dart';
 
 import 'base.dart';
+import 'shape/interval.dart';
 
 class IntervalGeom extends Geom {
   IntervalGeom({
@@ -31,7 +32,14 @@ class IntervalGeomState<D> extends GeomState<D> {}
 
 class IntervalGeomComponent<D> extends GeomComponent<IntervalGeomState<D>, D> {
   @override
-  IntervalGeomState<D> get originalState => IntervalGeomState();
+  IntervalGeomState<D> get originalState => IntervalGeomState<D>();
+
+  @override
+  get defaultShape => rectInterval;
+
+  // Handle in shape
+  @override
+  double get defaultSize => null;
 
   @override
   List<Offset> defaultPositionMapper(List<double> scaledValues) {

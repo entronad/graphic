@@ -5,6 +5,7 @@ import 'package:graphic/src/attr/position.dart';
 import 'package:graphic/src/geom/adjust/base.dart';
 
 import 'base.dart';
+import 'shape/line.dart';
 
 class LineGeom extends Geom {
   LineGeom({
@@ -29,5 +30,11 @@ class LineGeomState<D> extends GeomState<D> {}
 
 class LineGeomComponent<D> extends GeomComponent<LineGeomState<D>, D> {
   @override
-  LineGeomState<D> get originalState => LineGeomState();
+  LineGeomState<D> get originalState => LineGeomState<D>();
+
+  @override
+  get defaultShape => line;
+
+  @override
+  double get defaultSize => 1;
 }

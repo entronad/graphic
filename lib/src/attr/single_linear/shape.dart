@@ -3,16 +3,18 @@ import 'package:graphic/src/geom/shape/base.dart';
 import '../base.dart';
 import 'base.dart';
 
-class ShapeAttr extends Attr {
+class ShapeAttr extends SingleLinearAttr<Shape> {
   ShapeAttr({
     String field,
 
     List<Shape> values,
     List<double> stops,
+    bool isTween,
     Shape Function(List<double>) mapper,
   }) : super(field) {
     this['values'] = values;
     this['stops'] = stops;
+    this['isTween'] = isTween;
     this['mapper'] = mapper;
   }
 

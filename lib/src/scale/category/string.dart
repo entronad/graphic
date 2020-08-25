@@ -1,7 +1,7 @@
 import '../base.dart';
 import 'base.dart';
 
-class CatScale<D> extends Scale {
+class CatScale<D> extends CategoryScale<String, D> {
   CatScale({
     List<String> values,
     bool isRounding,
@@ -15,8 +15,12 @@ class CatScale<D> extends Scale {
     String Function(D) accessor,
   }) {
     assert(
+      values != null || formatter != null,
+      'must have values or formatter',
+    );
+    assert(
       scaledRange == null || scaledRange.length == 2,
-      'range can only has 2 items'
+      'range can only has 2 items',
     );
 
     this['values'] = values;
@@ -38,7 +42,7 @@ class StringCategoryScaleState<D> extends CategoryScaleState<String, D> {}
 class StringCategoryScaleComponent<D>
   extends CategoryScaleComponent<StringCategoryScaleState<D>, String, D>
 {
-  StringCategoryScaleComponent([CatScale props]) : super(props);
+  StringCategoryScaleComponent([CatScale<D> props]) : super(props);
 
   @override
   StringCategoryScaleState<D> get originalState => StringCategoryScaleState<D>();

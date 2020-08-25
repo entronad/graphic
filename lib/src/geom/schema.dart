@@ -7,6 +7,7 @@ import 'package:graphic/src/attr/position.dart';
 import 'package:graphic/src/geom/adjust/base.dart';
 
 import 'base.dart';
+import 'shape/schema.dart';
 
 class SchemaGeom extends Geom {
   SchemaGeom({
@@ -31,7 +32,13 @@ class SchemaGeomState<D> extends GeomState<D> {}
 
 class SchemaGeomComponent<D> extends GeomComponent<SchemaGeomState<D>, D> {
   @override
-  SchemaGeomState<D> get originalState => SchemaGeomState();
+  SchemaGeomState<D> get originalState => SchemaGeomState<D>();
+
+  @override
+  get defaultShape => candlestickSchema;
+
+  @override
+  double get defaultSize => null;
 
   @override
   List<Offset> defaultPositionMapper(List<double> scaledValues) {
@@ -48,5 +55,11 @@ class SchemaGeomComponent<D> extends GeomComponent<SchemaGeomState<D>, D> {
     }
 
     return rst;
+  }
+
+  @override
+  void initPositionAxisFields(PositionAttrComponent attrComponent) {
+    attrComponent.state.xFields = [attrComponent.state.fields[0]];
+    attrComponent.state.yFields = attrComponent.state.fields.sublist(1);
   }
 }

@@ -15,7 +15,7 @@ List<RenderShape> _circlePoint(
   final rst = <RenderShape>[];
 
   for (var record in attrValueRecords) {
-    final point = record.position.first;
+    var point = record.position.first;
     final size = record.size;
     final color = record.color;
     
@@ -47,7 +47,7 @@ List<RenderShape> _rectPoint(
   final rst = <RenderShape>[];
 
   for (var record in attrValueRecords) {
-    final point = record.position.first;
+    var point = record.position.first;
     final size = record.size;
     final color = record.color;
     

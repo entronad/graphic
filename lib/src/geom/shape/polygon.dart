@@ -8,9 +8,6 @@ import 'package:graphic/src/engine/render_shape/polygon.dart';
 
 import '../base.dart';
 
-double _normalize(double value, double bias) =>
-  (value + bias) / (1 + bias * 2);
-
 List<RenderShape> mosaicPolygon(
   List<AttrValueRecord> attrValueRecords,
   CoordComponent coord,
@@ -19,9 +16,15 @@ List<RenderShape> mosaicPolygon(
   var stepY = double.infinity;
   for (var i = 0; i < attrValueRecords.length - 1; i++) {
     final point = attrValueRecords[i].position.first;
-    final nextPoint = attrValueRecords[i].position.first;
-    stepX = min(stepX, (nextPoint.dx - point.dx).abs());
-    stepY = min(stepY, (nextPoint.dy - point.dy).abs());
+    final nextPoint = attrValueRecords[i + 1].position.first;
+    final dx = (nextPoint.dx - point.dx).abs();
+    final dy = (nextPoint.dy - point.dy).abs();
+    if (dx != 0) {
+      stepX = min(stepX, dx);
+    }
+    if (dy != 0) {
+      stepY = min(stepY, dy);
+    }
   }
   final biasX = stepX / 2;
   final biasY = stepY / 2;
@@ -41,16 +44,13 @@ List<RenderShape> mosaicPolygon(
     
     if (coord is PolarCoordComponent) {
       abstractPoints = abstractPoints.map(
-        (p) => Offset(
-          _normalize(p.dx, biasX),
-          _normalize(p.dy, biasY),
-        )
+        (p) => p.translate(biasX, 0)
       ).toList();
     }
 
     final points = abstractPoints.map(
       (p) => coord.convertPoint(p)
-    );
+    ).toList();
 
     rst.add(PolygonRenderShape(
       points: points,

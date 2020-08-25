@@ -5,6 +5,7 @@ import 'package:graphic/src/attr/position.dart';
 import 'package:graphic/src/geom/adjust/base.dart';
 
 import 'base.dart';
+import 'shape/polygon.dart';
 
 class PolygonGeom extends Geom {
   PolygonGeom({
@@ -29,5 +30,11 @@ class PolygonGeomState<D> extends GeomState<D> {}
 
 class PolygonGeomComponent<D> extends GeomComponent<PolygonGeomState<D>, D> {
   @override
-  PolygonGeomState<D> get originalState => PolygonGeomState();
+  PolygonGeomState<D> get originalState => PolygonGeomState<D>();
+
+  @override
+  get defaultShape => mosaicPolygon;
+
+  @override
+  double get defaultSize => null;
 }

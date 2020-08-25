@@ -4,7 +4,6 @@ import 'package:meta/meta.dart';
 import 'package:graphic/src/common/typed_map.dart';
 import 'package:graphic/src/common/base_classes.dart';
 import 'package:graphic/src/chart/component.dart';
-import 'package:graphic/src/engine/group.dart';
 import 'package:graphic/src/engine/render_shape/base.dart';
 import 'package:graphic/src/attr/single_linear/color.dart';
 import 'package:graphic/src/attr/single_linear/shape.dart';
@@ -13,6 +12,7 @@ import 'package:graphic/src/attr/position.dart';
 import 'package:graphic/src/scale/base.dart';
 import 'package:graphic/src/scale/category/base.dart';
 import 'package:graphic/src/util/list.dart';
+import 'package:graphic/src/chart/theme.dart';
 
 import 'shape/base.dart';
 import 'adjust/base.dart';
@@ -49,9 +49,6 @@ abstract class GeomState<D> with TypedMap {
   ChartComponent<D> get chart => this['chart'] as ChartComponent<D>;
   set chart(ChartComponent<D> value) => this['chart'] = value;
 
-  Group get plot => this['plot'] as Group;
-  set plot(Group value) => this['plot'] = value;
-
   ColorSingleLinearAttrComponent get color =>
     this['color'] as ColorSingleLinearAttrComponent;
   set color(ColorSingleLinearAttrComponent value) =>
@@ -81,21 +78,79 @@ abstract class GeomComponent<S extends GeomState<D>, D>
 {
   final _shapeComponents = <RenderShapeComponent>[];
 
-  void setColor(ColorAttr color) =>
-    state.color = ColorSingleLinearAttrComponent(color);
+  void setColor(ColorAttr color) {
+    final attrComponent = ColorSingleLinearAttrComponent(color);
+    if (attrComponent.state.values == null) {
+      attrComponent.state.values = defaultTheme.colors;
+    }
+    if (attrComponent.state.fields != null && !attrComponent.state.isTween) {
+      final field = state.color.state.fields.first;
+      final scale = state.chart.state.scales[field];
+      assert(
+        scale != null,
+        'Can not find $field scale in scales',
+      );
+      if (scale is CategoryScaleComponent) {
+        final length = scale.state.values.length;
+        makeup(attrComponent.state.values, length);
+      }
+    }
+    state.color = attrComponent;
+  }
   
-  void setShape(ShapeAttr shape) =>
-    state.shape = ShapeSingleLinearAttrComponent(shape);
+  void setShape(ShapeAttr shape) {
+    final attrComponent = ShapeSingleLinearAttrComponent(shape);
+    if (attrComponent.state.values == null) {
+      attrComponent.state.values = [defaultShape];
+    }
+    if (attrComponent.state.fields != null && !attrComponent.state.isTween) {
+      final field = state.shape.state.fields.first;
+      final scale = state.chart.state.scales[field];
+      assert(
+        scale != null,
+        'Can not find $field scale in scales',
+      );
+      if (scale is CategoryScaleComponent) {
+        final length = scale.state.values.length;
+        makeup(attrComponent.state.values, length);
+      }
+    }
+    state.shape = attrComponent;
+  }
   
-  void setSize(SizeAttr size) =>
-    state.size = SizeSingleLinearAttrComponent(size);
+  @protected
+  Shape get defaultShape;
+  
+  void setSize(SizeAttr size) {
+    final attrComponent = SizeSingleLinearAttrComponent(size);
+    if (attrComponent.state.values == null) {
+      attrComponent.state.values = [defaultSize];
+    }
+    if (attrComponent.state.fields != null && !attrComponent.state.isTween) {
+      final field = state.size.state.fields.first;
+      final scale = state.chart.state.scales[field];
+      assert(
+        scale != null,
+        'Can not find $field scale in scales',
+      );
+      if (scale is CategoryScaleComponent) {
+        final length = scale.state.values.length;
+        makeup(attrComponent.state.values, length);
+      }
+    }
+    state.size = attrComponent;
+  }
+  
+  @protected
+  double get defaultSize;
   
   void setPosition(PositionAttr position) {
-    final positionComponent = PositionAttrComponent(position);
-    if (positionComponent.state.mapper == null) {
-      positionComponent.state.mapper = defaultPositionMapper;
-    }
-    state.position = positionComponent;
+    final attrComponent = PositionAttrComponent(position);
+    if (attrComponent.state.mapper == null) {
+      attrComponent.state.mapper = defaultPositionMapper;
+      initPositionAxisFields(attrComponent);
+    } 
+    state.position = attrComponent;
   }
 
   // Base implimentation for sigle Point
@@ -112,6 +167,12 @@ abstract class GeomComponent<S extends GeomState<D>, D>
     )];
   }
 
+  @protected
+  void initPositionAxisFields(PositionAttrComponent attrComponent) {
+    attrComponent.state.xFields = [attrComponent.state.fields[0]];
+    attrComponent.state.yFields = [attrComponent.state.fields[1]];
+  }
+
   void render() {
     if (_shapeComponents.isNotEmpty) {
       for (var component in _shapeComponents) {
@@ -122,7 +183,8 @@ abstract class GeomComponent<S extends GeomState<D>, D>
 
     final renderShapes = _getRenderShapes();
     for (var renderShape in renderShapes) {
-      final component = state.plot.addShape(renderShape);
+      final plot = state.chart.state.middlePlot;
+      final component = plot.addShape(renderShape);
       _shapeComponents.add(component);
     }
   }
@@ -150,29 +212,79 @@ abstract class GeomComponent<S extends GeomState<D>, D>
     final scales = state.chart.state.scales;
 
     final positionFields = state.position.state.fields;
-    final positionScales = positionFields.map((field) => scales[field]);
-    final colorScale = scales[state.color.state.fields.first];
-    final sizeScale = scales[state.size.state.fields.first];
-    final shapeScale = scales[state.shape.state.fields.first];
+    List<ScaleComponent> positionScales;
+    if (positionFields != null) {
+      positionScales = positionFields.map((field) {
+        final scale = scales[field];
+        assert(
+          scale != null,
+          'Can not find $field scale in scales',
+        );
+        return scale;
+      }).toList();
+    }
+
+    final colorFields = state.color.state.fields;
+    ScaleComponent colorScale;
+    if (colorFields != null) {
+      final field = colorFields.first;
+      colorScale = scales[field];
+      assert(
+        colorScale != null,
+        'Can not find $field scale in scales',
+      );
+    }
     
+    final shapeFields = state.shape.state.fields;
+    ScaleComponent shapeScale;
+    if (shapeFields != null) {
+      final field = shapeFields.first;
+      shapeScale = scales[field];
+      assert(
+        shapeScale != null,
+        'Can not find $field scale in scales',
+      );
+    }
+
+    final sizeFields = state.size.state.fields;
+    ScaleComponent sizeScale;
+    if (sizeFields != null) {
+      final field = sizeFields.first;
+      sizeScale = scales[field];
+      assert(
+        sizeScale != null,
+        'Can not find $field scale in scales',
+      );
+    }
 
     final rst = <List<AttrValueRecord>>[];
 
     for (var data in dataGroup) {
       final records = <AttrValueRecord>[];
       for (var datum in data) {
-        final positionValues = positionScales.map(
-          (scale) => _scaleDatum(scale, datum)
-        );
-        final colorValues = [_scaleDatum(colorScale, datum)];
-        final sizeValues = [_scaleDatum(sizeScale, datum)];
-        final shapeValues = [_scaleDatum(shapeScale, datum)];
-
+        final position = positionFields == null
+          ? state.position.map()
+          : state.position.map(positionScales.map(
+              (scale) => _scaleDatum(scale, datum)
+            ).toList());
+        
+        final color = colorFields == null
+          ? state.color.map()
+          : state.color.map([_scaleDatum(colorScale, datum)]);
+        
+        final size = sizeFields == null
+          ? state.size.map()
+          : state.size.map([_scaleDatum(sizeScale, datum)]);
+        
+        final shape = shapeFields == null
+          ? state.shape.map()
+          : state.shape.map([_scaleDatum(shapeScale, datum)]);
+        
         records.add(AttrValueRecord(
-          position: state.position.map(positionValues),
-          color: state.color.map(colorValues),
-          size: state.size.map(sizeValues),
-          shape: state.shape.map(shapeValues),
+          position: position,
+          color: color,
+          size: size,
+          shape: shape,
         ));
       }
       rst.add(records);
@@ -202,17 +314,17 @@ abstract class GeomComponent<S extends GeomState<D>, D>
   }
 
   String _getGroupField() {
-    final positionFields = state.position.state.fields;
+    final positionFields = state.position.state?.fields;
 
-    final shapeField = state.shape.state.fields.first;
+    final shapeField = state.shape.state.fields?.first;
     if (shapeField != null && !positionFields.contains(shapeField)) {
       return shapeField;
     }
-    final colorField = state.color.state.fields.first;
+    final colorField = state.color.state.fields?.first;
     if (colorField != null && !positionFields.contains(colorField)) {
       return colorField;
     }
-    final sizeField = state.size.state.fields.first;
+    final sizeField = state.size.state.fields?.first;
     if (sizeField != null && !positionFields.contains(sizeField)) {
       return sizeField;
     }

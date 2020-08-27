@@ -827,3 +827,10 @@ transpose后那个轴垂直哪个轴水平也由Controller控制，Axis只管视
 Axis中所有的初始值都在Controller中设置
 
 label的位移通过transformLabel方法实现，注意初始位移的公式要考虑文字方向，offset和rotation为null时不位移
+
+极坐标没有tickLine
+
+radiusAxis没有蜘蛛网，不太合逻辑
+
+circularAxis的offset如果需要根据角度自行调整，需要设置callback，初始调整根据象限
+

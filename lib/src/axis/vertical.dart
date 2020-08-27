@@ -148,17 +148,10 @@ class VerticalAxisComponent
   }
 
   @override
-  void transformLabel(TextRenderShapeComponent label, AxisLabel labelProps) {
-    final offset = labelProps.offset;
-    final rotation = labelProps.rotation;
-    final biasX = label.bbox.right - label.state.x;
-    final biasY = label.bbox.center.dy - label.state.y;
-    label.translate(x: -biasX, y: -biasY);
-    if (offset != null) {
-      label.translate(x: offset.dx, y: offset.dy);
-    }
-    if (rotation != null) {
-      label.rotate(rotation, origin: label.bbox.topLeft);
-    }
+  void adjustLabel(TextRenderShapeComponent label, AxisLabel labelProps) {
+    final bbox = label.bbox;
+    final biasX = bbox.center.dx - label.state.x;
+    final biasY = bbox.center.dy - label.state.y;
+    label.translate(x: -biasX * 2, y: -biasY);
   }
 }

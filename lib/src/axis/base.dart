@@ -52,11 +52,9 @@ class AxisGrid with TypedMap {
   AxisGrid({
     bool top,
     LineStyle style,
-    bool arc,
   }) {
     this['top'] = top;
     this['style'] = style;
-    this['arc'] = arc;
   }
 
   bool get top => this['top'] as bool ?? false;
@@ -272,14 +270,22 @@ abstract class AxisComponent<S extends AxisState>
         : state.chart.state.backPlot;
       final component = plot.addShape(renderShape);
 
-      transformLabel(component, label);
+      adjustLabel(component, label);
+      final offset = label.offset;
+      final rotation = label.rotation;
+      if (offset != null) {
+        component.translate(x: offset.dx, y: offset.dy);
+      }
+      if (rotation != null) {
+        component.rotate(rotation, origin: component.bbox.topLeft);
+      }
 
       _labelComponents.add(component);
     }
   }
 
   @protected
-  void transformLabel(TextRenderShapeComponent label, AxisLabel labelProps);
+  void adjustLabel(TextRenderShapeComponent label, AxisLabel labelProps);
 
   @protected
   List<RenderShape> getLine();

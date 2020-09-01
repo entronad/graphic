@@ -1,11 +1,13 @@
+import 'package:meta/meta.dart';
+
 import '../base.dart';
 import 'base.dart';
 
 class IdentScale<D> extends IdentityScale<String, D> {
   IdentScale({
-    String value,
+    @required String value,
 
-    String Function(D) accessor,
+    @required String Function(D) accessor,
   }) {
     this['value'] = value;
     this['accessor'] = accessor;

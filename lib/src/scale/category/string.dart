@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../base.dart';
 import 'base.dart';
 
@@ -12,7 +14,7 @@ class CatScale<D> extends CategoryScale<String, D> {
     int tickCount,
     List<String> ticks,
 
-    String Function(D) accessor,
+    @required String Function(D) accessor,
   }) {
     assert(
       values != null || formatter != null,

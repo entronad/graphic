@@ -16,6 +16,12 @@ import 'package:graphic/src/chart/theme.dart';
 
 import 'shape/base.dart';
 import 'adjust/base.dart';
+import 'area.dart';
+import 'interval.dart';
+import 'line.dart';
+import 'point.dart';
+import 'polygon.dart';
+import 'schema.dart';
 
 double _scaleDatum<D>(ScaleComponent scale, D datum) =>
   scale.scale(scale.state.accessor(datum));
@@ -76,6 +82,24 @@ abstract class GeomState<D> with TypedMap {
 abstract class GeomComponent<S extends GeomState<D>, D>
   extends Component<S>
 {
+  static GeomComponent create(Geom props) {
+    switch (props.type) {
+      case GeomType.area:
+        return AreaGeomComponent();
+      case GeomType.interval:
+        return IntervalGeomComponent();
+      case GeomType.line:
+        return LineGeomComponent();
+      case GeomType.point:
+        return PointGeomComponent();
+      case GeomType.polygon:
+        return PolygonGeomComponent();
+      case GeomType.schema:
+        return SchemaGeomComponent();
+      default: return null;
+    }
+  }
+
   final _shapeComponents = <RenderShapeComponent>[];
 
   void setColor(ColorAttr color) {

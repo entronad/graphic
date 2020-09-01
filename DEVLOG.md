@@ -782,7 +782,9 @@ attrs没有values：color取theme的默认值，shape，size每个geom有默认�
 
 scales没有对应field：任何在attr中定义了的field都必须要有scale，因为需要accessor
 
-categoryScale没有values：必须要有（scale是与data无关的，不建议从data中获取）
+categoryScale没有values：必须要有~~（scale是与data无关的，不建议从data中获取）~~ values缺失的还是要从data中取的
+
+好像已经都在geom中处理了，chart中无需额外处理
 
 
 
@@ -833,4 +835,28 @@ label的位移通过transformLabel方法实现，注意初始位移的公式要�
 radiusAxis没有蜘蛛网，不太合逻辑
 
 circularAxis的offset如果需要根据角度自行调整，需要设置callback，初始调整根据象限
+
+
+
+chartComponent的作用
+
+根据组件宽高确定 coord region
+
+初始化 scales，重要的是确定values
+
+初始化 axis
+
+
+
+先不要controller了，后续再总结提取
+
+Widget的更新顺序是：执行build方法，获取size，执行paint方法，所以chartComponent对外暴露一个update方法，其中会调用 _render() 方法，更新renderer上的组件，然后在paint时执行，因此将设置size，update的过程放在paint中
+
+每个scale必须手动指定，因为不知道Datum的结构，scale中accessor也是必须指定的，要做的是确定values或（min，max），确定类目轴的 scaledRange，（dateTime）特殊
+
+
+
+确实要考虑好data、geoms为空的情况
+
+一个指导思想：在Datum为有类型的类的大背景下，获取field是一个必须被定义的行为，因此 scales，position和position中的field是必须的（因为认为scales中的field是无序的）
 

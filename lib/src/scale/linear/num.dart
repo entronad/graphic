@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../base.dart';
 import 'base.dart';
 import '../auto_ticks/num.dart';
@@ -14,7 +16,8 @@ class NumberScale<D> extends LinearScale<num, D> {
     String alias,
     int tickCount,
     List<num> ticks,
-    num Function(D) accessor,
+
+    @required num Function(D) accessor,
   }) {
     assert(
       tickCount == null || tickCount > 1,

@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'dart:math';
 
 import 'package:flutter/widgets.dart' hide Axis;
 import 'package:graphic/src/common/typed_map.dart';
@@ -11,8 +10,10 @@ import 'package:graphic/src/coord/base.dart';
 import 'package:graphic/src/coord/cartesian.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/axis/base.dart';
-import 'package:graphic/src/scale/category/base.dart';
-import 'package:graphic/src/scale/linear/base.dart';
+import 'package:graphic/src/axis/circular.dart';
+import 'package:graphic/src/axis/horizontal.dart';
+import 'package:graphic/src/axis/radial.dart';
+import 'package:graphic/src/axis/vertical.dart';
 import 'package:graphic/src/geom/base.dart';
 
 import 'theme.dart';
@@ -59,9 +60,6 @@ class ChartState<D> with TypedMap {
   Renderer get renderer => this['renderer'] as Renderer;
   set renderer(Renderer value) => this['renderer'] = value;
 
-  Size get size => this['size'] as Size;
-  set size(Size value) => this['size'] = value;
-
   Theme get theme => this['theme'] as Theme;
   set theme(Theme value) => this['theme'] = value;
 
@@ -76,6 +74,18 @@ class ChartState<D> with TypedMap {
 
   List<GeomComponent> get geoms => this['geoms'] as List<GeomComponent>;
   set geoms(List<GeomComponent> value) => this['geoms'] = value;
+
+  Set<String> get xFields => this['xFields'] as Set<String>;
+  set xFields(Set<String> value) => this['xFields'] = value;
+
+  Set<String> get yFields => this['yFields'] as Set<String>;
+  set yFields(Set<String> value) => this['yFields'] = value;
+
+  Map<String, AxisComponent> get xAxes => this['xAxes'] as Map<String, AxisComponent>;
+  set xAxes(Map<String, AxisComponent> value) => this['xAxes'] = value;
+
+  Map<String, AxisComponent> get yAxes => this['yAxes'] as Map<String, AxisComponent>;
+  set yAxes(Map<String, AxisComponent> value) => this['yAxes'] = value;
 }
 
 class ChartComponent<D> extends Component<ChartState<D>> {
@@ -93,11 +103,33 @@ class ChartComponent<D> extends Component<ChartState<D>> {
 
     state
       ..scales = {}
-      ..geoms = [];
+      ..geoms = []
+      ..xFields = Set()
+      ..yFields = Set()
+      ..xAxes = {}
+      ..yAxes = {};
   }
 
   void setProps(ChartProps props) {
-    
+    _setTheme(props.theme);
+    _setData(props.data);
+    _setCoord(
+      props.coord,
+      props.size,
+      props.padding,
+      props.margin,
+    );
+    _setScales(props.scales);
+    _setGeoms(props.geoms);
+    _setAxes(props.axes);
+
+    _render();
+  }
+
+  void _setTheme(Theme theme) {
+    state.theme = Theme()
+      ..mix(defaultTheme)
+      ..mix(theme);
   }
 
   void _setData(List<D> data) {
@@ -138,29 +170,7 @@ class ChartComponent<D> extends Component<ChartState<D>> {
 
     for (var field in scales.keys) {
       final scale = scales[field];
-
-      if (scale is CategoryScale) {
-        if (scale['values'] == null) {
-          final accessor = scale['accessor'];
-          final values = state.data.map(accessor).toSet().toList();
-          scale['values'] = values;
-        }
-        if (scale['scaledRange'] == null) {
-          final count = (scale['values'] as List).length;
-          if (state.coord is PolarCoordComponent) {
-            scale['scaledRange'] = [0, 1 - 1 / count];
-          } else {
-            scale['scaledRange'] = [1 / count / 2, 1 - 1 / count / 2];
-          }
-        }
-      } else if(scale is LinearScale) {
-        if (scale['max'] == null || scale['min'] == null) {
-          final accessor = scale['accessor'];
-          final values = state.data.map(accessor).toList() as List<num>;
-          scale['max'] = scale['max'] ?? values.reduce(max);
-          scale['min'] = scale['min'] ?? values.reduce(min);
-        }
-      }
+      scale.complete(state.data, state.coord);
 
       state.scales[field] = ScaleComponent.create(scale);
     }
@@ -168,6 +178,8 @@ class ChartComponent<D> extends Component<ChartState<D>> {
 
   void _setGeoms(List<Geom> geoms) {
     state.geoms.clear();
+    state.xFields.clear();
+    state.yFields.clear();
 
     for (var geom in geoms) {
       final geomComponent = GeomComponent.create(geom);
@@ -180,14 +192,92 @@ class ChartComponent<D> extends Component<ChartState<D>> {
         ..setPosition(geom['position']);
 
       state.geoms.add(geomComponent);
+      final positionAttr = geomComponent.state.position;
+      state.xFields.addAll(positionAttr.state.xFields);
+      state.yFields.addAll(positionAttr.state.yFields);
     }
   }
 
-  void update() {
-    _render();
+  void _setAxes(Map<String, Axis> axes) {
+    state.xAxes.clear();
+    state.yAxes.clear();
+
+    if (axes == null) {
+      return;
+    }
+
+    final coord = state.coord;
+    final theme = state.theme;
+
+    for (var field in axes.keys) {
+      final axis = axes[field];
+      final scale = state.scales[field];
+
+      if (state.xFields.contains(field)) {
+        AxisComponent axisComponent;
+        if (coord is PolarCoordComponent) {
+          if (coord.state.transposed) {
+            axisComponent = RadialAxisComponent()
+              ..mixProps(theme.radialAxis);
+          } else {
+            axisComponent = CircularAxisComponent()
+              ..mixProps(theme.circularAxis);
+          }
+        } else {
+          if (coord.state.transposed) {
+            axisComponent = VerticalAxisComponent()
+              ..mixProps(theme.verticalAxis);
+          } else {
+            axisComponent = HorizontalAxisComponent()
+              ..mixProps(theme.horizontalAxis);
+          }
+        }
+
+        axisComponent
+          ..mixProps(axis)
+          ..state.chart = this
+          ..state.scale = scale;
+        state.xAxes[field] = axisComponent;
+      }
+
+      if (state.yFields.contains(field)) {
+        AxisComponent axisComponent;
+        if (coord is PolarCoordComponent) {
+          if (coord.state.transposed) {
+            axisComponent = CircularAxisComponent()
+              ..mixProps(theme.circularAxis);
+          } else {
+            axisComponent = RadialAxisComponent()
+              ..mixProps(theme.radialAxis);
+          }
+        } else {
+          if (coord.state.transposed) {
+            axisComponent = HorizontalAxisComponent()
+              ..mixProps(theme.horizontalAxis);
+          } else {
+            axisComponent = VerticalAxisComponent()
+              ..mixProps(theme.verticalAxis);
+          }
+        }
+
+        axisComponent
+          ..mixProps(axis)
+          ..state.chart = this
+          ..state.scale = scale;
+        state.yAxes[field] = axisComponent;
+      }
+    }
   }
 
   void _render() {
-
+    for (var axis in state.xAxes.values) {
+      axis.render();
+    }
+    for (var axis in state.yAxes.values) {
+      axis.render();
+    }
+    for (var geom in state.geoms) {
+      geom.render();
+    }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:meta/meta.dart';
 import 'package:graphic/src/common/typed_map.dart';
 import 'package:graphic/src/common/base_classes.dart';
+import 'package:graphic/src/coord/base.dart';
 
 import 'category/string.dart';
 import 'identity/string.dart';
@@ -14,7 +15,9 @@ enum ScaleType {
   number,
 }
 
-abstract class Scale<V, D> extends Props<ScaleType> {}
+abstract class Scale<V, D> extends Props<ScaleType> {
+  void complete(List<D> data, CoordComponent coord) {}
+}
 
 abstract class ScaleState<V, D> with TypedMap {
   String Function(V) get formatter => this['formatter'] as String Function(V);
@@ -67,13 +70,8 @@ abstract class ScaleComponent<S extends ScaleState<V, D>, V, D> extends Componen
   List<V> getAutoTicks();
 
   void setProps(Props<ScaleType> props) {
-    state.clear();
+    resetState();
     state.mix(props);
-    onSetProps();
-  }
-
-  @protected
-  void onSetProps() {
     assign();
   }
 

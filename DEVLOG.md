@@ -860,3 +860,16 @@ Widget的更新顺序是：执行build方法，获取size，执行paint方法，
 
 一个指导思想：在Datum为有类型的类的大背景下，获取field是一个必须被定义的行为，因此 scales，position和position中的field是必须的（因为认为scales中的field是无序的）
 
+chart管理axes的模式是，首先根据coord、geom确定xy各一个默认的axis，以及检索props对应的field确定是否需要创建和mix，然后再创建其它设定的axes
+
+AxisComponent需要添加一个 mixProps的方法，这是AxisComponent的特殊性决定的，它没有关联变量，一切计算依赖render方法，使用时确实有mix的需求
+
+Axis要有就要指明，没有默认
+
+一个field可能既作为x，又作为y axis
+
+linearScale 中的 max 和min 是必须的
+
+size/margin/padding 属性包含在coord region信息中，chart不持有
+
+所有state清零的地方，要重新init，合成一个 resetState() 方法

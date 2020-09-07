@@ -26,10 +26,6 @@ class TimeScale<D> extends OrdinalScale<DateTime, D> {
     String Function(D) stringAccessor,
   }) {
     assert(
-      values != null || stringValues != null || formatter != null,
-      'must have values or formatter',
-    );
-    assert(
       testParamRedundant([mask, formatter]),
       paramRedundantWarning('mask, formatter'),
     );

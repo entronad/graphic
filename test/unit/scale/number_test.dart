@@ -7,6 +7,7 @@ main() {
       min: 0,
       max: 100,
       formatter: (val) => '${val}bit',
+      accessor: null,
     ));
 
     test('scale', () {
@@ -39,6 +40,7 @@ main() {
       scale.setProps(NumberScale(
         min: 10,
         max: 110,
+        accessor: null,
       ));
       expect(scale.scale(60), 0.5);
     });
@@ -49,6 +51,7 @@ main() {
       min: 0,
       max: 100,
       scaledRange: [0, 1000],
+      accessor: null,
     ));
 
     test('scale', () {
@@ -68,6 +71,7 @@ main() {
     final scale = NumLinearScaleComponent(NumberScale(
       min: 3,
       max: 97,
+      accessor: null,
     ));
 
     test('scale', () {
@@ -92,6 +96,7 @@ main() {
       min: 3,
       max: 97,
       nice: true,
+      accessor: null,
     ));
 
     test('state', () {
@@ -118,7 +123,10 @@ main() {
 
   group('scale ticks', () {
     final scale = NumLinearScaleComponent(NumberScale(
+      min: 1,
+      max: 5,
       ticks: [ 1, 2, 3, 4, 5 ],
+      accessor: null,
     ));
 
     test('min, max', () {
@@ -131,6 +139,7 @@ main() {
     final scale = NumLinearScaleComponent(NumberScale(
       min: 0,
       max: 0,
+      accessor: null,
     ));
 
     test('scale', () {
@@ -149,6 +158,7 @@ main() {
       min: 0,
       max: 0,
       nice: true,
+      accessor: null,
     ));
 
     test('scale', () {
@@ -168,6 +178,7 @@ main() {
       max: 85,
       tickInterval: 15,
       nice: true,
+      accessor: null,
     ));
 
     test('ticks', () {

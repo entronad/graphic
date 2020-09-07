@@ -47,6 +47,9 @@ class NumberScale<D> extends LinearScale<num, D> {
 
   @override
   ScaleType get type => ScaleType.number;
+
+  @override
+  int compare(num a, num b) => (a - b).toInt();
 }
 
 class NumLinearScaleState<D> extends LinearScaleState<num, D> {}

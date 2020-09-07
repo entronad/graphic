@@ -1,9 +1,36 @@
 import 'package:meta/meta.dart';
+import 'package:graphic/src/coord/base.dart';
+import 'package:graphic/src/coord/polar.dart';
 
 import '../base.dart';
 import '../auto_ticks/cat.dart';
 
-abstract class CategoryScale<V, D> extends Scale<V, D> {}
+abstract class CategoryScale<V, D> extends Scale<V, D> {
+  List<double> get scaledRange => this['scaledRange'] as List<double>;
+  set scaledRange(List<double> value) => this['scaledRange'] = value;
+
+  V Function(D) get accessor => this['accessor'] as V Function(D);
+  set accessor(V Function(D) value) => this['accessor'] = value;
+
+  List<V> get values => this['values'] as List<V>;
+  set values(List<V> value) => this['values'] = value;
+
+  @override
+  void complete(List<D> data, CoordComponent coord) {
+    if (values == null) {
+      values = data.map(accessor).toSet().toList();
+    }
+
+    if (scaledRange == null) {
+      final count = values.length;
+      if (coord is PolarCoordComponent) {
+        scaledRange = [0, 1 - 1 / count];
+      } else {
+        scaledRange = [1 / count / 2, 1 - 1 / count / 2];
+      }
+    }
+  }
+}
 
 abstract class CategoryScaleState<V, D> extends ScaleState<V, D> {
   List<V> get values => this['values'] as List<V>;

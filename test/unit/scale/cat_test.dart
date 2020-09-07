@@ -5,6 +5,7 @@ main() {
   group('scale', () {
     final scale = StringCategoryScaleComponent(CatScale(
       values: [ 'Jan', 'Feb', 'Mar', 'Apr', 'May' ],
+      accessor: null,
     ));
 
     test('scale', () {
@@ -35,6 +36,7 @@ main() {
     test('set props', () {
       scale.setProps(CatScale(
         values: [ '1', '2', '3', '4', '5', '6' ],
+        accessor: null,
       ));
       expect(scale.invert(0), '1');
       expect(scale.invert(0.4), '3');
@@ -48,6 +50,7 @@ main() {
     final scale = StringCategoryScaleComponent(CatScale(
       values: [ 'Jan', 'Feb', 'Mar', 'Apr', 'May' ],
       scaledRange: [0.1, 0.9],
+      accessor: null,
     ));
 
     test('scale', () {
@@ -71,6 +74,7 @@ main() {
     final scale = StringCategoryScaleComponent(CatScale(
       values: values,
       tickCount: 10,
+      accessor: null,
     ));
 
     test('state', () {

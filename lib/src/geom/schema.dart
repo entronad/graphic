@@ -59,7 +59,7 @@ class SchemaGeomComponent<D> extends GeomComponent<SchemaGeomState<D>, D> {
 
   @override
   void initPositionAxisFields(PositionAttrComponent attrComponent) {
-    attrComponent.state.xFields = [attrComponent.state.fields[0]];
-    attrComponent.state.yFields = attrComponent.state.fields.sublist(1);
+    attrComponent.state.xFields = Set()..add(attrComponent.state.fields[0]);
+    attrComponent.state.yFields = Set.from(attrComponent.state.fields.sublist(1));
   }
 }

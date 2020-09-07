@@ -166,6 +166,23 @@ abstract class AxisComponent<S extends AxisState>
 
   final _labelComponents = <RenderShapeComponent>[];
 
+  void mixProps(Axis props) {
+
+    // mix mamually
+
+    state.position = props['position'] ?? state.position;
+    state.line = props['line'] ?? state.line;
+    state.tickLine = props['tickLine'] ?? state.tickLine;
+    if (props['grid'] != null || props['gridCallback'] != null) {
+      state.grid = props['grid'];
+      state.gridCallback = props['gridCallback'];
+    }
+    if (props['label'] != null || props['labelCallback'] != null) {
+      state.label = props['label'];
+      state.labelCallback = props['labelCallback'];
+    }
+  }
+
   void render() {
     _renderLine();
     _renderTickLine();

@@ -20,4 +20,9 @@ abstract class Component<S extends TypedMap> {
 
   @protected
   void initDefaultState() {}
+
+  void resetState() {
+    state.clear();
+    initDefaultState();
+  }
 }

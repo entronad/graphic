@@ -10,6 +10,7 @@ main() {
         Color(0xffffffff),
         Color(0xff000000),
       ],
+      field: 'a',
     ));
     expect(attr.map([0]), Color(0xffffffff));
     expect(attr.map([1]), Color(0xff000000));
@@ -22,6 +23,7 @@ main() {
         Color(0xffff0000),
         Color(0xff0000ff),
       ],
+      field: 'a',
     ));
     expect(attr.map([0]), Color(0xffff0000));
     expect(attr.map([-0.1]), Color(0xffff0000));
@@ -34,6 +36,7 @@ main() {
   test('category', () {
     final attr = ColorSingleLinearAttrComponent(ColorAttr(
       values: [ Colors.amberAccent, Colors.blueAccent, Colors.cyanAccent ],
+      field: 'a',
     ));
     expect(attr.map([0]), Colors.amberAccent);
     expect(attr.map([1]), Colors.cyanAccent);
@@ -43,9 +46,22 @@ main() {
   test('single color', () {
     final attr = ColorSingleLinearAttrComponent(ColorAttr(
       values: [ Color(0xffff0000) ],
+      field: 'a',
     ));
     expect(attr.map([0]), Color(0xffff0000));
     expect(attr.map([1]), Color(0xffff0000));
     expect(attr.map([0.5]), Color(0xffff0000));
+  });
+
+  test('without field', () {
+    final attr = ColorSingleLinearAttrComponent(ColorAttr(
+      values: [
+        Color(0xffffffff),
+        Color(0xff000000),
+      ],
+    ));
+    expect(attr.map([0]), Color(0xffffffff));
+    expect(attr.map([1]), Color(0xffffffff));
+    expect(attr.map([0.5]), Color(0xffffffff));
   });
 }

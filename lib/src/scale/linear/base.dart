@@ -1,6 +1,24 @@
+import 'package:graphic/src/coord/base.dart';
+
 import '../base.dart';
 
-abstract class LinearScale<V, D> extends Scale<V, D> {}
+abstract class LinearScale<V, D> extends Scale<V, D> {
+  @override
+  void complete(List<D> data, CoordComponent coord) {
+    if (this['max'] == null || this['min'] == null) {
+      final accessor = this['accessor'] as V Function(D);
+      final values = data.map(accessor).toList();
+      this['max'] = this['max'] ?? values.reduce(max);
+      this['min'] = this['min'] ?? values.reduce(min);
+    }
+  }
+
+  int compare(V a, V b);
+
+  V max(V a, V b) => compare(a, b) >= 0 ? a : b;
+
+  V min(V a, V b) => compare(a, b) <= 0 ? a : b;
+}
 
 abstract class LinearScaleState<V, D> extends ScaleState<V, D> {
   bool get nice => this['nice'] as bool ?? false;
@@ -40,10 +58,10 @@ abstract class LinearScaleComponent<S extends LinearScaleState<V, D>, V, D>
     } else {
       final firstTick = state.ticks.first;
       final lastTick = state.ticks.last;
-      if (state.min == null || compare(state.min, firstTick) > 0) {
+      if (compare(state.min, firstTick) > 0) {
         state.min = firstTick;
       }
-      if (state.max == null || compare(state.max, firstTick) < 0){
+      if (compare(state.max, lastTick) < 0){
         state.max = lastTick;
       }
     }

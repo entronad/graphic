@@ -17,10 +17,6 @@ class CatScale<D> extends CategoryScale<String, D> {
     @required String Function(D) accessor,
   }) {
     assert(
-      values != null || formatter != null,
-      'must have values or formatter',
-    );
-    assert(
       scaledRange == null || scaledRange.length == 2,
       'range can only has 2 items',
     );

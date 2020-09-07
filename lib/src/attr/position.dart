@@ -9,8 +9,8 @@ class PositionAttr extends Attr<List<Offset>> {
     List<List<Offset>> values,
     List<Offset> Function(List<double>) mapper,
 
-    List<String> xFields,
-    List<String> yFields,
+    Set<String> xFields,
+    Set<String> yFields,
   }) : super(field) {
     assert(
       this['mapper'] == null
@@ -27,11 +27,11 @@ class PositionAttr extends Attr<List<Offset>> {
 }
 
 class PositionAttrState extends AttrState<List<Offset>> {
-  List<String> get xFields => this['xFields'] as List<String>;
-  set xFields(List<String> value) => this['xFields'] = value;
+  Set<String> get xFields => this['xFields'] as Set<String>;
+  set xFields(Set<String> value) => this['xFields'] = value;
 
-  List<String> get yFields => this['yFields'] as List<String>;
-  set yFields(List<String> value) => this['yFields'] = value;
+  Set<String> get yFields => this['yFields'] as Set<String>;
+  set yFields(Set<String> value) => this['yFields'] = value;
 }
 
 class PositionAttrComponent

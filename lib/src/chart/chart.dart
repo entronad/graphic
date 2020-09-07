@@ -9,30 +9,25 @@ import 'theme.dart';
 
 class Chart<D> extends StatefulWidget {
   Chart({
-    this.theme,
-    this.padding,
-    this.margin,
-    this.data,
-    this.scales,
-    this.coord,
-    this.axes,
-    this.geoms,
-  });
-  final Theme theme;
+    Theme theme,
+    EdgeInsets padding,
+    EdgeInsets margin,
+    List<D> data,
+    Map<String, Scale> scales,
+    Coord coord,
+    Map<String, Axis> axes,
+    List<Geom> geoms,
+  }) : props = ChartProps<D>()
+    ..theme = theme
+    ..padding = padding
+    ..margin = margin
+    ..data = data
+    ..scales = scales
+    ..coord = coord
+    ..axes = axes
+    ..geoms = geoms;
 
-  final EdgeInsets padding;
-
-  final EdgeInsets margin;
-
-  final List<D> data;
-
-  final Map<String, Scale> scales;
-
-  final Coord coord;
-
-  final Map<String, Axis> axes;
-
-  final List<Geom> geoms;
+  final ChartProps<D> props;
 
   @override
   _ChartState<D> createState() => _ChartState<D>();
@@ -55,7 +50,7 @@ class _ChartState<D> extends State<Chart<D>> {
   @override
   Widget build(BuildContext context) {
     return CustomSingleChildLayout(
-      delegate: _ChartLayoutDelegate(_component),
+      delegate: _ChartLayoutDelegate(_component, widget.props),
       child: CustomPaint(
         painter: _component.state.renderer.painter,
       ),
@@ -66,17 +61,19 @@ class _ChartState<D> extends State<Chart<D>> {
 // build -> getPositionForChild -> paint
 
 class _ChartLayoutDelegate extends SingleChildLayoutDelegate {
-  _ChartLayoutDelegate(this.component);
+  _ChartLayoutDelegate(this.component, this.props);
 
-  final ChartComponent component;  
+  final ChartComponent component;
+
+  final ChartProps props;
 
   @override
   bool shouldRelayout(SingleChildLayoutDelegate oldDelegate) => false;
   
   @override
   Offset getPositionForChild(Size size, Size childSize) {
-    component.state.size = childSize;
-    component.update();
+    props.size = childSize;
+    component.setProps(props);
 
     return super.getPositionForChild(size, childSize);
   }

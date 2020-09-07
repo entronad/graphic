@@ -193,8 +193,8 @@ abstract class GeomComponent<S extends GeomState<D>, D>
 
   @protected
   void initPositionAxisFields(PositionAttrComponent attrComponent) {
-    attrComponent.state.xFields = [attrComponent.state.fields[0]];
-    attrComponent.state.yFields = [attrComponent.state.fields[1]];
+    attrComponent.state.xFields = Set()..add(attrComponent.state.fields[0]);
+    attrComponent.state.yFields = Set()..add(attrComponent.state.fields[1]);
   }
 
   void render() {

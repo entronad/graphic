@@ -56,7 +56,7 @@ class _AxisPageState extends State<AxisPage> {
       scaledRange: [1 / 10, 1 - 1 / 10],
       // scaledRange: [0, 1 - 0.2],
     ));
-    final scaleY1 = NumLinearScaleComponent(graphic.NumberScale(
+    final scaleY1 = NumLinearScaleComponent(graphic.NumScale(
       min: 100,
       max: 400,
       accessor: (map) => map['sold'] as num,
@@ -132,7 +132,7 @@ class _AxisPageState extends State<AxisPage> {
       accessor: (map) => map['genre'] as String,
       scaledRange: [0, 1 - 0.2],
     ));
-    final scaleY2 = NumLinearScaleComponent(graphic.NumberScale(
+    final scaleY2 = NumLinearScaleComponent(graphic.NumScale(
       min: 100,
       max: 400,
       accessor: (map) => map['sold'] as num,
@@ -192,7 +192,7 @@ class _AxisPageState extends State<AxisPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text('Geom'),
+        title: Text('Axis'),
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(

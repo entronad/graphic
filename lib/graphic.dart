@@ -11,6 +11,8 @@ export 'src/engine/render_shape/rect.dart' show RectRenderShape;
 export 'src/engine/render_shape/sector.dart' show SectorRenderShape;
 export 'src/engine/render_shape/text.dart' show TextRenderShape;
 
+export 'src/common/styles.dart' show LineStyle;
+
 export 'src/coord/base.dart' show Coord;
 export 'src/coord/cartesian.dart' show CartesianCoord;
 export 'src/coord/polar.dart' show PolarCoord;
@@ -47,3 +49,7 @@ export 'src/geom/line.dart' show LineGeom;
 export 'src/geom/point.dart' show PointGeom;
 export 'src/geom/polygon.dart' show PolygonGeom;
 export 'src/geom/schema.dart' show SchemaGeom;
+
+export 'src/axis/base.dart' show Axis;
+
+export 'src/chart/chart.dart' show Chart;

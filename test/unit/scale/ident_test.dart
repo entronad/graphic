@@ -5,6 +5,7 @@ main() {
   group('scale', () {
     final scale = StringIdentityScaleComponent(IdentScale(
       value: 'const',
+      accessor: null,
     ));
 
     test('scale', () {
@@ -34,6 +35,7 @@ main() {
     test('set props', () {
       scale.setProps(IdentScale(
         value: 'var',
+        accessor: null,
       ));
       expect(scale.scale('var'), 0);
       expect(scale.scale('const'), null);

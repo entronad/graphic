@@ -57,7 +57,7 @@ class _GeomPageState extends State<GeomPage> {
         scaledRange: [1 / 10, 1 - 1 / 10],
         // scaledRange: [0, 1 - 0.2],
       )),
-      'sold': NumLinearScaleComponent(graphic.NumberScale(
+      'sold': NumLinearScaleComponent(graphic.NumScale(
         min: 100,
         max: 400,
         accessor: (map) => map['sold'] as num,
@@ -106,7 +106,7 @@ class _GeomPageState extends State<GeomPage> {
         scaledRange: [1 / 10, 1 - 1 / 10],
         // scaledRange: [0, 1 - 0.2],
       )),
-      'sold': NumLinearScaleComponent(graphic.NumberScale(
+      'sold': NumLinearScaleComponent(graphic.NumScale(
         min: 100,
         max: 400,
         accessor: (map) => map['sold'] as num,
@@ -153,7 +153,7 @@ class _GeomPageState extends State<GeomPage> {
         values: ['Sports', 'Strategy', 'Action', 'Shooter', 'Other'],
         accessor: (map) => map['genre'] as String,
       )),
-      'sold': NumLinearScaleComponent(graphic.NumberScale(
+      'sold': NumLinearScaleComponent(graphic.NumScale(
         min: 100,
         max: 400,
         accessor: (map) => map['sold'] as num,
@@ -200,7 +200,7 @@ class _GeomPageState extends State<GeomPage> {
         values: ['Sports', 'Strategy', 'Action', 'Shooter', 'Other'],
         accessor: (map) => map['genre'] as String,
       )),
-      'sold': NumLinearScaleComponent(graphic.NumberScale(
+      'sold': NumLinearScaleComponent(graphic.NumScale(
         min: 100,
         max: 400,
         accessor: (map) => map['sold'] as num,
@@ -300,7 +300,7 @@ class _GeomPageState extends State<GeomPage> {
         // scaledRange: [0.1, 1 - 0.1],
         scaledRange: [0, 1 - 0.2],
       )),
-      'sales': NumLinearScaleComponent(graphic.NumberScale(
+      'sales': NumLinearScaleComponent(graphic.NumScale(
         min: 0,
         max: 200,
         accessor: (list) => list[2] as num,
@@ -360,22 +360,22 @@ class _GeomPageState extends State<GeomPage> {
         stringAccessor: (map) => map['time'] as String,
         stringValues: data6.map((map) => map['time'] as String).toList(),
       )),
-      'start': NumLinearScaleComponent(graphic.NumberScale(
+      'start': NumLinearScaleComponent(graphic.NumScale(
         min: 6,
         max: 9,
         accessor: (map) => map['start'] as num,
       )),
-      'max': NumLinearScaleComponent(graphic.NumberScale(
+      'max': NumLinearScaleComponent(graphic.NumScale(
         min: 6,
         max: 9,
         accessor: (map) => map['max'] as num,
       )),
-      'min': NumLinearScaleComponent(graphic.NumberScale(
+      'min': NumLinearScaleComponent(graphic.NumScale(
         min: 6,
         max: 9,
         accessor: (map) => map['min'] as num,
       )),
-      'end': NumLinearScaleComponent(graphic.NumberScale(
+      'end': NumLinearScaleComponent(graphic.NumScale(
         min: 6,
         max: 9,
         accessor: (map) => map['end'] as num,

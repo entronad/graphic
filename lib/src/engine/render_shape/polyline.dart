@@ -98,8 +98,7 @@ class PolylineRenderShapeComponent
 
     path.moveTo(filteredPoints[0].dx, filteredPoints[0].dy);
     if (smooth) {
-      final constraint = Rect.fromLTWH(0, 0, 1, 1);
-      final segments = smooth_util.smooth(filteredPoints, false, constraint);
+      final segments = smooth_util.smooth(filteredPoints, false, true);
       for (var s in segments) {
         path.cubicTo(s.cp1.dx, s.cp1.dy, s.cp2.dx, s.cp2.dy, s.p.dx, s.p.dy);
       }

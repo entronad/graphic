@@ -21,6 +21,7 @@ double _getPolarRadius(double value, double start, double end) =>
 List<RenderShape> _rect(
   List<AttrValueRecord> attrValueRecords,
   CoordComponent coord,
+  Offset origin,
   Radius radius,
 ) {
   final rst = <RenderShape>[];
@@ -36,15 +37,15 @@ List<RenderShape> _rect(
 
       // Pie
 
-      final rangeYs = attrValueRecords.map(
-        (record) => record.position.last.dy - record.position.first.dy
+      final ys = attrValueRecords.map(
+        (record) => record.position.first.dy
       ).toList();
-      final totalScaledY = rangeYs.reduce((a, b) => a + b);
+      final totalScaledY = ys.reduce((a, b) => a + b);
       var preAngle = startAngle;
       for (var i = 0; i < count; i++) {
         final record = attrValueRecords[i];
         final color = record.color;
-        final swipeAngle = (rangeYs[i] / totalScaledY) * totalAngle;
+        final swipeAngle = (ys[i] / totalScaledY) * totalAngle;
 
         rst.add(SectorRenderShape(
           x: center.dx,
@@ -62,21 +63,20 @@ List<RenderShape> _rect(
 
       // Rose
 
+      final r0 = _getPolarRadius(
+        origin.dy,
+        coord.state.innerRadius,
+        coord.state.radius,
+      ) * radiusLength;
+
       for (var i = 0; i < count; i++) {
         final record = attrValueRecords[i];
-        final startY = record.position.first.dy;
-        final endY = record.position.last.dy;
         final startX = record.position.first.dx;
         final endX = get(attrValueRecords, i + 1)?.position?.first?.dx ?? 1.0;
         final color = record.color;
 
-        final r0 = _getPolarRadius(
-          startY,
-          coord.state.innerRadius,
-          coord.state.radius,
-        ) * radiusLength;
         final r = _getPolarRadius(
-          endY,
+          record.position.first.dy,
           coord.state.innerRadius,
           coord.state.radius,
         ) * radiusLength;
@@ -102,10 +102,13 @@ List<RenderShape> _rect(
       size = attrValueRecords.first.position.first.dx * 2 * sizeStepRatio * coord.state.region.width;
     }
 
+    final originY = origin.dy;
+
     for (var i = 0; i < attrValueRecords.length; i++) {
       final record = attrValueRecords[i];
-      final startPoint = coord.convertPoint(record.position.first);
-      final endPoint = coord.convertPoint(record.position.last);
+      final point = record.position.first;
+      final startPoint = coord.convertPoint(Offset(point.dx, originY));
+      final endPoint = coord.convertPoint(point);
       final color = record.color;
 
       double x;
@@ -141,6 +144,7 @@ List<RenderShape> _rect(
 List<RenderShape> _slopedIntervals(
   List<AttrValueRecord> attrValueRecords,
   CoordComponent coord,
+  Offset origin,
   bool sharp,
 ) {
   assert(
@@ -162,11 +166,12 @@ List<RenderShape> _slopedIntervals(
   final secondaryLast = scaledXs[scaledXs.length - 2];
   expandedXs.add(last + (last - secondaryLast) / 2);
 
-  final expandedstartYs = attrValueRecords.map((record) => record.position.first.dy).toList();
-  final expandedendYs = attrValueRecords.map((record) => record.position.last.dy).toList();
+  final originY = origin.dy;
+  final expandedstartYs = List.filled(attrValueRecords.length, originY, growable: true);
+  final expandedendYs = attrValueRecords.map((record) => record.position.first.dy).toList();
   if (sharp) {
-    expandedstartYs.add(0);
-    expandedendYs.add(0);
+    expandedstartYs.add(originY);
+    expandedendYs.add(originY);
   } else {
     expandedstartYs.add(expandedstartYs.last);
     expandedendYs.add(expandedendYs.last);
@@ -207,18 +212,21 @@ List<RenderShape> _slopedIntervals(
 List<RenderShape> rectInterval(
   List<AttrValueRecord> attrValueRecords,
   CoordComponent coord,
-) => _rect(attrValueRecords, coord, Radius.zero);
+  Offset origin,
+) => _rect(attrValueRecords, coord, origin, Radius.zero);
 
-Shape rrectInterval({@required radius}) =>
-  (attrValueRecords, coord) =>
-    _rect(attrValueRecords, coord, radius);
+Shape rrectInterval({@required Radius radius}) =>
+  (attrValueRecords, coord, origin) =>
+    _rect(attrValueRecords, coord, origin, radius);
 
 List<RenderShape> pyramidInterval(
   List<AttrValueRecord> attrValueRecords,
   CoordComponent coord,
-) => _slopedIntervals(attrValueRecords, coord, true);
+  Offset origin,
+) => _slopedIntervals(attrValueRecords, coord, origin, true);
 
 List<RenderShape> funnelInterval(
   List<AttrValueRecord> attrValueRecords,
   CoordComponent coord,
-) => _slopedIntervals(attrValueRecords, coord, false);
+  Offset origin,
+) => _slopedIntervals(attrValueRecords, coord, origin, false);

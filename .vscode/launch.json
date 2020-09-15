@@ -6,6 +6,12 @@
       "request": "launch",
       "type": "dart",
       "program": "./debug/lib/main.dart"
+    },
+    {
+      "name": "example",
+      "request": "launch",
+      "type": "dart",
+      "program": "./example/lib/main.dart"
     }
   ]
 }

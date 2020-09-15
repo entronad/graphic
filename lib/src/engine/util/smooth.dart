@@ -15,9 +15,9 @@ List<Offset> _getControlPoints(
   List<Offset> points,
   double ratio,
   bool isLoop,
+  bool hasConstraint,
   [Rect constraint,]
 ) {
-  final hasConstraint = (constraint != null);
   final vectors = points.map((point) =>pointToVector(point)).toList();
 
   final cps = <Offset>[];
@@ -26,7 +26,9 @@ List<Offset> _getControlPoints(
   Vector3 min;
   Vector3 max;
 
-  // real constraint box is the bigger one of constraint and bbox of points
+  // Real constraint box is:
+  // bbox of points, if constraint is null
+  // the bigger one of constraint and bbox of points, if constraint is not null
   if (hasConstraint) {
     min = Vector3(double.infinity, double.infinity, 0);
     max = Vector3(double.negativeInfinity, double.negativeInfinity, 0);
@@ -35,8 +37,10 @@ List<Offset> _getControlPoints(
       Vector3.min(min, vector, min);
       Vector3.max(max, vector, max);
     }
-    Vector3.min(min,pointToVector(constraint.topLeft), min);
-    Vector3.max(max,pointToVector(constraint.bottomRight), max);
+    if (constraint != null) {
+      Vector3.min(min,pointToVector(constraint.topLeft), min);
+      Vector3.max(max,pointToVector(constraint.bottomRight), max);
+    }
   }
 
   final len = points.length;
@@ -91,9 +95,10 @@ List<Offset> _getControlPoints(
 List<BezierSegment> smooth(
   List<Offset> points,
   bool isLoop,
+  bool hasConstraint,
   [Rect constraint,]
 ) {
-  final controlPointList = _getControlPoints(points, 0.4, isLoop, constraint);
+  final controlPointList = _getControlPoints(points, 0.4, isLoop, hasConstraint, constraint);
   final len = points.length;
   final rst = <BezierSegment>[];
 

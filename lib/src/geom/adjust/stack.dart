@@ -18,7 +18,9 @@ class StackAdjustComponent extends AdjustComponent<StackAdjustState> {
   StackAdjustState get originalState => StackAdjustState();
 
   @override
-  void adjust(List<List<AttrValueRecord>> recordsGroup) {
+  void adjust(List<List<AttrValueRecord>> recordsGroup, Offset origin) {
+    final originY = origin.dy;
+
     // To be meaningfull, y must be all positive or all negtive.
     for (var i = 1; i < recordsGroup.length; i++) {
       final records = recordsGroup[i];
@@ -26,10 +28,15 @@ class StackAdjustComponent extends AdjustComponent<StackAdjustState> {
       for (var j = 0; j < records.length; j++) {
         final position = records[j].position;
         final prePosition = preRecords[j].position;
+
+        final preTop = prePosition.reduce(
+          (a, b) => (a.dy - originY).abs() >= (b.dy - originY).abs() ? a : b
+        );
+
         for (var k = 0; k < position.length; k++) {
           position[k] = Offset(
             position[k].dx,
-            position[k].dy + prePosition[k].dy,
+            position[k].dy + (preTop.dy - originY),
           );
         }
       }

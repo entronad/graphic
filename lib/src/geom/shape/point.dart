@@ -81,19 +81,23 @@ List<RenderShape> _rectPoint(
 List<RenderShape> circlePoint(
   List<AttrValueRecord> attrValueRecords,
   CoordComponent coord,
+  Offset origin,
 ) => _circlePoint(attrValueRecords, coord, false);
 
 List<RenderShape> hollowCirclePoint(
   List<AttrValueRecord> attrValueRecords,
   CoordComponent coord,
+  Offset origin,
 ) => _circlePoint(attrValueRecords, coord, true);
 
 List<RenderShape> rectPoint(
   List<AttrValueRecord> attrValueRecords,
   CoordComponent coord,
+  Offset origin,
 ) => _rectPoint(attrValueRecords, coord, false);
 
 List<RenderShape> hollowRectPoint(
   List<AttrValueRecord> attrValueRecords,
   CoordComponent coord,
+  Offset origin,
 ) => _rectPoint(attrValueRecords, coord, true);

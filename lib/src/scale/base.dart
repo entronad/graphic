@@ -23,8 +23,8 @@ abstract class ScaleState<V, D> with TypedMap {
   String Function(V) get formatter => this['formatter'] as String Function(V);
   set formatter(String Function(V) value) => this['formatter'] = value;
 
-  List<double> get scaledRange => this['scaledRange'] as List<double>;
-  set scaledRange(List<double> value) => this['scaledRange'] = value;
+  List<double> get range => this['range'] as List<double>;
+  set range(List<double> value) => this['range'] = value;
 
   String get alias => this['alias'] as String;
   set alias(String value) => this['alias'] = value;
@@ -49,7 +49,7 @@ abstract class ScaleComponent<S extends ScaleState<V, D>, V, D> extends Componen
       case ScaleType.time:
         return DateTimeOrdinalScaleComponent<D>(props as TimeScale<D>);
       case ScaleType.number:
-        return NumLinearScaleComponent<D>(props as NumberScale<D>);
+        return NumLinearScaleComponent<D>(props as NumScale<D>);
       default: return null;
     }
   }
@@ -62,7 +62,7 @@ abstract class ScaleComponent<S extends ScaleState<V, D>, V, D> extends Componen
   void initDefaultState() {
     super.initDefaultState();
     state
-      ..scaledRange = [0, 1]
+      ..range = [0, 1]
       ..formatter = (v) => v?.toString();
   }
 
@@ -84,4 +84,6 @@ abstract class ScaleComponent<S extends ScaleState<V, D>, V, D> extends Componen
   V invert(double scaled);
 
   String getText(V value) => state.formatter(value);
+
+  double get origin => 0;
 }

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:graphic/src/attr/single_linear/color.dart';
 import 'package:graphic/src/attr/single_linear/shape.dart';
 import 'package:graphic/src/attr/single_linear/size.dart';
@@ -40,18 +38,4 @@ class IntervalGeomComponent<D> extends GeomComponent<IntervalGeomState<D>, D> {
   // Handle in shape
   @override
   double get defaultSize => null;
-
-  @override
-  List<Offset> defaultPositionMapper(List<double> scaledValues) {
-    if (scaledValues == null || scaledValues.isEmpty) {
-      return null;
-    }
-    assert(scaledValues.length == 2);
-
-    // [start, end]
-    return [
-      Offset(scaledValues[0], 0),
-      Offset(scaledValues[0], scaledValues[1]),
-    ];
-  }
 }

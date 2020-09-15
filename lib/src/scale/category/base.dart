@@ -6,8 +6,8 @@ import '../base.dart';
 import '../auto_ticks/cat.dart';
 
 abstract class CategoryScale<V, D> extends Scale<V, D> {
-  List<double> get scaledRange => this['scaledRange'] as List<double>;
-  set scaledRange(List<double> value) => this['scaledRange'] = value;
+  List<double> get range => this['range'] as List<double>;
+  set range(List<double> value) => this['range'] = value;
 
   V Function(D) get accessor => this['accessor'] as V Function(D);
   set accessor(V Function(D) value) => this['accessor'] = value;
@@ -21,12 +21,12 @@ abstract class CategoryScale<V, D> extends Scale<V, D> {
       values = data.map(accessor).toSet().toList();
     }
 
-    if (scaledRange == null) {
+    if (range == null) {
       final count = values.length;
       if (coord is PolarCoordComponent) {
-        scaledRange = [0, 1 - 1 / count];
+        range = [0, 1 - 1 / count];
       } else {
-        scaledRange = [1 / count / 2, 1 - 1 / count / 2];
+        range = [1 / count / 2, 1 - 1 / count / 2];
       }
     }
   }
@@ -83,8 +83,8 @@ abstract class CategoryScaleComponent<S extends CategoryScaleState<V, D>, V, D>
       return null;
     }
     final intervalsCount = state.values.length - 1;
-    final rangeMin = state.scaledRange.first;
-    final rangeMax = state.scaledRange.last;
+    final rangeMin = state.range.first;
+    final rangeMax = state.range.last;
 
     // when values has one item and that is value, The same as identity.
     if (intervalsCount < 1) {
@@ -107,8 +107,8 @@ abstract class CategoryScaleComponent<S extends CategoryScaleState<V, D>, V, D>
     final values = state.values;
     final valuesCount = values.length;
     final intervalsCount = valuesCount - 1;
-    final rangeMin = state.scaledRange.first;
-    final rangeMax = state.scaledRange.last;
+    final rangeMin = state.range.first;
+    final rangeMax = state.range.last;
 
     final ratio = (scaled.clamp(rangeMin, rangeMax) - rangeMin) / (rangeMax - rangeMin);
     final index = (ratio * intervalsCount).round() % valuesCount;

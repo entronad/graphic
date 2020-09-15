@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'dart:math';
 
 import 'package:graphic/src/geom/base.dart';
 
@@ -7,7 +6,7 @@ import 'base.dart';
 
 class SymmetricAdjust extends Adjust {
   @override
-  AdjustType get type => AdjustType.stack;
+  AdjustType get type => AdjustType.symmetric;
 }
 
 class SymmetricAdjustState extends AdjustState {}
@@ -19,31 +18,28 @@ class SymmetricAdjustComponent extends AdjustComponent<SymmetricAdjustState> {
   SymmetricAdjustState get originalState => SymmetricAdjustState();
 
   @override
-  void adjust(List<List<AttrValueRecord>> recordsGroup) {
+  void adjust(List<List<AttrValueRecord>> recordsGroup, Offset origin) {
+    final originY = origin.dy;
+    
+    final symmetricRecordsGroup = <List<AttrValueRecord>>[];
     for (var records in recordsGroup) {
+      final symmetricRecords = <AttrValueRecord>[];
       for (var record in records) {
-        var originalPosition = record.position;
-
-        if (originalPosition.length == 1) {
-          final singlePoint = originalPosition.first;
-          originalPosition = [
-            Offset(singlePoint.dx, 0),
-            singlePoint,
-          ];
-        }
-
-        var maxY = double.negativeInfinity;
-        var minY = double.infinity;
-        for (var point in originalPosition) {
-          maxY = max(maxY, point.dy);
-          minY = min(minY, point.dy);
-        }
-
-        final offsetY = -(minY + maxY) / 2;
-        record.position = originalPosition.map(
-          (point) => Offset(point.dx, point.dy + offsetY)
+        record.position = record.position.map(
+          (point) => Offset(point.dx, point.dy - (point.dy - originY) / 2),
         ).toList();
+        final symmetricRecord = AttrValueRecord(
+          color: record.color,
+          size: record.size,
+          shape: record.shape,
+          position: record.position.map(
+            (point) => Offset(point.dx, originY - (point.dy - originY)),
+          ).toList(),
+        );
+        symmetricRecords.add(symmetricRecord);
       }
+      symmetricRecordsGroup.add(symmetricRecords);
     }
+    recordsGroup.addAll(symmetricRecordsGroup);
   }
 }

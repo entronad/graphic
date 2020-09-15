@@ -34,26 +34,39 @@ abstract class SingleLinearAttrComponent<S extends SingleLinearAttrState, A>
     final ratio = scaledValues.first;
 
     final values = state.values;
-    var stops = state.stops;
-    assert(stops == null || stops.length == values.length);
+    final stops = state.stops;
+    assert(stops.length == values.length);
 
-    if (stops == null) {
-      stops = <double>[];
-      for (var i = 0; i < values.length; i++) {
-        stops.add(i * (1 / (values.length - 1)));
+    // Wether stops is increasing or decreasing
+    if (stops.first <= stops.last) {
+      for (var s = 0; s < stops.length - 1; s++) {
+        final leftStop = stops[s];
+        final rightStop = stops[s + 1];
+        final leftValue = values[s];
+        final rightValue = values[s + 1];
+        if (ratio <= leftStop) {
+          return leftValue;
+        } else if (ratio < rightStop) {
+          final sectionT = (ratio - leftStop) / (rightStop - leftStop);
+          return lerp(leftValue, rightValue, sectionT);
+        }
       }
-    }
-    for (var s = 0; s < stops.length - 1; s++) {
-      final leftStop = stops[s], rightStop = stops[s + 1];
-      final leftColor = values[s], rightColor = values[s + 1];
-      if (ratio <= leftStop) {
-        return leftColor;
-      } else if (ratio < rightStop) {
-        final sectionT = (ratio - leftStop) / (rightStop - leftStop);
-        return lerp(leftColor, rightColor, sectionT);
+      return values.last;
+    } else {
+      for (var s = 0; s < stops.length - 1; s++) {
+        final leftStop = stops[s];
+        final rightStop = stops[s + 1];
+        final leftValue = values[s];
+        final rightValue = values[s + 1];
+        if (ratio >= leftStop) {
+          return leftValue;
+        } else if (ratio > rightStop) {
+          final sectionT = (ratio - leftStop) / (rightStop - leftStop);
+          return lerp(leftValue, rightValue, sectionT);
+        }
       }
+      return values.last;
     }
-    return values.last;
   }
 
   @protected

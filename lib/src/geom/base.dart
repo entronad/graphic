@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:graphic/src/attr/single_linear/base.dart';
 import 'package:meta/meta.dart';
 import 'package:graphic/src/common/typed_map.dart';
 import 'package:graphic/src/common/base_classes.dart';
@@ -12,7 +13,7 @@ import 'package:graphic/src/attr/position.dart';
 import 'package:graphic/src/scale/base.dart';
 import 'package:graphic/src/scale/category/base.dart';
 import 'package:graphic/src/util/list.dart';
-import 'package:graphic/src/chart/theme.dart';
+import 'package:graphic/src/defaults.dart';
 
 import 'shape/base.dart';
 import 'adjust/base.dart';
@@ -105,19 +106,10 @@ abstract class GeomComponent<S extends GeomState<D>, D>
   void setColor(ColorAttr color) {
     final attrComponent = ColorSingleLinearAttrComponent(color);
     if (attrComponent.state.values == null) {
-      attrComponent.state.values = defaultTheme.colors;
+      attrComponent.state.values = Defaults.theme.colors;
     }
-    if (attrComponent.state.fields != null && !attrComponent.state.isTween) {
-      final field = state.color.state.fields.first;
-      final scale = state.chart.state.scales[field];
-      assert(
-        scale != null,
-        'Can not find $field scale in scales',
-      );
-      if (scale is CategoryScaleComponent) {
-        final length = scale.state.values.length;
-        makeup(attrComponent.state.values, length);
-      }
+    if (attrComponent.state.fields != null) {
+      _completeSingleLinearAttr(attrComponent);
     }
     state.color = attrComponent;
   }
@@ -127,17 +119,8 @@ abstract class GeomComponent<S extends GeomState<D>, D>
     if (attrComponent.state.values == null) {
       attrComponent.state.values = [defaultShape];
     }
-    if (attrComponent.state.fields != null && !attrComponent.state.isTween) {
-      final field = state.shape.state.fields.first;
-      final scale = state.chart.state.scales[field];
-      assert(
-        scale != null,
-        'Can not find $field scale in scales',
-      );
-      if (scale is CategoryScaleComponent) {
-        final length = scale.state.values.length;
-        makeup(attrComponent.state.values, length);
-      }
+    if (attrComponent.state.fields != null) {
+      _completeSingleLinearAttr(attrComponent);
     }
     state.shape = attrComponent;
   }
@@ -150,23 +133,46 @@ abstract class GeomComponent<S extends GeomState<D>, D>
     if (attrComponent.state.values == null) {
       attrComponent.state.values = [defaultSize];
     }
-    if (attrComponent.state.fields != null && !attrComponent.state.isTween) {
-      final field = state.size.state.fields.first;
-      final scale = state.chart.state.scales[field];
-      assert(
-        scale != null,
-        'Can not find $field scale in scales',
-      );
-      if (scale is CategoryScaleComponent) {
-        final length = scale.state.values.length;
-        makeup(attrComponent.state.values, length);
-      }
+    if (attrComponent.state.fields != null) {
+      _completeSingleLinearAttr(attrComponent);
     }
     state.size = attrComponent;
   }
   
   @protected
   double get defaultSize;
+
+  void _completeSingleLinearAttr(SingleLinearAttrComponent attrComponent) {
+    final field = attrComponent.state.fields.first;
+    final scale = state.chart.state.scales[field];
+    assert(
+      scale != null,
+      'Can not find $field scale in scales',
+    );
+
+    if (scale is CategoryScaleComponent && !attrComponent.state.isTween) {
+      final length = scale.state.values.length;
+      attrComponent.state.values = makeup(attrComponent.state.values, length);
+    }
+
+    attrComponent.state.stops ??= _getAttrStops(
+      attrComponent.state.values,
+      scale.state.range,
+    );
+  }
+
+  List<double> _getAttrStops<A>(List<A> values, List<double> range) {
+    final start = range.first;
+    final step = (1 / (values.length - 1)) * (range.last - range.first);
+
+    final rst = <double>[];
+
+    for (var i = 0; i < values.length; i++) {
+      rst.add(start + i * step);
+    }
+
+    return rst;
+  }
   
   void setPosition(PositionAttr position) {
     final attrComponent = PositionAttrComponent(position);
@@ -206,7 +212,8 @@ abstract class GeomComponent<S extends GeomState<D>, D>
     }
 
     final renderShapes = _getRenderShapes();
-    for (var renderShape in renderShapes) {
+    for (var i = renderShapes.length - 1; i >= 0; i--) {
+      final renderShape = renderShapes[i];
       final plot = state.chart.state.middlePlot;
       final component = plot.addShape(renderShape);
       _shapeComponents.add(component);
@@ -216,8 +223,10 @@ abstract class GeomComponent<S extends GeomState<D>, D>
   List<RenderShape> _getRenderShapes() {
     final coord = state.chart.state.coord;
     final recordsGroup = _getRecordsGroup();
-    _adjustRecordsGroup(recordsGroup);
-    
+    final origin = _getOrigin();
+
+    _adjustRecordsGroup(recordsGroup, origin);
+
     final rst = <RenderShape>[];
 
     for (var records in recordsGroup) {
@@ -225,10 +234,22 @@ abstract class GeomComponent<S extends GeomState<D>, D>
       rst.addAll(shape(
         records,
         coord,
+        origin,
       ));
     }
 
     return rst;
+  }
+
+  Offset _getOrigin() {
+    final xField = state.position.state.xFields.first;
+    final yField = state.position.state.yFields.first;
+    final scales = state.chart.state.scales;
+    final originPoint = Offset(
+      scales[xField].origin,
+      scales[yField].origin,
+    );
+    return originPoint;
   }
 
   List<List<AttrValueRecord>> _getRecordsGroup() {
@@ -356,10 +377,10 @@ abstract class GeomComponent<S extends GeomState<D>, D>
     return null;
   }
 
-  void _adjustRecordsGroup(List<List<AttrValueRecord>> recordsGroup) {
+  void _adjustRecordsGroup(List<List<AttrValueRecord>> recordsGroup, Offset origin) {
     final adjust = state.adjust;
     if (adjust != null) {
-      adjust.adjust(recordsGroup);
+      adjust.adjust(recordsGroup, origin);
     }
   }
 }

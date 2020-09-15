@@ -3,7 +3,7 @@ import 'package:graphic/src/scale/linear/num.dart';
 
 main() {
   group('scale linear', () {
-    final scale = NumLinearScaleComponent(NumberScale(
+    final scale = NumLinearScaleComponent(NumScale(
       min: 0,
       max: 100,
       formatter: (val) => '${val}bit',
@@ -37,7 +37,7 @@ main() {
     });
 
     test('set props', () {
-      scale.setProps(NumberScale(
+      scale.setProps(NumScale(
         min: 10,
         max: 110,
         accessor: null,
@@ -47,10 +47,10 @@ main() {
   });
 
   group('scale linear change range', () {
-    final scale = NumLinearScaleComponent(NumberScale(
+    final scale = NumLinearScaleComponent(NumScale(
       min: 0,
       max: 100,
-      scaledRange: [0, 1000],
+      range: [0, 1000],
       accessor: null,
     ));
 
@@ -68,7 +68,7 @@ main() {
   });
 
   group('scale not nice', () {
-    final scale = NumLinearScaleComponent(NumberScale(
+    final scale = NumLinearScaleComponent(NumScale(
       min: 3,
       max: 97,
       accessor: null,
@@ -92,7 +92,7 @@ main() {
   });
 
   group('scale nice', () {
-    final scale = NumLinearScaleComponent(NumberScale(
+    final scale = NumLinearScaleComponent(NumScale(
       min: 3,
       max: 97,
       nice: true,
@@ -122,7 +122,7 @@ main() {
   });
 
   group('scale ticks', () {
-    final scale = NumLinearScaleComponent(NumberScale(
+    final scale = NumLinearScaleComponent(NumScale(
       min: 1,
       max: 5,
       ticks: [ 1, 2, 3, 4, 5 ],
@@ -136,7 +136,7 @@ main() {
   });
 
   group('scale linear: min is equal to max', () {
-    final scale = NumLinearScaleComponent(NumberScale(
+    final scale = NumLinearScaleComponent(NumScale(
       min: 0,
       max: 0,
       accessor: null,
@@ -154,7 +154,7 @@ main() {
   });
 
   group('scale linear: min is equal to max, nice true', () {
-    final scale = NumLinearScaleComponent(NumberScale(
+    final scale = NumLinearScaleComponent(NumScale(
       min: 0,
       max: 0,
       nice: true,
@@ -173,7 +173,7 @@ main() {
   });
 
   group('scale linear: declare tickInterval.', () {
-    final scale = NumLinearScaleComponent(NumberScale(
+    final scale = NumLinearScaleComponent(NumScale(
       min: 20,
       max: 85,
       tickInterval: 15,

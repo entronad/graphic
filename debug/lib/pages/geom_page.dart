@@ -54,8 +54,8 @@ class _GeomPageState extends State<GeomPage> {
       'genre': StringCategoryScaleComponent(graphic.CatScale(
         values: ['Sports', 'Strategy', 'Action', 'Shooter', 'Other'],
         accessor: (map) => map['genre'] as String,
-        scaledRange: [1 / 10, 1 - 1 / 10],
-        // scaledRange: [0, 1 - 0.2],
+        range: [1 / 10, 1 - 1 / 10],
+        // range: [0, 1 - 0.2],
       )),
       'sold': NumLinearScaleComponent(graphic.NumScale(
         min: 100,
@@ -103,8 +103,8 @@ class _GeomPageState extends State<GeomPage> {
       'genre': StringCategoryScaleComponent(graphic.CatScale(
         values: ['Sports', 'Strategy', 'Action', 'Shooter', 'Other'],
         accessor: (map) => map['genre'] as String,
-        scaledRange: [1 / 10, 1 - 1 / 10],
-        // scaledRange: [0, 1 - 0.2],
+        range: [1 / 10, 1 - 1 / 10],
+        // range: [0, 1 - 0.2],
       )),
       'sold': NumLinearScaleComponent(graphic.NumScale(
         min: 100,
@@ -143,10 +143,10 @@ class _GeomPageState extends State<GeomPage> {
       { 'genre': 'Shooter', 'sold': 350 },
       { 'genre': 'Other', 'sold': 150 },
     ];
-    // final coord3 = CartesianCoordComponent(graphic.CartesianCoord(transposed: true));
-    final coord3 = PolarCoordComponent(graphic.PolarCoord(
-      innerRadius: 0.5,
-    ));
+    final coord3 = CartesianCoordComponent(graphic.CartesianCoord());
+    // final coord3 = PolarCoordComponent(graphic.PolarCoord(
+    //   innerRadius: 0.5,
+    // ));
     coord3.setRegion(Rect.fromLTWH(0, 0, 300, 300));
     final scales3 = <String, ScaleComponent>{
       'genre': StringCategoryScaleComponent(graphic.CatScale(
@@ -291,14 +291,14 @@ class _GeomPageState extends State<GeomPage> {
       'name': StringCategoryScaleComponent(graphic.CatScale(
         values: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
         accessor: (list) => list[0] as String,
-        // scaledRange: [0.05, 1 - 0.05],
-        scaledRange: [0, 1 - 0.1],
+        // range: [0.05, 1 - 0.05],
+        range: [0, 1 - 0.1],
       )),
       'day': StringCategoryScaleComponent(graphic.CatScale(
         values: ['0', '1', '2', '3', '4'],
         accessor: (list) => list[1] as String,
-        // scaledRange: [0.1, 1 - 0.1],
-        scaledRange: [0, 1 - 0.2],
+        // range: [0.1, 1 - 0.1],
+        range: [0, 1 - 0.2],
       )),
       'sales': NumLinearScaleComponent(graphic.NumScale(
         min: 0,

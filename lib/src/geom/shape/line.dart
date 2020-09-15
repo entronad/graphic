@@ -61,9 +61,11 @@ List<RenderShape> _line(
 List<RenderShape> line(
   List<AttrValueRecord> attrValueRecords,
   CoordComponent coord,
+  Offset origin,
 ) => _line(attrValueRecords, coord, false);
 
 List<RenderShape> smoothLine(
   List<AttrValueRecord> attrValueRecords,
   CoordComponent coord,
+  Offset origin,
 ) => _line(attrValueRecords, coord, true);

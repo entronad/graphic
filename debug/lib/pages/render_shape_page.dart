@@ -138,17 +138,37 @@ class _RenderShapePageState extends State<RenderShapePage> {
     //   color: Colors.red,
     // ))..state.zIndex = 100;
 
-    final path = Path();
-    path.moveTo(50, 50);
-    path.lineTo(100, 50);
-    path.lineTo(100, 100);
-    path.close();
+    // final path = Path();
+    // path.moveTo(50, 50);
+    // path.lineTo(100, 50);
+    // path.lineTo(100, 100);
+    // path.close();
 
-    r1.addShape(graphic.CustomRenderShape(
-      path: path,
+    // r1.addShape(graphic.CustomRenderShape(
+    //   path: path,
+    //   color: Colors.red,
+    // ));
+
+    final points = [
+      Offset(10, 100),
+      Offset(20, 140),
+      Offset(200, 280),
+      Offset(280, 140),
+    ];
+
+    final rPoints = points.reversed.toList();
+
+    r1.addShape(graphic.PolylineRenderShape(
+      points: points,
+      smooth: true,
       color: Colors.red,
     ));
 
+    r1.addShape(graphic.PolylineRenderShape(
+      points: rPoints,
+      smooth: true,
+      color: Colors.green,
+    ));
 
     r1.mount(() { setState(() {}); });
   }
@@ -166,8 +186,8 @@ class _RenderShapePageState extends State<RenderShapePage> {
           child: Column(
             children: <Widget>[
               Container(
-                width: 1000,
-                height: 1000,
+                width: 300,
+                height: 300,
                 child: CustomPaint(
                   painter: r1.painter,
                 ),

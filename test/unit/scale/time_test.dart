@@ -57,7 +57,7 @@ main() {
 
     test('set props', () {
       scale.setProps(TimeScale(
-        scaledRange: [0.2, 0.8],
+        range: [0.2, 0.8],
         values: [
           DateTime.fromMillisecondsSinceEpoch(1442937600000),
           DateTime.fromMillisecondsSinceEpoch(1441296000000),
@@ -75,7 +75,7 @@ main() {
 
     test('set props with itcks', () {
       scale.setProps(TimeScale(
-        scaledRange: [0.2, 0.8],
+        range: [0.2, 0.8],
         values: [
           DateTime.fromMillisecondsSinceEpoch(1442937600000),
           DateTime.fromMillisecondsSinceEpoch(1441296000000),

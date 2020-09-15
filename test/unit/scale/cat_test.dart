@@ -49,7 +49,7 @@ main() {
   group('scale cat change range', () {
     final scale = StringCategoryScaleComponent(CatScale(
       values: [ 'Jan', 'Feb', 'Mar', 'Apr', 'May' ],
-      scaledRange: [0.1, 0.9],
+      range: [0.1, 0.9],
       accessor: null,
     ));
 

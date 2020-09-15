@@ -8,12 +8,24 @@ abstract class LinearScale<V, D> extends Scale<V, D> {
     if (this['max'] == null || this['min'] == null) {
       final accessor = this['accessor'] as V Function(D);
       final values = data.map(accessor).toList();
-      this['max'] = this['max'] ?? values.reduce(max);
-      this['min'] = this['min'] ?? values.reduce(min);
+      final maxValue = values.reduce(max);
+      final minValue = values.reduce(min);
+      if (compare(minValue, zero) > 0) {
+        this['max'] = this['max'] ?? maxValue;
+        this['min'] = this['min'] ?? zero;
+      } else if (compare(maxValue, zero) < 0) {
+        this['max'] = this['max'] ?? zero;
+        this['min'] = this['min'] ?? minValue;
+      } else {
+        this['max'] = this['max'] ?? maxValue;
+        this['min'] = this['min'] ?? minValue;
+      }
     }
   }
 
   int compare(V a, V b);
+
+  V get zero;
 
   V max(V a, V b) => compare(a, b) >= 0 ? a : b;
 
@@ -50,6 +62,10 @@ abstract class LinearScaleComponent<S extends LinearScaleState<V, D>, V, D>
   V multiply(V a, double k);
 
   double divide(V a, V b);
+
+  V get zero;
+
+  V get one;
 
   @override
   void assign() {
@@ -99,8 +115,8 @@ abstract class LinearScaleComponent<S extends LinearScaleState<V, D>, V, D>
 
     final min = state.min;
     final max = state.max;
-    final rangeMin = state.scaledRange.first;
-    final rangeMax = state.scaledRange.last;
+    final rangeMin = state.range.first;
+    final rangeMax = state.range.last;
 
     if (max == min) {
       return rangeMin;
@@ -114,10 +130,13 @@ abstract class LinearScaleComponent<S extends LinearScaleState<V, D>, V, D>
   V invert(double scaled) {
     final min = state.min;
     final max = state.max;
-    final rangeMin = state.scaledRange.first;
-    final rangeMax = state.scaledRange.last;
+    final rangeMin = state.range.first;
+    final rangeMax = state.range.last;
 
     final percent = (scaled - rangeMin) / (rangeMax - rangeMin);
     return add(min, multiply(substarct(max, min), percent));
   }
+
+  @override
+  double get origin => scale(zero);
 }

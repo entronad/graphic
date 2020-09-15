@@ -11,6 +11,7 @@ import '../base.dart';
 List<RenderShape> mosaicPolygon(
   List<AttrValueRecord> attrValueRecords,
   CoordComponent coord,
+  Offset origin,
 ) {
   var stepX = double.infinity;
   var stepY = double.infinity;

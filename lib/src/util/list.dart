@@ -50,5 +50,6 @@ List<T> makeup<T>(
   }
 
   placeholder = placeholder ?? list.last;
-  return [...list]..fillRange(list.length, length, placeholder);
+
+  return [...list, ...List.filled(length - list.length, placeholder)];
 }

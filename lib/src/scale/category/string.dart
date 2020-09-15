@@ -9,7 +9,7 @@ class CatScale<D> extends CategoryScale<String, D> {
     bool isRounding,
 
     String Function(String) formatter,
-    List<double> scaledRange,
+    List<double> range,
     String alias,
     int tickCount,
     List<String> ticks,
@@ -17,14 +17,14 @@ class CatScale<D> extends CategoryScale<String, D> {
     @required String Function(D) accessor,
   }) {
     assert(
-      scaledRange == null || scaledRange.length == 2,
+      range == null || range.length == 2,
       'range can only has 2 items',
     );
 
     this['values'] = values;
     this['isRounding'] = isRounding;
     this['formatter'] = formatter;
-    this['scaledRange'] = scaledRange;
+    this['range'] = range;
     this['alias'] = alias;
     this['tickCount'] = tickCount;
     this['ticks'] = ticks;

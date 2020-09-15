@@ -39,7 +39,7 @@ class AdjustPage extends StatelessWidget {
                     position: graphic.PositionAttr(field: 'index*value'),
                     color: graphic.ColorAttr(field: 'type'),
                     adjust: graphic.StackAdjust(),
-                    // shape: graphic.ShapeAttr(values: [graphic.smoothLine]),
+                    shape: graphic.ShapeAttr(values: [graphic.Shapes.smoothArea]),
                   )],
                   axes: {
                     'index': graphic.Axis(),
@@ -75,6 +75,100 @@ class AdjustPage extends StatelessWidget {
                     'index': graphic.Axis(),
                     'value': graphic.Axis(),
                   },
+                ),
+                margin: EdgeInsets.all(20),
+              ),
+              Container(
+                width: 300,
+                height: 300,
+                child: graphic.Chart(
+                  data: data,
+                  scales: {
+                    'index': graphic.NumScale(
+                      accessor: (map) => map['index'] as num,
+                    ),
+                    'type': graphic.CatScale(
+                      accessor: (map) => map['type'] as String,
+                    ),
+                    'value': graphic.NumScale(
+                      accessor: (map) => map['value'] as num,
+                      max: 3000,
+                    ),
+                  },
+                  geoms: [graphic.LineGeom(
+                    position: graphic.PositionAttr(field: 'index*value'),
+                    color: graphic.ColorAttr(field: 'type'),
+                    adjust: graphic.StackAdjust(),
+                    shape: graphic.ShapeAttr(values: [graphic.Shapes.smoothLine]),
+                  )],
+                  axes: {
+                    'index': graphic.Axis(),
+                    'value': graphic.Axis(),
+                  },
+                ),
+                margin: EdgeInsets.all(20),
+              ),
+              Container(
+                width: 300,
+                height: 300,
+                child: graphic.Chart(
+                  data: data,
+                  scales: {
+                    'index': graphic.CatScale(
+                      accessor: (map) => map['index'].toString(),
+                    ),
+                    'type': graphic.CatScale(
+                      accessor: (map) => map['type'] as String,
+                      range: [0, 1],
+                    ),
+                    'value': graphic.NumScale(
+                      accessor: (map) => map['value'] as num,
+                      max: 3000,
+                    ),
+                  },
+                  geoms: [graphic.IntervalGeom(
+                    position: graphic.PositionAttr(field: 'index*value'),
+                    color: graphic.ColorAttr(field: 'type'),
+                    adjust: graphic.StackAdjust(),
+                  )],
+                  axes: {
+                    'index': graphic.Axis(),
+                    'value': graphic.Axis(),
+                  },
+                ),
+                margin: EdgeInsets.all(20),
+              ),
+              Container(
+                width: 300,
+                height: 300,
+                child: graphic.Chart(
+                  data: data,
+                  scales: {
+                    'index': graphic.CatScale(
+                      accessor: (map) => map['index'].toString(),
+                    ),
+                    'type': graphic.CatScale(
+                      accessor: (map) => map['type'] as String,
+                      range: [0, 1],
+                    ),
+                    'value': graphic.NumScale(
+                      accessor: (map) => map['value'] as num,
+                      max: 3000,
+                    ),
+                  },
+                  geoms: [graphic.IntervalGeom(
+                    position: graphic.PositionAttr(field: 'index*value'),
+                    color: graphic.ColorAttr(field: 'type'),
+                    adjust: graphic.StackAdjust(),
+                  )],
+                  axes: {
+                    'index': graphic.Defaults.circularAxis
+                      ..top = true,
+                    'value': graphic.Defaults.radialAxis
+                      ..grid = null
+                      ..top = true,
+                  },
+                  coord: graphic.PolarCoord(),
                 ),
                 margin: EdgeInsets.all(20),
               ),

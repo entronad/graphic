@@ -41,7 +41,7 @@ Path _candlestickElementPath(
   return path;
 }
 
-// position: [min, q1, q2, q3, max]
+// position: [min, q1, median, q3, max]
 Path _boxElementPath(
   List<Offset> renderPosition,
   double size,
@@ -264,9 +264,11 @@ List<RenderShape> _cartesianSchema(
 List<RenderShape> candlestickSchema(
   List<AttrValueRecord> attrValueRecords,
   CoordComponent coord,
+  Offset origin,
 ) => _cartesianSchema(attrValueRecords, coord, _candlestickElementPath);
 
 List<RenderShape> boxSchema(
   List<AttrValueRecord> attrValueRecords,
   CoordComponent coord,
+  Offset origin,
 ) => _cartesianSchema(attrValueRecords, coord, _boxElementPath);

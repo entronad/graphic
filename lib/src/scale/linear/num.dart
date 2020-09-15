@@ -4,15 +4,15 @@ import '../base.dart';
 import 'base.dart';
 import '../auto_ticks/num.dart';
 
-class NumberScale<D> extends LinearScale<num, D> {
-  NumberScale({
+class NumScale<D> extends LinearScale<num, D> {
+  NumScale({
     bool nice,
     num min,
     num max,
     num tickInterval,
 
     String Function(num) formatter,
-    List<double> scaledRange,
+    List<double> range,
     String alias,
     int tickCount,
     List<num> ticks,
@@ -28,7 +28,7 @@ class NumberScale<D> extends LinearScale<num, D> {
       'max: $max should not be less than min: $min',
     );
     assert(
-      scaledRange == null || scaledRange.length == 2,
+      range == null || range.length == 2,
       'range can only has 2 items'
     );
 
@@ -37,7 +37,7 @@ class NumberScale<D> extends LinearScale<num, D> {
     this['max'] = max;
     this['tickInterval'] = tickInterval;
     this['formatter'] = formatter;
-    this['scaledRange'] = scaledRange;
+    this['range'] = range;
     this['alias'] = alias;
     this['tickCount'] = tickCount;
     this['ticks'] = ticks;
@@ -50,6 +50,9 @@ class NumberScale<D> extends LinearScale<num, D> {
 
   @override
   int compare(num a, num b) => (a - b).toInt();
+
+  @override
+  num get zero => 0;
 }
 
 class NumLinearScaleState<D> extends LinearScaleState<num, D> {}
@@ -57,7 +60,7 @@ class NumLinearScaleState<D> extends LinearScaleState<num, D> {}
 class NumLinearScaleComponent<D>
   extends LinearScaleComponent<NumLinearScaleState<D>, num, D>
 {
-  NumLinearScaleComponent([NumberScale<D> props]) : super(props);
+  NumLinearScaleComponent([NumScale<D> props]) : super(props);
 
   @override
   NumLinearScaleState<D> get originalState => NumLinearScaleState<D>();
@@ -76,6 +79,12 @@ class NumLinearScaleComponent<D>
 
   @override
   double divide(num a, num b) => a / b;
+
+  @override
+  num get zero => 0.0;
+
+  @override
+  num get one => 1.0;
 
   @override
   List<num> getAutoTicks() => numAutoTicks(

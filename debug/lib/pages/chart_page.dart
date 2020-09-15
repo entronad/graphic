@@ -40,8 +40,8 @@ class ChartPage extends StatelessWidget {
                     position: graphic.PositionAttr(field: 'genre*sold'),
                   )],
                   axes: {
-                    'genre': graphic.Axis(),
-                    'sold': graphic.Axis(),
+                    'genre': graphic.Defaults.horizontalAxis,
+                    'sold': graphic.Defaults.verticalAxis,
                   },
                 ),
                 margin: EdgeInsets.all(20),

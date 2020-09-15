@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
+import 'package:graphic/src/engine/group.dart';
 import 'package:graphic/src/engine/render_shape/text.dart';
 import 'package:meta/meta.dart';
 import 'package:graphic/src/common/typed_map.dart';
@@ -13,15 +14,10 @@ import 'package:graphic/src/scale/base.dart';
 
 class AxisLine with TypedMap {
   AxisLine({
-    bool top,
     LineStyle style,
   }) {
-    this['top'] = top;
     this['style'] = style;
   }
-
-  bool get top => this['top'] as bool ?? false;
-  set top(bool value) => this['top'] = value;
 
   LineStyle get style => this['style'] as LineStyle;
   set style(LineStyle value) => this['style'] = value;
@@ -29,17 +25,12 @@ class AxisLine with TypedMap {
 
 class AxisTickLine with TypedMap {
   AxisTickLine({
-    bool top,
     LineStyle style,
     double length,
   }) {
-    this['top'] = top;
     this['style'] = style;
     this['length'] = length;
   }
-
-  bool get top => this['top'] as bool ?? false;
-  set top(bool value) => this['top'] = value;
 
   LineStyle get style => this['style'] as LineStyle;
   set style(LineStyle value) => this['style'] = value;
@@ -50,15 +41,10 @@ class AxisTickLine with TypedMap {
 
 class AxisGrid with TypedMap {
   AxisGrid({
-    bool top,
     LineStyle style,
   }) {
-    this['top'] = top;
     this['style'] = style;
   }
-
-  bool get top => this['top'] as bool ?? false;
-  set top(bool value) => this['top'] = value;
 
   LineStyle get style => this['style'] as LineStyle;
   set style(LineStyle value) => this['style'] = value;
@@ -69,19 +55,14 @@ class AxisGrid with TypedMap {
 
 class AxisLabel with TypedMap {
   AxisLabel({
-    bool top,
     TextStyle style,
     Offset offset,
     double rotation,
   }) {
-    this['top'] = top;
     this['style'] = style;
     this['offset'] = offset;
     this['rotation'] = rotation;
   }
-
-  bool get top => this['top'] as bool ?? false;
-  set top(bool value) => this['top'] = value;
 
   TextStyle get style => this['style'] as TextStyle;
   set style(TextStyle value) => this['style'] = value;
@@ -95,6 +76,7 @@ class AxisLabel with TypedMap {
 
 class Axis with TypedMap {
   Axis({
+    bool top,
     double position,
     AxisLine line,
     AxisTickLine tickLine,
@@ -112,6 +94,7 @@ class Axis with TypedMap {
       paramRedundantWarning('label, labelCallback'),
     );
 
+    this['top'] = top;
     this['position'] = position;
     this['line'] = line;
     this['tickLine'] = tickLine;
@@ -120,6 +103,34 @@ class Axis with TypedMap {
     this['label'] = label;
     this['labelCallback'] = labelCallback;
   }
+
+  bool get top => this['top'] as bool ?? false;
+  set top(bool value) => this['top'] = value;
+
+  double get position => this['position'] as double;
+  set position(double value) => this['position'] = value;
+
+  AxisLine get line => this['line'] as AxisLine;
+  set line(AxisLine value) => this['line'] = value;
+
+  AxisTickLine get tickLine => this['tickLine'] as AxisTickLine;
+  set tickLine(AxisTickLine value) => this['tickLine'] = value;
+
+  AxisGrid get grid => this['grid'] as AxisGrid;
+  set grid(AxisGrid value) => this['grid'] = value;
+
+  AxisGrid Function(String text, int index, int total) get gridCallback =>
+    this['gridCallback'] as AxisGrid Function(String text, int index, int total);
+  set gridCallback(AxisGrid Function(String text, int index, int total) value) =>
+    this['gridCallback'] = value;
+
+  AxisLabel get label => this['label'] as AxisLabel;
+  set label(AxisLabel value) => this['label'] = value;
+
+  AxisLabel Function(String text, int index, int total) get labelCallback =>
+    this['labelCallback'] as AxisLabel Function(String text, int index, int total);
+  set labelCallback(AxisLabel Function(String text, int index, int total) value) =>
+    this['labelCallback'] = value;
 }
 
 abstract class AxisState with TypedMap {
@@ -128,6 +139,9 @@ abstract class AxisState with TypedMap {
 
   ScaleComponent get scale => this['scale'] as ScaleComponent;
   set scale(ScaleComponent value) => this['scale'] = value;
+
+  bool get top => this['top'] as bool ?? false;
+  set top(bool value) => this['top'] = value;
 
   double get position => this['position'] as double;
   set position(double value) => this['position'] = value;
@@ -166,18 +180,31 @@ abstract class AxisComponent<S extends AxisState>
 
   final _labelComponents = <RenderShapeComponent>[];
 
+  Group get _plot => state.top
+    ? state.chart.state.frontPlot
+    : state.chart.state.backPlot;
+
   void mixProps(Axis props) {
 
     // mix mamually
 
-    state.position = props['position'] ?? state.position;
-    state.line = props['line'] ?? state.line;
-    state.tickLine = props['tickLine'] ?? state.tickLine;
-    if (props['grid'] != null || props['gridCallback'] != null) {
+    if (props.keys.contains('top')) {
+      state.top = props['top'];
+    }
+    if (props.keys.contains('position')) {
+      state.position = props['position'];
+    }
+    if (props.keys.contains('line')) {
+      state.line = props['line'];
+    }
+    if (props.keys.contains('tickLine')) {
+      state.tickLine = props['tickLine'];
+    }
+    if (props.keys.contains('grid') || props.keys.contains('gridCallback')) {
       state.grid = props['grid'];
       state.gridCallback = props['gridCallback'];
     }
-    if (props['label'] != null || props['labelCallback'] != null) {
+    if (props.keys.contains('label') || props.keys.contains('labelCallback')) {
       state.label = props['label'];
       state.labelCallback = props['labelCallback'];
     }
@@ -204,11 +231,7 @@ abstract class AxisComponent<S extends AxisState>
 
     final renderShapes = getLine();
     for (var renderShape in renderShapes) {
-      final top = state.line.top;
-      final plot = top
-        ? state.chart.state.frontPlot
-        : state.chart.state.backPlot;
-      final component = plot.addShape(renderShape);
+      final component = _plot.addShape(renderShape);
       _lineComponents.add(component);
     }
   }
@@ -227,11 +250,7 @@ abstract class AxisComponent<S extends AxisState>
 
     final renderShapes = getTickLine();
     for (var renderShape in renderShapes) {
-      final top = state.tickLine.top;
-      final plot = top
-        ? state.chart.state.frontPlot
-        : state.chart.state.backPlot;
-      final component = plot.addShape(renderShape);
+      final component = _plot.addShape(renderShape);
       _tickLineComponents.add(component);
     }
   }
@@ -249,16 +268,8 @@ abstract class AxisComponent<S extends AxisState>
     }
 
     final renderShapes = getGrid();
-    final gridCallbackRsts = _gridCallbackRsts;
-    for (var i = 0; i < renderShapes.length; i++) {
-      final renderShape = renderShapes[i];
-      final grid = state.gridCallback == null
-        ? state.grid
-        : gridCallbackRsts[i];
-      final plot = grid.top
-        ? state.chart.state.frontPlot
-        : state.chart.state.backPlot;
-      final component = plot.addShape(renderShape);
+    for (var renderShape in renderShapes) {
+      final component = _plot.addShape(renderShape);
       _gridComponents.add(component);
     }
   }
@@ -282,10 +293,7 @@ abstract class AxisComponent<S extends AxisState>
       final label = state.labelCallback == null
         ? state.label
         : labelCallbackRsts[i];
-      final plot = label.top
-        ? state.chart.state.frontPlot
-        : state.chart.state.backPlot;
-      final component = plot.addShape(renderShape);
+      final component = _plot.addShape(renderShape);
 
       adjustLabel(component, label);
       final offset = label.offset;
@@ -294,7 +302,7 @@ abstract class AxisComponent<S extends AxisState>
         component.translate(x: offset.dx, y: offset.dy);
       }
       if (rotation != null) {
-        component.rotate(rotation, origin: component.bbox.topLeft);
+        component.rotate(rotation, origin: component.bbox.center);
       }
 
       _labelComponents.add(component);
@@ -315,25 +323,6 @@ abstract class AxisComponent<S extends AxisState>
 
   @protected
   List<RenderShape> getLabel();
-
-  List<AxisGrid> get _gridCallbackRsts {
-    if (state.gridCallback == null) {
-      return null;
-    }
-
-    final scale = state.scale;
-    final ticks = scale.state.ticks;
-    final total = ticks.length;
-    final rst = <AxisGrid>[];
-    for (var i = 0; i < total; i++) {
-      final text = scale.getText(ticks[i]);
-      final grid = state.gridCallback(text, i, total);
-      if (grid != null) {
-        rst.add(grid);
-      }
-    }
-    return rst;
-  }
 
   List<AxisLabel> get _labelCallbackRsts {
     if (state.labelCallback == null) {

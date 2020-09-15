@@ -36,39 +36,3 @@ class Theme with TypedMap {
   set circularAxis(Axis value) => this['circularAxis'] = value;
 }
 
-const lineColor = Color(0xffe8e8e8);
-const textColor = Color(0xff808080);
-
-final defaultTheme = Theme(
-  colors: [
-    Color(0xff1890ff),
-    Color(0xff2fc25b),
-    Color(0xfffacc14),
-    Color(0xff223273),
-    Color(0xff8543e0),
-    Color(0xff13c2c2),
-    Color(0xff3436c7),
-    Color(0xfff04864),
-  ],
-  horizontalAxis: Axis(
-    position: 0,
-    line: AxisLine(style: LineStyle(color: lineColor)),
-    label: AxisLabel(offset: Offset(0, 7.5), style: TextStyle(fontSize: 10, color: textColor)),
-  ),
-  verticalAxis: Axis(
-    position: 0,
-    label: AxisLabel(offset: Offset(7.5, 0), style: TextStyle(fontSize: 10, color: textColor)),
-    grid: AxisGrid(style: LineStyle(color: lineColor)),
-  ),
-  radialAxis: Axis(
-    position: 0,
-    line: AxisLine(style: LineStyle(color: lineColor)),
-    label: AxisLabel(style: TextStyle(fontSize: 10, color: textColor)),
-    grid: AxisGrid(style: LineStyle(color: lineColor)),
-  ),
-  circularAxis: Axis(
-    position: 1,
-    line: AxisLine(style: LineStyle(color: lineColor)),
-    label: AxisLabel(offset: Offset(0, 7.5), style: TextStyle(fontSize: 10, color: textColor)),
-  ),
-);

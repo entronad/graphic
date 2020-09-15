@@ -17,7 +17,7 @@ class TimeScale<D> extends OrdinalScale<DateTime, D> {
     bool isRounding,
 
     String Function(DateTime) formatter,
-    List<double> scaledRange,
+    List<double> range,
     String alias,
     int tickCount,
     List<DateTime> ticks,
@@ -30,7 +30,7 @@ class TimeScale<D> extends OrdinalScale<DateTime, D> {
       paramRedundantWarning('mask, formatter'),
     );
     assert(
-      scaledRange == null || scaledRange.length == 2,
+      range == null || range.length == 2,
       'range can only has 2 items'
     );
     assert(
@@ -46,7 +46,7 @@ class TimeScale<D> extends OrdinalScale<DateTime, D> {
     this['isSorted'] = isSorted;
     this['isRounding'] = isRounding;
     this['formatter'] = formatter;
-    this['scaledRange'] = scaledRange;
+    this['range'] = range;
     this['alias'] = alias;
     this['tickCount'] = tickCount;
     this['ticks'] = ticks;

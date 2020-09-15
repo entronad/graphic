@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/widgets.dart' hide Axis;
+import 'package:graphic/src/attr/position.dart';
 import 'package:graphic/src/common/typed_map.dart';
 import 'package:graphic/src/common/base_classes.dart';
 import 'package:graphic/src/engine/group.dart';
@@ -15,6 +16,8 @@ import 'package:graphic/src/axis/horizontal.dart';
 import 'package:graphic/src/axis/radial.dart';
 import 'package:graphic/src/axis/vertical.dart';
 import 'package:graphic/src/geom/base.dart';
+import 'package:graphic/src/geom/adjust/base.dart';
+import 'package:graphic/src/defaults.dart';
 
 import 'theme.dart';
 
@@ -121,14 +124,21 @@ class ChartComponent<D> extends Component<ChartState<D>> {
     );
     _setScales(props.scales);
     _setGeoms(props.geoms);
-    _setAxes(props.axes);
+    _setAxes(
+      props.axes,
+      state.coord,
+      state.theme,
+      state.scales,
+      state.xFields,
+      state.yFields,
+    );
 
     _render();
   }
 
   void _setTheme(Theme theme) {
     state.theme = Theme()
-      ..mix(defaultTheme)
+      ..mix(Defaults.theme)
       ..mix(theme);
   }
 
@@ -148,18 +158,21 @@ class ChartComponent<D> extends Component<ChartState<D>> {
 
     var region = Rect.fromLTWH(0, 0, size.width, size.height);
 
+    margin = margin ?? EdgeInsets.all(5);
+    region = margin.deflateRect(region);
+    state.backPlot.state.clip = Path()..addRect(region);
+    state.frontPlot.state.clip = Path()..addRect(region);
+
     if (padding == null) {
       if (coordComponent is PolarCoordComponent) {
-        padding = EdgeInsets.all(15);
+        padding = EdgeInsets.all(40);
       } else {
-        padding = EdgeInsets.fromLTRB(15, 0, 0, 15);
+        padding = EdgeInsets.fromLTRB(40, 5, 10, 20);
       }
     }
     region = padding.deflateRect(region);
-
-    margin = margin ?? EdgeInsets.all(5);
-    region = margin.deflateRect(region);
-
+    state.middlePlot.state.clip = Path()..addRect(region);
+    
     coordComponent.setRegion(region);
 
     state.coord = coordComponent;
@@ -190,6 +203,11 @@ class ChartComponent<D> extends Component<ChartState<D>> {
         ..setShape(geom['shape'])
         ..setSize(geom['size'])
         ..setPosition(geom['position']);
+      
+      if (geom['adjust'] != null) {
+        final adjustComponent = AdjustComponent.create(geom['adjust']);
+        geomComponent.state.adjust = adjustComponent;
+      }
 
       state.geoms.add(geomComponent);
       final positionAttr = geomComponent.state.position;
@@ -198,7 +216,14 @@ class ChartComponent<D> extends Component<ChartState<D>> {
     }
   }
 
-  void _setAxes(Map<String, Axis> axes) {
+  void _setAxes(
+    Map<String, Axis> axes,
+    CoordComponent coord,
+    Theme theme,
+    Map<String, ScaleComponent> scales,
+    Set<String> xFields,
+    Set<String> yFields,
+  ) {
     state.xAxes.clear();
     state.yAxes.clear();
 
@@ -206,30 +231,23 @@ class ChartComponent<D> extends Component<ChartState<D>> {
       return;
     }
 
-    final coord = state.coord;
-    final theme = state.theme;
-
     for (var field in axes.keys) {
       final axis = axes[field];
-      final scale = state.scales[field];
+      final scale = scales[field];
 
-      if (state.xFields.contains(field)) {
+      if (xFields.contains(field)) {
         AxisComponent axisComponent;
         if (coord is PolarCoordComponent) {
           if (coord.state.transposed) {
-            axisComponent = RadialAxisComponent()
-              ..mixProps(theme.radialAxis);
+            axisComponent = RadialAxisComponent();
           } else {
-            axisComponent = CircularAxisComponent()
-              ..mixProps(theme.circularAxis);
+            axisComponent = CircularAxisComponent();
           }
         } else {
           if (coord.state.transposed) {
-            axisComponent = VerticalAxisComponent()
-              ..mixProps(theme.verticalAxis);
+            axisComponent = VerticalAxisComponent();
           } else {
-            axisComponent = HorizontalAxisComponent()
-              ..mixProps(theme.horizontalAxis);
+            axisComponent = HorizontalAxisComponent();
           }
         }
 
@@ -240,23 +258,19 @@ class ChartComponent<D> extends Component<ChartState<D>> {
         state.xAxes[field] = axisComponent;
       }
 
-      if (state.yFields.contains(field)) {
+      if (yFields.contains(field)) {
         AxisComponent axisComponent;
         if (coord is PolarCoordComponent) {
           if (coord.state.transposed) {
-            axisComponent = CircularAxisComponent()
-              ..mixProps(theme.circularAxis);
+            axisComponent = CircularAxisComponent();
           } else {
-            axisComponent = RadialAxisComponent()
-              ..mixProps(theme.radialAxis);
+            axisComponent = RadialAxisComponent();
           }
         } else {
           if (coord.state.transposed) {
-            axisComponent = HorizontalAxisComponent()
-              ..mixProps(theme.horizontalAxis);
+            axisComponent = HorizontalAxisComponent();
           } else {
-            axisComponent = VerticalAxisComponent()
-              ..mixProps(theme.verticalAxis);
+            axisComponent = VerticalAxisComponent();
           }
         }
 

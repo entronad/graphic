@@ -873,3 +873,76 @@ linearScale 中的 max 和min 是必须的
 size/margin/padding 属性包含在coord region信息中，chart不持有
 
 所有state清零的地方，要重新init，合成一个 resetState() 方法
+
+adjust 之后的scale先手动调整
+
+同一个geom中的不同records，原则上是越在前面的越易显示，故添加RenderShape时倒过来
+
+
+
+对于adjust 和 symmetric的理解：
+
+adjust之后，将改变scaledValues中的position，但是要用到对应的值（如tooltip中）时需用原始数据
+
+adjust应该是支持串联的，但有顺序要求，先不做
+
+symmetric仅支持相对于原点轴，它会使原records的所有y变为一半，并生成一个新的records，与变化后的原records对称
+
+对于某些需要起点的图形，采取这样的方案：每一个scale有一个原点origin字段，每个geom的originPoint由xy的第一个scale的origin构成，传递给shape
+
+stack堆叠的量是前值position中所有点最高（距离原点最远）的
+
+关于绘制对称图（河流面积，漏斗）有两种对称方案，一种是adjust的时候，position一点变为两点两半同时绘制，还有一种是shape中只绘制一般，adjust中会复制出另一半的records，我们采用后者，因为这样同一种geom的position结构不会变化，架构更稳定清晰，adjust更抽象
+
+chart的三个plot的作用
+
+back：盛放axis，范围是整个组件
+
+middle：盛放geom，范围是coord region
+
+可控制scaledRange前后值的大小，控制坐标轴方向
+
+注意group只可依据category scale
+
+scaledRange是个比较常用的参数，还是改回叫range吧
+
+标签的旋转要以中心，否则会歪，高度自己通过offset调整
+
+CatScale要判断一下，如果不用在position中就还是 0-1
+
+Component 中的 setXXX 要做到所有需要依赖的东西都作为参数传入，不能直接内部获取，方便在setProps中统一管理顺序
+
+axis的top应该放整体，否则又麻烦又没意义，变成肉夹馍
+
+props的混入时的null处理，比较复杂
+
+~~从机制上讲，可能要把“构造函数中显式的设为null表示没有，没有显式的设置就用default”这种机制取消掉，因为函数传参时是无法分辨显式设置null还是没有设置的~~
+
+~~所以原则应该是：对于必须存在的东西，比如coord，catScale.values, scale.range，设有默认值，没有就是默认值，~~
+
+~~对于可有可无的东西，必须设置了才会有，不设置就没有，取值可到defaultTheme中去找，然后同 ..的方式修改，这就要求props也要有getter/setter~~
+
+对于默认配置的问题，先在 Axis上试点默认值法（函数传参时是无法分辨显式设置null还是没有设置的）
+
+~~axes为null时，默认取xFieds、yFieds的第一个设置默认axis~~
+
+axes为Map时，根据键设置axis，必须要有会有对应的axis
+
+Axis类里的每个成员采用默认值法，这样设为null就是没有，Axis表示默认的
+
+~~用占位符作为默认参数区分null，占位符类型用P（Pseudo）做前缀，这应该只是Axis这个因为coord不同配置不同的特殊情况中使用~~
+
+目前唯一可行的办法是用默认值修改法，不过当axes为null时添加个默认值
+
+~~interval和area的stack还是要采用分段的形式，否则有透明度的颜色会重影，这就要求他们的position是包含起始点的，这就要求~~
+
+PositionAttr.map计算中，不能引入origin，
+
+重影挺好的，stack就是这个味！
+
+catScale默认range会有个小的留白调整，但是这就导致了在colorAttr上的不准确，现在的处理方法是当它仅作为position时才留白，但有些field是既作为positionAttr又作为color的，改为从stops上做文章
+
+linearScale的max，min的默认值，当全为正时min取0，当全为负时max取0
+
+smooth中的constraint是有必要的，但感觉不应该像f2用[0, 1], 而应该就是点本身
+

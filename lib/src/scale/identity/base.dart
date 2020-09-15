@@ -22,7 +22,7 @@ abstract class IdentityScaleComponent<S extends IdentityScaleState<V, D>, V, D>
 
   @override
   double scale(V value) =>
-    value == state.value ? state.scaledRange.first : null;
+    value == state.value ? state.range.first : null;
 
   @override
   V invert(double scaled) => state.value;

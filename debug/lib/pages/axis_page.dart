@@ -53,8 +53,8 @@ class _AxisPageState extends State<AxisPage> {
     final scaleX1 = StringCategoryScaleComponent(graphic.CatScale(
       values: ['Sports', 'Strategy', 'Action', 'Shooter', 'Other'],
       accessor: (map) => map['genre'] as String,
-      scaledRange: [1 / 10, 1 - 1 / 10],
-      // scaledRange: [0, 1 - 0.2],
+      range: [1 / 10, 1 - 1 / 10],
+      // range: [0, 1 - 0.2],
     ));
     final scaleY1 = NumLinearScaleComponent(graphic.NumScale(
       min: 100,
@@ -130,7 +130,7 @@ class _AxisPageState extends State<AxisPage> {
     final scaleX2 = StringCategoryScaleComponent(graphic.CatScale(
       values: ['Sports', 'Strategy', 'Action', 'Shooter', 'Other'],
       accessor: (map) => map['genre'] as String,
-      scaledRange: [0, 1 - 0.2],
+      range: [0, 1 - 0.2],
     ));
     final scaleY2 = NumLinearScaleComponent(graphic.NumScale(
       min: 100,

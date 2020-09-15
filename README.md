@@ -1,4 +1,4 @@
-![examples](./docs/examples.jpg)
+![examples](./devdoc/examples.jpg)
 
 
 

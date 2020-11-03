@@ -1,3 +1,15 @@
+## 0.2.0
+
+**2020-11-03**
+
+- Redefine scale types to CatScale, LinearScale, and TimeScale, basicly according to the value type. This classification is closer to *The Grammer of Graphics*.
+- Change Shape type from function to class, for future expansions.
+- Redefine the datum record object.
+- Remove polygon geom and move heatmap to point geom and rename it to 'tile'. This classification is closer to *The Grammer of Graphics*.
+- Reconstruct the interval and area shape. Now they have two position points.
+- Reconstruct stack adjust. Now they will really stack in height.
+- Reconstruct symmetric adjust. Now it will not generate new records list.
+
 ## 0.1.1
 
 **2020-09-15**

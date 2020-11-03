@@ -33,7 +33,7 @@ class LineAreaPage extends StatelessWidget {
                       range: [0, 1],
                       tickCount: 5,
                     ),
-                    'Close': graphic.NumScale(
+                    'Close': graphic.LinearScale(
                       accessor: (map) => map['Close'] as num,
                       nice: true,
                       min: 100,
@@ -42,14 +42,14 @@ class LineAreaPage extends StatelessWidget {
                   geoms: [
                     graphic.AreaGeom(
                       position: graphic.PositionAttr(field: 'Date*Close'),
-                      shape: graphic.ShapeAttr(values: [graphic.Shapes.smoothArea]),
+                      shape: graphic.ShapeAttr(values: [graphic.BasicAreaShape(smooth: true)]),
                       color: graphic.ColorAttr(values: [
                         graphic.Defaults.theme.colors.first.withAlpha(80),
                       ]),
                     ),
                     graphic.LineGeom(
                       position: graphic.PositionAttr(field: 'Date*Close'),
-                      shape: graphic.ShapeAttr(values: [graphic.Shapes.smoothLine]),
+                      shape: graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
                       size: graphic.SizeAttr(values: [0.5]),
                     ),
                   ],
@@ -77,7 +77,7 @@ class LineAreaPage extends StatelessWidget {
                     'type': graphic.CatScale(
                       accessor: (map) => map['type'] as String,
                     ),
-                    'value': graphic.NumScale(
+                    'value': graphic.LinearScale(
                       accessor: (map) => map['value'] as num,
                       nice: true,
                     ),
@@ -85,7 +85,7 @@ class LineAreaPage extends StatelessWidget {
                   geoms: [graphic.LineGeom(
                     position: graphic.PositionAttr(field: 'index*value'),
                     color: graphic.ColorAttr(field: 'type'),
-                    shape: graphic.ShapeAttr(values: [graphic.Shapes.smoothLine]),
+                    shape: graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
                   )],
                   axes: {
                     'index': graphic.Defaults.horizontalAxis,
@@ -111,7 +111,7 @@ class LineAreaPage extends StatelessWidget {
                     'type': graphic.CatScale(
                       accessor: (map) => map['type'] as String,
                     ),
-                    'value': graphic.NumScale(
+                    'value': graphic.LinearScale(
                       accessor: (map) => map['value'] as num,
                       max: 1800,
                     ),
@@ -119,7 +119,7 @@ class LineAreaPage extends StatelessWidget {
                   geoms: [graphic.AreaGeom(
                     position: graphic.PositionAttr(field: 'index*value'),
                     color: graphic.ColorAttr(field: 'type'),
-                    shape: graphic.ShapeAttr(values: [graphic.Shapes.smoothArea]),
+                    shape: graphic.ShapeAttr(values: [graphic.BasicAreaShape(smooth: true)]),
                     adjust: graphic.StackAdjust(),
                   )],
                   axes: {
@@ -145,7 +145,7 @@ class LineAreaPage extends StatelessWidget {
                     'type': graphic.CatScale(
                       accessor: (map) => map['type'] as String,
                     ),
-                    'value': graphic.NumScale(
+                    'value': graphic.LinearScale(
                       accessor: (map) => map['value'] as num,
                       nice: true,
                     ),
@@ -178,7 +178,7 @@ class LineAreaPage extends StatelessWidget {
                     'type': graphic.CatScale(
                       accessor: (map) => map['type'] as String,
                     ),
-                    'value': graphic.NumScale(
+                    'value': graphic.LinearScale(
                       accessor: (map) => map['value'] as num,
                       nice: true,
                       max: 1800,

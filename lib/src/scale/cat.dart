@@ -2,18 +2,50 @@ import 'package:meta/meta.dart';
 import 'package:graphic/src/coord/base.dart';
 import 'package:graphic/src/coord/polar.dart';
 
-import '../base.dart';
-import '../auto_ticks/cat.dart';
+import 'base.dart';
+import 'auto_ticks/cat.dart';
 
-abstract class CategoryScale<V, D> extends Scale<V, D> {
+class CatScale<D> extends Scale<String, D> {
+  CatScale({
+    List<String> values,
+    bool isRounding,
+
+    String Function(String) formatter,
+    List<double> range,
+    String alias,
+    int tickCount,
+    List<String> ticks,
+    double origin,
+
+    @required String Function(D) accessor,
+  }) {
+    assert(
+      range == null || range.length == 2,
+      'range can only has 2 items',
+    );
+
+    this['values'] = values;
+    this['isRounding'] = isRounding;
+    this['formatter'] = formatter;
+    this['range'] = range;
+    this['alias'] = alias;
+    this['tickCount'] = tickCount;
+    this['ticks'] = ticks;
+    this['origin'] = origin;
+    this['accessor'] = accessor;
+  }
+
+  @override
+  ScaleType get type => ScaleType.cat;
+
   List<double> get range => this['range'] as List<double>;
   set range(List<double> value) => this['range'] = value;
 
-  V Function(D) get accessor => this['accessor'] as V Function(D);
-  set accessor(V Function(D) value) => this['accessor'] = value;
+  String Function(D) get accessor => this['accessor'] as String Function(D);
+  set accessor(String Function(D) value) => this['accessor'] = value;
 
-  List<V> get values => this['values'] as List<V>;
-  set values(List<V> value) => this['values'] = value;
+  List<String> get values => this['values'] as List<String>;
+  set values(List<String> value) => this['values'] = value;
 
   @override
   void complete(List<D> data, CoordComponent coord) {
@@ -32,18 +64,21 @@ abstract class CategoryScale<V, D> extends Scale<V, D> {
   }
 }
 
-abstract class CategoryScaleState<V, D> extends ScaleState<V, D> {
-  List<V> get values => this['values'] as List<V>;
-  set values(List<V> value) => this['values'] = value;
+class CatScaleState<D> extends ScaleState<String, D> {
+  List<String> get values => this['values'] as List<String>;
+  set values(List<String> value) => this['values'] = value;
 
   bool get isRounding => this['isRounding'] as bool ?? false;
   set isRounding(bool value) => this['isRounding'] = value;
 }
 
-abstract class CategoryScaleComponent<S extends CategoryScaleState<V, D>, V, D>
-  extends ScaleComponent<S, V, D>
+class CatScaleComponent<D>
+  extends ScaleComponent<CatScaleState<D>, String, D>
 {
-  CategoryScaleComponent([CategoryScale<V, D> props]) : super(props);
+  CatScaleComponent([CatScale<D> props]) : super(props);
+
+  @override
+  CatScaleState<D> createState() => CatScaleState<D>();
 
   @override
   void initDefaultState() {
@@ -53,7 +88,7 @@ abstract class CategoryScaleComponent<S extends CategoryScaleState<V, D>, V, D>
   }
 
   @override
-  List<V> getAutoTicks() => catAutoTicks<V>(
+  List<String> getAutoTicks() => catAutoTicks<String>(
     maxCount: state.tickCount,
     categories: state.values,
     isRounding: state.isRounding,
@@ -74,7 +109,7 @@ abstract class CategoryScaleComponent<S extends CategoryScaleState<V, D>, V, D>
   }
 
   @override
-  double scale(V value) {
+  double scale(String value) {
     if (value == null) {
       return null;
     }
@@ -96,14 +131,14 @@ abstract class CategoryScaleComponent<S extends CategoryScaleState<V, D>, V, D>
   }
 
   @protected
-  int getIndex(V value) {
+  int getIndex(String value) {
     final values = state.values;
     int index = values.indexOf(value);
     return index;
   }
 
   @override
-  V invert(double scaled) {
+  String invert(double scaled) {
     final values = state.values;
     final valuesCount = values.length;
     final intervalsCount = valuesCount - 1;
@@ -114,4 +149,7 @@ abstract class CategoryScaleComponent<S extends CategoryScaleState<V, D>, V, D>
     final index = (ratio * intervalsCount).round() % valuesCount;
     return values[index];
   }
+
+  @override
+  double get origin => 0;
 }

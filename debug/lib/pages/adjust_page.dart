@@ -24,13 +24,13 @@ class AdjustPage extends StatelessWidget {
                 child: graphic.Chart(
                   data: data,
                   scales: {
-                    'index': graphic.NumScale(
+                    'index': graphic.LinearScale(
                       accessor: (map) => map['index'] as num,
                     ),
                     'type': graphic.CatScale(
                       accessor: (map) => map['type'] as String,
                     ),
-                    'value': graphic.NumScale(
+                    'value': graphic.LinearScale(
                       accessor: (map) => map['value'] as num,
                       max: 3000,
                     ),
@@ -39,7 +39,7 @@ class AdjustPage extends StatelessWidget {
                     position: graphic.PositionAttr(field: 'index*value'),
                     color: graphic.ColorAttr(field: 'type'),
                     adjust: graphic.StackAdjust(),
-                    shape: graphic.ShapeAttr(values: [graphic.Shapes.smoothArea]),
+                    shape: graphic.ShapeAttr(values: [graphic.BasicAreaShape(smooth: true)]),
                   )],
                   axes: {
                     'index': graphic.Axis(),
@@ -60,7 +60,7 @@ class AdjustPage extends StatelessWidget {
                     'type': graphic.CatScale(
                       accessor: (map) => map['type'] as String,
                     ),
-                    'value': graphic.NumScale(
+                    'value': graphic.LinearScale(
                       accessor: (map) => map['value'] as num,
                     ),
                   },
@@ -84,13 +84,13 @@ class AdjustPage extends StatelessWidget {
                 child: graphic.Chart(
                   data: data,
                   scales: {
-                    'index': graphic.NumScale(
+                    'index': graphic.LinearScale(
                       accessor: (map) => map['index'] as num,
                     ),
                     'type': graphic.CatScale(
                       accessor: (map) => map['type'] as String,
                     ),
-                    'value': graphic.NumScale(
+                    'value': graphic.LinearScale(
                       accessor: (map) => map['value'] as num,
                       max: 3000,
                     ),
@@ -99,7 +99,7 @@ class AdjustPage extends StatelessWidget {
                     position: graphic.PositionAttr(field: 'index*value'),
                     color: graphic.ColorAttr(field: 'type'),
                     adjust: graphic.StackAdjust(),
-                    shape: graphic.ShapeAttr(values: [graphic.Shapes.smoothLine]),
+                    shape: graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
                   )],
                   axes: {
                     'index': graphic.Axis(),
@@ -121,7 +121,7 @@ class AdjustPage extends StatelessWidget {
                       accessor: (map) => map['type'] as String,
                       range: [0, 1],
                     ),
-                    'value': graphic.NumScale(
+                    'value': graphic.LinearScale(
                       accessor: (map) => map['value'] as num,
                       max: 3000,
                     ),
@@ -151,7 +151,7 @@ class AdjustPage extends StatelessWidget {
                       accessor: (map) => map['type'] as String,
                       range: [0, 1],
                     ),
-                    'value': graphic.NumScale(
+                    'value': graphic.LinearScale(
                       accessor: (map) => map['value'] as num,
                       max: 3000,
                     ),

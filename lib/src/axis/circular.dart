@@ -14,7 +14,7 @@ class CircularAxisComponent
   extends AxisComponent<CircularAxisState>
 {
   @override
-  CircularAxisState get originalState => CircularAxisState();
+  CircularAxisState createState() => CircularAxisState();
 
   @override
   List<RenderShape> getLine() {

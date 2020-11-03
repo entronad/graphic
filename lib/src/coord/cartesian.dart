@@ -20,7 +20,7 @@ class CartesianCoordComponent extends CoordComponent<CartesianCoordState> {
 
   // Dosen't need specific state subclass.
   @override
-  CartesianCoordState get originalState => CartesianCoordState();
+  CartesianCoordState createState() => CartesianCoordState();
 
   @override
   List<double> get rangeX => [

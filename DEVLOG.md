@@ -946,3 +946,151 @@ linearScale的max，min的默认值，当全为正时min取0，当全为负时ma
 
 smooth中的constraint是有必要的，但感觉不应该像f2用[0, 1], 而应该就是点本身
 
+在图形语法的书中对identity有这样的描写：对于归一的scale，不应有tick marks 和scale values，unity的值在scale的中间
+
+在图形语法的书中scale章节的最后，明确表示了bar是两个值间的距离，底部的值不一定是0
+
+
+
+---
+
+# 0.2
+
+Intercal等属于 geometric graphing operation
+
+具体的图形gpl中称为element，vega，chart-parts中称为mark
+
+
+
+处理配置的复杂性可否这样：参数结构是原旨的gg，但将除data、variable之外的配置打包成presets，可直接用，也可通过级联运算符修改
+
+g2的语法其实是对的，只是没有statistics，statistics自行处理
+
+
+
+scale和accessor的关系还按现在这样处理，因为不仅 antv 是这样，vega也是这样
+
+
+
+必须要做的：
+
+scale 的类型改为三种，CatScale, NumScale, TimeScale, 分别对应 String, Num, DateTime泛型，其中Num有个参数可以决定它是 linear/log/exp等（这似乎是gg中比较推崇的分法，它有专门一章将time）
+
+shape变成类，为了提供 getcenter、getTouch等方法
+
+绘图时的主体为Case对象，取代AttrValueRecord对象，添加原始datum等信息
+
+stack改为真的一个一个堆叠
+
+添加null值处理
+
+~~interval的shape要整理一下，分为 bar 和 historigom两大类~~
+
+考虑chart参数的类型，添加基本图表的preset
+
+~~geom按照 function、partition、network进行分类，先暂时移除schema类型~~
+
+我们现在常画的“热力图”并不是真的热力图，只是一种特殊类型的point，这样移除 polygon和schema，仅保留function的geom
+
+pie和rose都可以通过单独的shape来处理，geom只负责映射到坐标点，这样pie省了summary.proportion的过程能保留原值，vega似乎也是这种方式，饼图是一种非常特殊的图形，它是唯一的一维图形
+
+~~或者pie和rose都是极坐标下的historigom~~
+
+
+
+
+
+
+
+叫 LinearScale 不叫 NumScale，与g2一致，今后有新的的代数型直接在其上继承
+
+TimeScale目前采用：计算采用LinearScale的方法，tick计算采用cat的方法
+
+以 LinearScale 为基础，进行如下改造：移除nice相关东西，先不要有stringMax等便利功能，现在仅支持tickCount不支持interval，简单算一下
+
+时间计算基于微秒
+
+label不适合作为attr，作为guide，antv也是这样
+
+先不做动画，1.需要动画的图表不多，就算有需求也千变万化，具体到图形上又与图形类型关联
+
+2.动画最好在渲染更新机制优化后再说
+
+3.事件已经能提供一定的动态体验了
+
+
+
+geom分为两类：一体式和分块式，不在类型上体现，一体式是line，area
+
+一体式要进行null值截断，这是一个很合理的需求
+
+
+
+交互机制，还是基于shape，只是返回的区域可由shape类进行定义。区域都是bbox（Rect）
+
+如无分组，返回与数据点一样多的对象，如有分组，返回与每组数据一样多的对象。
+
+不管怎样都要带着具体的数据点、点组，以便定义事件，带着实际的 RenderShape 以便处理样式
+
+
+
+
+
+事件主体分为 chart 和 geom 两个级别，
+
+```
+Interaction(
+  trigger: TriggerType.element,
+  geasture: PointEvent.longPress,
+  callback: (datum, datumGroup, shape) {},
+)
+```
+
+
+
+在geom中引入 element 的概念，介于datum 和 renderShape 之间
+
+通过 ElementRecord中携带了原始datum和各个scale，adjust就可以随意修改了，依然采用现在修改 attrValue的方式
+
+
+
+在gg中，schema是一个统计意义上的概念，仅指数据密度的分布，schema一词源自箱型统计，图形上通过 point 和interval 实现，而在antv中 schema 是用来处理一个x对应多个y的自定义图形的。
+
+我们决定按照antv的定义保留schema，并默认提供candleStick和box两种shape
+
+对于null值的处理，目前在attr中进行归0
+
+对于断开法：仅在line和area中使用，实现太麻烦
+
+对于插值法：仅适用于line和area，其它不合理
+
+
+
+interval的图形分类还是尽量依照现在
+
+position只有一个field时，认为它是y，这种情况目前只出现在pie中。此时x表现为一个输出0.5,origin 为0的类似identity scale的特性（不单独定义）
+
+
+
+~~pie目前采取的方法（由于没有stat）不管是否stack，都均分其interval~~
+
+由于scale可能倒过来，或者设置不为0,1的起止点，所以连续宽度的也不能直接依赖0和1的值
+
+
+
+scale.origin 的真实含义：是表示value意义上的0，在scale之后转换为scaledValue意义上的刻度是多少，主要是为了因对数字轴最小刻度不为0的情况，分别定义如下：
+
+cat：规定value意义上的0就是轴的最小刻度对应的值，故直接返回0
+
+linear：即数字0在scale之后的值
+
+time：定义value意义上的0为最小值（设置的或数据的最小值），其scale结果一定是0，故直接返回0
+
+
+
+pie在没有 summary.proportion() 的情况下不可能按照gg的思路来，只能采取传统的方式即x是类目，y是值，不需要stack
+
+
+
+
+

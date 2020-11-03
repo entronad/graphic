@@ -56,7 +56,7 @@ class PolygonRenderShapeComponent
   PolygonRenderShapeComponent([PolygonRenderShape props]) : super(props);
 
   @override
-  PolygonRenderShapeState get originalState => PolygonRenderShapeState();
+  PolygonRenderShapeState createState() => PolygonRenderShapeState();
 
   @override
   void createPath(Path path) {

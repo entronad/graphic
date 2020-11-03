@@ -71,7 +71,7 @@ class LineRenderShapeComponent
   LineRenderShapeComponent([LineRenderShape props]) : super(props);
 
   @override
-  LineRenderShapeState get originalState => LineRenderShapeState();
+  LineRenderShapeState createState() => LineRenderShapeState();
 
   @override
   void initDefaultState() {

@@ -131,7 +131,7 @@ class TextRenderShapeComponent
   TextPainter _textPainter = TextPainter();
 
   @override
-  TextRenderShapeState get originalState => TextRenderShapeState();
+  TextRenderShapeState createState() => TextRenderShapeState();
 
   @override
   void initDefaultState() {

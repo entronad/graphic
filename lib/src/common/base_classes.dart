@@ -8,7 +8,7 @@ abstract class Props<T> with TypedMap {
 
 abstract class Component<S extends TypedMap> {
   Component([TypedMap props]) {
-    state = originalState;
+    state = createState();
     initDefaultState();
     state.mix(props);
   }
@@ -16,7 +16,7 @@ abstract class Component<S extends TypedMap> {
   S state;
 
   @protected
-  S get originalState;
+  S createState();
 
   @protected
   void initDefaultState() {}

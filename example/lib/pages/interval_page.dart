@@ -31,7 +31,7 @@ class IntervalPage extends StatelessWidget {
                     'genre': graphic.CatScale(
                       accessor: (map) => map['genre'] as String,
                     ),
-                    'sold': graphic.NumScale(
+                    'sold': graphic.LinearScale(
                       accessor: (map) => map['sold'] as num,
                       nice: true,
                     )
@@ -39,7 +39,7 @@ class IntervalPage extends StatelessWidget {
                   geoms: [graphic.IntervalGeom(
                     position: graphic.PositionAttr(field: 'genre*sold'),
                     shape: graphic.ShapeAttr(values: [
-                      graphic.Shapes.rrectInterval(radius: Radius.circular(5))
+                      graphic.RectShape(radius: Radius.circular(5))
                     ]),
                   )],
                   axes: {
@@ -65,7 +65,7 @@ class IntervalPage extends StatelessWidget {
                     'type': graphic.CatScale(
                       accessor: (map) => map['type'] as String,
                     ),
-                    'value': graphic.NumScale(
+                    'value': graphic.LinearScale(
                       accessor: (map) => map['value'] as num,
                       nice: true,
                     ),
@@ -99,7 +99,7 @@ class IntervalPage extends StatelessWidget {
                     'type': graphic.CatScale(
                       accessor: (map) => map['type'] as String,
                     ),
-                    'value': graphic.NumScale(
+                    'value': graphic.LinearScale(
                       accessor: (map) => map['value'] as num,
                       max: 2000,
                     ),
@@ -129,7 +129,7 @@ class IntervalPage extends StatelessWidget {
                     'genre': graphic.CatScale(
                       accessor: (map) => map['genre'] as String,
                     ),
-                    'sold': graphic.NumScale(
+                    'sold': graphic.LinearScale(
                       accessor: (map) => map['sold'] as num,
                       nice: true,
                     )
@@ -160,7 +160,7 @@ class IntervalPage extends StatelessWidget {
                     'genre': graphic.CatScale(
                       accessor: (map) => map['genre'] as String,
                     ),
-                    'sold': graphic.NumScale(
+                    'sold': graphic.LinearScale(
                       accessor: (map) => map['sold'] as num,
                       nice: true,
                     )
@@ -191,7 +191,7 @@ class IntervalPage extends StatelessWidget {
                     'type': graphic.CatScale(
                       accessor: (map) => map['type'] as String,
                     ),
-                    'value': graphic.NumScale(
+                    'value': graphic.LinearScale(
                       accessor: (map) => map['value'] as num,
                       max: 1800,
                       tickCount: 5,
@@ -230,7 +230,7 @@ class IntervalPage extends StatelessWidget {
                       accessor: (map) => map['genre'] as String,
                       range: [0.2, 0.9],
                     ),
-                    'sold': graphic.NumScale(
+                    'sold': graphic.LinearScale(
                       max: 200,
                       min: -200,
                       accessor: (map) => map['sold'] as num,
@@ -240,7 +240,7 @@ class IntervalPage extends StatelessWidget {
                   coord: graphic.CartesianCoord(transposed: true),
                   geoms: [graphic.IntervalGeom(
                     position: graphic.PositionAttr(field: 'genre*sold'),
-                    shape: graphic.ShapeAttr(values: [graphic.Shapes.pyramidInterval]),
+                    shape: graphic.ShapeAttr(values: [graphic.PyramidShape()]),
                     color: graphic.ColorAttr(field: 'genre'),
                     adjust: graphic.SymmetricAdjust(),
                   )],
@@ -264,7 +264,7 @@ class IntervalPage extends StatelessWidget {
                       accessor: (map) => map['genre'] as String,
                       range: [0.9, 0.2],
                     ),
-                    'sold': graphic.NumScale(
+                    'sold': graphic.LinearScale(
                       max: 200,
                       min: -200,
                       accessor: (map) => map['sold'] as num,
@@ -274,7 +274,7 @@ class IntervalPage extends StatelessWidget {
                   coord: graphic.CartesianCoord(transposed: true),
                   geoms: [graphic.IntervalGeom(
                     position: graphic.PositionAttr(field: 'genre*sold'),
-                    shape: graphic.ShapeAttr(values: [graphic.Shapes.funnelInterval]),
+                    shape: graphic.ShapeAttr(values: [graphic.FunnelShape()]),
                     color: graphic.ColorAttr(field: 'genre'),
                     adjust: graphic.SymmetricAdjust(),
                   )],

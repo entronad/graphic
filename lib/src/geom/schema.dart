@@ -9,10 +9,12 @@ import 'package:graphic/src/geom/adjust/base.dart';
 import 'base.dart';
 import 'shape/schema.dart';
 
+final _defaultShape = CandlestickShape();
+
 class SchemaGeom extends Geom {
   SchemaGeom({
     ColorAttr color,
-    ShapeAttr shape,
+    ShapeAttr<SchemaShape> shape,
     SizeAttr size,
     PositionAttr position,
     Adjust adjust,
@@ -32,10 +34,10 @@ class SchemaGeomState<D> extends GeomState<D> {}
 
 class SchemaGeomComponent<D> extends GeomComponent<SchemaGeomState<D>, D> {
   @override
-  SchemaGeomState<D> get originalState => SchemaGeomState<D>();
+  SchemaGeomState<D> createState() => SchemaGeomState<D>();
 
   @override
-  get defaultShape => candlestickSchema;
+  get defaultShape => _defaultShape;
 
   @override
   double get defaultSize => null;

@@ -30,7 +30,7 @@ class ColorSingleLinearAttrComponent
   ColorSingleLinearAttrComponent([ColorAttr props]) : super(props);
 
    @override
-  ColorSingleLinearAttrState get originalState => ColorSingleLinearAttrState();
+  ColorSingleLinearAttrState createState() => ColorSingleLinearAttrState();
 
   @override
   Color lerp(Color a, Color b, double t) =>

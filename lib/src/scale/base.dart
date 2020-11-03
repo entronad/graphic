@@ -3,16 +3,14 @@ import 'package:graphic/src/common/typed_map.dart';
 import 'package:graphic/src/common/base_classes.dart';
 import 'package:graphic/src/coord/base.dart';
 
-import 'category/string.dart';
-import 'identity/string.dart';
-import 'linear/num.dart';
-import 'ordinal/date_time.dart';
+import 'cat.dart';
+import 'linear.dart';
+import 'time.dart';
 
 enum ScaleType {
-  ident,
   cat,
+  linear,
   time,
-  number,
 }
 
 abstract class Scale<V, D> extends Props<ScaleType> {
@@ -42,14 +40,12 @@ abstract class ScaleState<V, D> with TypedMap {
 abstract class ScaleComponent<S extends ScaleState<V, D>, V, D> extends Component<S> {
   static ScaleComponent create<V, D>(Scale<V, D> props) {
     switch (props.type) {
-      case ScaleType.ident:
-        return StringIdentityScaleComponent<D>(props as IdentScale<D>);
       case ScaleType.cat:
-        return StringCategoryScaleComponent<D>(props as CatScale<D>);
+        return CatScaleComponent<D>(props as CatScale<D>);
+      case ScaleType.linear:
+        return LinearScaleComponent<D>(props as LinearScale<D>);
       case ScaleType.time:
-        return DateTimeOrdinalScaleComponent<D>(props as TimeScale<D>);
-      case ScaleType.number:
-        return NumLinearScaleComponent<D>(props as NumScale<D>);
+        return TimeScaleComponent<D>(props as TimeScale<D>);
       default: return null;
     }
   }
@@ -63,7 +59,7 @@ abstract class ScaleComponent<S extends ScaleState<V, D>, V, D> extends Componen
     super.initDefaultState();
     state
       ..range = [0, 1]
-      ..formatter = (v) => v?.toString();
+      ..formatter = ((v) => v?.toString());
   }
 
   @protected
@@ -85,5 +81,5 @@ abstract class ScaleComponent<S extends ScaleState<V, D>, V, D> extends Componen
 
   String getText(V value) => state.formatter(value);
 
-  double get origin => 0;
+  double get origin;
 }

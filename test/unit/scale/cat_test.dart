@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:graphic/src/scale/category/string.dart';
+import 'package:graphic/src/scale/cat.dart';
 
 main() {
   group('scale', () {
-    final scale = StringCategoryScaleComponent(CatScale(
+    final scale = CatScaleComponent(CatScale(
       values: [ 'Jan', 'Feb', 'Mar', 'Apr', 'May' ],
       accessor: null,
     ));
@@ -47,7 +47,7 @@ main() {
   });
 
   group('scale cat change range', () {
-    final scale = StringCategoryScaleComponent(CatScale(
+    final scale = CatScaleComponent(CatScale(
       values: [ 'Jan', 'Feb', 'Mar', 'Apr', 'May' ],
       range: [0.1, 0.9],
       accessor: null,
@@ -71,7 +71,7 @@ main() {
     for (var i = 0; i < 100; i++) {
       values.add(i.toString());
     }
-    final scale = StringCategoryScaleComponent(CatScale(
+    final scale = CatScaleComponent(CatScale(
       values: values,
       tickCount: 10,
       accessor: null,

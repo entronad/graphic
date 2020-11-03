@@ -5,14 +5,13 @@ import 'package:graphic/src/chart/component.dart';
 import 'package:graphic/src/coord/cartesian.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/scale/base.dart';
-import 'package:graphic/src/scale/category/string.dart';
-import 'package:graphic/src/scale/linear/num.dart';
-import 'package:graphic/src/scale/ordinal/date_time.dart';
+import 'package:graphic/src/scale/linear.dart';
+import 'package:graphic/src/scale/cat.dart';
+import 'package:graphic/src/scale/time.dart';
 import 'package:graphic/src/geom/interval.dart';
 import 'package:graphic/src/geom/line.dart';
 import 'package:graphic/src/geom/area.dart';
 import 'package:graphic/src/geom/point.dart';
-import 'package:graphic/src/geom/polygon.dart';
 import 'package:graphic/src/geom/schema.dart';
 import 'package:graphic/src/axis/base.dart';
 import 'package:graphic/src/axis/horizontal.dart';
@@ -50,13 +49,13 @@ class _AxisPageState extends State<AxisPage> {
     ];
     final coord1 = CartesianCoordComponent(graphic.CartesianCoord());
     coord1.setRegion(Rect.fromLTWH(20, 0, 280, 280));
-    final scaleX1 = StringCategoryScaleComponent(graphic.CatScale(
+    final scaleX1 = CatScaleComponent(graphic.CatScale(
       values: ['Sports', 'Strategy', 'Action', 'Shooter', 'Other'],
       accessor: (map) => map['genre'] as String,
       range: [1 / 10, 1 - 1 / 10],
       // range: [0, 1 - 0.2],
     ));
-    final scaleY1 = NumLinearScaleComponent(graphic.NumScale(
+    final scaleY1 = LinearScaleComponent(graphic.LinearScale(
       min: 100,
       max: 400,
       accessor: (map) => map['sold'] as num,
@@ -127,12 +126,12 @@ class _AxisPageState extends State<AxisPage> {
       // innerRadius: 0.3,
     ));
     coord2.setRegion(Rect.fromLTWH(20, 0, 280, 280));
-    final scaleX2 = StringCategoryScaleComponent(graphic.CatScale(
+    final scaleX2 = CatScaleComponent(graphic.CatScale(
       values: ['Sports', 'Strategy', 'Action', 'Shooter', 'Other'],
       accessor: (map) => map['genre'] as String,
       range: [0, 1 - 0.2],
     ));
-    final scaleY2 = NumLinearScaleComponent(graphic.NumScale(
+    final scaleY2 = LinearScaleComponent(graphic.LinearScale(
       min: 100,
       max: 400,
       accessor: (map) => map['sold'] as num,

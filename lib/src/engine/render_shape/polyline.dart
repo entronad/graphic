@@ -75,7 +75,7 @@ class PolylineRenderShapeComponent
   PolylineRenderShapeComponent([PolylineRenderShape props]) : super(props);
 
   @override
-  PolylineRenderShapeState get originalState => PolylineRenderShapeState();
+  PolylineRenderShapeState createState() => PolylineRenderShapeState();
 
   @override
   void initDefaultState() {

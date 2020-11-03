@@ -4,71 +4,55 @@ import 'package:graphic/src/coord/base.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/engine/render_shape/base.dart';
 import 'package:graphic/src/engine/render_shape/custom.dart';
-import 'package:graphic/src/engine/render_shape/polygon.dart';
 import 'package:graphic/src/engine/util/smooth.dart' as smooth_util;
 
+import 'base.dart';
 import '../base.dart';
 
-List<RenderShape> _area(
-  List<AttrValueRecord> attrValueRecords,
-  CoordComponent coord,
-  Offset origin,
-  bool smooth,
-) {
-  final firstRecord = attrValueRecords.first;
-  final color = firstRecord.color;
+abstract class AreaShape extends Shape {}
 
-  final points = <Offset>[];
-  
-  if (coord is PolarCoordComponent) {
-    
-    // radar
+class BasicAreaShape extends AreaShape {
+  BasicAreaShape({this.smooth = false});
 
+  final bool smooth;
+
+  @override
+  List<RenderShape> getRenderShape(
+    List<ElementRecord> records,
+    CoordComponent coord,
+    Offset origin,
+  ) {
     assert(
-      !coord.state.transposed,
+      !(coord is PolarCoordComponent && coord.state.transposed),
       'Do not transpose polar coord for area shapes',
     );
     assert(
-      !smooth,
+      !(coord is PolarCoordComponent && smooth),
       'smooth area shapes only support cartesian coord',
     );
 
-    for (var record in attrValueRecords) {
-      final point = record.position.first;
-      points.add(coord.convertPoint(point));
+    final firstRecord = records.first;
+    final color = firstRecord.color;
+
+    final topPoints = <Offset>[];
+    final bottomPoints = <Offset>[];
+    for (var record in records) {
+      topPoints.add(coord.convertPoint(record.position.last));
+      bottomPoints.add(coord.convertPoint(record.position.first));
     }
 
-    return [PolygonRenderShape(
-      points: points,
-      color: color,
-    )];
-  } else {
+    // radar
+    if (coord is PolarCoordComponent) {
+      topPoints.add(topPoints.first);
+      bottomPoints.add(bottomPoints.first);
+    }
+
     final path = Path();
 
-    for (var record in attrValueRecords) {
-      final point = record.position.first;
-      points.add(coord.convertPoint(point));
-    }
-
-    // render points
-    Offset bottomStart;
-    Offset bottomEnd;
-    final renderOrigin = coord.convertPoint(origin);
-    if (coord.state.transposed) {
-      final areaBottom = renderOrigin.dx;
-      bottomStart = Offset(areaBottom, points.first.dy);
-      bottomEnd = Offset(areaBottom, points.last.dy);
-    } else {
-      final areaBottom = renderOrigin.dy;
-      bottomStart = Offset(points.first.dx, areaBottom);
-      bottomEnd = Offset(points.last.dx, areaBottom);
-    }
-
-    path.moveTo(bottomStart.dx, bottomStart.dy);
-    path.lineTo(points.first.dx, points.first.dy);
+    path.moveTo(topPoints.first.dx, topPoints.first.dy);
     if (smooth) {
       final segments = smooth_util.smooth(
-        points,
+        topPoints,
         false,
         true,
       );
@@ -83,11 +67,33 @@ List<RenderShape> _area(
         );
       }
     } else {
-      for (var point in points) {
+      for (var point in topPoints) {
         path.lineTo(point.dx, point.dy);
       }
     }
-    path.lineTo(bottomEnd.dx, bottomEnd.dy);
+    path.lineTo(bottomPoints.last.dx, bottomPoints.last.dy);
+    final reversedBottomPoints = bottomPoints.reversed.toList();
+    if (smooth) {
+      final segments = smooth_util.smooth(
+        reversedBottomPoints,
+        false,
+        true,
+      );
+      for (var s in segments) {
+        path.cubicTo(
+          s.cp1.dx,
+          s.cp1.dy,
+          s.cp2.dx,
+          s.cp2.dy,
+          s.p.dx,
+          s.p.dy
+        );
+      }
+    } else {
+      for (var point in reversedBottomPoints) {
+        path.lineTo(point.dx, point.dy);
+      }
+    }
     path.close();
 
     return [CustomRenderShape(
@@ -96,15 +102,3 @@ List<RenderShape> _area(
     )];
   }
 }
-
-List<RenderShape> area(
-  List<AttrValueRecord> attrValueRecords,
-  CoordComponent coord,
-  Offset origin,
-) => _area(attrValueRecords, coord, origin, false);
-
-List<RenderShape> smoothArea(
-  List<AttrValueRecord> attrValueRecords,
-  CoordComponent coord,
-  Offset origin,
-) => _area(attrValueRecords, coord, origin, true);

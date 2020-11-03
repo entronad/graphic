@@ -31,7 +31,7 @@ class ChartPage extends StatelessWidget {
                     'genre': graphic.CatScale(
                       accessor: (map) => map['genre'] as String,
                     ),
-                    'sold': graphic.NumScale(
+                    'sold': graphic.LinearScale(
                       accessor: (map) => map['sold'] as num,
                       nice: true,
                     )

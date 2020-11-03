@@ -76,7 +76,7 @@ class RectRenderShapeComponent
   RectRenderShapeComponent([RectRenderShape props]) : super(props);
 
   @override
-  RectRenderShapeState get originalState => RectRenderShapeState();
+  RectRenderShapeState createState() => RectRenderShapeState();
 
   @override
   void initDefaultState() {

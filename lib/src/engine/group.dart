@@ -14,7 +14,7 @@ class GroupState extends NodeState {
 
 class Group extends Node<GroupState> {
   @override
-  GroupState get originalState => GroupState();
+  GroupState createState() => GroupState();
 
   @override
   void initDefaultState() {

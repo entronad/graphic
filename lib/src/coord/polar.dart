@@ -48,7 +48,7 @@ class PolarCoordComponent extends CoordComponent<PolarCoordState> {
   PolarCoordComponent([PolarCoord props]) : super(props);
 
   @override
-  PolarCoordState get originalState => PolarCoordState();
+  PolarCoordState createState() => PolarCoordState();
 
   @override
   void initDefaultState() {

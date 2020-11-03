@@ -5,14 +5,13 @@ import 'package:graphic/src/chart/component.dart';
 import 'package:graphic/src/coord/cartesian.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/scale/base.dart';
-import 'package:graphic/src/scale/category/string.dart';
-import 'package:graphic/src/scale/linear/num.dart';
-import 'package:graphic/src/scale/ordinal/date_time.dart';
+import 'package:graphic/src/scale/cat.dart';
+import 'package:graphic/src/scale/linear.dart';
+import 'package:graphic/src/scale/time.dart';
 import 'package:graphic/src/geom/interval.dart';
 import 'package:graphic/src/geom/line.dart';
 import 'package:graphic/src/geom/area.dart';
 import 'package:graphic/src/geom/point.dart';
-import 'package:graphic/src/geom/polygon.dart';
 import 'package:graphic/src/geom/schema.dart';
 
 class GeomPage extends StatefulWidget {
@@ -51,13 +50,13 @@ class _GeomPageState extends State<GeomPage> {
     // ));
     coord1.setRegion(Rect.fromLTWH(0, 0, 300, 300));
     final scales1 = <String, ScaleComponent>{
-      'genre': StringCategoryScaleComponent(graphic.CatScale(
+      'genre': CatScaleComponent(graphic.CatScale(
         values: ['Sports', 'Strategy', 'Action', 'Shooter', 'Other'],
         accessor: (map) => map['genre'] as String,
         range: [1 / 10, 1 - 1 / 10],
         // range: [0, 1 - 0.2],
       )),
-      'sold': NumLinearScaleComponent(graphic.NumScale(
+      'sold': LinearScaleComponent(graphic.LinearScale(
         min: 100,
         max: 400,
         accessor: (map) => map['sold'] as num,
@@ -100,13 +99,13 @@ class _GeomPageState extends State<GeomPage> {
     // ));
     coord2.setRegion(Rect.fromLTWH(0, 0, 300, 300));
     final scales2 = <String, ScaleComponent>{
-      'genre': StringCategoryScaleComponent(graphic.CatScale(
+      'genre': CatScaleComponent(graphic.CatScale(
         values: ['Sports', 'Strategy', 'Action', 'Shooter', 'Other'],
         accessor: (map) => map['genre'] as String,
         range: [1 / 10, 1 - 1 / 10],
         // range: [0, 1 - 0.2],
       )),
-      'sold': NumLinearScaleComponent(graphic.NumScale(
+      'sold': LinearScaleComponent(graphic.LinearScale(
         min: 100,
         max: 400,
         accessor: (map) => map['sold'] as num,
@@ -149,11 +148,11 @@ class _GeomPageState extends State<GeomPage> {
     // ));
     coord3.setRegion(Rect.fromLTWH(0, 0, 300, 300));
     final scales3 = <String, ScaleComponent>{
-      'genre': StringCategoryScaleComponent(graphic.CatScale(
+      'genre': CatScaleComponent(graphic.CatScale(
         values: ['Sports', 'Strategy', 'Action', 'Shooter', 'Other'],
         accessor: (map) => map['genre'] as String,
       )),
-      'sold': NumLinearScaleComponent(graphic.NumScale(
+      'sold': LinearScaleComponent(graphic.LinearScale(
         min: 100,
         max: 400,
         accessor: (map) => map['sold'] as num,
@@ -196,11 +195,11 @@ class _GeomPageState extends State<GeomPage> {
     ));
     coord4.setRegion(Rect.fromLTWH(0, 0, 300, 300));
     final scales4 = <String, ScaleComponent>{
-      'genre': StringCategoryScaleComponent(graphic.CatScale(
+      'genre': CatScaleComponent(graphic.CatScale(
         values: ['Sports', 'Strategy', 'Action', 'Shooter', 'Other'],
         accessor: (map) => map['genre'] as String,
       )),
-      'sold': NumLinearScaleComponent(graphic.NumScale(
+      'sold': LinearScaleComponent(graphic.LinearScale(
         min: 100,
         max: 400,
         accessor: (map) => map['sold'] as num,
@@ -288,19 +287,19 @@ class _GeomPageState extends State<GeomPage> {
     ));
     coord5.setRegion(Rect.fromLTWH(0, 0, 300, 300));
     final scales5 = <String, ScaleComponent>{
-      'name': StringCategoryScaleComponent(graphic.CatScale(
+      'name': CatScaleComponent(graphic.CatScale(
         values: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
         accessor: (list) => list[0] as String,
         // range: [0.05, 1 - 0.05],
         range: [0, 1 - 0.1],
       )),
-      'day': StringCategoryScaleComponent(graphic.CatScale(
+      'day': CatScaleComponent(graphic.CatScale(
         values: ['0', '1', '2', '3', '4'],
         accessor: (list) => list[1] as String,
         // range: [0.1, 1 - 0.1],
         range: [0, 1 - 0.2],
       )),
-      'sales': NumLinearScaleComponent(graphic.NumScale(
+      'sales': LinearScaleComponent(graphic.LinearScale(
         min: 0,
         max: 200,
         accessor: (list) => list[2] as num,
@@ -312,7 +311,7 @@ class _GeomPageState extends State<GeomPage> {
       ..state.middlePlot = plot5
       ..state.scales = scales5;
     
-    final geom5 = PolygonGeomComponent()
+    final geom5 = PointGeomComponent()
       ..state.chart = chart5
       ..setColor(graphic.ColorAttr(
         field: 'sales',
@@ -356,26 +355,26 @@ class _GeomPageState extends State<GeomPage> {
     final coord6 = CartesianCoordComponent(graphic.CartesianCoord());
     coord6.setRegion(Rect.fromLTWH(0, 0, 300, 300));
     final scales6 = <String, ScaleComponent>{
-      'time': DateTimeOrdinalScaleComponent(graphic.TimeScale(
-        stringAccessor: (map) => map['time'] as String,
-        stringValues: data6.map((map) => map['time'] as String).toList(),
+      'time': CatScaleComponent(graphic.CatScale(
+        accessor: (map) => map['time'] as String,
+        values: data6.map((map) => map['time'] as String).toList(),
       )),
-      'start': NumLinearScaleComponent(graphic.NumScale(
+      'start': LinearScaleComponent(graphic.LinearScale(
         min: 6,
         max: 9,
         accessor: (map) => map['start'] as num,
       )),
-      'max': NumLinearScaleComponent(graphic.NumScale(
+      'max': LinearScaleComponent(graphic.LinearScale(
         min: 6,
         max: 9,
         accessor: (map) => map['max'] as num,
       )),
-      'min': NumLinearScaleComponent(graphic.NumScale(
+      'min': LinearScaleComponent(graphic.LinearScale(
         min: 6,
         max: 9,
         accessor: (map) => map['min'] as num,
       )),
-      'end': NumLinearScaleComponent(graphic.NumScale(
+      'end': LinearScaleComponent(graphic.LinearScale(
         min: 6,
         max: 9,
         accessor: (map) => map['end'] as num,

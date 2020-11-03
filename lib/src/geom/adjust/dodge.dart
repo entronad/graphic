@@ -1,9 +1,8 @@
 import 'dart:ui';
 import 'dart:math';
 
-import 'package:graphic/src/geom/base.dart';
-
 import 'base.dart';
+import '../base.dart';
 
 class DodgeAdjust extends Adjust {
   DodgeAdjust({
@@ -25,10 +24,10 @@ class DodgeAdjustComponent extends AdjustComponent<DodgeAdjustState> {
   DodgeAdjustComponent([DodgeAdjust props]) : super(props);
 
   @override
-  DodgeAdjustState get originalState => DodgeAdjustState();
+  DodgeAdjustState createState() => DodgeAdjustState();
 
   @override
-  void adjust(List<List<AttrValueRecord>> recordsGroup, Offset origin) {
+  void adjust(List<List<ElementRecord>> recordsGroup, Offset origin) {
     var minX = 1.0;
     var maxX = 0.0;
     final values = Set();
@@ -51,8 +50,8 @@ class DodgeAdjustComponent extends AdjustComponent<DodgeAdjustState> {
       final records = recordsGroup[i];
       final dodgeWidth = i * dodgeRatio * step;
       for (var record in records) {
-        final originalPosition = record.position;
-        record.position = originalPosition.map(
+        final sourcePosition = record.position;
+        record.position = sourcePosition.map(
           (point) => Offset(point.dx + dodgeWidth - bias, point.dy)
         ).toList();
       }

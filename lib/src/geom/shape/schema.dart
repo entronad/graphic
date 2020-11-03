@@ -5,7 +5,10 @@ import 'package:graphic/src/coord/cartesian.dart';
 import 'package:graphic/src/engine/render_shape/base.dart';
 import 'package:graphic/src/engine/render_shape/custom.dart';
 
+import 'base.dart';
 import '../base.dart';
+
+abstract class SchemaShape extends Shape {}
 
 // position: [star, end, max, min]
 Path _candlestickElementPath(
@@ -212,7 +215,7 @@ Path _boxElementPath(
 }
 
 List<RenderShape> _cartesianSchema(
-  List<AttrValueRecord> attrValueRecords,
+  List<ElementRecord> records,
   CoordComponent coord,
   Path Function(
     List<Offset> renderPosition,
@@ -229,19 +232,19 @@ List<RenderShape> _cartesianSchema(
 
   final sigleDefaultSize = 10.0;
   final sizeStepRatio = 0.5;
-  var size = attrValueRecords[0].size;
+  var size = records[0].size;
   if (size == null) {
-    if (attrValueRecords.length == 1) {
+    if (records.length == 1) {
       size = sigleDefaultSize;
     } else {
       final stepRatio =
-        attrValueRecords[1].position.first.dx
-        - attrValueRecords[0].position.first.dx;
+        records[1].position.first.dx
+        - records[0].position.first.dx;
       size = stepRatio * coord.state.region.width * sizeStepRatio;
     }
   }
 
-  for (var record in attrValueRecords) {
+  for (var record in records) {
     final position = record.position;
     final color = record.color;
 
@@ -261,14 +264,38 @@ List<RenderShape> _cartesianSchema(
   return rst;
 }
 
-List<RenderShape> candlestickSchema(
-  List<AttrValueRecord> attrValueRecords,
-  CoordComponent coord,
-  Offset origin,
-) => _cartesianSchema(attrValueRecords, coord, _candlestickElementPath);
+class CandlestickShape extends SchemaShape {
+  CandlestickShape({
+    this.hollow = true,
+    this.strokeWidth = 1,
+    this.increasingColor = const Color(0xff00ff00),
+    this.decreasingColor = const Color(0xffff0000),
+  });
 
-List<RenderShape> boxSchema(
-  List<AttrValueRecord> attrValueRecords,
-  CoordComponent coord,
-  Offset origin,
-) => _cartesianSchema(attrValueRecords, coord, _boxElementPath);
+  final bool hollow;
+  final double strokeWidth;
+  final Color increasingColor;
+  final Color decreasingColor;
+
+  @override
+  List<RenderShape> getRenderShape(
+    List<ElementRecord> records,
+    CoordComponent coord,
+    Offset origin,
+  ) => _cartesianSchema(records, coord, _candlestickElementPath);
+}
+
+class BoxShape extends SchemaShape {
+  BoxShape({
+    this.strokeWidth = 1,
+  });
+
+  final double strokeWidth;
+
+  @override
+  List<RenderShape> getRenderShape(
+    List<ElementRecord> records,
+    CoordComponent coord,
+    Offset origin,
+  ) => _cartesianSchema(records, coord, _boxElementPath);
+}

@@ -100,7 +100,7 @@ class ShapePage extends StatelessWidget {
                     'genre': graphic.CatScale(
                       accessor: (map) => map['genre'] as String,
                     ),
-                    'sold': graphic.NumScale(
+                    'sold': graphic.LinearScale(
                       max: 400,
                       min: -100,
                       accessor: (map) => map['sold'] as num,
@@ -109,7 +109,7 @@ class ShapePage extends StatelessWidget {
                   },
                   geoms: [graphic.IntervalGeom(
                     position: graphic.PositionAttr(field: 'genre*sold'),
-                    shape: graphic.ShapeAttr(values: [graphic.Shapes.rrectInterval(radius: Radius.circular(4))])
+                    shape: graphic.ShapeAttr(values: [graphic.RectShape(radius: Radius.circular(4))])
                   )],
                   axes: {
                     'genre': graphic.Defaults.horizontalAxis,
@@ -134,7 +134,7 @@ class ShapePage extends StatelessWidget {
                       accessor: (map) => map['genre'] as String,
                       range: [0.9, 0.2],
                     ),
-                    'sold': graphic.NumScale(
+                    'sold': graphic.LinearScale(
                       max: 200,
                       min: -200,
                       accessor: (map) => map['sold'] as num,
@@ -143,7 +143,7 @@ class ShapePage extends StatelessWidget {
                   },
                   geoms: [graphic.IntervalGeom(
                     position: graphic.PositionAttr(field: 'genre*sold'),
-                    shape: graphic.ShapeAttr(values: [graphic.Shapes.pyramidInterval]),
+                    shape: graphic.ShapeAttr(values: [graphic.PyramidShape()]),
                     color: graphic.ColorAttr(field: 'genre'),
                     adjust: graphic.SymmetricAdjust(),
                   )],
@@ -157,15 +157,15 @@ class ShapePage extends StatelessWidget {
                 child: graphic.Chart(
                   data: bubbleData,
                   scales: {
-                    '0': graphic.NumScale(
+                    '0': graphic.LinearScale(
                       accessor: (list) => list[0] as num,
                       range: [0.1, 0.9],
                     ),
-                    '1': graphic.NumScale(
+                    '1': graphic.LinearScale(
                       accessor: (list) => list[1] as num,
                       range: [0.1, 0.9],
                     ),
-                    '2': graphic.NumScale(
+                    '2': graphic.LinearScale(
                       accessor: (list) => list[2] as num,
                     ),
                     '4': graphic.CatScale(
@@ -177,8 +177,8 @@ class ShapePage extends StatelessWidget {
                     size: graphic.SizeAttr(field: '2', values: [5, 20]),
                     color: graphic.ColorAttr(field: '4'),
                     shape: graphic.ShapeAttr(field: '4', values: [
-                      graphic.Shapes.hollowCirclePoint,
-                      graphic.Shapes.hollowRectPoint,
+                      graphic.CircleShape(hollow: true),
+                      graphic.SquareShape(hollow: true),
                     ], isTween: true),
                   )],
                   axes: {
@@ -200,12 +200,13 @@ class ShapePage extends StatelessWidget {
                     'day': graphic.CatScale(
                       accessor: (list) => list[1].toString(),
                     ),
-                    'sales': graphic.NumScale(
+                    'sales': graphic.LinearScale(
                       accessor: (list) => list[2] as num,
                     )
                   },
-                  geoms: [graphic.PolygonGeom(
+                  geoms: [graphic.PointGeom(
                     position: graphic.PositionAttr(field: 'name*day'),
+                    shape: graphic.ShapeAttr(values: [graphic.TileShape()]),
                     color: graphic.ColorAttr(
                       field: 'sales',
                       values: [Color(0xffbae7ff), Color(0xff1890ff), Color(0xff0050b3)],
@@ -228,27 +229,27 @@ class ShapePage extends StatelessWidget {
                     'x': graphic.CatScale(
                       accessor: (map) => map['x'] as String,
                     ),
-                    'low': graphic.NumScale(
+                    'low': graphic.LinearScale(
                       accessor: (map) => map['low'] as num,
                       max: 40,
                       min: 0,
                     ),
-                    'q1': graphic.NumScale(
+                    'q1': graphic.LinearScale(
                       accessor: (map) => map['q1'] as num,
                       max: 40,
                       min: 0,
                     ),
-                    'median': graphic.NumScale(
+                    'median': graphic.LinearScale(
                       accessor: (map) => map['median'] as num,
                       max: 40,
                       min: 0,
                     ),
-                    'q3': graphic.NumScale(
+                    'q3': graphic.LinearScale(
                       accessor: (map) => map['q3'] as num,
                       max: 40,
                       min: 0,
                     ),
-                    'high': graphic.NumScale(
+                    'high': graphic.LinearScale(
                       accessor: (map) => map['high'] as num,
                       max: 40,
                       min: 0,
@@ -256,7 +257,7 @@ class ShapePage extends StatelessWidget {
                   },
                   geoms: [graphic.SchemaGeom(
                     position: graphic.PositionAttr(field: 'x*low*q1*median*q3*high'),
-                    shape: graphic.ShapeAttr(values: [graphic.Shapes.boxSchema]),
+                    shape: graphic.ShapeAttr(values: [graphic.BoxShape()]),
                   )],
                   axes: {
                     'x': graphic.Defaults.horizontalAxis
@@ -277,27 +278,27 @@ class ShapePage extends StatelessWidget {
                     'x': graphic.CatScale(
                       accessor: (map) => map['x'] as String,
                     ),
-                    'low': graphic.NumScale(
+                    'low': graphic.LinearScale(
                       accessor: (map) => map['low'] as num,
                       max: 40,
                       min: 0,
                     ),
-                    'q1': graphic.NumScale(
+                    'q1': graphic.LinearScale(
                       accessor: (map) => map['q1'] as num,
                       max: 40,
                       min: 0,
                     ),
-                    'median': graphic.NumScale(
+                    'median': graphic.LinearScale(
                       accessor: (map) => map['median'] as num,
                       max: 40,
                       min: 0,
                     ),
-                    'q3': graphic.NumScale(
+                    'q3': graphic.LinearScale(
                       accessor: (map) => map['q3'] as num,
                       max: 40,
                       min: 0,
                     ),
-                    'high': graphic.NumScale(
+                    'high': graphic.LinearScale(
                       accessor: (map) => map['high'] as num,
                       max: 40,
                       min: 0,
@@ -305,7 +306,7 @@ class ShapePage extends StatelessWidget {
                   },
                   geoms: [graphic.SchemaGeom(
                     position: graphic.PositionAttr(field: 'x*low*q1*median*q3*high'),
-                    shape: graphic.ShapeAttr(values: [graphic.Shapes.boxSchema]),
+                    shape: graphic.ShapeAttr(values: [graphic.BoxShape()]),
                   )],
                   axes: {
                     'x': graphic.Defaults.horizontalAxis

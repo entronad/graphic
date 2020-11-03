@@ -28,18 +28,18 @@ class PointPolygonSchemaPage extends StatelessWidget {
                 child: graphic.Chart(
                   data: scatterData,
                   scales: {
-                    '0': graphic.NumScale(
+                    '0': graphic.LinearScale(
                       accessor: (list) => list[0] as num,
                       range: [0.1, 0.9],
                       nice: true,
                     ),
-                    '1': graphic.NumScale(
+                    '1': graphic.LinearScale(
                       accessor: (list) => list[1] as num,
                       range: [0.1, 0.9],
                       nice: true,
                       min: 55,
                     ),
-                    '2': graphic.NumScale(
+                    '2': graphic.LinearScale(
                       accessor: (list) => list[2] as num,
                     ),
                     '4': graphic.CatScale(
@@ -51,8 +51,8 @@ class PointPolygonSchemaPage extends StatelessWidget {
                     size: graphic.SizeAttr(field: '2', values: [5, 20]),
                     color: graphic.ColorAttr(field: '4'),
                     shape: graphic.ShapeAttr(field: '4', values: [
-                      graphic.Shapes.hollowCirclePoint,
-                      graphic.Shapes.hollowRectPoint,
+                      graphic.CircleShape(hollow: true),
+                      graphic.SquareShape(hollow: true),
                     ], isTween: true),
                   )],
                   axes: {
@@ -72,16 +72,16 @@ class PointPolygonSchemaPage extends StatelessWidget {
                 child: graphic.Chart(
                   data: scatterData,
                   scales: {
-                    '0': graphic.NumScale(
+                    '0': graphic.LinearScale(
                       accessor: (list) => list[0] as num,
                       nice: true,
                     ),
-                    '1': graphic.NumScale(
+                    '1': graphic.LinearScale(
                       accessor: (list) => list[1] as num,
                       nice: true,
                       min: 55,
                     ),
-                    '2': graphic.NumScale(
+                    '2': graphic.LinearScale(
                       accessor: (list) => list[2] as num,
                     ),
                     '4': graphic.CatScale(
@@ -118,12 +118,13 @@ class PointPolygonSchemaPage extends StatelessWidget {
                     'day': graphic.CatScale(
                       accessor: (list) => list[1].toString(),
                     ),
-                    'sales': graphic.NumScale(
+                    'sales': graphic.LinearScale(
                       accessor: (list) => list[2] as num,
                     )
                   },
-                  geoms: [graphic.PolygonGeom(
+                  geoms: [graphic.PointGeom(
                     position: graphic.PositionAttr(field: 'name*day'),
+                    shape: graphic.ShapeAttr(values: [graphic.TileShape()]),
                     color: graphic.ColorAttr(
                       field: 'sales',
                       values: [Color(0xffbae7ff), Color(0xff1890ff), Color(0xff0050b3)],
@@ -153,13 +154,14 @@ class PointPolygonSchemaPage extends StatelessWidget {
                     'day': graphic.CatScale(
                       accessor: (list) => list[1].toString(),
                     ),
-                    'sales': graphic.NumScale(
+                    'sales': graphic.LinearScale(
                       accessor: (list) => list[2] as num,
                     )
                   },
                   coord: graphic.PolarCoord(),
-                  geoms: [graphic.PolygonGeom(
+                  geoms: [graphic.PointGeom(
                     position: graphic.PositionAttr(field: 'name*day'),
+                    shape: graphic.ShapeAttr(values: [graphic.TileShape()]),
                     color: graphic.ColorAttr(
                       field: 'sales',
                       values: [Color(0xffbae7ff), Color(0xff1890ff), Color(0xff0050b3)],
@@ -189,30 +191,30 @@ class PointPolygonSchemaPage extends StatelessWidget {
                     'x': graphic.CatScale(
                       accessor: (map) => map['x'] as String,
                     ),
-                    'low': graphic.NumScale(
+                    'low': graphic.LinearScale(
                       accessor: (map) => map['low'] as num,
                       max: 35,
                     ),
-                    'q1': graphic.NumScale(
+                    'q1': graphic.LinearScale(
                       accessor: (map) => map['q1'] as num,
                       max: 35,
                     ),
-                    'median': graphic.NumScale(
+                    'median': graphic.LinearScale(
                       accessor: (map) => map['median'] as num,
                       max: 35,
                     ),
-                    'q3': graphic.NumScale(
+                    'q3': graphic.LinearScale(
                       accessor: (map) => map['q3'] as num,
                       max: 35,
                     ),
-                    'high': graphic.NumScale(
+                    'high': graphic.LinearScale(
                       accessor: (map) => map['high'] as num,
                       max: 35,
                     ),
                   },
                   geoms: [graphic.SchemaGeom(
                     position: graphic.PositionAttr(field: 'x*low*q1*median*q3*high'),
-                    shape: graphic.ShapeAttr(values: [graphic.Shapes.boxSchema]),
+                    shape: graphic.ShapeAttr(values: [graphic.BoxShape()]),
                   )],
                   axes: {
                     'x': graphic.Defaults.horizontalAxis
@@ -237,23 +239,23 @@ class PointPolygonSchemaPage extends StatelessWidget {
                     'x': graphic.CatScale(
                       accessor: (map) => map['x'] as String,
                     ),
-                    'low': graphic.NumScale(
+                    'low': graphic.LinearScale(
                       accessor: (map) => map['low'] as num,
                       max: 35,
                     ),
-                    'q1': graphic.NumScale(
+                    'q1': graphic.LinearScale(
                       accessor: (map) => map['q1'] as num,
                       max: 35,
                     ),
-                    'median': graphic.NumScale(
+                    'median': graphic.LinearScale(
                       accessor: (map) => map['median'] as num,
                       max: 35,
                     ),
-                    'q3': graphic.NumScale(
+                    'q3': graphic.LinearScale(
                       accessor: (map) => map['q3'] as num,
                       max: 35,
                     ),
-                    'high': graphic.NumScale(
+                    'high': graphic.LinearScale(
                       accessor: (map) => map['high'] as num,
                       max: 35,
                     ),
@@ -261,7 +263,7 @@ class PointPolygonSchemaPage extends StatelessWidget {
                   coord: graphic.CartesianCoord(transposed: true),
                   geoms: [graphic.SchemaGeom(
                     position: graphic.PositionAttr(field: 'x*low*q1*median*q3*high'),
-                    shape: graphic.ShapeAttr(values: [graphic.Shapes.boxSchema]),
+                    shape: graphic.ShapeAttr(values: [graphic.BoxShape()]),
                   )],
                   axes: {
                     'x': graphic.Defaults.verticalAxis

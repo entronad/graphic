@@ -14,7 +14,7 @@ class RadialAxisComponent
   extends AxisComponent<RadialAxisState>
 {
   @override
-  RadialAxisState get originalState => RadialAxisState();
+  RadialAxisState createState() => RadialAxisState();
 
   @override
   List<RenderShape> getLine() {

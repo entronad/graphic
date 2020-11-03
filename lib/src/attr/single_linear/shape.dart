@@ -3,14 +3,14 @@ import 'package:graphic/src/geom/shape/base.dart';
 import '../base.dart';
 import 'base.dart';
 
-class ShapeAttr extends SingleLinearAttr<Shape> {
+class ShapeAttr<S extends Shape> extends SingleLinearAttr<S> {
   ShapeAttr({
     String field,
 
-    List<Shape> values,
+    List<S> values,
     List<double> stops,
     bool isTween,
-    Shape Function(List<double>) mapper,
+    S Function(List<double>) mapper,
   }) : super(field) {
     this['values'] = values;
     this['stops'] = stops;
@@ -22,17 +22,17 @@ class ShapeAttr extends SingleLinearAttr<Shape> {
   AttrType get type => AttrType.shape;
 }
 
-class ShapeSingleLinearAttrState extends SingleLinearAttrState<Shape> {}
+class ShapeSingleLinearAttrState<S extends Shape> extends SingleLinearAttrState<S> {}
 
-class ShapeSingleLinearAttrComponent
-  extends SingleLinearAttrComponent<ShapeSingleLinearAttrState, Shape>
+class ShapeSingleLinearAttrComponent<S extends Shape>
+  extends SingleLinearAttrComponent<ShapeSingleLinearAttrState<S>, S>
 {
-  ShapeSingleLinearAttrComponent([ShapeAttr props]) : super(props);
-
-   @override
-  ShapeSingleLinearAttrState get originalState => ShapeSingleLinearAttrState();
+  ShapeSingleLinearAttrComponent([ShapeAttr<S> props]) : super(props);
 
   @override
-  Shape lerp(Shape a, Shape b, double t) =>
+  ShapeSingleLinearAttrState<S> createState() => ShapeSingleLinearAttrState<S>();
+
+  @override
+  S lerp(S a, Shape b, double t) =>
     t < 0.5 ? a : b;
 }

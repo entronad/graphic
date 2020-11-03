@@ -35,5 +35,5 @@ abstract class AdjustComponent<S extends AdjustState>
 
   AdjustComponent([TypedMap props]) : super(props);
 
-  void adjust(List<List<AttrValueRecord>> recordsGroup, Offset origin);
+  void adjust(List<List<ElementRecord>> recordsGroup, Offset origin);
 }

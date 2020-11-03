@@ -10,7 +10,7 @@ class HorizontalAxisComponent
   extends AxisComponent<HorizontalAxisState>
 {
   @override
-  HorizontalAxisState get originalState => HorizontalAxisState();
+  HorizontalAxisState createState() => HorizontalAxisState();
 
   @override
   List<RenderShape> getLine() {

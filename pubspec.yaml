@@ -1,6 +1,6 @@
 name: graphic
 description: A data visualization (charts / chart / charting) library based on Grammar of Graphics.
-version: 0.1.1
+version: 0.2.0
 homepage: https://github.com/entronad/graphic
 
 environment:

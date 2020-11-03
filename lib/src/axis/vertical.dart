@@ -10,7 +10,7 @@ class VerticalAxisComponent
   extends AxisComponent<VerticalAxisState>
 {
   @override
-  VerticalAxisState get originalState => VerticalAxisState();
+  VerticalAxisState createState() => VerticalAxisState();
 
   @override
   List<RenderShape> getLine() {

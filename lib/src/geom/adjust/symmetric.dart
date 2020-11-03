@@ -1,8 +1,8 @@
 import 'dart:ui';
-
-import 'package:graphic/src/geom/base.dart';
+import 'dart:math';
 
 import 'base.dart';
+import '../base.dart';
 
 class SymmetricAdjust extends Adjust {
   @override
@@ -15,31 +15,31 @@ class SymmetricAdjustComponent extends AdjustComponent<SymmetricAdjustState> {
   SymmetricAdjustComponent([SymmetricAdjust props]) : super(props);
 
   @override
-  SymmetricAdjustState get originalState => SymmetricAdjustState();
+  SymmetricAdjustState createState() => SymmetricAdjustState();
 
   @override
-  void adjust(List<List<AttrValueRecord>> recordsGroup, Offset origin) {
+  void adjust(List<List<ElementRecord>> recordsGroup, Offset origin) {
     final originY = origin.dy;
     
-    final symmetricRecordsGroup = <List<AttrValueRecord>>[];
     for (var records in recordsGroup) {
-      final symmetricRecords = <AttrValueRecord>[];
+      // Symmetric means to redistribute position points of
+      // a sigle record around originY, keeping the relative distance.
+      // Single postion point will fall to the origin y.
       for (var record in records) {
-        record.position = record.position.map(
-          (point) => Offset(point.dx, point.dy - (point.dy - originY) / 2),
+        var originalPosition = record.position;
+
+        var maxY = double.negativeInfinity;
+        var minY = double.infinity;
+        for (var point in originalPosition) {
+          maxY = max(maxY, point.dy);
+          minY = min(minY, point.dy);
+        }
+
+        final offsetY = originY - (minY + maxY) / 2;
+        record.position = originalPosition.map(
+          (point) => Offset(point.dx, point.dy + offsetY)
         ).toList();
-        final symmetricRecord = AttrValueRecord(
-          color: record.color,
-          size: record.size,
-          shape: record.shape,
-          position: record.position.map(
-            (point) => Offset(point.dx, originY - (point.dy - originY)),
-          ).toList(),
-        );
-        symmetricRecords.add(symmetricRecord);
       }
-      symmetricRecordsGroup.add(symmetricRecords);
     }
-    recordsGroup.addAll(symmetricRecordsGroup);
   }
 }

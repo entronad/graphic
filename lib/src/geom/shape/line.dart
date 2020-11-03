@@ -6,66 +6,64 @@ import 'package:graphic/src/engine/render_shape/polyline.dart';
 import 'package:graphic/src/engine/render_shape/polygon.dart';
 import 'package:graphic/src/coord/polar.dart';
 
+import 'base.dart';
 import '../base.dart';
 
-List<RenderShape> _line(
-  List<AttrValueRecord> attrValueRecords,
-  CoordComponent coord,
-  bool smooth,
-) {
-  final firstRecord = attrValueRecords.first;
-  final color = firstRecord.color;
-  final size = firstRecord.size;
+abstract class LineShape extends Shape {}
 
-  final points = <Offset>[];
+class BasicLineShape extends LineShape {
+  BasicLineShape({this.smooth = false});
 
-  if (coord is PolarCoordComponent) {
+  final bool smooth;
 
-    // radar
+  @override
+  List<RenderShape> getRenderShape(
+    List<ElementRecord> records,
+    CoordComponent coord,
+    Offset origin,
+  ) {
+    final firstRecord = records.first;
+    final color = firstRecord.color;
+    final size = firstRecord.size;
 
-    assert(
-      !coord.state.transposed,
-      'Do not transpose polar coord for line shapes',
-    );
-    assert(
-      !smooth,
-      'smooth line shapes only support cartesian coord',
-    );
+    final points = <Offset>[];
 
-    for (var record in attrValueRecords) {
-      final point = record.position.first;
-      points.add(coord.convertPoint(point));
+    if (coord is PolarCoordComponent) {
+
+      // radar
+
+      assert(
+        !coord.state.transposed,
+        'Do not transpose polar coord for line shapes',
+      );
+      assert(
+        !smooth,
+        'smooth line shapes only support cartesian coord',
+      );
+
+      for (var record in records) {
+        final point = record.position.first;
+        points.add(coord.convertPoint(point));
+      }
+
+      return [PolygonRenderShape(
+        points: points,
+        color: color,
+        style: PaintingStyle.stroke,
+        strokeWidth: size,
+      )];
+    } else {
+      for (var record in records) {
+        final point = record.position.first;
+        points.add(coord.convertPoint(point));
+      }
+
+      return [PolylineRenderShape(
+        points: points,
+        color: color,
+        strokeWidth: size,
+        smooth: smooth,
+      )];
     }
-
-    return [PolygonRenderShape(
-      points: points,
-      color: color,
-      style: PaintingStyle.stroke,
-      strokeWidth: size,
-    )];
-  } else {
-    for (var record in attrValueRecords) {
-      final point = record.position.first;
-      points.add(coord.convertPoint(point));
-    }
-
-    return [PolylineRenderShape(
-      points: points,
-      color: color,
-      strokeWidth: size,
-      smooth: smooth,
-    )];
   }
 }
-
-List<RenderShape> line(
-  List<AttrValueRecord> attrValueRecords,
-  CoordComponent coord,
-  Offset origin,
-) => _line(attrValueRecords, coord, false);
-
-List<RenderShape> smoothLine(
-  List<AttrValueRecord> attrValueRecords,
-  CoordComponent coord,
-  Offset origin,
-) => _line(attrValueRecords, coord, true);

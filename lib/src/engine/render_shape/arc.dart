@@ -82,7 +82,7 @@ class ArcRenderShapeComponent
   ArcRenderShapeComponent([ArcRenderShape props]) : super(props);
 
   @override
-  ArcRenderShapeState get originalState => ArcRenderShapeState();
+  ArcRenderShapeState createState() => ArcRenderShapeState();
 
   @override
   void initDefaultState() {

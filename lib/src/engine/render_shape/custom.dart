@@ -56,7 +56,7 @@ class CustomRenderShapeComponent
   CustomRenderShapeComponent([CustomRenderShape props]) : super(props);
 
   @override
-  CustomRenderShapeState get originalState => CustomRenderShapeState();
+  CustomRenderShapeState createState() => CustomRenderShapeState();
 
   @override
   void createPath(Path path) {

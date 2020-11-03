@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:graphic/src/attr/single_linear/base.dart';
@@ -11,7 +12,7 @@ import 'package:graphic/src/attr/single_linear/shape.dart';
 import 'package:graphic/src/attr/single_linear/size.dart';
 import 'package:graphic/src/attr/position.dart';
 import 'package:graphic/src/scale/base.dart';
-import 'package:graphic/src/scale/category/base.dart';
+import 'package:graphic/src/scale/cat.dart';
 import 'package:graphic/src/util/list.dart';
 import 'package:graphic/src/defaults.dart';
 
@@ -21,24 +22,37 @@ import 'area.dart';
 import 'interval.dart';
 import 'line.dart';
 import 'point.dart';
-import 'polygon.dart';
 import 'schema.dart';
 
 double _scaleDatum<D>(ScaleComponent scale, D datum) =>
   scale.scale(scale.state.accessor(datum));
 
-class AttrValueRecord {
-  AttrValueRecord({
-    this.color,
-    this.size,
+class ElementRecord<D> {
+  ElementRecord({
     this.position,
+    this.positionScales,
+    this.color,
+    this.colorScale,
+    this.size,
+    this.sizeScale,
     this.shape,
+    this.shapeScale,
+    this.datum,
   });
 
-  Color color;
-  double size;
   List<Offset> position;
+  List<ScaleComponent> positionScales;
+
+  Color color;
+  ScaleComponent colorScale;
+
+  double size;
+  ScaleComponent sizeScale;
+
   Shape shape;
+  ScaleComponent shapeScale;
+
+  D datum;
 }
 
 enum GeomType {
@@ -46,7 +60,6 @@ enum GeomType {
   interval,
   line,
   point,
-  polygon,
   schema,
 }
 
@@ -93,8 +106,6 @@ abstract class GeomComponent<S extends GeomState<D>, D>
         return LineGeomComponent();
       case GeomType.point:
         return PointGeomComponent();
-      case GeomType.polygon:
-        return PolygonGeomComponent();
       case GeomType.schema:
         return SchemaGeomComponent();
       default: return null;
@@ -150,7 +161,7 @@ abstract class GeomComponent<S extends GeomState<D>, D>
       'Can not find $field scale in scales',
     );
 
-    if (scale is CategoryScaleComponent && !attrComponent.state.isTween) {
+    if (scale is CatScaleComponent && !attrComponent.state.isTween) {
       final length = scale.state.values.length;
       attrComponent.state.values = makeup(attrComponent.state.values, length);
     }
@@ -185,23 +196,11 @@ abstract class GeomComponent<S extends GeomState<D>, D>
 
   // Base implimentation for sigle Point
   @protected
-  List<Offset> defaultPositionMapper(List<double> scaledValues) {
-    if (scaledValues == null || scaledValues.isEmpty) {
-      return null;
-    }
-    assert(scaledValues.length == 2);
+  List<Offset> defaultPositionMapper(List<double> scaledValues);
 
-    return [Offset(
-      scaledValues[0],
-      scaledValues[1],
-    )];
-  }
-
+  // Should match defaultPositionMapper
   @protected
-  void initPositionAxisFields(PositionAttrComponent attrComponent) {
-    attrComponent.state.xFields = Set()..add(attrComponent.state.fields[0]);
-    attrComponent.state.yFields = Set()..add(attrComponent.state.fields[1]);
-  }
+  void initPositionAxisFields(PositionAttrComponent attrComponent);
 
   void render() {
     if (_shapeComponents.isNotEmpty) {
@@ -231,7 +230,7 @@ abstract class GeomComponent<S extends GeomState<D>, D>
 
     for (var records in recordsGroup) {
       final shape = records.first.shape;
-      rst.addAll(shape(
+      rst.addAll(shape.getRenderShape(
         records,
         coord,
         origin,
@@ -252,7 +251,7 @@ abstract class GeomComponent<S extends GeomState<D>, D>
     return originPoint;
   }
 
-  List<List<AttrValueRecord>> _getRecordsGroup() {
+  List<List<ElementRecord>> _getRecordsGroup() {
     final dataGroup = _getDataGroup();
     final scales = state.chart.state.scales;
 
@@ -302,10 +301,10 @@ abstract class GeomComponent<S extends GeomState<D>, D>
       );
     }
 
-    final rst = <List<AttrValueRecord>>[];
+    final rst = <List<ElementRecord>>[];
 
     for (var data in dataGroup) {
-      final records = <AttrValueRecord>[];
+      final records = <ElementRecord>[];
       for (var datum in data) {
         final position = positionFields == null
           ? state.position.map()
@@ -325,11 +324,16 @@ abstract class GeomComponent<S extends GeomState<D>, D>
           ? state.shape.map()
           : state.shape.map([_scaleDatum(shapeScale, datum)]);
         
-        records.add(AttrValueRecord(
+        records.add(ElementRecord(
           position: position,
+          positionScales: positionScales,
           color: color,
+          colorScale: colorScale,
           size: size,
+          sizeScale: sizeScale,
           shape: shape,
+          shapeScale: shapeScale,
+          datum: datum,
         ));
       }
       rst.add(records);
@@ -349,7 +353,7 @@ abstract class GeomComponent<S extends GeomState<D>, D>
 
     // only group by category scale
     final groupScale = chart.state.scales[groupField];
-    if (groupScale is CategoryScaleComponent) {
+    if (groupScale is CatScaleComponent) {
       final accessor = groupScale.state.accessor;
       final values = groupScale.state.values;
       return group(data, accessor, values);
@@ -359,7 +363,7 @@ abstract class GeomComponent<S extends GeomState<D>, D>
   }
 
   String _getGroupField() {
-    final positionFields = state.position.state?.fields;
+    final positionFields = state.position.state.fields;
 
     final shapeField = state.shape.state.fields?.first;
     if (shapeField != null && !positionFields.contains(shapeField)) {
@@ -377,7 +381,7 @@ abstract class GeomComponent<S extends GeomState<D>, D>
     return null;
   }
 
-  void _adjustRecordsGroup(List<List<AttrValueRecord>> recordsGroup, Offset origin) {
+  void _adjustRecordsGroup(List<List<ElementRecord>> recordsGroup, Offset origin) {
     final adjust = state.adjust;
     if (adjust != null) {
       adjust.adjust(recordsGroup, origin);

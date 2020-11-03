@@ -93,7 +93,7 @@ class ChartState<D> with TypedMap {
 
 class ChartComponent<D> extends Component<ChartState<D>> {
   @override
-  ChartState<D> get originalState => ChartState<D>();
+  ChartState<D> createState() => ChartState<D>();
 
   @override
   void initDefaultState() {

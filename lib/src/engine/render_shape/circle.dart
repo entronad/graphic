@@ -66,7 +66,7 @@ class CircleRenderShapeComponent
   CircleRenderShapeComponent([CircleRenderShape props]) : super(props);
 
   @override
-  CircleRenderShapeState get originalState => CircleRenderShapeState();
+  CircleRenderShapeState createState() => CircleRenderShapeState();
 
   @override
   void createPath(Path path) {

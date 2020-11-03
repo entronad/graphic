@@ -1,27 +1,25 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
-import 'package:graphic/src/scale/ordinal/date_time.dart';
+import 'package:graphic/src/scale/time.dart';
 
 main() {
   group('scale time cat', () {
     final mask = 'yyyy/MM/dd';
-    final scale = DateTimeOrdinalScaleComponent(TimeScale(
-      values: [
-        DateTime.fromMillisecondsSinceEpoch(1442937600000),
-        DateTime.fromMillisecondsSinceEpoch(1441296000000),
-        DateTime.fromMillisecondsSinceEpoch(1449849600000),
-      ],
+    final scale = TimeScaleComponent(TimeScale(
+      min: DateTime.fromMillisecondsSinceEpoch(1441296000000),
+      max: DateTime.fromMillisecondsSinceEpoch(1449849600000),
       mask: mask,
+      tickCount: 3,
     ));
 
     test('scale', () {
       expect(scale.scale(DateTime.fromMillisecondsSinceEpoch(1441296000000)), 0);
-      expect(scale.scale(DateTime.fromMillisecondsSinceEpoch(1442937600000)), 0.5);
+      expect(scale.scale(DateTime.fromMillisecondsSinceEpoch(1445572800000)), 0.5);
     });
 
     test('invert', () {
       expect(scale.invert(0), DateTime.fromMillisecondsSinceEpoch(1441296000000));
-      expect(scale.invert(0.5), DateTime.fromMillisecondsSinceEpoch(1442937600000));
+      expect(scale.invert(0.5), DateTime.fromMillisecondsSinceEpoch(1445572800000));
       expect(scale.invert(1), DateTime.fromMillisecondsSinceEpoch(1449849600000));
     });
 
@@ -31,8 +29,8 @@ main() {
       final dateFormat = DateFormat(mask);
       expect(text, dateFormat.format(date));
       expect(
-        scale.getText(DateTime.fromMillisecondsSinceEpoch(1442937600000)),
-        dateFormat.format(DateTime.fromMillisecondsSinceEpoch(1442937600000)),
+        scale.getText(DateTime.fromMillisecondsSinceEpoch(1445572800000)),
+        dateFormat.format(DateTime.fromMillisecondsSinceEpoch(1445572800000)),
       );
     });
 
@@ -40,7 +38,7 @@ main() {
       expect(scale.state.ticks.length, 3);
       expect(scale.state.ticks, [
         DateTime.fromMillisecondsSinceEpoch(1441296000000),
-        DateTime.fromMillisecondsSinceEpoch(1442937600000),
+        DateTime.fromMillisecondsSinceEpoch(1445572800000),
         DateTime.fromMillisecondsSinceEpoch(1449849600000),
       ]);
     });
@@ -51,39 +49,27 @@ main() {
       final dateFormat = DateFormat(mask);
       expect(
         scale.getText(ticks[1]),
-        dateFormat.format(DateTime.fromMillisecondsSinceEpoch(1442937600000)),
+        dateFormat.format(DateTime.fromMillisecondsSinceEpoch(1445572800000)),
       );
     });
 
     test('set props', () {
       scale.setProps(TimeScale(
         range: [0.2, 0.8],
-        values: [
-          DateTime.fromMillisecondsSinceEpoch(1442937600000),
-          DateTime.fromMillisecondsSinceEpoch(1441296000000),
-          DateTime.fromMillisecondsSinceEpoch(1449849600000),
-          DateTime.fromMillisecondsSinceEpoch(1359648000000),
-          DateTime.fromMillisecondsSinceEpoch(1362326400000),
-          DateTime.fromMillisecondsSinceEpoch(1443024000000),
-        ]
+        min: DateTime.fromMillisecondsSinceEpoch(1445572800000),
+        max: DateTime.fromMillisecondsSinceEpoch(1449849600000),
       ));
       expect(
-        scale.invert(scale.scale(DateTime.fromMillisecondsSinceEpoch(1442937600000))),
-        DateTime.fromMillisecondsSinceEpoch(1442937600000),
+        scale.invert(scale.scale(DateTime.fromMillisecondsSinceEpoch(1445572800000))),
+        DateTime.fromMillisecondsSinceEpoch(1445572800000),
       );
     });
 
     test('set props with itcks', () {
       scale.setProps(TimeScale(
         range: [0.2, 0.8],
-        values: [
-          DateTime.fromMillisecondsSinceEpoch(1442937600000),
-          DateTime.fromMillisecondsSinceEpoch(1441296000000),
-          DateTime.fromMillisecondsSinceEpoch(1449849600000),
-          DateTime.fromMillisecondsSinceEpoch(1359648000000),
-          DateTime.fromMillisecondsSinceEpoch(1362326400000),
-          DateTime.fromMillisecondsSinceEpoch(1443024000000),
-        ],
+        min: DateTime.fromMillisecondsSinceEpoch(1442937600000),
+        max: DateTime.fromMillisecondsSinceEpoch(1443024000000),
         ticks: [
           DateTime.fromMillisecondsSinceEpoch(1442937600000),
           DateTime.fromMillisecondsSinceEpoch(1443024000000),
@@ -93,30 +79,14 @@ main() {
     });
 
     test('scale formatter', () {
-      final scale = DateTimeOrdinalScaleComponent(TimeScale(
-      values: [
-        DateTime.fromMillisecondsSinceEpoch(1519084800000),
-        DateTime.fromMillisecondsSinceEpoch(1519171200000),
-        DateTime.fromMillisecondsSinceEpoch(1519257600000),
-      ],
-      formatter: (val) => 'time is ' + val.millisecondsSinceEpoch.toString(),
-      isSorted: true,
-    ));
+      final scale = TimeScaleComponent(TimeScale(
+        min: DateTime.fromMillisecondsSinceEpoch(1519084800000),
+        max: DateTime.fromMillisecondsSinceEpoch(1519257600000),
+        formatter: (val) => 'time is ' + val.millisecondsSinceEpoch.toString(),
+      ));
       
       final text = scale.getText(DateTime.fromMillisecondsSinceEpoch(1519084800000));
       expect(text, 'time is 1519084800000');
-    });
-
-    test('scale scale a value not in scale values', () {
-      final scale = DateTimeOrdinalScaleComponent(TimeScale(
-      values: [
-        DateTime.fromMillisecondsSinceEpoch(1519084800000),
-        DateTime.fromMillisecondsSinceEpoch(1519171200000),
-        DateTime.fromMillisecondsSinceEpoch(1519257600000),
-      ],
-    ));
-      final scaledValue = scale.scale(DateTime.fromMillisecondsSinceEpoch(1441296000000));
-      expect(scaledValue, null);
     });
   });
 }

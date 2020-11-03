@@ -40,7 +40,7 @@ class PositionAttrComponent
   PositionAttrComponent([PositionAttr props]) : super(props);
 
   @override
-  PositionAttrState get originalState => PositionAttrState();
+  PositionAttrState createState() => PositionAttrState();
 
   // Only map to abstract position
   @override

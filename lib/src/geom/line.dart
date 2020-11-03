@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:graphic/src/attr/single_linear/color.dart';
 import 'package:graphic/src/attr/single_linear/shape.dart';
 import 'package:graphic/src/attr/single_linear/size.dart';
@@ -7,10 +9,12 @@ import 'package:graphic/src/geom/adjust/base.dart';
 import 'base.dart';
 import 'shape/line.dart';
 
+final _defaultShape = BasicLineShape();
+
 class LineGeom extends Geom {
   LineGeom({
     ColorAttr color,
-    ShapeAttr shape,
+    ShapeAttr<LineShape> shape,
     SizeAttr size,
     PositionAttr position,
     Adjust adjust,
@@ -30,11 +34,30 @@ class LineGeomState<D> extends GeomState<D> {}
 
 class LineGeomComponent<D> extends GeomComponent<LineGeomState<D>, D> {
   @override
-  LineGeomState<D> get originalState => LineGeomState<D>();
+  LineGeomState<D> createState() => LineGeomState<D>();
 
   @override
-  get defaultShape => line;
+  get defaultShape => _defaultShape;
 
   @override
   double get defaultSize => 1;
+
+  @override
+  List<Offset> defaultPositionMapper(List<double> scaledValues) {
+    if (scaledValues == null || scaledValues.isEmpty) {
+      return null;
+    }
+    assert(scaledValues.length == 2);
+
+    return [Offset(
+      scaledValues[0],
+      scaledValues[1],
+    )];
+  }
+
+  @override
+  void initPositionAxisFields(PositionAttrComponent attrComponent) {
+    attrComponent.state.xFields = Set()..add(attrComponent.state.fields[0]);
+    attrComponent.state.yFields = Set()..add(attrComponent.state.fields[1]);
+  }
 }

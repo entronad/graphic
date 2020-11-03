@@ -87,7 +87,7 @@ class SectorRenderShapeComponent
   SectorRenderShapeComponent([SectorRenderShape props]) : super(props);
 
   @override
-  SectorRenderShapeState get originalState => SectorRenderShapeState();
+  SectorRenderShapeState createState() => SectorRenderShapeState();
 
   @override
   void initDefaultState() {

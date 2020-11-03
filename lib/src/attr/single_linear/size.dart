@@ -28,7 +28,7 @@ class SizeSingleLinearAttrComponent
   SizeSingleLinearAttrComponent([SizeAttr props]) : super(props);
 
    @override
-  SizeSingleLinearAttrState get originalState => SizeSingleLinearAttrState();
+  SizeSingleLinearAttrState createState() => SizeSingleLinearAttrState();
 
   @override
   double lerp(double a, double b, double t) =>

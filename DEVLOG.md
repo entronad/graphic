@@ -1092,5 +1092,122 @@ pie在没有 summary.proportion() 的情况下不可能按照gg的思路来，�
 
 
 
+# google/charts
+
+可能颜色是需要一个palette的，以处理默认的选中行为
+
+它其中居于核心地位的 series 也有一部分属性是通过类似于TypedMap的 TypedRegistry保存的
+
+选择分为两种，是否byDomain，scatter等适合通过图形选择
+
+事件分为 gesture 和 lifecycle
+
+生命周期分为：
+
+onData
+
+onPreprocess
+
+onPostprocess
+
+onAxisConfigured
+
+onPostrender
+
+onAnimationComplete
+
+只有当series list或者其他configuration变化时，触发了_chartState.configurationChanged，才会 reprocess series, 否则只会要求 repainting
+
+召唤重绘分为：
+
+requestRedraw  好像没什么用
+
+requestAnimation
+
+requestRebuild   它的触发方式是setState(() {});
+
+requestPaint   通过markNeedsPaint实现，它好像是一个很好的机制，似乎会重绘图形，但不会导致重绘组件，现在graphic的更新是依靠setState和每次生成新painter来的，今后可能可以通过重写RenderObject来优化
+
+其中requestRebuild似乎与其中内置的widget有关，比如legend；为处理渲染生命周期，使用了 SchedulerBinding
 
 
+
+# 0.3
+
+规定style的类型：
+
+PaintStyle：geom，background，tooltip/legend symbol, anno-region
+
+LineStyle: tickline, tick, grid, anno-line
+
+TextStyle: ticktext, tooltip/legengd text
+
+其中要添加“相对渐变属性”
+
+需用通过drawShadow添加阴影属性
+
+图形元素可添加style，它的指定优先级高于attr，因为它的指定更具体、特殊
+
+
+
+需要确定一个生命周期
+
+处理过程：
+
+diff: 当组件更新时，比对参数是否发生变化，参数分为data和spec，data只要不是原来的实例就认为变化了，spec会进行diff
+
+process: 从data、spec计算ElementRecord等重要中间状态，一般由外部变化引起，内部变化不会导致，是主要的计算负担。内部事件导致的某些中间状态重新计算也属于此过程，但不会导致全部重新执行process
+
+render: 从重要中间状态获取或修改RenderShape，
+
+paint: painter执行paint过程中调用 renderer树中各节点的paint函数
+
+draw：指RenderShape的paint函数中调用的具体绘制方法
+
+
+
+selection 状态只会影响 style ，style的环节应该在process之后，render之前，即 selection 交互不会 reProcess
+
+
+
+null值处理
+
+注意null值处理仅针对作为position的值，用作分组、其它attr的值为null可能导致异常
+
+分组不做额外的null值处理
+
+scale输入为null返回null
+
+所有attr中除了position不做额外的null值处理
+
+position中也不做额外的处理，~~遇到为null的值，对应的point的x或y会为null~~ 注意由于Offset 的xy不能为null，因此将y元素为null的情况暂用nan代替，这样似乎也不要isValid了
+
+adjust中的null视为处于origin
+
+shape绘制中进行判断，area、line中进行切断分组，其它中对应的图元不画
+
+注意null值处理仅针对值域（measure）不针对定义域（domain）
+
+还要处理nan的情况，统称为 invalid，通过 null 和 isFinit 判断，就不额外写函数了
+
+处理invalid的类型枚举称为 invalidFix
+
+计算机特别是图形学中lerp更常用，dart语言中也是用的lerp
+
+注意对nan的情况只有在adjust和shape中才开始用到
+
+目前暂定，为方便序号对应，每个record对应一个shape，invalid的时候放入一个null或高为0的shape
+
+zero和lerp两种情况就不放在shape中做了，用户自己或将来的static中做
+
+
+
+line/area重排序
+
+基于性能考虑，line/area不进行重排，用户需自己保证x顺序正确
+
+K线图比较复杂，就先暂时不搞了
+
+
+
+由于目前engine不支持null节点，所以invald y的图元不添加null，先改为不添加，图元不一定与record一一对应

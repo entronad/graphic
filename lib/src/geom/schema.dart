@@ -9,7 +9,7 @@ import 'package:graphic/src/geom/adjust/base.dart';
 import 'base.dart';
 import 'shape/schema.dart';
 
-final _defaultShape = CandlestickShape();
+final _defaultShape = BoxShape();
 
 class SchemaGeom extends Geom {
   SchemaGeom({
@@ -53,7 +53,7 @@ class SchemaGeomComponent<D> extends GeomComponent<SchemaGeomState<D>, D> {
 
     // x*y0*y1*y2 => [(x, y0), (x, y1), (x, y2)]
     for (var i = 1; i < scaledValues.length; i++) {
-      rst.add(Offset(scaledValues[0], scaledValues[i]));
+      rst.add(Offset(scaledValues[0], scaledValues[i] ?? double.nan));
     }
 
     return rst;

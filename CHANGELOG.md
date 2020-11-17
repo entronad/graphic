@@ -1,3 +1,10 @@
+## 0.2.1
+
+**2020-11-17**
+
+- Add invalid datum handling. Now if datum has invlid y values(null, NaN, Infinity), processions will handle correctly and line/area shape will have a break at that point.
+- Add big data examples.
+
 ## 0.2.0
 
 **2020-11-03**

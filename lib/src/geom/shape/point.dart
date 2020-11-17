@@ -7,6 +7,7 @@ import 'package:graphic/src/engine/render_shape/base.dart';
 import 'package:graphic/src/engine/render_shape/polygon.dart';
 import 'package:graphic/src/engine/render_shape/circle.dart';
 import 'package:graphic/src/engine/render_shape/rect.dart';
+import 'package:graphic/src/util/math.dart';
 
 import 'base.dart';
 import '../base.dart';
@@ -32,6 +33,11 @@ class CircleShape extends PointShape {
 
     for (var record in records) {
       var point = record.position.first;
+
+      if (!isValid(point.dy)) {
+        continue;
+      }
+
       final size = record.size;
       final color = record.color;
       
@@ -74,6 +80,11 @@ class SquareShape extends PointShape {
 
   for (var record in records) {
     var point = record.position.first;
+
+    if (!isValid(point.dy)) {
+      continue;
+    }
+
     final size = record.size;
     final color = record.color;
     
@@ -111,6 +122,7 @@ class TileShape extends PointShape {
     CoordComponent coord,
     Offset origin,
   ) {
+    // For tile shape, both x and y must be valid.
     var stepX = double.infinity;
     var stepY = double.infinity;
     for (var i = 0; i < records.length - 1; i++) {

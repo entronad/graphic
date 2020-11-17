@@ -38,7 +38,7 @@ export 'src/geom/shape/area.dart' show AreaShape, BasicAreaShape;
 export 'src/geom/shape/interval.dart' show IntervalShape, RectShape, PyramidShape, FunnelShape;
 export 'src/geom/shape/line.dart' show LineShape, BasicLineShape;
 export 'src/geom/shape/point.dart' show PointShape, CircleShape, SquareShape, TileShape;
-export 'src/geom/shape/schema.dart' show SchemaShape, CandlestickShape, BoxShape;
+export 'src/geom/shape/schema.dart' show SchemaShape, BoxShape;
 
 export 'src/geom/base.dart' show Geom, ElementRecord;
 export 'src/geom/area.dart' show AreaGeom;

@@ -28,8 +28,8 @@ class DodgeAdjustComponent extends AdjustComponent<DodgeAdjustState> {
 
   @override
   void adjust(List<List<ElementRecord>> recordsGroup, Offset origin) {
-    var minX = 1.0;
-    var maxX = 0.0;
+    var minX = double.infinity;
+    var maxX = double.negativeInfinity;
     final values = Set();
     for (var records in recordsGroup) {
       for (var record in records) {

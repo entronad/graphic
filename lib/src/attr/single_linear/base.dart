@@ -27,10 +27,8 @@ abstract class SingleLinearAttrComponent<S extends SingleLinearAttrState, A>
 
   @override
   A defaultMapper(List<double> scaledValues) {
-    if (scaledValues == null || scaledValues.isEmpty) {
-      return null;
-    }
     assert(scaledValues.length == 1);
+    
     final ratio = scaledValues.first;
 
     final values = state.values;

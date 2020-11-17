@@ -51,7 +51,7 @@ class PointGeomComponent<D> extends GeomComponent<PointGeomState<D>, D> {
 
     return [Offset(
       scaledValues[0],
-      scaledValues[1],
+      scaledValues[1] ?? double.nan,
     )];
   }
 

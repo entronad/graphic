@@ -5,6 +5,7 @@ import 'pages/interval_page.dart';
 import 'pages/line_area_page.dart';
 import 'pages/point_polygon_schema_page.dart';
 import 'pages/custom_shape_page.dart';
+import 'pages/big_data_page.dart';
 
 final routes = {
   '/': (context) => HomePage(),
@@ -12,6 +13,7 @@ final routes = {
   '/demos/Line, Area': (context) => LineAreaPage(),
   '/demos/Point, Polygon, Schema': (context) => PointPolygonSchemaPage(),
   '/demos/Custom Shape': (context) => CustomShapePage(),
+  '/demos/Big Data': (context) => BigDataPage(),
 };
 
 class MyApp extends StatelessWidget {

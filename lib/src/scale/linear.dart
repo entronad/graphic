@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:meta/meta.dart';
 import 'package:graphic/src/coord/base.dart';
+import 'package:graphic/src/util/math.dart';
 
 import 'base.dart';
 import 'auto_ticks/num.dart';
@@ -55,7 +56,7 @@ class LinearScale<D> extends Scale<num, D> {
   void complete(List<D> data, CoordComponent coord) {
     if (this['max'] == null || this['min'] == null) {
       final accessor = this['accessor'] as num Function(D);
-      final values = data.map(accessor).toList();
+      final values = data.map(accessor).where((value) => isValid(value)).toList();
       final maxValue = values.reduce(max);
       final minValue = values.reduce(min);
       if (minValue > 0) {

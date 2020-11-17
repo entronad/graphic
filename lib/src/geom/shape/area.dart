@@ -5,6 +5,7 @@ import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/engine/render_shape/base.dart';
 import 'package:graphic/src/engine/render_shape/custom.dart';
 import 'package:graphic/src/engine/util/smooth.dart' as smooth_util;
+import 'package:graphic/src/util/math.dart';
 
 import 'base.dart';
 import '../base.dart';
@@ -34,71 +35,100 @@ class BasicAreaShape extends AreaShape {
     final firstRecord = records.first;
     final color = firstRecord.color;
 
-    final topPoints = <Offset>[];
-    final bottomPoints = <Offset>[];
+    final segments = <List<List<Offset>>>[];
+
+    // Disconnect invalid points
+    var currentSegment = <List<Offset>>[];
     for (var record in records) {
-      topPoints.add(coord.convertPoint(record.position.last));
-      bottomPoints.add(coord.convertPoint(record.position.first));
+      final startPoint = record.position.first;
+      final endPoint = record.position.last;
+      if (isValid(startPoint.dy) && isValid(endPoint.dy)) {
+        currentSegment.add(record.position);
+      } else if (currentSegment.isNotEmpty) {
+        segments.add(currentSegment);
+        currentSegment = <List<Offset>>[];
+      }
+    }
+    if (currentSegment.isNotEmpty) {
+      segments.add(currentSegment);
     }
 
-    // radar
-    if (coord is PolarCoordComponent) {
-      topPoints.add(topPoints.first);
-      bottomPoints.add(bottomPoints.first);
+    // Rada
+    if (
+      coord is PolarCoordComponent
+        && isValid(records.first.position.first.dy)
+        && isValid(records.first.position.last.dy)
+        && isValid(records.last.position.first.dy)
+        && isValid(records.last.position.last.dy)
+    ) {
+      segments.last.add(segments.first.first);
     }
 
-    final path = Path();
+    final rst = <RenderShape>[];
 
-    path.moveTo(topPoints.first.dx, topPoints.first.dy);
-    if (smooth) {
-      final segments = smooth_util.smooth(
-        topPoints,
-        false,
-        true,
-      );
-      for (var s in segments) {
-        path.cubicTo(
-          s.cp1.dx,
-          s.cp1.dy,
-          s.cp2.dx,
-          s.cp2.dy,
-          s.p.dx,
-          s.p.dy
+    for (var segment in segments) {
+      final topPoints = <Offset>[];
+      final bottomPoints = <Offset>[];
+      for (var position in segment) {
+        topPoints.add(coord.convertPoint(position.last));
+        bottomPoints.add(coord.convertPoint(position.first));
+      }
+
+      final path = Path();
+
+      path.moveTo(topPoints.first.dx, topPoints.first.dy);
+      if (smooth) {
+        final segments = smooth_util.smooth(
+          topPoints,
+          false,
+          true,
         );
+        for (var s in segments) {
+          path.cubicTo(
+            s.cp1.dx,
+            s.cp1.dy,
+            s.cp2.dx,
+            s.cp2.dy,
+            s.p.dx,
+            s.p.dy
+          );
+        }
+      } else {
+        for (var point in topPoints) {
+          path.lineTo(point.dx, point.dy);
+        }
       }
-    } else {
-      for (var point in topPoints) {
-        path.lineTo(point.dx, point.dy);
-      }
-    }
-    path.lineTo(bottomPoints.last.dx, bottomPoints.last.dy);
-    final reversedBottomPoints = bottomPoints.reversed.toList();
-    if (smooth) {
-      final segments = smooth_util.smooth(
-        reversedBottomPoints,
-        false,
-        true,
-      );
-      for (var s in segments) {
-        path.cubicTo(
-          s.cp1.dx,
-          s.cp1.dy,
-          s.cp2.dx,
-          s.cp2.dy,
-          s.p.dx,
-          s.p.dy
+      path.lineTo(bottomPoints.last.dx, bottomPoints.last.dy);
+      final reversedBottomPoints = bottomPoints.reversed.toList();
+      if (smooth) {
+        final segments = smooth_util.smooth(
+          reversedBottomPoints,
+          false,
+          true,
         );
+        for (var s in segments) {
+          path.cubicTo(
+            s.cp1.dx,
+            s.cp1.dy,
+            s.cp2.dx,
+            s.cp2.dy,
+            s.p.dx,
+            s.p.dy
+          );
+        }
+      } else {
+        for (var point in reversedBottomPoints) {
+          path.lineTo(point.dx, point.dy);
+        }
       }
-    } else {
-      for (var point in reversedBottomPoints) {
-        path.lineTo(point.dx, point.dy);
-      }
-    }
-    path.close();
+      path.close();
 
-    return [CustomRenderShape(
-      path: path,
-      color: color,
-    )];
+      rst.add(CustomRenderShape(
+        path: path,
+        color: color,
+      ));
+    }
+
+    return rst;
   }
 }

@@ -56,13 +56,13 @@ class AreaGeomComponent<D> extends GeomComponent<AreaGeomState<D>, D> {
     switch (scaledValues.length) {
       case 2:
         return [
-          Offset(scaledValues[0], singleYOrigin),
-          Offset(scaledValues[0], scaledValues[1]),
+          Offset(scaledValues[0], singleYOrigin ?? double.nan),
+          Offset(scaledValues[0], scaledValues[1] ?? double.nan),
         ];
       case 3:
         return [
-          Offset(scaledValues[0], scaledValues[1]),
-          Offset(scaledValues[0], scaledValues[2]),
+          Offset(scaledValues[0], scaledValues[1] ?? double.nan),
+          Offset(scaledValues[0], scaledValues[2] ?? double.nan),
         ];
       default:
         throw Exception('Area position fields must be 2, or 3');

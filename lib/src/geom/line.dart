@@ -51,7 +51,7 @@ class LineGeomComponent<D> extends GeomComponent<LineGeomState<D>, D> {
 
     return [Offset(
       scaledValues[0],
-      scaledValues[1],
+      scaledValues[1] ?? double.nan,
     )];
   }
 

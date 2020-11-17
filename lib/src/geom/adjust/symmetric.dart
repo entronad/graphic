@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'dart:math';
 
+import 'package:graphic/src/util/math.dart';
+
 import 'base.dart';
 import '../base.dart';
 
@@ -31,8 +33,11 @@ class SymmetricAdjustComponent extends AdjustComponent<SymmetricAdjustState> {
         var maxY = double.negativeInfinity;
         var minY = double.infinity;
         for (var point in originalPosition) {
-          maxY = max(maxY, point.dy);
-          minY = min(minY, point.dy);
+          final y = point.dy;
+          if (isValid(y)) {
+            maxY = max(maxY, y);
+            minY = min(minY, y);
+          }
         }
 
         final offsetY = originY - (minY + maxY) / 2;

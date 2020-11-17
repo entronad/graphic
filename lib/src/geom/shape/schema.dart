@@ -10,40 +10,6 @@ import '../base.dart';
 
 abstract class SchemaShape extends Shape {}
 
-// position: [star, end, max, min]
-Path _candlestickElementPath(
-  List<Offset> renderPosition,
-  double size,
-  CoordComponent coord,
-) {
-  assert(
-    !coord.state.transposed,
-    'Do not transpose candlestick chart',
-  );
-
-  final path = Path();
-
-  final bias = size / 2;
-  final x = renderPosition.first.dx;
-  final ys = renderPosition.map((point) => point.dy).toList()..sort();
-  final top = ys[0];
-  final topEdge = ys[1];
-  final bottomEdge = ys[2];
-  final bottom = ys[3];
-  
-  path.moveTo(x, top);
-  path.lineTo(x, topEdge);
-  path.moveTo(x, bottomEdge);
-  path.lineTo(x, bottom);
-
-  path.addRect(Rect.fromPoints(
-    Offset(x - bias, topEdge),
-    Offset(x + bias, bottomEdge),
-  ));
-
-  return path;
-}
-
 // position: [min, q1, median, q3, max]
 Path _boxElementPath(
   List<Offset> renderPosition,
@@ -222,6 +188,7 @@ List<RenderShape> _cartesianSchema(
     double size,
     CoordComponent coord,
   ) elementPath,
+  double strokeWidth,
 ) {
   assert(
     coord is CartesianCoordComponent,
@@ -256,33 +223,12 @@ List<RenderShape> _cartesianSchema(
     rst.add(CustomRenderShape(
       path: path,
       style: PaintingStyle.stroke,
-      strokeWidth: 1,
+      strokeWidth: strokeWidth,
       color: color,
     ));
   }
 
   return rst;
-}
-
-class CandlestickShape extends SchemaShape {
-  CandlestickShape({
-    this.hollow = true,
-    this.strokeWidth = 1,
-    this.increasingColor = const Color(0xff00ff00),
-    this.decreasingColor = const Color(0xffff0000),
-  });
-
-  final bool hollow;
-  final double strokeWidth;
-  final Color increasingColor;
-  final Color decreasingColor;
-
-  @override
-  List<RenderShape> getRenderShape(
-    List<ElementRecord> records,
-    CoordComponent coord,
-    Offset origin,
-  ) => _cartesianSchema(records, coord, _candlestickElementPath);
 }
 
 class BoxShape extends SchemaShape {
@@ -297,5 +243,5 @@ class BoxShape extends SchemaShape {
     List<ElementRecord> records,
     CoordComponent coord,
     Offset origin,
-  ) => _cartesianSchema(records, coord, _boxElementPath);
+  ) => _cartesianSchema(records, coord, _boxElementPath, strokeWidth);
 }

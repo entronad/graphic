@@ -8,6 +8,7 @@ import 'package:graphic/src/engine/render_shape/rect.dart';
 import 'package:graphic/src/engine/render_shape/sector.dart';
 import 'package:graphic/src/engine/render_shape/polygon.dart';
 import 'package:graphic/src/util/list.dart';
+import 'package:graphic/src/util/math.dart';
 
 import '../base.dart';
 import 'base.dart';
@@ -111,7 +112,14 @@ class RectShape extends IntervalShape {
         // Pie
 
         final rangeYs = records.map(
-          (record) => record.position.last.dy - record.position.first.dy
+          (record) {
+            final startY = record.position.first.dy;
+            final endY = record.position.last.dy;
+            // check valid
+            return (isValid(startY) && isValid(endY))
+              ? record.position.last.dy - record.position.first.dy
+              : 0;
+          },
         ).toList();
         final totalScaledY = rangeYs.reduce((a, b) => a + b);
         var preAngle = startAngle;
@@ -140,6 +148,11 @@ class RectShape extends IntervalShape {
           final record = records[i];
           final startY = record.position.first.dy;
           final endY = record.position.last.dy;
+
+          if (!isValid(startY) || !isValid(endY)) {
+            continue;
+          }
+
           final startX = record.position.first.dx;
           final endX = get(records, i + 1)?.position?.first?.dx ?? 1.0;
           final color = record.color;
@@ -178,6 +191,13 @@ class RectShape extends IntervalShape {
 
       for (var i = 0; i < records.length; i++) {
         final record = records[i];
+        final startY = record.position.first.dy;
+        final endY = record.position.last.dy;
+
+        if (!isValid(startY) || !isValid(endY)) {
+          continue;
+        }
+        
         final startPoint = coord.convertPoint(record.position.first);
         final endPoint = coord.convertPoint(record.position.last);
         final color = record.color;

@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:graphic/src/util/math.dart';
+
 import 'base.dart';
 import '../base.dart';
 
@@ -30,14 +32,18 @@ class StackAdjustComponent extends AdjustComponent<StackAdjustState> {
         final position = records[j].position;
         final prePosition = preRecords[j].position;
 
-        final preTop = prePosition.reduce(
-          (a, b) => (a.dy - originY).abs() >= (b.dy - originY).abs() ? a : b
-        );
+        var preTopY = originY;
+        for (var point in prePosition) {
+          final y = point.dy;
+          if (isValid(y)) {
+            preTopY = (preTopY - originY).abs() >= (y - originY).abs() ? preTopY : y;
+          }
+        }
 
         for (var k = 0; k < position.length; k++) {
           position[k] = Offset(
             position[k].dx,
-            position[k].dy + (preTop.dy - originY),
+            position[k].dy + (preTopY - originY),
           );
         }
       }

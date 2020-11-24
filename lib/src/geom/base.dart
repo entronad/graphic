@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:graphic/src/attr/single_linear/base.dart';
@@ -213,9 +212,14 @@ abstract class GeomComponent<S extends GeomState<D>, D>
     final renderShapes = _getRenderShapes();
     for (var i = renderShapes.length - 1; i >= 0; i--) {
       final renderShape = renderShapes[i];
-      final plot = state.chart.state.middlePlot;
-      final component = plot.addShape(renderShape);
-      _shapeComponents.add(component);
+      // renderShape may be null, but that will not add to engine
+      if (renderShape != null) {
+        final plot = state.chart.state.middlePlot;
+        final component = plot.addShape(renderShape);
+        _shapeComponents.add(component);
+      } else {
+        _shapeComponents.add(null);
+      }
     }
   }
 

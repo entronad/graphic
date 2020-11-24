@@ -10,6 +10,13 @@ mixin TypedMap {
     return this;
   }
 
+  TypedMap mixMap(Map<String, Object> src) {
+    if (src != null) {
+      _map.addAll(src);
+    }
+    return this;
+  }
+
   TypedMap deepMix(
     TypedMap src,
     {int maxLevel = map_util.defaultDeepMixMaxLevel,

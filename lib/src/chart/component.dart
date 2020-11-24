@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/widgets.dart' hide Axis;
-import 'package:graphic/src/attr/position.dart';
 import 'package:graphic/src/common/typed_map.dart';
 import 'package:graphic/src/common/base_classes.dart';
 import 'package:graphic/src/engine/group.dart';
@@ -18,8 +17,11 @@ import 'package:graphic/src/axis/vertical.dart';
 import 'package:graphic/src/geom/base.dart';
 import 'package:graphic/src/geom/adjust/base.dart';
 import 'package:graphic/src/defaults.dart';
+import 'package:graphic/src/interaction/gesture_arena.dart';
+import 'package:graphic/src/interaction/interaction.dart';
 
 import 'theme.dart';
+import 'chart.dart';
 
 class ChartProps<D> with TypedMap {
   Size get size => this['size'] as Size;
@@ -48,6 +50,9 @@ class ChartProps<D> with TypedMap {
 
   Map<String, Axis> get axes => this['axes'] as Map<String, Axis>;
   set axes(Map<String, Axis> value) => this['axes'] = value;
+
+  List<ChartInteraction> get interactions => this['interactions'] as List<ChartInteraction>;
+  set interactions(List<ChartInteraction> value) => this['interactions'] = value;
 }
 
 class ChartState<D> with TypedMap {
@@ -92,6 +97,12 @@ class ChartState<D> with TypedMap {
 }
 
 class ChartComponent<D> extends Component<ChartState<D>> {
+  ChartComponent(this.container);
+  
+  final ChartContainer container;
+
+  final GestureArena gestureArena = GestureArena();
+
   @override
   ChartState<D> createState() => ChartState<D>();
 
@@ -113,7 +124,31 @@ class ChartComponent<D> extends Component<ChartState<D>> {
       ..yAxes = {};
   }
 
+  // exposed require methods
+
+  void initProps(ChartProps props) {
+    _setProps(props);
+    _process();
+  }
+
   void setProps(ChartProps props) {
+    _setProps(props);
+    _process();
+    repaint();
+  }
+
+  void reprocess() {
+    _process();
+    repaint();
+  }
+
+  void repaint() {
+    container.rebuild();
+  }
+
+  // lifecircle methods
+
+  void _setProps(ChartProps props) {
     _setTheme(props.theme);
     _setData(props.data);
     _setCoord(
@@ -132,8 +167,19 @@ class ChartComponent<D> extends Component<ChartState<D>> {
       state.xFields,
       state.yFields,
     );
+    _setInteractions(props.interactions);
+  }
 
-    _render();
+  void _process() {
+    for (var axis in state.xAxes.values) {
+      axis.render();
+    }
+    for (var axis in state.yAxes.values) {
+      axis.render();
+    }
+    for (var geom in state.geoms) {
+      geom.render();
+    }
   }
 
   void _setTheme(Theme theme) {
@@ -283,15 +329,19 @@ class ChartComponent<D> extends Component<ChartState<D>> {
     }
   }
 
-  void _render() {
-    for (var axis in state.xAxes.values) {
-      axis.render();
+  void _setInteractions(List<ChartInteraction> interactions) {
+    // can only replace all, not mix
+    gestureArena.off();
+
+    if (interactions == null || interactions.isEmpty) {
+      return;
     }
-    for (var axis in state.yAxes.values) {
-      axis.render();
-    }
-    for (var geom in state.geoms) {
-      geom.render();
+
+    for (var interaction in interactions) {
+      gestureArena.on(
+        interaction.type,
+        (event) { interaction.callback(event, this); },
+      );
     }
   }
 }

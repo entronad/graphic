@@ -4,6 +4,8 @@ import 'package:flutter/painting.dart' hide Axis;
 import 'package:graphic/src/chart/theme.dart';
 import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/axis/base.dart';
+import 'package:graphic/src/interaction/interaction.dart';
+import 'package:graphic/src/interaction/defaults.dart' as interaction_defaults;
 
 const lineColor = Color(0xffe8e8e8);
 const textColor = Color(0xff808080);
@@ -44,4 +46,7 @@ abstract class Defaults {
     label: AxisLabel(style: TextStyle(fontSize: 10, color: textColor)),
     grid: AxisGrid(style: LineStyle(color: lineColor)),
   );
+
+  static ChartInteraction xPaning = interaction_defaults.xPaning;
+  static ChartInteraction xScaling = interaction_defaults.xScaling;
 }

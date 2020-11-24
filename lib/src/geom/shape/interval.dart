@@ -150,6 +150,7 @@ class RectShape extends IntervalShape {
           final endY = record.position.last.dy;
 
           if (!isValid(startY) || !isValid(endY)) {
+            rst.add(null);
             continue;
           }
 
@@ -195,6 +196,7 @@ class RectShape extends IntervalShape {
         final endY = record.position.last.dy;
 
         if (!isValid(startY) || !isValid(endY)) {
+          rst.add(null);
           continue;
         }
         

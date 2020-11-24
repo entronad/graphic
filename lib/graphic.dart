@@ -49,7 +49,11 @@ export 'src/geom/schema.dart' show SchemaGeom;
 
 export 'src/axis/base.dart' show Axis, AxisLine, AxisTickLine, AxisGrid, AxisLabel;
 
+export 'src/interaction/gesture_arena.dart' show GestureType, GestureEvent;
+export 'src/interaction/interaction.dart' show ChartInteraction;
+
 export 'src/chart/chart.dart' show Chart;
+export 'src/chart/component.dart' show ChartComponent;
 export 'src/chart/theme.dart' show Theme;
 
 export 'src/defaults.dart' show Defaults;

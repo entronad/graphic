@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'home.dart';
-import 'pages/render_shape_page.dart';
-import 'pages/geom_page.dart';
-import 'pages/axis_page.dart';
 import 'pages/chart_page.dart';
 import 'pages/adjust_page.dart';
 import 'pages/shape_page.dart';
@@ -11,9 +8,6 @@ import 'pages/invalid_page.dart';
 
 final routes = {
   '/': (context) => HomePage(),
-  '/demos/render_shape': (context) => RenderShapePage(),
-  '/demos/geom': (context) => GeomPage(),
-  '/demos/axis': (context) => AxisPage(),
   '/demos/chart': (context) => ChartPage(),
   '/demos/adjust': (context) => AdjustPage(),
   '/demos/shape': (context) => ShapePage(),

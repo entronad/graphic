@@ -1210,4 +1210,58 @@ K线图比较复杂，就先暂时不搞了
 
 
 
-由于目前engine不支持null节点，所以invald y的图元不添加null，先改为不添加，图元不一定与record一一对应
+由于目前engine不支持null节点，~~所以invald y的图元不添加null，先改为不添加，图元不一定与record一一对应~~ 在getRenderShape中null是要占位的，只是在geom的“render”过程中判断不是null才挂到engine上
+
+
+
+f2中pan和pinch移动图表好像是靠影响scale来处理的
+
+高效的渲染引擎点击事件似乎可以采取点击的坐标从renderPoint 转换为abstractPoint，然后通过其中的 scaledValue进行对比的方式，即点击的定义和判断，完全在scaledValue这个抽象层面进行，scaledValue是整个系统最重要的中枢。
+
+
+
+注意state自身调用setState引起的更新，只会调用 build 而不会调用 didUpdateWidget，而 chartComponent 是持久化的，因此可将 didUpdateWidget，作为输出参数变化的判断入口调用diff，而 setState 作为内部引起的repaint 触发器，不会引起 diff，chart widget 整体作为“图表配置对象”
+
+
+
+绘制大数据点图时，有没有变化的 color、size时间差别不大，说明attr的计算不是主要瓶颈，可能是因为每次addShape都要sort引起的？但是数据影响又不大
+
+
+
+缩减 engine的作用，使其仅提供paint方法，将 Painter系列的东西放到chart中，repaint交给ChartComponent
+
+感觉 GestureArena已经起到了EventEmmiter的作用，不需要再加一层了
+
+可能逐渐考虑将一些不是状态的、一一对应的东西不放在State中了
+
+
+
+全用canvas的好处，可获得所见即所得的位图
+
+
+
+因为 scale、pan涉及到动scale，所以还是要 reprocess 的，
+
+过程分为两个
+
+_setProps
+
+_process
+
+对外暴露
+
+initProps
+
+setProps
+
+reprocess
+
+repaint
+
+
+
+需要把所有setProps的地方统一搞一下，由于state是否重置等问题比较复杂，对于这类问题，将原先的state拷贝一遍再行修改，先搞个 updateState函数处理一下
+
+
+
+关于scale，由于ScaleUpdateDetai中的值都是带有绝对值的，所以当有两指时哪个减哪个并不重要，依然将focal定义为不动的那个手指，则一定有动focal和move两个手指，定义他们的差为offset

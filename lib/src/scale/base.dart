@@ -71,6 +71,11 @@ abstract class ScaleComponent<S extends ScaleState<V, D>, V, D> extends Componen
     assign();
   }
 
+  void updateState(Map<String, Object> stateMap) {
+    state.mixMap(stateMap);
+    assign();
+  }
+
   // subclass must assign ticks.
   @protected
   void assign();

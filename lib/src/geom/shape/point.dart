@@ -35,6 +35,7 @@ class CircleShape extends PointShape {
       var point = record.position.first;
 
       if (!isValid(point.dy)) {
+        rst.add(null);
         continue;
       }
 
@@ -82,6 +83,7 @@ class SquareShape extends PointShape {
     var point = record.position.first;
 
     if (!isValid(point.dy)) {
+      rst.add(null);
       continue;
     }
 

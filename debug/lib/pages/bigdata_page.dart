@@ -3,24 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart' as graphic;
 
-List<List<num>> getLineBigData(int n) {
-  final rdm = Random();
-
-  final rst = <List<num>>[];
-  var current = 0.0; 
-  for (var i = 0; i < n; i++) {
-    current = current + rdm.nextDouble() - 0.5;
-    rst.add([
-      i,
-      current,
-    ]);
-  }
-
-  return rst;
-}
-
-final lineBigData = getLineBigData(10000);
-
 List<List<num>> getPointBigData(int n) {
   final rdm = Random();
 
@@ -37,7 +19,7 @@ List<List<num>> getPointBigData(int n) {
   return rst;
 }
 
-final pointBigData = getPointBigData(10000);
+final pointBigData = getPointBigData(50000);
 
 class BigDataPage extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -54,46 +36,46 @@ class BigDataPage extends StatelessWidget {
         child: Center(
           child: Column(
             children: <Widget>[
-              Padding(
-                child: Text('10,000 Items Line and Area', style: TextStyle(fontSize: 20)),
-                padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
-              ),
-              Container(
-                width: 350,
-                height: 300,
-                child: graphic.Chart(
-                  data: lineBigData,
-                  scales: {
-                    'domain': graphic.LinearScale(
-                      accessor: (list) => list.first,
-                    ),
-                    'measure': graphic.LinearScale(
-                      accessor: (list) => list.last,
-                    )
-                  },
-                  geoms: [
-                    graphic.AreaGeom(
-                      position: graphic.PositionAttr(field: 'domain*measure'),
-                      shape: graphic.ShapeAttr(values: [graphic.BasicAreaShape()]),
-                      color: graphic.ColorAttr(values: [
-                        graphic.Defaults.theme.colors.first.withAlpha(80),
-                      ]),
-                    ),
-                    graphic.LineGeom(
-                      position: graphic.PositionAttr(field: 'domain*measure'),
-                      shape: graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
-                      size: graphic.SizeAttr(values: [0.5]),
-                    ),
-                  ],
-                  axes: {
-                    'domain': graphic.Defaults.horizontalAxis,
-                    'measure': graphic.Defaults.verticalAxis,
-                  },
-                ),
-              ),
+              // Padding(
+              //   child: Text('10,000 Items Line and Area', style: TextStyle(fontSize: 20)),
+              //   padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
+              // ),
+              // Container(
+              //   width: 350,
+              //   height: 300,
+              //   child: graphic.Chart(
+              //     data: lineBigData,
+              //     scales: {
+              //       'domain': graphic.LinearScale(
+              //         accessor: (list) => list.first,
+              //       ),
+              //       'measure': graphic.LinearScale(
+              //         accessor: (list) => list.last,
+              //       )
+              //     },
+              //     geoms: [
+              //       graphic.AreaGeom(
+              //         position: graphic.PositionAttr(field: 'domain*measure'),
+              //         shape: graphic.ShapeAttr(values: [graphic.BasicAreaShape()]),
+              //         color: graphic.ColorAttr(values: [
+              //           graphic.Defaults.theme.colors.first.withAlpha(80),
+              //         ]),
+              //       ),
+              //       graphic.LineGeom(
+              //         position: graphic.PositionAttr(field: 'domain*measure'),
+              //         shape: graphic.ShapeAttr(values: [graphic.BasicLineShape(smooth: true)]),
+              //         size: graphic.SizeAttr(values: [0.5]),
+              //       ),
+              //     ],
+              //     axes: {
+              //       'domain': graphic.Defaults.horizontalAxis,
+              //       'measure': graphic.Defaults.verticalAxis,
+              //     },
+              //   ),
+              // ),
 
               Padding(
-                child: Text('10,000 Points', style: TextStyle(fontSize: 20)),
+                child: Text('Points', style: TextStyle(fontSize: 20)),
                 padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
               ),
               Container(

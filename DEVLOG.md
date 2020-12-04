@@ -1265,3 +1265,45 @@ repaint
 
 
 关于scale，由于ScaleUpdateDetai中的值都是带有绝对值的，所以当有两指时哪个减哪个并不重要，依然将focal定义为不动的那个手指，则一定有动focal和move两个手指，定义他们的差为offset
+
+
+
+还是要有一个render的过程的，用来生成、更新、挂载RenderShape，对应的使用场景就是 geom 的 selection，process和render之间的桥梁就是RenderShapeProps
+
+这样各个可render组件还能保存个中间变量（们）供今后参考使用
+
+这样事件操作的就是RenderShapeProps而不是RenderShapeComponent，selection插在render的过程中
+
+
+
+graffity 可能的一种优化方式是 elementRecord 保存 path 和paint，就相当于现在的 RenderShapeProps，然后graffity 直接引用这些信息，避免构建过多对象？不过要先测试一下构建对象是不是瓶颈
+
+目前主要的后退是_sort，移除它可以极大提升效率，是的几万个shape都可轻松画出。仔细查看后，引擎中还是有一些类似计算bbox等的冗余可优化
+
+
+
+# Vega papers
+
+按dataflow的思想，chart参数的变化，包括data的变化，也可以理解为是一个事件：widgetUpdate，
+
+predicate 指的是“判断条件”
+
+居于中间地位的表示mark中datum的vega中称为 scenegraph
+
+流中产生信号称为 propagate 或 pulse
+
+数据tuple每个都有一个id，并且有标签标明被增删改，衍生的tuple通过原型继承与原tuple关联，每个数据项的previous value 也被记录了，
+
+vega在底层会为每种类型的基本事件生成一个 listener 
+
+protovis 是 d3 的前身
+
+我觉得vega最大的问题是它不是typed，它的specification要是能升级为typed就好了
+
+dart team 目前认为：在面向对象语言中，联合类型的功能应该由接口承担，即定义一个接口（类）包裹这两种类型，这样虽然麻烦，但是大家嘴里的联合类型其实有很多掰扯不清的问题
+
+发生变化不会全量更新，而是通过 changeset 来表征这些变化
+
+对于一些处理时要用到整个数据集的，通过 collector
+
+有两种类型的边：一种是连接处理同一个数据的不同算子的，在这样的边上，changeset 是被push的，算子直接处理它们；另一种是连接外部依赖和算子的，由于它连接的是不同数据空间，外部依赖只能连接被依赖者的collector，这时连接上的 changeset 会被标记为 reflow changeset，只有signal到signal的连接由于传递的是标量，不需要collector。

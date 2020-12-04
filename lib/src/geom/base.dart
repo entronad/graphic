@@ -111,7 +111,37 @@ abstract class GeomComponent<S extends GeomState<D>, D>
     }
   }
 
+  final shapeProps = <RenderShape>[];
+
   final _shapeComponents = <RenderShapeComponent>[];
+
+  void process() {
+    final renderShapes = _getRenderShapes();
+    shapeProps
+      ..clear()
+      ..addAll(renderShapes);
+  }
+
+  void render() {
+    if (_shapeComponents.isNotEmpty) {
+      for (var component in _shapeComponents) {
+        component.remove();
+      }
+      _shapeComponents.clear();
+    }
+
+    for (var i = shapeProps.length - 1; i >= 0; i--) {
+      final renderShape = shapeProps[i];
+      // renderShape may be null, but that will not add to engine
+      if (renderShape != null) {
+        final plot = state.chart.state.middlePlot;
+        final component = plot.addShape(renderShape);
+        _shapeComponents.add(component);
+      } else {
+        _shapeComponents.add(null);
+      }
+    }
+  }
 
   void setColor(ColorAttr color) {
     final attrComponent = ColorSingleLinearAttrComponent(color);
@@ -200,28 +230,6 @@ abstract class GeomComponent<S extends GeomState<D>, D>
   // Should match defaultPositionMapper
   @protected
   void initPositionAxisFields(PositionAttrComponent attrComponent);
-
-  void render() {
-    if (_shapeComponents.isNotEmpty) {
-      for (var component in _shapeComponents) {
-        component.remove();
-      }
-      _shapeComponents.clear();
-    }
-
-    final renderShapes = _getRenderShapes();
-    for (var i = renderShapes.length - 1; i >= 0; i--) {
-      final renderShape = renderShapes[i];
-      // renderShape may be null, but that will not add to engine
-      if (renderShape != null) {
-        final plot = state.chart.state.middlePlot;
-        final component = plot.addShape(renderShape);
-        _shapeComponents.add(component);
-      } else {
-        _shapeComponents.add(null);
-      }
-    }
-  }
 
   List<RenderShape> _getRenderShapes() {
     final coord = state.chart.state.coord;

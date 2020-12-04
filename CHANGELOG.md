@@ -1,3 +1,10 @@
+## 0.3.0
+
+**2020-12-04**
+
+- Add chart interaction.
+- Optimize big data rendering by remoing _sort() in addShape().
+
 ## 0.2.1
 
 **2020-11-17**

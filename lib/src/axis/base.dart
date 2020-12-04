@@ -172,6 +172,19 @@ abstract class AxisState with TypedMap {
 abstract class AxisComponent<S extends AxisState>
   extends Component<S>
 {
+
+  // render props
+
+  final lineProps = <RenderShape>[];
+
+  final tickLineProps = <RenderShape>[];
+
+  final gridProps = <RenderShape>[];
+
+  final labelProps = <RenderShape>[];
+
+  // render component
+
   final _lineComponents = <RenderShapeComponent>[];
 
   final _tickLineComponents = <RenderShapeComponent>[];
@@ -179,6 +192,20 @@ abstract class AxisComponent<S extends AxisState>
   final _gridComponents = <RenderShapeComponent>[];
 
   final _labelComponents = <RenderShapeComponent>[];
+
+  void process() {
+    _processLine();
+    _processTickLine();
+    _processGrid();
+    _processLabel();
+  }
+
+  void render() {
+    _renderLine();
+    _renderTickLine();
+    _renderGrid();
+    _renderLabel();
+  }
 
   Group get _plot => state.top
     ? state.chart.state.frontPlot
@@ -210,11 +237,15 @@ abstract class AxisComponent<S extends AxisState>
     }
   }
 
-  void render() {
-    _renderLine();
-    _renderTickLine();
-    _renderGrid();
-    _renderLabel();
+  void _processLine() {
+    if (state.line == null) {
+      return;
+    }
+
+    final renderShapes = getLine();
+    lineProps
+      ..clear()
+      ..addAll(renderShapes);
   }
 
   void _renderLine() {
@@ -225,15 +256,21 @@ abstract class AxisComponent<S extends AxisState>
       _lineComponents.clear();
     }
 
-    if (state.line == null) {
-      return;
-    }
-
-    final renderShapes = getLine();
-    for (var renderShape in renderShapes) {
+    for (var renderShape in lineProps) {
       final component = _plot.addShape(renderShape);
       _lineComponents.add(component);
     }
+  }
+
+  void _processTickLine() {
+    if (state.tickLine == null) {
+      return;
+    }
+
+    final renderShapes = getTickLine();
+    tickLineProps
+      ..clear()
+      ..addAll(renderShapes);
   }
 
   void _renderTickLine() {
@@ -244,15 +281,21 @@ abstract class AxisComponent<S extends AxisState>
       _tickLineComponents.clear();
     }
 
-    if (state.tickLine == null) {
-      return;
-    }
-
-    final renderShapes = getTickLine();
-    for (var renderShape in renderShapes) {
+    for (var renderShape in tickLineProps) {
       final component = _plot.addShape(renderShape);
       _tickLineComponents.add(component);
     }
+  }
+
+  void _processGrid() {
+    if (state.grid == null && state.gridCallback == null) {
+      return;
+    }
+
+    final renderShapes = getGrid();
+    gridProps
+      ..clear()
+      ..addAll(renderShapes);
   }
 
   void _renderGrid() {
@@ -263,15 +306,21 @@ abstract class AxisComponent<S extends AxisState>
       _gridComponents.clear();
     }
 
-    if (state.grid == null && state.gridCallback == null) {
-      return;
-    }
-
-    final renderShapes = getGrid();
-    for (var renderShape in renderShapes) {
+    for (var renderShape in gridProps) {
       final component = _plot.addShape(renderShape);
       _gridComponents.add(component);
     }
+  }
+
+  void _processLabel() {
+    if (state.label == null && state.labelCallback == null) {
+      return;
+    }
+
+    final renderShapes = getLabel();
+    labelProps
+      ..clear()
+      ..addAll(renderShapes);
   }
 
   void _renderLabel() {
@@ -282,14 +331,9 @@ abstract class AxisComponent<S extends AxisState>
       _labelComponents.clear();
     }
 
-    if (state.label == null && state.labelCallback == null) {
-      return;
-    }
-
-    final renderShapes = getLabel();
     final labelCallbackRsts = _labelCallbackRsts;
-    for (var i = 0; i < renderShapes.length; i++) {
-      final renderShape = renderShapes[i];
+    for (var i = 0; i < labelProps.length; i++) {
+      final renderShape = labelProps[i];
       final label = state.labelCallback == null
         ? state.label
         : labelCallbackRsts[i];

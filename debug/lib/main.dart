@@ -5,6 +5,7 @@ import 'pages/chart_page.dart';
 import 'pages/adjust_page.dart';
 import 'pages/shape_page.dart';
 import 'pages/invalid_page.dart';
+import 'pages/bigdata_page.dart';
 
 final routes = {
   '/': (context) => HomePage(),
@@ -12,6 +13,7 @@ final routes = {
   '/demos/adjust': (context) => AdjustPage(),
   '/demos/shape': (context) => ShapePage(),
   '/demos/invalid': (context) => InvalidPage(),
+  '/demos/bigdata': (context) => BigDataPage(),
 };
 
 class MyApp extends StatelessWidget {

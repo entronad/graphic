@@ -129,16 +129,25 @@ class ChartComponent<D> extends Component<ChartState<D>> {
   void initProps(ChartProps props) {
     _setProps(props);
     _process();
+    _render();
+    // first cycle need no repaint
   }
 
   void setProps(ChartProps props) {
     _setProps(props);
     _process();
+    _render();
     repaint();
   }
 
   void reprocess() {
     _process();
+    _render();
+    repaint();
+  }
+
+  void rerender() {
+    _render();
     repaint();
   }
 
@@ -171,6 +180,18 @@ class ChartComponent<D> extends Component<ChartState<D>> {
   }
 
   void _process() {
+    for (var axis in state.xAxes.values) {
+      axis.process();
+    }
+    for (var axis in state.yAxes.values) {
+      axis.process();
+    }
+    for (var geom in state.geoms) {
+      geom.process();
+    }
+  }
+
+  void _render() {
     for (var axis in state.xAxes.values) {
       axis.render();
     }

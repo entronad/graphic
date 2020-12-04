@@ -43,7 +43,7 @@ class Group extends Node<GroupState> {
   }
 
   void _onAdd() {
-    _sort();
+    // _sort();
   }
 
   void _sort() {

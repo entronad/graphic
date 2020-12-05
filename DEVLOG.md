@@ -1307,3 +1307,5 @@ dart team 目前认为：在面向对象语言中，联合类型的功能应该�
 对于一些处理时要用到整个数据集的，通过 collector
 
 有两种类型的边：一种是连接处理同一个数据的不同算子的，在这样的边上，changeset 是被push的，算子直接处理它们；另一种是连接外部依赖和算子的，由于它连接的是不同数据空间，外部依赖只能连接被依赖者的collector，这时连接上的 changeset 会被标记为 reflow changeset，只有signal到signal的连接由于传递的是标量，不需要collector。
+
+operator 保存value，可以有一个 value update function，它接收 parameter，parameter既可以是直接值，也可以是其它operator（假设原来的称为甲，其它的称为乙），甲动态的pull乙的value，甲是乙的dependency

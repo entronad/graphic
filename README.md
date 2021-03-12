@@ -1,3 +1,5 @@
+**Graphic is now under a total refactoring. The prior available version code is here: [v0.3.0](https://github.com/entronad/graphic/tree/v0.3.0) .**
+
 ![examples](./devdoc/examples.jpg)
 
 

@@ -1278,7 +1278,11 @@ repaint
 
 graffity 可能的一种优化方式是 elementRecord 保存 path 和paint，就相当于现在的 RenderShapeProps，然后graffity 直接引用这些信息，避免构建过多对象？不过要先测试一下构建对象是不是瓶颈
 
-目前主要的后退是_sort，移除它可以极大提升效率，是的几万个shape都可轻松画出。仔细查看后，引擎中还是有一些类似计算bbox等的冗余可优化
+目前主要的后腿是_sort，移除它可以极大提升效率，是的几万个shape都可轻松画出。仔细查看后，引擎中还是有一些类似计算bbox等的冗余可优化
+
+tabaleu也使用的术语：mark、domain、measure
+
+
 
 
 
@@ -1309,3 +1313,723 @@ dart team 目前认为：在面向对象语言中，联合类型的功能应该�
 有两种类型的边：一种是连接处理同一个数据的不同算子的，在这样的边上，changeset 是被push的，算子直接处理它们；另一种是连接外部依赖和算子的，由于它连接的是不同数据空间，外部依赖只能连接被依赖者的collector，这时连接上的 changeset 会被标记为 reflow changeset，只有signal到signal的连接由于传递的是标量，不需要collector。
 
 operator 保存value，可以有一个 value update function，它接收 parameter，parameter既可以是直接值，也可以是其它operator（假设原来的称为甲，其它的称为乙），甲动态的pull乙的value，甲是乙的dependency
+
+
+
+# FRP
+
+fp强调的是不可变数据和可组合性
+
+rp定义1.基于事件2.对输入做出反应3.视为数据流而非控制流
+
+rx更强调如何串联事件处理器
+
+编程常被分为两种模型：thread：适用于io，event：适用于gui
+
+状态机的定义是：1.输入事件进入系统2.程序根据输入和状态做出决定3.决定会改变状态或做出输出。任何程序都可以等价为状态机。状态机的缺点是不可推导
+
+stream变化会导致状态变化的，cell变化不会，它是被动的。不区分两者的系统一般称他们为signal
+
+事件是否可以同时是个重要的问题，Rx认为事件不可同时
+
+现代编程的瓶颈就是面向冯诺依曼机导致的顺序思维，高度依赖就地状态改变，使得编译器无法推断程序的依赖，进而进行分布式优化。而函数式编程是面向问题的，只声明依赖关系，天然的方便分布式优化。并且由于不是面向具体的机器，为未来机器的优化摆脱了枷锁
+
+对并行的需求迫使我们面向问题而不是机器编程
+
+工程最重要的就是 reductionism ，即可分解组合，这就要求各部分是 compositionality ，即组合不会导致它的特性变化。FRP在数学上被证明是 compositionality 的
+
+OO不是 compositionality 的一个解释是：回调函数的执行结果不仅依赖于处理对象的调用，还依赖于回调函数的挂载顺序，这一般与处理对象的创建顺序有关
+
+Rx最主要是缺少 denotative semantics，这使得在某些领域它不具备 composititionality
+
+Rx中的Observable为使用方便有三种类型 onNext, onError, onCompleted ，而纯FPR认为异常处理是领域问题，不作为基本特性
+
+Rx可以通过 subscription.dispose() 取消订阅，但是Rx主要为发射完即丢的场景设计，所以一般不需要取消订阅
+
+Rx中Observable分两类，subscribe之后立即执行的称为cold，如range，而subscribe之后不立即执行，需要真正事件产生了才会响应的称为hot，如fromEvent。cold仅仅相当于FP中的list，因为Rx有一部分作用是为一些语言提供函数式基础特性，hot才相当于FRP中的stream
+
+Rx不区分stream和cell
+
+由于Rx没有同时事件（Rx中的merge不是处理同时事件），所以产生由于两个流中的事件没有同时变化引起的glitch
+
+FRP能更好的发挥静态类型的作用，最好于静态类型结合
+
+FRP中一般不会主动获取数据，主动获取数据的sample方法主要用于paint()方法进行采样。snapshot也有类似功能（snapshot是map和sample的结合）
+
+动画系统由两部分构成，连续的描述和推进采样系统
+
+---
+
+
+
+
+
+# Vega
+
+data可以有多个，有不同的name。（g2只可以有一个data，且格式是json，dataset在之前处理并得到此json；echarts不同的series是不同的data，但是dataset只能是一个；charts_flutter 是基于series的，不同series是不同data类似echarts）
+
+transform的感觉g2的更实际些
+
+data、mark的交互规则通常为一个trigger对象，列在 on 字段中，其中的trigger字段是一个signal
+
+vega只有直角坐标系
+
+production rule 指的属性值是一个数组，每个元素（除了最后一个）有个 test 字段，按顺序如果满足test就是这个值。类似webpack中的那种配置，起到 if else 的作用
+
+vega也认为，一般一个mark instance对应一个datum，line和area是特例
+
+mark encode中的enter, update, exit涉及到d3中的一个重要概念：data join，详见这里：https://bost.ocks.org/mike/join/
+
+
+
+
+
+# GPL
+
+gpl 表达式基本分类为 source, data, scale, guide, element
+
+scale只有在指明包含0时会包含0，scale、guide等有默认值
+
+nest运算符（/）总是会导致分面，在blend时把每个数据集 nest 一个固定值可以强制分面（gg p79)
+
+city\*pop2000\*group 和 city/group\*pop2000 都会以group分面，区别是前者两个分面中所有城市都出现在横轴，而后者横轴中只出现对应分组的城市。即前者中两个分面的横轴是完全复制，它表示二维空间中又第三维又循环到了横向，通过分面表示；而后者两个分面的很轴是通过group划分过了，表示分过组的很轴用分面表示
+
+cross和nest会增加维度，blend不会
+
+注意图形代数只有结合律和分配律，没有交换律
+
+优先级 nest > cross > blend
+
+只有position可以有多个variables，其它的只能有一个，position中在同一个坐标系中的（用于分面的不算）最后一个维度的variable称为 analysis variable，所有统计方法都是针对它的。
+
+应用在analysis variable上的统计方法，和count相关的统计方法是区分的
+
+unit variable 是用来给维度占位的，比如只有jobcat和gender想按gender分类，要写成 jobcat\*1\*gender。对于scale，它表示在scale的中间。unit variable不可用analysis variable的统计方法，但可以用count相关的
+
+user constant 是一个单独的字符串，相当于一个 variable 永远是一个固定值，在cross和nest中常起到强制分面的作用，blend中常起到添加字段的作用
+
+algebra决定维度的代数关系，最终图形怎样还要加入 coordinate 
+
+nest的定义突出“不为空”，而不是纯“分类”，即 city/gourp，一个 city 可以属于多个group，只要有case是同时这个city这个group
+
+gpl中有个dim的概念，通过dim(1, 2, 3), dim(1), dim(2) 标识，coord，scale，guide定义的时候都与它有关
+
+聚合分组通过 coord 中的cluster函数表示，cluster(3)表示聚合第三维。被聚合的维不占用坐标系的维，analysis variable 依然是坐标系的最后一维
+
+stack的实现中，添加color是起到划分分组的作用的
+
+axis也算在guide中
+
+在关联dim时，nest的variable不算一个独立的维度
+
+stack和cluster的语法是不一样的：
+
+```
+// stack:
+interval.stack(position(summary.sum(jobcat*salary)), color(gender))
+
+// cluster:
+COORD: rect(dim(1,2), cluster(3))
+interval(position(summary.mean(jobcat*salary*gender)), color(jobcat))
+```
+
+注意这个cluster并不是dodge，而是“把两个分面放到同一个坐标系“
+
+视觉通道属性称为 aesthentic，区分 categorical 和 continous
+
+可以有多个 SOURCE， 取不同名字
+
+coordinate 和 transformation 可以相互嵌套，通过由内向外的顺序变换
+
+饼图通过一维的 polar.theta 坐标系实现
+
+一般scale关联的是维度，不需要名字，除非你想给一个维度安多个scale多个axis
+
+scale的类型就为 linear、cat、time 这样平铺的
+
+cat scale 一般是可以不用设置的，说明 cat scale 的values 鼓励从data中获取默认值
+
+linear scale 一般是不用设置的，如果想从0开始要特别指明
+
+GUIDE 有以下几种：axis, form.line, legend, text
+
+line 和 path 的区分符合gg的定义，另外path可以有不同的宽度
+
+schema符合gg的定义，专指boxplot
+
+图形调整称为 Collision Modifier
+
+注意dodge和cluster的区别，dodge只是调整position，而cluster则是改变坐标系，将原来分面的拼接成同一个坐标系
+
+dodge.asymmetric 是专为一维坐标准备的
+
+dodge.symmetric 的精髓是 elements extend in two directions
+
+创建数据的col方法第三个参数表明数据类型，分为unit.continuous, unit.category, unit.time 三种
+
+GPL的部件会不显式的写会有默认配置，如要不显示是在配置中添加一个 null() 函数
+
+坐标系除了可以作用在position上，也可用在其他aes上：polar.theta(aesthetick(color))
+
+坐标轴只可在端点，可通过 opposite 表明在另一端
+
+SOURCE 和 DATA 是在 GRAPH 之外。多个 GRAPH 公用同样的 SOURCE 和 DATA
+
+GRAPH 和分面的区别是分面不会叠在一起，而 GRAPH则可以叠在一起，而且可以精细控制位置大小
+
+GPL在发展过程中也经历过翻天覆地的改版
+
+GPL中的函数大量使用了重载（overload）
+
+
+
+# GG
+
+gg中有个重要的概念 frame，algebra主要是针对它的。
+
+gg本身已经很重视动态和交互了。
+
+gg承认自己基于现存常用的统计图表，语法的扩展性和创造性有限
+
+gg从初衷上讲，关注数据创建图形的规则，而不是具体图形的指定，因此理论上讲不会创建无意义的图形
+
+p24流程图中每一步的顺序不可颠倒，比如不可以在scale之后再算statistics
+
+Relation是集合中很重要的概念，它是笛卡尔积的满足某种规则的子集
+
+函数有定义域（domain）和值域（co-domain）
+
+graph是函数所有的输入和输出的值对构成的集合，和函数是一一对应的关系
+
+函数的串联称为 composition
+
+定义域和值域相同的集合称为 transformation
+
+algebra 是三样东西构成，定义集合，运算符，结合运算符的规则
+
+运算符的操作数和返回结果应该是相同的集合，所以一元运算符是 transformation
+
+variable 指的是从object到value的映射的定义，它的定义域（domain）是object。根据值域的不同，分为 continous 和 categorical 两类
+
+varset 指value到object的映射的定义，它的定义域（domain）是value。主要是为了定义algebra时方便，并且其中的object是bag
+
+尖括号表示bag
+
+frame 是一个value为p维的varset的所有可能的value的集合。它依赖于 algebra 表达式。frame 是计算 aesthetic 的参考框架。它不仅可表示位置，也可表示颜色空间等
+
+可以没有data直接variable
+
+interval的疑虑：上下限两个值应以何种algebra结合？不从0开始的单值interval规则应当如何
+
+coordinate 本质上是一种 transformation。和frame类似，它也可以应用在其它属性上
+
+现在流行原始的 data source 和系统需要的 view 这种模式
+
+数据分为三种类型：empirical data, abstract data, metadata
+
+gg要求 variable 的 mapping function 返回单一值
+
+数据的行列在gg中更多表示为 cases-by-variables
+
+transform 作用在 variable 上，它的作用一是使得variable适用于statistics（transform 和 statistics好像是有明确区别的），二是创建其它 summary（好像 variable，aggravate都属于 summary）
+
+transform 的结果会填满 variable 的每一个 case，哪怕是像 mean 这样的。它会创造新的variable，类型也可能变（比如 rank）。因此要考虑 定义的原始 variable 和 transform产生的匿名 variable的事情
+
+algebra 中的 unity value 对应没有tick mark 或者值，但展示时位于scale的中间
+
+从定义上讲，blend的两者不要求一致，但是一致了才有意义
+
+gg坚定的认为只需要三个运算符，虽然不能证明充要性，但是基于以下几个事实：过去15年所有图表都能表示。曾经还有第四个，但后来证明可以用另两个组合
+
+可能聚合的需要放到 transform 中了
+
+单元元素对应的varset是任意数据都对应到unity
+
+algebra不满足交换律，对于一些特殊图形（比如path）blend 也不具备交换律
+
+symbol或operator组合的多个symbol称为expression
+
+没有 blend 的expression称为 term
+
+没有cross的term称为factor
+
+term数量要结合后看，(A + B) / C 有两个 term
+
+一个term的称为monomial，多个term的称为 polynomial
+
+所有term中factor数量都一样的expression称为algebraic form，这个数量称为它的order
+
+如果想搞清楚一个expression对应的维度，以及variable和维度的对应关系，需要将expression正则化，首先分解blend，然后在每一项右边添加单位元素，直到达到最大的factor数
+
+优先级是 nest > corss > blend
+
+如果variable是categrical的，则会将frame对应的维度按照variable中数据进行分割
+
+cross和nest分面后的图很像，但大为不同。对于同一维度，cross两个不同的分面上是一样的，而nest则是属于不同分类的不同含义
+
+为什么不直接使用类似sql的系统，而要单独搞 graphics algebra ，因为1，两者还是有各自的特性，比如sql中的join、nest满足交换律，但是图形代数中就不满足。2，将图形代数系统置于数据库查询中将丢失掉关于图形对象的信息。3，关系型数据库系统并没有充分考虑动态交互，由于事务的存在，在关系型数据库系统中实现动态交互很麻烦且低效。当然，除了以上不同，sql的关系模型有助于编写 graphics algebra 的程序
+
+graph并不懂algebra，algebra是为了创造管理他们的维度
+
+一个好的图形代数系统应该能够提供接口兼容数据查询语言的函数
+
+图形代数和函数式编程的代数有很多联系
+
+个人觉得，graphics algebra （和很多类似的尝试），目的是为了统一数据的查询和可视化，以期提供智能的“输入查询，输出图形”
+
+scale指的是从 varset 映射到 dimension 的函数
+
+axiomatic scale(nominal, ordinal, interval, ratio) 用在gg上还不够，还需要一些细节，比如同样都是ratio的，但是blend重量和长度显然是没有意义的。从unit measurement中得到启发可以引入类型系统，这样就可以利用类似类型转换处理类似不同类型blend这样的问题了
+
+原教旨的 axiomatic scale 者认为仅凭数据本身可以选择使用何种scale，而gg认为仅凭数据本身不能选择何种scale，需要使用者根据领域知识确定，同样数据可能对应不同scale
+
+虽然 axiomatic scale 理论是毋庸置疑的，但却没有一个绝对的方法确定数据集用哪一种
+
+bar 为什么一般会有个默认原点，这不是geometry决定的，interval 本身与有没有原点无关，事实上 geometry 要求的是两个端点。这是由这一维度是 ratio scale 决定的
+
+transform 可以作用于 variable、scale(dimension)、coordinate，三者严格区分是因为：
+
+variable 和 scale 的需要在 statistics 之前，因为 statistics 一般对它操作的 variable 有一些要求
+
+而 coordinate 的需要在 statistics 之后，它不会改变 statistical properties ，只会改变图形的形状
+
+由于视觉上必须有个顺序，在图形上，nominal 和 oridinal 是一样的
+
+数值型 cat scale 可以挑选自然数作为数值
+
+cat scale 等距划分后两个端点不要对应到 cat 值，这也是和数值型的视觉上的区分
+
+有时候 cat 类型的数值并不需要按数值本身的顺序（它们是 nominal 的）
+
+nice number 的定义是儿童学数时喜欢的数字
+
+不是线性的 scale 也可以有 nice number
+
+nice number 最好包含0
+
+time scale 应该能反映出真实的时间度量，比如二月份的间隔就应该短一些
+
+statistics 应当在 graph 函数管理之下，而不是图表在 statistics 管理之下。这样一是在一个frame上可以展示多种 statistics；二是将 statistics 融入到 graph 函数之中迫使其成为数据的视图而不是数据本身，这样数据项本身和图形就建立了牢固的联系；最后这样会使计算模块化，方便分布式系统使用
+
+有时候从图形是很难倒退 statistics 的，看似相同的图形可能用了不同的 statistics
+
+bin 类型的统计在其它统计之前，它给各个case标上分类的标签，后续统计将仅在同个标签中进行
+
+statistics 中的 summary 类别指的是“基本的”，它的结果是单一的值
+
+region 类型在一个维度上生成两个边界值或在高维上生成顶点
+
+statistics 中的 confi 指的是 confidence
+
+区分 statistics 和 图形展示的原因是两者并没有必然联系，同一种 statistics 可以用不同图形展示，相同的图形可能表示不同的 statistics，这样也能节省代码
+
+注意图 7.1 ，它表明 geom 对和 position 的值的数量没有必然要求，点、线也可接受多个值，
+
+point 等称为 graph type
+
+statistic分为 conditional（条件）和joint（联合）两种，一维上一样的，二维上 conditional 只作用于单一的 x，joint 作用于所有x，三维类似，详见表7.2
+
+grapher 提供 geometric function。不是所有的 graph 都能提供。可以表示为 geometric object 的称为 geometric graph
+
+geometric graph 定义在特定的 bounded region 之内
+
+graph 的分类既考虑 data 又考虑 geometry，因为图形语法处理的是统计图形。分类：function：将value 转为 value或者value的集合；partition 将point的集合分为多个子集；network 连接多个点。
+
+Wilkinson对目前的geom的分类结构很有自信，绝大部分情况都包含在内。但也承认可能需要添加扩展，不过这个添加不会影响大结构和已有的类别
+
+point 的结果是获取一个 n-tuple 的集合，称之为 point graph
+
+一个图元一个对象还是所有图元一个对象各有利弊，取决于要处理的数据量
+
+line 是指 n 到 n+1 维的函数
+
+line 本质上应当是完全的函数映射，但实际上是由 knot 和其中连接的插值。一般插值用直线或样条（spline）
+
+line 要处理无限高度的问题、缺值打洞的问题
+
+可以看出，图形的最终呈现依赖于 OS 的图形系统
+
+三维情况下可用 surface 作为 line 的别名
+
+area 是 line 和 under 这个line的所有点的集合，
+
+interval 产生两个端点，但是bar一般数据只有一点，另一点是 reference point，一般是 zero
+
+histogram 是 interval 和 bin 统计函数结合，bin统计产生的分类使得interval每个bar紧挨着。它能表达一些面积的意味
+
+闭合的path称为 circuit
+
+path和line的区别：line是x的函数，而path是参数方程。由于path可以用参数方程表示，所以算在function中而不是 network 中。另外line所有segment都一样，而path的每一段segment可以不一样
+
+schema 的定义是用来表示数据密度的一组 point 和 interval，计算机程序是从point和interval衍生的，schema 可以有多种形状，也可基于不同的统计规律
+
+partition 的作用是将 dataset 划分为 sebset
+
+polygon 是将平面分为互斥的多边形
+
+注意图 8.20 的写法，只有一个 element，然后用 blend 连接
+
+categorical variable 会划分（split） graph。由于nest需要应用在 categorical variable 上，所以nest也必然划分 graph。
+
+应用在其它 aesthetic 上的 categorical variable 也会划分 graph，比如 `position(sepalwidth*sepallength), color(species)` 会按species 划分 graph
+
+而 continuous variable 则不会划分 graph，它称之为 shade
+
+如果我们想划分图形但不添加 aesthetic，用 split，
+
+
+
+
+
+# FRP
+
+frp 中最重要的就是两个概念：
+
+behavior: 随时间变化的值，包括时间本身和常量
+
+event: 按照时间序列出现的序列。一个事件变量代表了所有将发生的此事件，而不是一次
+
+其它概念：
+
+operator (combinator): 组合 behavior 和 event 形成其它 behavior 和 event
+
+FRP 程序就是一些相互递归的 behavior 和 event 的集合，每个都是建立自静态的值或其他 behavior/event
+
+比如一个颜色 behavior 初始为红色，左键点击后变为蓝色：
+
+```
+color :: Behavior Color
+color = red `until` (lbp -=> blue)
+```
+
+然后用它去定义一个动画：
+
+```
+ball :: Behavior Picture
+ball = paint color circ
+
+circ :: Behavior Region
+circ = translate (cos time, sin time) (circle 1)
+```
+
+有的时候需要分支选择：
+
+```
+color2 = red `until`
+  (lbp -=> blue) .|. (key -=> yellow)
+```
+
+when 能将一个布尔 behavior 转为一个 event ，这个event 在布尔 behavior 转为 true 时发射，这种event称为 predicate event：
+
+```
+color3 = red `until`
+  (when (time >* 5) -=> blue)
+```
+
+将值变为behavior的函数称为 lift
+
+```
+lift0 :: a -> Behavior a
+lift1 :: (a -> b) -> (Behavior a -> Behavior b)
+```
+
+如果函数或运算符不能重载的话，在函数名或运算符后面加个\*表示未提升版本
+
+一个非常有用的操作是behavior对于时间的积分，比如力、质量、位移的关系
+
+```
+s, v :: Behavior Real
+s = s0 + integral v
+v = v0 + integral f
+```
+
+FRP 的本质是声明式，FRP 使得用户能够从“建模”的角度思考问题，而不是表达细节。所以往往FRP的声明就是简洁的问题本身。
+
+behavior 语义函数：
+
+```
+at : Behavior<a> -> Time -> Time -> a
+```
+
+表示给定起始时间和某一时间，得到值。注意起始时间与 FRP 的反应式本质有关，如果一个事件导致了 behavior 的值变化，那起始时间就要从那个事件算起，behavior 是无法获知起始时间之前的事件的。
+
+event 语义函数：
+
+```
+occ : Event<a> -> Time -> Time -> [Time * a]
+```
+
+表示给定起始时间和某一时间，得到这段时间内的升序排列的所有结构，为时间和值的 tuple。起始时间的规则和behavior类似，且起始时间的不可以有事件（结束时间可以）
+
+基于stream 的FRP实现：
+
+核心类型定义：
+
+```
+type Behavior a = [Time] -> [a]
+type Event a = [Time] -> [Maybe a]
+```
+
+behavior 可认为是一个 stream transformer 函数从一个无穷的时间 stream 映射到无穷的值 stream，event 是可能取到没有值的 behavior。
+
+实现分为两步：1.定义基本的 behavior, event, combinator 作为 stream transformer；2.实现一个运行时系统，翻译上述内容、建立无线的时间 stream，并应用上述内容
+
+时间的定义：
+
+```
+time :: Behavior Time
+time = \ts -> ts
+```
+
+lift 的定义：
+
+```
+($*) :: Behavior (a -> b) -> Behavior a -> Behavior b
+ff $* fb = \ts -> zipWith ($) (ff ts) (fb ts)
+
+lift0 :: a -> Behavior a
+lift0 x = map (const x)
+
+lift1 :: (a -> b) -> (Behavior a -> Behavior b)
+lift1 f b1 = lift0 f $* b1
+
+lift2 :: (a -> b -> c) -> (Behavior a -> Behavior b -> Behavior c)
+lift2 f b1 b2 = lift1 f b1 $* b2
+```
+
+积分的定义：
+
+```
+integral :: Behavior Real -> Behavior Real
+integral fb =
+  \ts@(t:ts') -> 0 : loop t 0 ts' (fb ts)
+    where loop t0 acc (t1:ts) (a:as)
+      = let acc' = acc + (t1 - t0) * a
+        in acc' : loop t1 acc' evs ts as
+```
+
+事件映射
+
+```
+(==>) :: Event a -> (a -> b) -> Event b
+fe ==> f = map (map f) . fe
+
+e -=> b = e ==> \_ -> b
+```
+
+merge 同类型事件
+
+```
+(.|.) :: Event a -> Event a -> Event a
+fe1 .|. fe2 =
+  \ts -> zipWith aux (fe1 ts) (fe2 ts)
+    where aux Nothing Nothing = Nothing
+          aux (Just x) _      = Just x
+          aux _ (Just x)      = Just x
+```
+
+切换 behavior
+
+```
+until :: Behavior a -> Event (Behavior a) -> Behavior a
+
+fb `until` fe =
+  \ts -> loop ts (fe ts) (fb ts)
+    where loop ts@(_:ts') ~(e:es) (b:bs) =
+      b : case e of
+          Nothing -> loop ts' es bs
+          Just fb' -> tail (fb' ts)
+```
+
+snapshot 对 behavior 在某个时刻或事件发生时进行采样
+
+```
+snapshot :: Event a -> Behavior b -> Event (a, b)
+snapshot fe fb
+  = \ts -> zipWith aux (fe ts) (fb ts)
+    where aux (Just x) y = Just (x, y)
+          aux Nothing _  = Nothing
+```
+
+predicate event
+
+```
+when :: Behavior Bool -> Event ()
+when fb =
+  \ts -> zipWith up (True : bs) bs
+    where bs = fb ts
+          up False True = Just ()
+          up _     _    = Nothing
+```
+
+外界输入称为 environment （Env）
+
+# E-FRP
+
+在 E-FRP 中，behavior 只有在事件出现时才会改变
+
+在 E-FRP 中，两个事件不能同时发生，防止了事件处理时的复杂相互影响
+
+当事件发生时，程序执行分为两个阶段：一是根据之前的状态执行计算，而是更新状态。E-FRP 运行程序员指定behavior 的变化应该发生在哪个阶段
+
+为简便，event 发生时并不携带值
+
+non-reactive behavior 不会直接被事件更新，可以是变量、常量、或对其它 non-reactive behavior 的函数调用
+
+reactive behavior 具有初始值，当事件发生时变成当前值，
+
+store 将 variable 映射为 value
+
+# Vega
+
+**E-FRP**
+
+E-FRP 中的 stream 可以被组合成 signal，以便建立对 event 响应的表达式
+
+E-FRP 运行时会建立 dataflow graph ，这样当事件发生时会传播到相应的 stream
+
+后续信号会分两个阶段计算：根据依赖的之前值进行计算，再更新依赖
+
+传统 E-FRP 存在浪费重复计算的问题，vega 保留了二阶段更新，但借鉴流数据库，引入了“流分层数据”，可在运行时动态的改变 dataflow graph ，生成新的分支处理嵌套关系
+
+**streaming data**
+
+tuples 被系统观察后，会被标记为 new 或 removed
+
+operator 之间传递 tuple 而不是完整的关系
+
+这样 operator 就能发现哪些tuple更新了
+
+有时仅改变tuple是不够的，比如两个关系的 join，这时用 cache（或称 view，synopse）去固化这种关系，并在依赖的 operator 之间共享
+
+现存的 streaming data 系统只处理flat relation，vega却使其支持 nested data。动态分支解包包含关系，使得下游的 operator不需要知道高层的结构，这样就可以有任意层了
+
+**dataflow visualization**
+
+vega借鉴了比如：对于没变的tuple进行了 pass-by-reference
+
+输出数据只有在需要时才会被存储
+
+vega 提供了 interaction primitive，补充了 stream 的操作性
+
+graphical primitive 可以任意包含
+
+**architecture**
+
+pulse 就是 propagate
+
+graph唯一的sink就是renderer
+
+operator 分为三种类型：输入数据的处理，interaction 处理，构建 scene graph
+
+对每个 dataset 都会建立一个 branch
+
+branch 由输入和输出node组成，node之间通过 data transformation operator 组成的管道连接
+
+输入节点将原始 tuple 作为线性 stream 接受（tree 和 graph 则分别通过父子和临指针支持）。当data source 更新，tuple被标记为 added modified removed 之一，每一个 tuple 都会有一个独特的标识符。数据转换 operator就通过这些标记进行计算或生成新数据。生成的数据通过原型继承与父数据保持联系。这使得operator不用传递无关的上游变化了
+
+有些 op 需要对数据标签状态进行额外的调研。比如求平均数，增减可以在当前tuple值处理，但改则需要除去旧的换上新的。
+
+所以 tuple 有个 previous 参数。对 tuple 的修改将会把原tuple放到 previous 中
+
+针对可视化中每种底层事件，vega都会实例化一个 event listener node，它们通过 event selector 指定到依赖的 signal
+
+组合事件中每个子事件都会关联到一个自动建立的匿名signal；另外还有一个连接它们的匿名signal作为阀门，只会发射最终signal，
+
+signal可以有多个依赖 signal或事件，值的传递遵循 E-FRP 的二阶段
+
+
+
+
+
+
+
+
+
+---
+
+Graphic 大的架构为：
+
+- GG 的 specification
+- vega的架构
+- 轻量渲染引擎 Graffiti
+
+typed(dart) + declarative(vega) + gg(GPL) + E-FRP(vega)
+
+vega-view API 会暴露vega架构中的对象，方便调试
+
+注意 **dimension** 和 **domain** 的区分
+
+字符串、extension 好像不太适合algebra，还是要定义个对象，不如统一用 Key('city')
+
+可不可给element的shape属性注册一个relative symbol的方式来做legend？
+
+维度用什么？1,2,3，‘x', 'y', 'z'，还是Dim.x, Dim.y？
+
+guide 感觉可以拆分为 axis, legend, annotation
+
+data 的 transform：
+
+g2是仅可作用于dataset，结果才会传给图表，
+
+vega是既可作用在data，又可用于mark的channel
+
+gpl是可作用在variable定义或作用于position的algebra只上
+
+可能所有的表达式（predicate）要用函数的形式
+
+感觉scale优化的关键是要区分 continuous 和 discrete，discrete是输出序列，continue是输出[0, 1]
+
+注意“函数”和FRP唾弃的“回调函数”还是有区别的
+
+---
+
+algebra的现状
+
+ggplot2:没有
+
+vega:没有
+
+g2:全部用*表示，本质上没有，就是个数组
+
+chart-part:没有
+
+
+
+好的可视化库：
+
+true GG
+
+typed language
+
+declarative specification
+
+FRP
+
+extensive
+
+---
+
+感觉 variable 的函数还是应该叫 mapper
+
+感觉blend好像就起到多点图形的作用了？（blend是有序的，不满足交换律）
+
+blend后到底是分开的图还是同一个图元上的，可以依据是不是同一个case？
+
+注意variable只是data的一个视图
+
+需要区分只有ratio scale 才有原点
+
+感觉在统计学中很多地方还是以从1开始的自然数符合习惯
+
+blend 是否结合可能是判断是多个图元还是同一图元过个关键值的区别 见图7.32
+
+以下内容感觉暂不包括：
+
+facet：移动端不常用，不过 nest 运算先实现
+
+geography：留给专业的
+
+edge：图可视化一般也是专门的
+
+感觉在 fpr 语法中的运算符还是直接用函数形式比较好，可模仿rx，因为这样直观易接受

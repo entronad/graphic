@@ -1677,6 +1677,106 @@ categorical variable 会划分（split） graph。由于nest需要应用在 cate
 
 如果我们想划分图形但不添加 aesthetic，用 split，
 
+使用不同坐标系的原因：1.简化 2关键是区别能更好的被感知 3使得图形与理论或实践一致，比如 0-2pi的值，或表示磁盘分区的数据，适合用极坐标
+
+axes、guide 和 graphic 共用 geometry ，所以它们也会进行同样的变换。但也有特例，比如text的文字方向等就不会
+
+isometry 变换，保持距离不变，包括 translation, rotation, reflection,
+
+similarity 包括 dilation，形状一样大小不同
+
+affine 仿射，只有一个维度变换
+
+project 投影
+
+conformal 保角
+
+coordinate 中的rotation由于是作用于view的而不是 frame，所以文字的位置变了但方向等不会变
+
+transpose是 reflect加rotate，它是沿着对角线翻转
+
+注意 transpose 是不会调换 domain 和 range 的位置的，只改变 domain 和 range 称为 pivot (这是从数据库学来的词汇)
+
+对于有些图形，比如某些point，transpose和pivot是一样的，但是某些统计曲线会有微小的不同
+
+有时我们transpose，仅仅为了让纵轴的文字能够横向排下
+
+对于 dilation，rectangular是(x, y) -> (cx, cy)， polar是 (r,theta) -> (cr,theta)
+
+zoom是dilation的应用，需要区分 graphical zoom 和 data zoom，
+
+graphical zoom会改变所有东西，包括axes和text，它通过 dilation transformation实现，可以想象成光学放大
+
+data zoom 则是改变 frame，通过改变 bounds。frame的物理边界（由axes构成的盒子）以及frame中的其它graphic（points、line、bar）的大小是不会改变的。zoom-in会subset data，而zoom-out会将data放在更大的尺度。
+
+data zoom会对内置的graphic有影响，需要重新计算。而 graphical zoom则不需要重新计算。
+
+stretch改变的是aspect ratio，及物理高度与宽度比。有时会根据屏幕尺寸比定，但这样减少了精确性，一般45度左右的曲线感知起来最精确
+
+polar坐标系中，第一个表 domain，是角度，第二个表range，是半径
+
+polar坐标系主要应用于方向数据、转动数据、天文时间、周期波动数据、占比数据。最常用的是表占比和大量树叶的情况
+
+饼图是 polar.theta坐标中的一维图形，饼图标签不是 axis、scale等guide的一部分，而是一种 aes，
+
+polar.rho是传说中的牛眼图
+
+polar.plus和polar.rho.plus是以单位元为基准再往外增长，防止原点处太拥挤
+
+注意图9.22，由于应用了bin统计方法，polar.rho不再是牛眼
+
+注意图9.26，多环饼图
+
+scale的cycle和polar坐标系结合可以用来展示周期性数据的变化
+
+注意图 9.29 的雷达图写法。area雷达图并不表面积，它的边更类似于edge
+
+极坐标下的inverse是rho变为倒数，theta不变
+
+bend是指对x或y独立的做变换，当然也可以两者同时做变换，因为是独立的与shear是不同的。它的特点是grid和axes的平行性会保留
+
+将高维的数据图形化表示有三种方法：一是投影到二维平面，二是通过函数表示，三是递归分类创造 nested coordinate space
+
+注意图 9.61和图9.26的对比，坐标本质上是变换？可叠加？
+
+类别（Category）从哲学上是否表示事物本质分为两派，因此分为（prototypes）和（exemplars）两派
+
+靠在一起的容易被理解为分为一类，这称为 principle of proximity
+
+注意可以自定义 aesthetic attribute 函数，比如 color.spectrum()
+
+aesthetic attribute function 有两种使用方式：一是接受一维variable（可以 blend）或常量；二是 position 接受二维variable，但是不可以常量
+
+attribute 如何分类这点上心理学家和设计师是有分歧的，目前的分类是一个妥协，具体考虑：1.一个attribute必须能同时兼容 continous 和 categorical 的 variable；2.对于一个 continuous variable，attribute需要沿着一个尺度变化。对于多维的attribute，比如颜色，需要确定沿着某一方向（比如色相或亮度），或多种的结合；3.attribute并不必然意味着是线性的变化，比如hue；4.必须要让感受者直观准确高效的从attribute中读出variable；5.要能区分两个不同attribute代表的不同variable的value；attribute必须关联到实际可以渲染的特性
+
+将 form 与 texture 分开是为了计算机实现
+
+attribute 哪怕是position，size可感知，不一定代表要是视觉的，在不同的设备上或可访问性的需要可以以视觉、声音、触摸的形式表现
+
+continuous variable 对应到 location，categorical variable 对应到 lattice（格子）
+
+有些情况，比如bar的宽度，不适合映射到数据变化。只让一个attribute变化会让精力更集中
+
+shape 指的是对象的外边缘形状。
+
+shape 也是可以有 continuous 变换的，称为 morph
+
+area 只有在它的边缘不被position限制时可以改变 shape attribute，比如 polygon 可以设为 hexgon
+
+颜色的rgb立方不能代表所有的颜色，而且在这个立方中的距离也不代表感知的差异度
+
+rgb 0,1,1被称为 cyan，1,0,1被称为magenta，1,1,0是yellow
+
+在rgb立方上沿不同路径可以得到一些color scale，比如 brightness, heat, ranbow, circular, bipolar
+
+text 也是 aesthetic 的一种，一般用 label() 函数
+
+注意图 10.47 的interval shape
+
+注意图 10.54 中对 string() 的应用，主要为了区分 blend 中的类别，常用于label、color中
+
+
+
 
 
 
@@ -1914,7 +2014,7 @@ vega 提供了 interaction primitive，补充了 stream 的操作性
 
 graphical primitive 可以任意包含
 
-**architecture**
+**processing input data**
 
 pulse 就是 propagate
 
@@ -1932,15 +2032,79 @@ branch 由输入和输出node组成，node之间通过 data transformation opera
 
 所以 tuple 有个 previous 参数。对 tuple 的修改将会把原tuple放到 previous 中
 
+**handling interaction**
+
 针对可视化中每种底层事件，vega都会实例化一个 event listener node，它们通过 event selector 指定到依赖的 signal
 
 组合事件中每个子事件都会关联到一个自动建立的匿名signal；另外还有一个连接它们的匿名signal作为阀门，只会发射最终signal，
 
 signal可以有多个依赖 signal或事件，值的传递遵循 E-FRP 的二阶段
 
+**constructing the scene graph**
 
+scene graph 的建立类似 protovis 的 bind-build-evaluate 流程：
 
+解析完声明后，遍历 mark 树绑定property定义，property被编译为视觉通道（vega中encoding指视觉通）函数
 
+在运行时，为所有的mark 创建build 和 evaluate operator
+
+build operator 执行 data join，为背景 dataset 中的每个tuple创建一个 scene graph element （或叫 mark
+
+evaluate operator 执行恰当的 encoding function
+
+下游的 bounds 操作符计算生成的mark的 bounding box们
+
+运算符的顺序很关键：父mark必须在子mark前build和encode，但是子的bound要在父之前计算
+
+这样 scene graph 就是一个树，父节点是个 sentinel node
+
+生成的 scene graph的元素是 data tuple，可以作为下游的输入
+
+这样的结构称为 reactive geometry ，提高了一些操作的性能，比如加标签，而且由于mark可以进行数据转换，也是的一些高级layout算法得以应用
+
+**changeset and materialization**
+
+不是所有时候所有数据都要传播的，operator 传递的是 changeset
+
+changeset 由被观察的tuple，新的 signal value，事件之后的更新组成。
+
+changeset 的传递起自对 streaming tuple或者用户交互的响应。相应的 input node创建一个新的 changeset,并注入侦测到的update。operator根据它进行相应的计算，并可能通过多种方式加强它。比如filter会去掉一些tuple，cartesian product 会替换掉所有的tuple
+
+虽然changeset仅包含更新了的data，但有些运算符需要全data，就要用到 collector 运算符。他能在一个分支中 materialize 当前data。为了高效，collector 是共享的
+
+对于动画，changeset包含一个插入队列让mark计算需要加入的实例
+
+**coordinating changeset propagation**
+
+通过中心化的 scheduler 向合适的operator分发 datachange，而不是由operator自己代理
+
+scheduler 控制传播符合拓扑规律，即依赖都更新了才算下游，能防止glitch，更好的剪枝
+
+而交互 event 发生后，更新则不完全按照拓扑结构。signal会根据定义顺序重算。signal重算可能会基于依赖的前值，类似 E-FRP 中的二阶段更新，所有需要的signal重算好后，会发送一个包含新signal values 的 changeset并交给dataflow graph
+
+**pushing internal and pulling external changeset**
+
+dataflow graph 中连接 operator 的 edge 分为两种：
+
+两边操作同样的数据，比如一个mark的build和evaluate。这种就是push
+
+如果是外部依赖，比如其它data source，signal。他们不能直接连接operator，而是外部依赖连接到最近的上游 collector node。这种连接那个依赖到collector 的 edge上传播的称为 reflow changeset。当 collector 接收到 reflow dataset ，将会将其向前传播，标记他们为 modified。这样下面就能接收蒸汽的输入数据并通过scheduler请求依赖的最新值。
+
+只有一个例外，就是signal依赖其他signal。reflow changeset 在edge上传播的是标量，不需要通过collector
+
+这种 push/pull 混合的结构减少了单个元素的复杂度。比如 signal 的参数不管是数据变换还是视觉通道，都输出 reflow changeset。
+
+vega架构图中实心箭头代表内部edge，空心箭头代表外部 edge
+
+**dynamically restructuring the graph**
+
+operator 可以增加或删减分支。
+
+分支模型采用标准关系层次，所以下层不需要知道上层。
+
+新branch计算队列的顺序与创建的一样。为确保拓扑顺序，operator 有一个rank。当加入新的edge，rank会重新计算确保每个operator的rank都比它的依赖大。scheduler列队计算operator时也会记录rank。在传changeset给operator之前，scheduler会比对这个operator当前rank和存储rank，如果一样就计算，如果不一样重建graph。
+
+由于建立寄生的scene graph 是完全数据驱动的，重建最常源自 scene graph operator。子mark（包含 build-evaluate-bound 链)在父mark实例化之后实例化。所以在编译时，只会建立一个与 scene graph 的root node关联的分支。当数据流经 graph，或者发生交互才会创建branch并计算包含的mark。为确保mark计算在同一循环，新branch临时挂载在父上。这些链接会顺序被移除以确保子mark仅字啊背景数据源更新时 rebuit 和 re-encoded。
 
 
 
@@ -2033,3 +2197,144 @@ geography：留给专业的
 edge：图可视化一般也是专门的
 
 感觉在 fpr 语法中的运算符还是直接用函数形式比较好，可模仿rx，因为这样直观易接受
+
+
+
+
+
+
+
+
+
+---
+
+# Interp Vega
+
+dataflow 感觉还是用函数式的思想，Tuple类尽量简单，用函数+变量代替类方法，方法大多返回对象本身
+
+需要动态成员的地方先在局部添加个map，比如parameters
+
+数组的迭代函数参数需要重点注意
+
+hash多指表示映射关系的Map
+
+vega 中的 timestamp， clock， stamp 都是指的采样周期，这是E-FRP的特点，我们代码里统一用论文中的 clock 指代
+
+UniqueList 感觉完全可以用set取代，因为它只有add remove 方法，序号没意义
+
+encode 在 vega-encode包中，它是 dataflow 中 Transform 的子类 Operator::Transform::Encode
+
+filter 和 visitor 先都采用dart的只有item的方案
+
+先依旧保持方法返回对象本身以便链式调用的方式，可能更简洁写，不过setter方法就不刻意做成函数，到时候用双点调用
+
+子类不支持的方法用 UnimplementedError
+
+为与图形的element冲突，集合元素称为item，对应包装的临时类叫 XXInfo
+
+
+
+由于DV的特殊性，字段其实只能有 num, String, DateTime三种，要不要通过accessor，使得读取tuple字段成为可能？
+
+
+
+**Tuple**
+
+ingest 就是 Tuple 的构造函数
+
+如果以datum这种方式，根本就没有 rederive的功能
+
+**Parameters**
+
+set 直接设置和设置List的一项还是分开来写比较好
+
+modifiedAny 还是单独写比较好，因为如果name是null 时容易混淆
+
+**Pulse**
+
+stopPropagation 不应该用实例相等判断，而应该用一个标志位判断（私有只有getter）
+
+先假设整个dataflow中Tuple需要具有一致的泛型D
+
+mask中有些操作需用于const，因此不抽象成函数
+
+文件中的工具函数materialize好像就是where
+
+注意js的小陷阱：0 判断是false，但是 0 || default 依然是0
+
+因为他注释里强调了，所以 filter 函数还是采取返回tuple的形式，null 表示不要，同时起到 transformer 的作用
+
+_visitArray 中list为非null，source单独判断
+
+clean感觉就搞一个成员就可以了
+
+modifed()函数逻辑比较复杂，现在这样写应该是比较合理的
+
+由于目前datum不具备按字段修改，所以fields不需要是map，先改为bool名称暂时不变
+
+dataflow的pulse方法中给pulse添加了一个target成员，暂时不知道什么用，先加上
+
+**MultiPulse**
+
+注意 change() 方法flags缺省时父子类的差别
+
+modifed检查不能设置了noMod
+
+**Operator**
+
+op的id好像在scope中可以改的，所以先设为外部
+
+update方法先尝试不要把operator本身作为参数
+
+set方法返回值感觉还是bool靠谱
+
+skip modified两个改成访问器
+
+parameters中子数组或对象不再搜索
+
+感觉argops并不需要用到name和index，因此先作为List处理，initonly作为一个配套参数 \_argOpsInitOnly
+
+注意现在由于null的存在，泛型V不一定继承自Object，全能母类型是 Object? ，类的泛型V在定义时仿佛是nullsafe的，但是和Object比对时又不认，暂时先用dynamic
+
+为方便dataflow的rerank方法判断，_targets 要再搞一个hasTargets方法判断
+
+op的async是个future，好像是从设置中传入的，在dataflow的evaluate方法中用上，先整上
+
+**Transform**
+
+run中的rv.then没太整明白，先挂在pulse中，估计是链式的
+
+**Changeset**
+
+根据论文，Changeset认为合成词
+
+changeset 所有成员都为私有，仅暴露方法
+
+modify 不具备改字段的功能，只能改data，是记录pulse的encode还是修改tuple的datum以
+
+**Dataflow**
+
+add 先按照只能传入 Operator 的方式来
+
+update系列函数中的 options 直接作为命名参数
+
+注意pulse方法中的op.pulse，由于stopPropagation的存在，它的类型要特殊处理
+
+由于没有loader，所以没有\_pending
+
+DataflowCallback可能是async，所以要FutureOr\<void\>
+
+中间 next = await next; 没看懂，先不管
+
+next == null || next.stopPropagation 注意包含null和非stop的情况
+
+_running 有很多作用，不光光load用，所以要的
+
+\_getPulse 方法会根据传入的op的source中元素的个数决定返回一个pulse还是MultiPulse
+
+从MultiPulse的逻辑来看pulses的元素不能为null，getPulse中几个pulse先都用 ! 置信
+
+**EventStream**
+
+vega中的EventStream不是指异步中Stream的概念，而是一个独特的事件定义模型
+

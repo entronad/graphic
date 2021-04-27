@@ -2238,6 +2238,10 @@ filter 和 visitor 先都采用dart的只有item的方案
 
 
 
+util没有业务含义的统一放到公用的中，有业务含义的放到对应模块
+
+时间都是精确到微秒（microseconds）
+
 **Tuple**
 
 ingest 就是 Tuple 的构造函数
@@ -2284,7 +2288,7 @@ modifed检查不能设置了noMod
 
 op的id好像在scope中可以改的，所以先设为外部
 
-update方法先尝试不要把operator本身作为参数
+update目前来看是需要传入operator本身的，在dataflow的 \_updater方法中就可以看出
 
 set方法返回值感觉还是bool靠谱
 
@@ -2316,7 +2320,7 @@ modify 不具备改字段的功能，只能改data，是记录pulse的encode还�
 
 add 先按照只能传入 Operator 的方式来
 
-update系列函数中的 options 直接作为命名参数
+update系列函数中的 options 直接作为可选参数（命名没有必要，也不利于on中使用，on有可选位置参数，一个函数尽量要么都是位置参数，要么都是命名参数）
 
 注意pulse方法中的op.pulse，由于stopPropagation的存在，它的类型要特殊处理
 
@@ -2334,7 +2338,21 @@ _running 有很多作用，不光光load用，所以要的
 
 从MultiPulse的逻辑来看pulses的元素不能为null，getPulse中几个pulse先都用 ! 置信
 
+两个on先分开来写
+
+onStream中skip 默认是true，onOperator中默认是false
+
+onOperator中的target似乎是可以为null的
+
+从onStream方法看，Event会不会就是pulse？
+
 **EventStream**
 
 vega中的EventStream不是指异步中Stream的概念，而是一个独特的事件定义模型
+
+receive 采用先弄个占位符的方式，构造函数中在初始化，方便类型 null-safe
+
+consume直接用成员
+
+EventStream 的 detach 好像没用，但好像预示着 Operator 和 EventStream 有着相同的接口
 

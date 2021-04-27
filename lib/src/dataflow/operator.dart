@@ -10,7 +10,7 @@ final _noParameters = Parameters();
 const _skipFlag = 1;
 const _modifiedFlag = 2;
 
-typedef OperatorUpdate<V, D> = V Function(Parameters, Pulse<D>);
+typedef OperatorUpdate<V, D> = V Function(Operator<V, D>, Parameters, Pulse<D>);
 
 class _ArgOpsInfo<V, D> {
   _ArgOpsInfo(
@@ -181,7 +181,7 @@ class Operator<V, D> {
   Pulse<D>? evaluate(Pulse<D> pulse) {
     if (_update != null) {
       final parameters = marshall(pulse.clock);
-      final v = _update!(parameters, pulse);
+      final v = _update!(this, parameters, pulse);
 
       parameters.clear();
       if (v != value) {

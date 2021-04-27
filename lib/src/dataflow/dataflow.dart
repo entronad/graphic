@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:graphic/src/dataflow/util/asyncCallback.dart';
+import 'package:graphic/src/util/heap.dart';
 
 import 'operator.dart';
 import 'pulse.dart';
@@ -8,7 +8,13 @@ import 'multi_pulse.dart';
 import 'parameters.dart';
 import 'changeset.dart';
 import 'tuple.dart';
-import 'util/heap.dart';
+import 'event_stream.dart';
+import 'util/asyncCallback.dart';
+
+// TODO: mock event source class
+class EventSource {
+  void addEventListener(String type, EventReceive send) {}
+}
 
 Dataflow<D> _reentrant<D>(Dataflow<D> df) {
   df.error('Dataflow already running. Use runAsync() to chain invocations.');
@@ -105,13 +111,13 @@ class Dataflow<D> {
   Dataflow<D> pulse(
     Operator<dynamic, D> op,
     Changeset<D> changeset,
-    {bool skip = false,
-    bool force = false,}
+    [bool skip = false,
+    bool force = false,]
   ) {
-    touch(op, skip: skip, force: force);
+    touch(op, skip, force);
 
     final p = Pulse(this, clock + (_pulse != null ? 0 : 1));
-    final t = (op.pulse?.source ?? <Tuple<D>>[]) as List<Tuple<D>>;
+    final t = op.pulse?.source ?? <Tuple<D>>[];
 
     p.target = op;
     _input[op.id] = changeset.pulse(p, t);
@@ -121,8 +127,8 @@ class Dataflow<D> {
 
   Dataflow<D> touch(
     Operator<dynamic, D> op,
-    {bool skip = false,
-    bool force = false,}
+    [bool skip = false,
+    bool force = false,]
   ) {
     if (_pulse != null) {
       _enqueue(op);
@@ -140,11 +146,11 @@ class Dataflow<D> {
   Dataflow<D> update<V>(
     Operator<V, D> op,
     V value,
-    {bool skip = false,
-    bool force = false,}
+    [bool skip = false,
+    bool force = false,]
   ) {
     if (op.set(value) || force) {
-      touch(op, skip: skip, force: force);
+      touch(op, skip, force);
     }
 
     return this;
@@ -155,11 +161,114 @@ class Dataflow<D> {
   Dataflow<D> ingest<V>(Operator<V, D> target, List<Tuple<D>> data) =>
     pulse(target, changeset().insert(data));
   
-  // TODO: event
+  Dataflow<D> events(
+    List<EventSource> sources,
+    String type,
+    EventFilter filter,
+    EventApply apply,
+  ) {
+    final s = EventStream(filter, apply);
+    final _send = (Event e) {
+      e.dataflow = this;
+      try {
+        s.receive(e);
+      } catch (err) {
+        error(err.toString());
+      } finally {
+        run();
+      }
+    };
+
+    for (var source in sources) {
+      source.addEventListener(type, _send);
+    }
+
+    return this;
+  }
+
+  Dataflow<D> onStream(
+    EventStream source,
+    Operator<dynamic, D> Function(Event) target,
+    [OperatorUpdate<dynamic, D>? update,
+    Parameters? parameters,
+    bool skip = true,
+    bool force = false,]
+  ) {
+    EventApply func;
+
+    if (update == null) {
+      func = (e) {
+        this.touch(target(e));
+        return e;
+      };
+    } else {
+      final op = Operator(null, update, parameters, false);
+      func = (e) {
+        // TODO: op.evaluate(e);
+        final t = target(e);
+        final v = op.value;
+        if (v is Changeset<D>) {
+          pulse(t, v, skip, force);
+        } else {
+          this.update(t, v, skip, force);
+        }
+
+        return e;
+      };
+    }
+
+    source.apply(func);
+
+    return this;
+  }
+
+  Dataflow<D> onOperator(
+    Operator<dynamic, D> source,
+    [Operator<dynamic, D>? target,
+    OperatorUpdate<dynamic, D>? update,
+    Parameters? parameters,
+    bool skip = false,
+    bool force = false,]
+  ) {
+    if (update == null) {
+      if (target != null) {
+        source.targets.add(target);
+      }
+    } else {
+      final op = Operator(null, _updater(target, update), parameters, false);
+      op.modified = force;
+      op.rank = source.rank;
+      source.targets.add(op);
+
+      if (target != null) {
+        op.skip = true;
+        op.value = target.value;
+        op.targets.add(target);
+        connect(target, [op]);
+      }
+    }
+
+    return this;
+  }
+
+  OperatorUpdate<V, D> _updater<V>(
+    Operator<V, D>? target,
+    OperatorUpdate<V, D> update
+  ) => target != null
+    ? (self, parameters, pulse) {
+      final value = update(self, parameters, pulse);
+      if (!target.skip) {
+        target
+          ..skip = (value != self.value)
+          ..value = value;
+      }
+      return value;
+    }
+    : update;
 
   Future<Dataflow<D>> evaluate(
-    String? encode,
-    [DataflowCallback<D>? prerun,
+    [String? encode,
+    DataflowCallback<D>? prerun,
     DataflowCallback<D>? postrun,]
   ) async {
     if (_pulse != null) {
@@ -261,8 +370,8 @@ class Dataflow<D> {
   }
 
   Dataflow<D> run(
-    String? encode,
-    [DataflowCallback<D>? prerun,
+    [String? encode,
+    DataflowCallback<D>? prerun,
     DataflowCallback<D>? postrun,]
   ) {
     if (_pulse != null) {
@@ -274,8 +383,8 @@ class Dataflow<D> {
   }
 
   Future<Dataflow<D>> runAsync(
-    String? encode,
-    [DataflowCallback<D>? prerun,
+    [String? encode,
+    DataflowCallback<D>? prerun,
     DataflowCallback<D>? postrun,]
   ) async {
     while (_running != null) {

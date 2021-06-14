@@ -1284,38 +1284,6 @@ tabaleu也使用的术语：mark、domain、measure
 
 
 
-
-
-# Vega papers
-
-按dataflow的思想，chart参数的变化，包括data的变化，也可以理解为是一个事件：widgetUpdate，
-
-predicate 指的是“判断条件”
-
-居于中间地位的表示mark中datum的vega中称为 scenegraph
-
-流中产生信号称为 propagate 或 pulse
-
-数据tuple每个都有一个id，并且有标签标明被增删改，衍生的tuple通过原型继承与原tuple关联，每个数据项的previous value 也被记录了，
-
-vega在底层会为每种类型的基本事件生成一个 listener 
-
-protovis 是 d3 的前身
-
-我觉得vega最大的问题是它不是typed，它的specification要是能升级为typed就好了
-
-dart team 目前认为：在面向对象语言中，联合类型的功能应该由接口承担，即定义一个接口（类）包裹这两种类型，这样虽然麻烦，但是大家嘴里的联合类型其实有很多掰扯不清的问题
-
-发生变化不会全量更新，而是通过 changeset 来表征这些变化
-
-对于一些处理时要用到整个数据集的，通过 collector
-
-有两种类型的边：一种是连接处理同一个数据的不同算子的，在这样的边上，changeset 是被push的，算子直接处理它们；另一种是连接外部依赖和算子的，由于它连接的是不同数据空间，外部依赖只能连接被依赖者的collector，这时连接上的 changeset 会被标记为 reflow changeset，只有signal到signal的连接由于传递的是标量，不需要collector。
-
-operator 保存value，可以有一个 value update function，它接收 parameter，parameter既可以是直接值，也可以是其它operator（假设原来的称为甲，其它的称为乙），甲动态的pull乙的value，甲是乙的dependency
-
-
-
 # FRP
 
 fp强调的是不可变数据和可组合性
@@ -1368,7 +1336,7 @@ FRP中一般不会主动获取数据，主动获取数据的sample方法主要�
 
 data可以有多个，有不同的name。（g2只可以有一个data，且格式是json，dataset在之前处理并得到此json；echarts不同的series是不同的data，但是dataset只能是一个；charts_flutter 是基于series的，不同series是不同data类似echarts）
 
-transform的感觉g2的更实际些
+~~transform的感觉g2的更实际些~~ 根据gg的概念，区分 trans （trans属于 variable）和 stat
 
 data、mark的交互规则通常为一个trigger对象，列在 on 字段中，其中的trigger字段是一个signal
 
@@ -1378,7 +1346,7 @@ production rule 指的属性值是一个数组，每个元素（除了最后一�
 
 vega也认为，一般一个mark instance对应一个datum，line和area是特例
 
-mark encode中的enter, update, exit涉及到d3中的一个重要概念：data join，详见这里：https://bost.ocks.org/mike/join/
+mark encode中的enter, update, exit涉及到d3中的一个重要概念：data join，详见这里：https://bost.ocks.org/mike/join/ （好像不要用到）
 
 
 
@@ -1469,7 +1437,7 @@ dodge.symmetric 的精髓是 elements extend in two directions
 
 GPL的部件会不显式的写会有默认配置，如要不显示是在配置中添加一个 null() 函数
 
-坐标系除了可以作用在position上，也可用在其他aes上：polar.theta(aesthetick(color))
+坐标系除了可以作用在position上，也可用在其他aes上：polar.theta(aesthetic(color))，（先只考虑 coord就是指空间坐标系，一个图表一个。aes 也只考虑单变量的。即一个通道一个变量，空间一个维度一个通道）
 
 坐标轴只可在端点，可通过 opposite 表明在另一端
 
@@ -1775,11 +1743,29 @@ text 也是 aesthetic 的一种，一般用 label() 函数
 
 注意图 10.54 中对 string() 的应用，主要为了区分 blend 中的类别，常用于label、color中
 
+在GG中，facet是通过嵌套coord和algebra一起来定义的，不过有些坐标系看来是专为facet用的。antv中直接通过facet指定
 
+在 scale guide 中，axis 是给position 的，legend是给其他的，axis可以认为是position的legend
 
+ViZml的原则是没有设置就是不显示，而不是有个默认值，设置不显示才不显示。一是其实根本不存在约定俗成的默认值，有的默认显示有的默认不显示只会加重心智负担；二是交互时点击的元素能对应到具体的节点更方便些
 
+所以所有可选的节点如果没有设置都是没有，同理所有bool值默认都是false
 
+gg中的文字：geom并没有text类型，每个mark的文字属于label属性，annotation中的text指的是title这样全局性的
 
+facet 的本质是 frames of frames
+
+图解 facet 可以用 tree 或者 table
+
+cross 是一个frame 的一个 aspect，而不是 layout
+
+cross 和nest的区别最好的例子就是性别与婚姻状况和是否怀孕中
+
+代数表达式中引入 unity varset 只会升维，但不会添加新元素
+
+a/b/c 称为 three-way nesting
+
+(a\*b)/c 类似于 a\*b\*c 只不过在根据 c分类时要剔除掉没有的
 
 # FRP
 
@@ -1970,7 +1956,7 @@ when fb =
 
 在 E-FRP 中，两个事件不能同时发生，防止了事件处理时的复杂相互影响
 
-当事件发生时，程序执行分为两个阶段：一是根据之前的状态执行计算，而是更新状态。E-FRP 运行程序员指定behavior 的变化应该发生在哪个阶段
+当事件发生时，程序执行分为两个阶段：一是根据之前的状态执行计算，二是更新状态。E-FRP 运行程序员指定behavior 的变化应该发生在哪个阶段
 
 为简便，event 发生时并不携带值
 
@@ -2030,7 +2016,7 @@ branch 由输入和输出node组成，node之间通过 data transformation opera
 
 有些 op 需要对数据标签状态进行额外的调研。比如求平均数，增减可以在当前tuple值处理，但改则需要除去旧的换上新的。
 
-所以 tuple 有个 previous 参数。对 tuple 的修改将会把原tuple放到 previous 中
+所以 tuple 有个 previous 参数。对 tuple 的修改将会把原tuple放到 previous 中 （好像没了）
 
 **handling interaction**
 
@@ -2106,107 +2092,95 @@ operator 可以增加或删减分支。
 
 由于建立寄生的scene graph 是完全数据驱动的，重建最常源自 scene graph operator。子mark（包含 build-evaluate-bound 链)在父mark实例化之后实例化。所以在编译时，只会建立一个与 scene graph 的root node关联的分支。当数据流经 graph，或者发生交互才会创建branch并计算包含的mark。为确保mark计算在同一循环，新branch临时挂载在父上。这些链接会顺序被移除以确保子mark仅字啊背景数据源更新时 rebuit 和 re-encoded。
 
+**vega-lite selection**
 
+selection 的对象是data tuple，图形通过 inverse scale 查找到对应tuple
 
+selection 定义时分为 point, list, interval 三种
 
+selection 是一种高层次的封装，底层对应的原生事件根据平台自动决定
 
----
+有事先选择的机制
 
-Graphic 大的架构为：
+有几种变式选项：
 
-- GG 的 specification
-- vega的架构
-- 轻量渲染引擎 Graffiti
+project：只去判断一个字段
 
-typed(dart) + declarative(vega) + gg(GPL) + E-FRP(vega)
+toggle: 可开关多选
 
-vega-view API 会暴露vega架构中的对象，方便调试
+translate: 选框可拖动
 
-注意 **dimension** 和 **domain** 的区分
+zoom：选框可缩放
 
-字符串、extension 好像不太适合algebra，还是要定义个对象，不如统一用 Key('city')
+nearest: 根据泰森多边形选最近的
 
-可不可给element的shape属性注册一个relative symbol的方式来做legend？
+translate 和 zoom 同时也起到变换图表坐标区域的作用，通过将selection结果作用在scale上
 
-维度用什么？1,2,3，‘x', 'y', 'z'，还是Dim.x, Dim.y？
+selection是针对整个图表/可视化区域/坐标系的，它们也只对应一个tuple set
 
-guide 感觉可以拆分为 axis, legend, annotation
+vega-lite编译到vega的中间产物也叫XXComponent
 
-data 的 transform：
+`vega-parser` -> runtime dataflow description -> `vega-runtime` -> live dataflow instance
 
-g2是仅可作用于dataset，结果才会传给图表，
+流程：
 
-vega是既可作用在data，又可用于mark的channel
+使用vega的程序操作的对象是 View
 
-gpl是可作用在variable定义或作用于position的algebra只上
+View接受的对象是已经parse好了spec （runtime dataflow description，简称desc） ，里面是operators，streams，updates数组，但这个数组不是dataflow里的实例，是Entry
 
-可能所有的表达式（predicate）要用函数的形式
+用户写的 spec 转换为 desc 是通过 vega.parse 函数
 
-感觉scale优化的关键是要区分 continuous 和 discrete，discrete是输出序列，continue是输出[0, 1]
+vega.parse是一个parseView级联一个toRuntime
 
-注意“函数”和FRP唾弃的“回调函数”还是有区别的
+parseView的传入参数是spec和一个新建的scope，其中操作就是针对这个scope，返回加工完成的scope。config参数相当于 default theme
 
----
+scope.toRuntime抽取一些scope的属性组成一个对象返回，它就是desc
 
-algebra的现状
+view 的 \_runtime 字段是一个Context对象，通过 runtime()函数获得
 
-ggplot2:没有
+runtime()函数是一个Context的构造函数级联一个parse()函数，parse函数返回 this context
 
-vega:没有
+materialize的意思是从背景数据源中构建出所需的新list
 
-g2:全部用*表示，本质上没有，就是个数组
+dependency: 上游
 
-chart-part:没有
+dependent: 下游
 
+df的每个run中，都只会新建并持有一个pulse（分叉后每个支路一个），遍历 heap 中的每个 op.run更新这一个pulse，体现“op传递pulse”
 
+dataflow 只包含遍历 run每个op，view下一步会执行renderer.render，传入view.scenegraph.root，它是一个scene
 
-好的可视化库：
+scene对象并不保存绘图方法，而是rederer.draw方法执行是根据类型查找执行对应的mark.draw方法
 
-true GG
+在dataflow.runAsync和renderer.renderAsync中，都有一些异步执行标记的处理
 
-typed language
+在parse 的时候，有一些 built-in Signal ，它们会与view的一些设置相结合
 
-declarative specification
+data有个专门的 dataScope
 
-FRP
+在scope.toRuntime 中要执行finish函数，finish中主要的逻辑是 annotate，就是把保存在map的键中的name写到desc的对应字段中（比如 signal，scale）
 
-extensive
+view.scenegraph是在View的构造函数中新建的
 
----
+ctx（或称 runtime）是在View的构造函数中构造并 parse的
 
-感觉 variable 的函数还是应该叫 mapper
+operators 是在ctx.parse函数中被 add 到 dataflow中，并根据 params 被 connect，根据 source 新建 EventStream ，挂载listener也是在这一步（最终通过 canvas.addEventListener实现），其中sepc中的between、throttle等设置通过eventStream的对应函数实现
 
-感觉blend好像就起到多点图形的作用了？（blend是有序的，不满足交换律）
+event source 分为 timer, view, widow 三大类
 
-blend后到底是分开的图还是同一个图元上的，可以依据是不是同一个case？
+update在desc中是单独放的，标明 source 和 target，会通过 df.on 进行挂载
 
-注意variable只是data的一个视图
+View 的构造函数中安排完runtime后，会在内部执行一次pulse初始化 scenegraph（注意pulse属于update，不包括run）
 
-需要区分只有ratio scale 才有原点
+后面再进行一些涉及size和dom的操作
 
-感觉在统计学中很多地方还是以从1开始的自然数符合习惯
-
-blend 是否结合可能是判断是多个图元还是同一图元过个关键值的区别 见图7.32
-
-以下内容感觉暂不包括：
-
-facet：移动端不常用，不过 nest 运算先实现
-
-geography：留给专业的
-
-edge：图可视化一般也是专门的
-
-感觉在 fpr 语法中的运算符还是直接用函数形式比较好，可模仿rx，因为这样直观易接受
+然后显式的调用一次 runAsync
 
 
 
 
 
 
-
-
-
----
 
 # Interp Vega
 
@@ -2278,6 +2252,8 @@ modifed()函数逻辑比较复杂，现在这样写应该是比较合理的
 
 dataflow的pulse方法中给pulse添加了一个target成员，暂时不知道什么用，先加上
 
+加入Event继承自pulse的话，从对evnet的操作来看dataflow不是final的
+
 **MultiPulse**
 
 注意 change() 方法flags缺省时父子类的差别
@@ -2303,6 +2279,8 @@ parameters中子数组或对象不再搜索
 为方便dataflow的rerank方法判断，_targets 要再搞一个hasTargets方法判断
 
 op的async是个future，好像是从设置中传入的，在dataflow的evaluate方法中用上，先整上
+
+从dataflow.onStream方法看，operator 的 evaluate, update方法可以接受pulse也可以接受event，这时候marshall中传入的stamp为undefined，update方法要定义为接受event的
 
 **Transform**
 
@@ -2344,8 +2322,6 @@ onStream中skip 默认是true，onOperator中默认是false
 
 onOperator中的target似乎是可以为null的
 
-从onStream方法看，Event会不会就是pulse？
-
 **EventStream**
 
 vega中的EventStream不是指异步中Stream的概念，而是一个独特的事件定义模型
@@ -2356,3 +2332,338 @@ consume直接用成员
 
 EventStream 的 detach 好像没用，但好像预示着 Operator 和 EventStream 有着相同的接口
 
+
+
+从论文和某些代码来看，似乎存在着以下继承关系
+
+```
+Operator -> EventStream
+Pulse -> Event
+      -> Changeset
+```
+
+View 继承自dataflow
+
+dataflow.\_heap 并不是挂载所有op，只是一个临时运行的缓存，所有op通过op.\_target以链表的方式存储
+
+op的tuple的内容是个高度通用的，不一定指原始数据相关的
+
+图表创建时，会产生包含 add 的changeset，事件时会产生包含mod的changeset
+
+~~忽然觉得阿姨我不想努力了，先完全采用vega的spec，再用gg的概念去改造~~ vega grammar 毛病很多，但有很多值得借鉴的地方。GG最高！
+
+
+
+# Vega Grammar vs GG
+
+vega 的继承自D3 的scale很好
+
+设计时完备性优于简洁性
+
+vega没有坐标系很不好，所有的pie，radar都不好
+
+Signal 很好
+
+shape绘制器很关键，为了减少概念，直接占用shape 这个 aes attr
+
+aes attr 可以扩展，比如shader（覆盖 color）
+
+
+
+
+
+
+
+---
+
+Graphic 大的架构为：
+
+- GG 的 specification
+- vega的架构
+- 轻量渲染引擎 Graffiti
+
+typed(dart) + declarative(vega) + gg(GPL) + E-FRP(vega)
+
+vega-view API 会暴露vega架构中的对象，方便调试
+
+注意 **dimension** 和 **domain** 的区分
+
+字符串、extension 好像不太适合algebra，还是要定义个对象，不如统一用 Key('city')
+
+~~可不可给element的shape属性注册一个relative symbol的方式来做legend？~~ shape 属性还是用函数吧，legend自己考虑
+
+~~维度用什么？1,2,3，‘x', 'y', 'z'，~~还是Dim.x, Dim.y？
+
+guide 可以拆分为 axis, legend, annot（annotation），去掉guide这一层，g2也是这样的
+
+data 的 transform：
+
+g2是仅可作用于dataset，结果才会传给图表，
+
+vega是既可作用在data，又可用于mark的channel
+
+gpl是可作用在variable定义或作用于position的algebra只上
+
+可能所有的表达式（predicate）要用函数的形式
+
+感觉scale优化的关键是要区分 continuous 和 discrete，discrete是输出序列，continue是输出[0, 1]
+
+注意“函数”和FRP唾弃的“回调函数”还是有区别的
+
+---
+
+algebra的现状
+
+ggplot2:没有
+
+vega:没有
+
+g2:全部用*表示，本质上没有，就是个数组
+
+chart-part:没有
+
+
+
+好的可视化库：
+
+true GG
+
+typed language
+
+declarative specification
+
+FRP
+
+extensive
+
+---
+
+~~感觉 variable 的函数还是应该叫 mapper~~
+
+感觉blend好像就起到多点图形的作用了？（blend是有序的，不满足交换律）
+
+注意variable只是data的一个视图
+
+需要区分只有ratio scale 才有原点
+
+感觉在统计学中很多地方还是以从1开始的自然数符合习惯
+
+blend 是否结合可能是判断是多个图元还是同一图元过个关键值的区别 见图7.32
+
+以下内容感觉暂不包括：
+
+facet：移动端不常用，不过 nest 运算先实现
+
+geography：留给专业的
+
+edge：图可视化一般也是专门的
+
+感觉在 fpr 语法中的运算符还是直接用函数形式比较好，可模仿rx，因为这样直观易接受
+
+感觉在specification中会大量用到字符串作为标识符去指代某些变量，因为那些变量还没有被生成，比如signal的定义
+
+variable只接受三种类型，num, String, DateTime
+
+scale分为
+
+QuantitativeScale
+
+- LinearScale  (num)
+
+- TimeScale  (DateTime)
+
+DiscreteScale  (String)
+
+- OrdinalScale
+
+- BandScale
+
+- PointScale
+
+variable 统一为 field，更常用字更短
+
+data transform(statistic) 可以拎出来单独做，即传入 data 字段的就是不可变的成品数据，然后可以提供一些工具类
+
+~~除了gg的属性外，在提供给paint使用：~~ gg中aes属性是灵活多变的，根据实际需要来，gradient先单独搞，texture再想办法，虽然它们都是paint.shader实现
+
+GradientAes 渐变，覆盖color，只支持Gradiant类作为shader，spec中用painting里的Gradient类，本身就是相对坐标系，然后直接通过createShader方法创建到mark上
+
+~~StrokeAes 描边，还是挺重要的需求，新建个类包含 width 和 color 两个字段~~ 不要了，不是一个好的设计，而且比较麻烦
+
+ElevationAes MD特色的阴影，通过 canvas.drawShadow实现
+
+~~OpacityAes 还是加一下吧，比较实用，通过 withOpacity 实现~~ 好像完全可以通过Color很好的实现
+
+Attr整理
+
+PositionAttr   Offset
+
+SizeAttr    double
+
+ColorAttr    Color
+
+ShapeAttr    Shape
+
+GradientAttr    Gradient
+
+ElevationAttr    double
+
+其它的 paint 用默认值
+
+在spec中，有name的多配置项，尽量用map
+
+scale将值映射为 0-1或正整数，aes将0-1或正整数映射到属性值。PointScale和IntervalScale似乎没有必要
+
+感觉 scale 作为 field 的附属更合理，gpl中与dim绑定不能处理多图形和颜色属性等问题，这样也与vega类似，由于
+
+echarts, antv, vega-lite 数据都是只能有一个，我们也只弄一个，因为1，没有关联的两个数据源不应该出现在一个坐标系上，2一些交互逻辑需要统一数据源
+
+还是用variable比较专业些，与gg一致，variable感觉可以不光光通过accessor，而且可以通过transform创造出
+
+modifier gpl中只能应用一个
+
+用element不用mark，gg中就是用element这个词，mark一般指ticket mark
+
+而position等用Attr，因为它本来就叫Aesthetic Attribute或者Attribute Function，Aesthetic指代处理过程
+
+不拘泥于全写，dart中也有 num bool var，google charts 中也有 spec，Fn
+
+缩写记录：attr, coord, dim, 
+
+selections 是为事件准备的，不是确定值，而是值的变化，所以应该用函数，与algebra 和 values没有关系
+
+图片初始加载的那个周期里，还没有signal或selection，所以都是初始值值（由algebra和values决定）发生事件后会有影响，即selected有 true, false, null 三种状态，需要再考虑考虑...
+
+重点考虑要不要 stat/trans 为data，比如比例图，目前维持判断，antv, echarts 中的饼图、比例柱状图都是事先算好数据，antv中的饼图都是确保有个字段是percent，输入数据要percent
+
+注意有两种：
+
+一种是 transform ，是variable的生成方式之一
+
+另一种是statistics ，位置是在scale之后，geom之前，输入输出都是 scaled value，并且是从属于一个 attr的，所以gpl中 statistics value的概念要有，注意图 2.4 饼图的写法
+
+vega是支持多数据源的，其架构中的branch，collector等也都为此考虑。~~要不要加入多数据源？~~ 从需求的角度，单数据源
+
+只有operator 和 transformer 用名词，它们是抽象的父类，其它都用动词
+
+spec 的定义不用太考虑 reuse，因为可以在 flutter 组件外定义 spec，实现 reuse
+
+可能还是考虑叫 Gesture，今后的 SecondaryClick, Zoom, Hover 也包含进行，这样的一种 touch first
+
+ChartState设为私有的，减少 Controller和其的耦合
+
+Chart不算 spec 和 desc
+
+context.parse为避免重名改名叫mount
+
+思路上讲完全放弃 diff 的想法只有三种会导致图表自动的变化：定义的 signal，data发生变化（实例变了不是内部变化），自动形成的侦测 Runtime 变化的 signal
+
+Desc 中需要包含的信息：id，type，value，param
+
+Scope中包含的项：operators所有op，root：root op，signals（signals直接是 operators 的 desc，今后转换成operator），stream，updates（里面标明source，target，update函数）
+
+context 执行完mount后，就已经把op挂载到dataflow上了，有以下项：data：每个data包含input（Collect），output（Collect），values（Sieve）；nodes：将所有 op 以id为键的速查表，root：root op；signals：所有signal的op；scales：所有 scale 的op。
+
+不过可以搞个diff，一旦 onWidgetChange 不一样了的时候重新构建
+
+设置 context 的目的好像是为了方便查找，比如 scales，比如 setState，getState 获取data和 signal的state，另外通过 context 中的 nodes 可以方便的通过id查找
+
+不刻意追求“函数式”和“链式”的写法，还是用面向对象的习惯
+
+文件夹的命名采用gg概念，而不是spec的包含关系
+
+signal相关放到dataflow里
+
+并不需要spec有递归的parse方法，只要统一弄一个
+
+Chart 需要一个泛型D给表示Datum，如果今后多data了，这个泛型移到data上
+
+collection 这个package有很多实用的功能，比如深比较，比如heap
+
+dim 还是用 1,2,3... 表示，一般认为维度都是从1开始的
+
+user constant不需要在algebra中定义，应该在variable中定义
+
+modifier是“根据被某个其它aes使用的variable”分类，修改 statistics variable
+
+先不做nest
+
+expression 的缩写用 expr ，避免与 exponential 冲突
+
+事件需要添加一些合成事件，arena里先管普通事件
+
+事件可以统一放到一个enum中
+
+geom 只决定两个东西，对dim的增减到固定格式，默认shape，shape不再与geom绑定，custom geom 就是没有dim检查，必须手动定义shape
+
+scale 的分类为 continuous，discrete
+
+如果没有设置position，就自动从variable里找
+
+尝试 element 用不加后缀的
+
+postion还是保留encode吧，说不定有起效，不过记得postion的 Offset 是0-1的抽象的，要与coord结合
+
+其它attr的coord 功能融入到encode中了，postion单独，，那这样其它coord不应该用algebra，而应该是variable（反正都 values range了，代数没意义）
+
+Attr：基本：只有encode，label继承自它，postion继承自它，多了algebra；variable类继承自基本，多了variable系列，又分为连续和离散以及都可以？？？？？？好像结构太深了，毕竟是个spec
+
+scale仅做很纯粹的变换到 0-1,range交给坐标系，tickCount等交给axis（vega是这样）
+
+axis是与dim绑定的，由于存在多个维度，每个维度可有多个axis，为防止嵌套过深，通过数组和dim字段的方式指定。
+
+Default 用继承的办法似乎可行
+
+axis实际的样子，要根据coord，以及此维度上几个variable（或指定）的scale combine的结果决定，scale类型不同的variable不能共用同一个axis
+
+可以定义为signal的值：
+
+Attr设为value时，
+
+直角坐标系还是就叫rect 吧
+
+这个range定义时，需要与手势事件关联，所以它不能定义在variable scale中，因为不知道它x还是 y，在coord中也不应该受transpose影响，所以应该与x绑定，且一维坐标也应该有另一维的设置。为表明与维度无关，不叫x，而叫horizontal和vertical（用全称，这个对外接口清晰为重）
+
+theta和rho和paralle坐标，通过 polar 和 rect 设为一维来实现
+
+shape恐怕还得用类定义并在specification中使用实例，因为可能有参数，不过要定义下 ==
+
+spec 可能不能用 cont
+
+**trans/stat 方案一**
+
+trans不会增减原始数据或改变顺序，只会额外产生映射性的一维variable
+
+而 stat则有可能排序、过滤、增补，生成多维，bin
+
+trans的groupBy可以就用数组，多个就相当于叉乘，它重点是提供涉及到全局的计算，只涉及到单个元的直接用 accessor，
+
+trans的类型定义先采用全最灵活型，并可直接定义 accessor，不过基类中不定义variable和groupBy，根据实际需要
+
+先尝试 trans 和 stat 都不加后缀，两者没有交集，既可以trans，又可以 stat的优先做
+
+**trans/stat 方案二**
+
+trans 和 stat 定义上是一样的，但是在gg链路中所处的位置不一样，因此采用统一的类进行定义 Stat
+
+这样 trans就不是variable的子类，而是与accessor 可选的字段，也仅可通过其它字段定义。
+
+只有部分map类型（不改变data总数）的stat可用于trans定义
+
+在trans中必须指定variable，在geom中如不指定则是指 statistics variable
+
+**trans/stat 方案三**
+
+似乎polygon，edge 类型必与 bin stat 关联
+
+accessor 基本已覆盖trans的需求，为保持简洁性，不再设trans，统一到element下的 stat 属性。
+
+这主要是为了实现图2.2中，stat位于 scale 与geom之间的位置。ggplot2中也只有 stat 的概念。
+
+stat 可以可能排序、过滤、增补，生成多维，bin，也可改变原有字段，创建新字段。它的作用字段由 algebra和statistics variable决定，不过一些groupBy等辅助字段需指定。
+
+polygon必须与 stat相关联
+
+**trans/stat 方案四**
+
+类似vaga，在根据variable建好tuples之后对tuples的处理

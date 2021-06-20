@@ -1,11 +1,20 @@
-import 'base.dart';
-
+import 'package:flutter/painting.dart';
+import 'package:graphic/src/event/selection/select.dart';
+import 'package:graphic/src/event/signal.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 
-class LabelAttr<D> extends Attr<String> {
+import 'base.dart';
+
+class LabelAttr<D> extends Attr<TextSpan> {
   LabelAttr({
-    required String Function(Tuple) encode,
+    required TextSpan Function(Tuple) encode,
+    Signal<TextSpan>? signal,
+    Map<Select, SelectUpdate<TextSpan>>? select,
   }) : super(
     encode: encode,
+    signal: signal,
+    select: select,
   );
+
+  // TODO: label position: bbox? point?
 }

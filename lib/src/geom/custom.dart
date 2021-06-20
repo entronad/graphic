@@ -7,9 +7,10 @@ import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
 
 import 'base.dart';
+import 'modifier/base.dart';
 
-class Custom extends Element {
-  Custom({
+class CustomElement extends GeomElement {
+  CustomElement({
     ColorAttr? color,
     ElevationAttr? elevation,
     GradientAttr? gradient,
@@ -17,6 +18,8 @@ class Custom extends Element {
     PositionAttr? position,
     ShapeAttr? shape,
     SizeAttr? size,
+    Modifier? modifier,
+    Modifier
   }) : super(
     color: color,
     elevation: elevation,
@@ -25,5 +28,6 @@ class Custom extends Element {
     position: position,
     shape: shape,
     size: size,
+    modifier: modifier,
   );
 }

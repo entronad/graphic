@@ -13,4 +13,11 @@ abstract class ContinuousScale<V> extends Scale<V, double> {
   final V? min;
   
   final V? max;
+
+  @override
+  bool operator ==(Object other) =>
+    other is ContinuousScale<V> &&
+    super == other &&
+    min == other.min &&
+    max == other.max;
 }

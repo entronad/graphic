@@ -2667,3 +2667,133 @@ polygon必须与 stat相关联
 **trans/stat 方案四**
 
 类似vaga，在根据variable建好tuples之后对tuples的处理
+
+**目前确定的方案**
+
+还是采用 vega那种吧，对materialize 的控制更合理。这样data也要允许多个，创建DataSet类，有variables和transforms类，
+
+注意所有dataSet公用variable的命名空间；对于有些生成variable的transform，不加as就在原来的上面操作，加了as生成新的；生成的variable会自动配置scale，当然也可以设置，比如Proportion就自动是 0-1
+
+---
+
+最后尽量做到与 widget、md、captinou、ui、painting、gesture等库不冲突
+
+signal，selection 事件触发是更改性质，所以不应该包value，value还通过原来的方式设置，update中包含preValue
+
+bindState不放在signal中，而是通过spec的diff实现
+
+这样的话，感觉signal的定义用一个map就行了
+
+现在通过主副属性的方式，已经全部实现了vega-lite Parameters 的功能，
+
+value 直接定义，bind，直接写外面state的值，通过diff变化，exp没有必要，如果非要一个依赖另一个，提取到外面的state，通过chart本身向外输出的channel触发
+
+vega-lite selection 中的encodings，主要是为了处理匿名的fields
+
+出于frp的考虑，需要不能给同一时间事件挂回调
+
+如果spec 要 diff 的话，function 好像需要认为都相等，dart认为所有的function都不等
+
+这样的话function不能绑定为变量
+
+label文本还是用 TextSpan，attr额外再把painter的属性添上
+
+graph以内（含包括）都是只有string，aes层才开始有 textSpan，根据需要酌情采用 textSpan（优先）或String 加textStyle，textPainter的属性不在spec中体现，统一加载到scene中
+
+descrete scale 可以记录个bandPosition，表明在什么位置
+
+heatmap、voronoi使用了不同的内置统计方法分面
+
+背景的网格 band grid 等通过 axis 设置
+
+annotation先搞三个
+
+tag，文字，根据两维variable确定位置
+
+region，一维上的区间
+
+line，一维上的直线（弧线）
+
+selection 中的 variables 感觉多个也没有意义。不过为了保持语法的完整性还是保留
+
+tooltip采用 selection触发，不过作以下限制：类型必须是Point；不可toggle，variables最多一个，不单独搞子类了因为要可以共用。
+
+可能要搞个事件，就是 select none
+
+selection 有集中管理的意思在里面，所以还是采取统一定义然后用字符串选择的方式，一定要定义，但可以很简单 Selection()。
+
+常用字段：
+
+id：指自动生成的数字
+
+name：指代这个对象的字符
+
+title：用于 tooltip, label, legend, tag 等处显示的标题
+
+首先要有group variable和statistics variable的区分。gpl中引入了 sv，事实上也暗中引入了 gv
+
+
+
+单个tooltip 显示的内容为：
+
+vTitle: vValue
+
+vTitle: vValue
+
+当指定variables时只显示指定的
+
+
+
+当共用variable选定时，共用的被移至上面
+
+commonValue
+
+gValue1: sValue1
+
+gValue2: sValue 2
+
+
+
+暂时先不做marker，这个和legend一起
+
+点上的标记先不做
+
+
+
+const比较复杂，也没有必要性，先不考虑const spec了
+
+事件体系，底层的是 Event-Signal ，Selection 是上层的，仅针对 element 选取，结果是选中的tuples
+
+Interval做个简化，仅可使用scale，也没有translate和zoom，重新scale即可
+
+外向内，不考虑使用Controller模式了，与declarative 相违背，通过diff实现
+
+内向外，针对以上两层信息，做两个 onEvent 和 onSelection
+
+实例沿用vega的习惯称为 View
+
+transform 尽量也做成可扩展的
+
+坐标区域背景色在coord中配置，也可设置 gradient
+
+Spec并不能“拦截”强制要求重写 == ，chart继承的 widget 类不允许重写 ==，由于泛型的存在不能判断用 diff 还是 ==
+
+接口中的函数尽量叫有意义的名字（至少叫mapper）不要叫callback或func
+
+vega 的 dataset取名字段不好，结合g2 和 echart，取名为 source 和 from
+
+spec中先不考虑 data source 的变化
+
+tupe、event 等的相等性后面再考虑不属于 spec
+
+Selected 和 Signals 由于有函数，判断的时候只判断keys
+
+Shape中，由于用户可以自定义shape，要一个函数强制要求其 判定相等（ == 可能会忘了重写）
+
+目前还没有 mustOverride 的注解，通过重定义抽象函数实现
+
+由于在DataSet中还没有dim，所以统计字段皆需指定
+
+geom的几个关键词冲突还是挺多的，加上Element后缀吧
+
+因为 ! 不能重新，所以只能采取构造函数的办法

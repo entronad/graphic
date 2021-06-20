@@ -7,9 +7,10 @@ import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
 
 import 'partition.dart';
+import 'modifier/base.dart';
 
-class Area extends PartitionElement {
-  Area({
+class PolygonElement extends PartitionElement {
+  PolygonElement({
     ColorAttr? color,
     ElevationAttr? elevation,
     GradientAttr? gradient,
@@ -17,6 +18,7 @@ class Area extends PartitionElement {
     PositionAttr? position,
     ShapeAttr? shape,
     SizeAttr? size,
+    Modifier? modifier,
   }) : super(
     color: color,
     elevation: elevation,
@@ -25,5 +27,6 @@ class Area extends PartitionElement {
     position: position,
     shape: shape,
     size: size,
+    modifier: modifier,
   );
 }

@@ -1,7 +1,6 @@
 import 'dart:math';
-import 'package:collection/collection.dart';
 
-import 'package:graphic/src/parse/spec.dart';
+import 'package:collection/collection.dart';
 
 /// The reversed tag for unity varset.
 const _unityTag = '1';
@@ -31,7 +30,7 @@ typedef _Term = List<String>;
 typedef _Form = List<_Term>;
 
 /// Since faciting is not supported, nest operator is not supported.
-class Varset extends Spec {
+class Varset {
   Varset(String tag) : _form = [[tag]];
 
   Varset.unity() : _form = [[_unityTag]];
@@ -58,6 +57,7 @@ class Varset extends Spec {
     return rst;
   }
 
+  @override
   bool operator ==(Object other) =>
     other is Varset &&
     DeepCollectionEquality().equals(_form, other._form);

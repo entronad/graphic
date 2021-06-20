@@ -10,4 +10,10 @@ class PositionAttr extends Attr<List<Offset>> {
   });
 
   final Varset algebra;
+
+  @override
+  bool operator ==(Object other) =>
+    other is PositionAttr &&
+    super == other &&
+    algebra == other.algebra;
 }

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
-import 'package:graphic/src/control/signal.dart';
+import 'package:graphic/src/event/selection/select.dart';
+import 'package:graphic/src/event/signal.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/util/assert.dart';
 
@@ -12,16 +13,18 @@ class ColorAttr<D> extends SingleVariableAttr<Color> {
     String? variable,
     List<Color>? values,
     List<Color>? range,
-    Signal<Color>? signal,
     Color Function(Tuple)? encode,
+    Signal<Color>? signal,
+    Map<Select, SelectUpdate<Color>>? select,
   }) 
-    : assert(isSingle([value, variable, signal, encode])),
+    : assert(isSingle([value, variable, encode])),
       super(
         value: value,
         variable: variable,
         values: values,
         range: range,
-        signal: signal,
         encode: encode,
+        signal: signal,
+        select: select,
       );
 }

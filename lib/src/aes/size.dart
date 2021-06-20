@@ -1,4 +1,5 @@
-import 'package:graphic/src/control/signal.dart';
+import 'package:graphic/src/event/selection/select.dart';
+import 'package:graphic/src/event/signal.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/util/assert.dart';
 
@@ -10,16 +11,18 @@ class SizeAttr<D> extends SingleVariableAttr<double> {
     String? variable,
     List<double>? values,
     List<double>? range,
-    Signal<double>? signal,
     double Function(Tuple)? encode,
+    Signal<double>? signal,
+    Map<Select, SelectUpdate<double>>? select,
   })
-    : assert(isSingle([value, variable, signal, encode])),
+    : assert(isSingle([value, variable, encode])),
       super(
         value: value,
         variable: variable,
         values: values,
         range: range,
-        signal: signal,
         encode: encode,
+        signal: signal,
+        select: select,
       );
 }

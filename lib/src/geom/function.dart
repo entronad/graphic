@@ -7,8 +7,9 @@ import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
 
 import 'base.dart';
+import 'modifier/base.dart';
 
-abstract class FunctionElement extends Element {
+abstract class FunctionElement extends GeomElement {
   FunctionElement({
     ColorAttr? color,
     ElevationAttr? elevation,
@@ -17,6 +18,7 @@ abstract class FunctionElement extends Element {
     PositionAttr? position,
     ShapeAttr? shape,
     SizeAttr? size,
+    Modifier? modifier,
   }) : super(
     color: color,
     elevation: elevation,
@@ -25,5 +27,6 @@ abstract class FunctionElement extends Element {
     position: position,
     shape: shape,
     size: size,
+    modifier: modifier,
   );
 }

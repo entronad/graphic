@@ -1,5 +1,7 @@
+import 'package:collection/collection.dart';
 import 'package:graphic/src/aes/base.dart';
-import 'package:graphic/src/control/signal.dart';
+import 'package:graphic/src/event/selection/select.dart';
+import 'package:graphic/src/event/signal.dart';
 import 'package:graphic/src/util/assert.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 
@@ -10,14 +12,16 @@ abstract class SingleVariableAttr<V> extends Attr<V> {
     this.range,
 
     V? value,
+    V Function(Tuple)? encode,
     Signal<V>? signal,
-    V Function(Tuple)? encode
+    Map<Select, SelectUpdate<V>>? select,
   }) 
     : assert(isSingle([values, range], allowNone: true)),
       super(
         value: value,
-        signal: signal,
         encode: encode,
+        signal: signal,
+        select: select,
       );
 
   final String? variable;
@@ -25,4 +29,12 @@ abstract class SingleVariableAttr<V> extends Attr<V> {
   final List<V>? values;
 
   final List<V>? range;
+
+  @override
+  bool operator ==(Object other) =>
+    other is SingleVariableAttr &&
+    super == other &&
+    variable == other.variable &&
+    DeepCollectionEquality().equals(values, other.values) &&
+    DeepCollectionEquality().equals(range, other.range);
 }

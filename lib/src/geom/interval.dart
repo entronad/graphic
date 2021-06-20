@@ -7,9 +7,10 @@ import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
 
 import 'function.dart';
+import 'modifier/base.dart';
 
-class Interval extends FunctionElement {
-  Interval({
+class IntervalElement extends FunctionElement {
+  IntervalElement({
     ColorAttr? color,
     ElevationAttr? elevation,
     GradientAttr? gradient,
@@ -17,6 +18,7 @@ class Interval extends FunctionElement {
     PositionAttr? position,
     ShapeAttr? shape,
     SizeAttr? size,
+    Modifier? modifier,
   }) : super(
     color: color,
     elevation: elevation,
@@ -25,5 +27,6 @@ class Interval extends FunctionElement {
     position: position,
     shape: shape,
     size: size,
+    modifier: modifier,
   );
 }

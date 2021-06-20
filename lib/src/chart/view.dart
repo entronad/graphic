@@ -2,11 +2,11 @@ import 'package:graphic/src/dataflow/dataflow.dart';
 import 'package:graphic/src/parse/scope.dart';
 import 'package:graphic/src/parse/parse.dart';
 
-import 'widget.dart';
+import 'chart.dart';
 import 'context.dart';
 
-class ChartController extends Dataflow {
-  ChartController(Chart chart) {
+class View extends Dataflow {
+  View(Chart chart) {
     final scope = Scope();
     parse(chart, scope);
 

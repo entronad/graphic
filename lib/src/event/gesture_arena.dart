@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
 
+import 'event.dart';
+
 // GestureType/GestureEvent: output of the arena
 
 enum GestureType {
@@ -33,7 +35,7 @@ enum GestureType {
   scroll,
 }
 
-class GestureEvent {
+class GestureEvent extends Event {
   GestureEvent(
     this.type,
     this.pointerEvent,

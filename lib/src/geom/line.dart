@@ -7,9 +7,10 @@ import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
 
 import 'function.dart';
+import 'modifier/base.dart';
 
-class Line extends FunctionElement {
-  Line({
+class LineElement extends FunctionElement {
+  LineElement({
     ColorAttr? color,
     ElevationAttr? elevation,
     GradientAttr? gradient,
@@ -17,6 +18,7 @@ class Line extends FunctionElement {
     PositionAttr? position,
     ShapeAttr? shape,
     SizeAttr? size,
+    Modifier? modifier,
   }) : super(
     color: color,
     elevation: elevation,
@@ -25,5 +27,6 @@ class Line extends FunctionElement {
     position: position,
     shape: shape,
     size: size,
+    modifier: modifier,
   );
 }

@@ -1,4 +1,4 @@
-import 'package:graphic/src/chart/widget.dart';
+import 'package:graphic/src/chart/chart.dart';
 
 import 'scope.dart';
 

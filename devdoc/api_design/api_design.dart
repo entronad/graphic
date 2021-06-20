@@ -55,7 +55,7 @@ Chart(
     ),
     elevation: ElevationAttr(
       selections: {
-        Selected('s'): (_) => 5,
+        's': (_) => 5,
       }
     ),
   )],
@@ -159,8 +159,7 @@ Chart(
         ),
       ],
       selections: {
-        Selected('s'): (g) => g,
-        !Selected('s'): (g) => LinearGradient(
+        's': (g) => LinearGradient(
           begin: Alignment(0, 0),
           end: Alignment(0, 1),
           colors: g.colors.map((c) => c.withAlpha(0.2)),
@@ -175,27 +174,31 @@ Chart(
 
 // transform
 Chart(
-  data: [
-    {'value': 1048, 'name': '搜索引擎'},
-    {'value': 735, 'name': '直接访问'},
-    {'value': 580, 'name': '邮件营销'},
-    {'value': 484, 'name': '联盟广告'},
-    {'value': 300, 'name': '视频广告'}
-  ],
-  variables: {
-    'name': Variable<String>(
-      accessor: (datum) => (datum['name'] as String),
-      scale: OrdinalScale(),
+  data: {
+    'pieData': DataSet(
+      values: [
+        {'value': 1048, 'name': '搜索引擎'},
+        {'value': 735, 'name': '直接访问'},
+        {'value': 580, 'name': '邮件营销'},
+        {'value': 484, 'name': '联盟广告'},
+        {'value': 300, 'name': '视频广告'}
+      ],
+      variables: {
+        'name': Variable<String>(
+          accessor: (datum) => (datum['name'] as String),
+          scale: OrdinalScale(),
+        ),
+        'value': Variable<num>(
+          accessor: (datum) => (datum['value'] as num),
+          scale: LinearScale(),
+        ),
+      },
+      transforms: [Proportion(
+        variable: 'value',
+        as: 'percent',
+      )],
     ),
-    'value': Variable<num>(
-      accessor: (datum) => (datum['value'] as num),
-      scale: LinearScale(),
-    ),
-    'percent': PercentTrans(
-      param: 'value',
-      scale: LinearScale(),
-    ),
-  },
+  }
   coord: ThetaCoord(),
   elements: [Interval(
     position: PositionAttr(

@@ -1,4 +1,5 @@
-import 'package:graphic/src/control/signal.dart';
+import 'package:graphic/src/event/selection/select.dart';
+import 'package:graphic/src/event/signal.dart';
 import 'package:graphic/src/shape/base.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/util/assert.dart';
@@ -10,15 +11,17 @@ class ShapeAttr extends SingleVariableAttr<Shape> {
     Shape? value,
     String? variable,
     List<Shape>? values,  // Only descrete.
-    Signal<Shape>? signal,
     Shape Function(Tuple)? encode,
+    Signal<Shape>? signal,
+    Map<Select, SelectUpdate<Shape>>? select,
   })
-    : assert(isSingle([value, variable, signal, encode])),
+    : assert(isSingle([value, variable, encode])),
       super(
         value: value,
         variable: variable,
         values: values,
-        signal: signal,
         encode: encode,
+        signal: signal,
+        select: select,
       );
 }

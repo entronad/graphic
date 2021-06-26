@@ -19,6 +19,7 @@ class AreaElement extends FunctionElement {
     ShapeAttr? shape,
     SizeAttr? size,
     Modifier? modifier,
+    int? zIndex,
   }) : super(
     color: color,
     elevation: elevation,
@@ -28,5 +29,6 @@ class AreaElement extends FunctionElement {
     shape: shape,
     size: size,
     modifier: modifier,
+    zIndex: zIndex,
   );
 }

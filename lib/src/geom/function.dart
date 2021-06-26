@@ -19,6 +19,7 @@ abstract class FunctionElement extends GeomElement {
     ShapeAttr? shape,
     SizeAttr? size,
     Modifier? modifier,
+    int? zIndex,
   }) : super(
     color: color,
     elevation: elevation,
@@ -28,5 +29,6 @@ abstract class FunctionElement extends GeomElement {
     shape: shape,
     size: size,
     modifier: modifier,
+    zIndex: zIndex,
   );
 }

@@ -24,6 +24,7 @@ class Dataflow {
   Dataflow touch(Operator op) {}
 
   /// 更新 op 的 value，并 touch 它
+  /// 注意它不是一个核心过程，仅在onStream时使用到
   Dataflow update(Operator op, value) {}
 
   /// 输入数据

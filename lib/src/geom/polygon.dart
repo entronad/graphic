@@ -19,6 +19,7 @@ class PolygonElement extends PartitionElement {
     ShapeAttr? shape,
     SizeAttr? size,
     Modifier? modifier,
+    int? zIndex,
   }) : super(
     color: color,
     elevation: elevation,
@@ -28,5 +29,6 @@ class PolygonElement extends PartitionElement {
     shape: shape,
     size: size,
     modifier: modifier,
+    zIndex: zIndex,
   );
 }

@@ -81,18 +81,18 @@ final data2 = [
 ];
 
 final chart2 = Chart(
-  data: {'data': DataSet<Tuple>(
+  data: {'data': DataSet<Map>(
     source: data2,
     variables: {
-      'day': Variable<Tuple, String>(
+      'day': Variable<Map, String>(
         accessor: (datum) => (datum['day'] as String),
         scale: OrdinalScale(),
       ),
-      'value': Variable<Tuple, num>(
+      'value': Variable<Map, num>(
         accessor: (datum) => (datum['value'] as num),
         scale: LinearScale(),
       ),
-      'group': Variable<Tuple, String>(
+      'group': Variable<Map, String>(
         accessor: (datum) => (datum['group'].toString()),
         scale: OrdinalScale(),
       ),

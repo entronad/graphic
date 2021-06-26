@@ -31,7 +31,9 @@ typedef _Form = List<_Term>;
 
 /// Since faciting is not supported, nest operator is not supported.
 class Varset {
-  Varset(String tag) : _form = [[tag]];
+  Varset(String tag)
+    : assert(tag != _unityTag),
+      _form = [[tag]];
 
   Varset.unity() : _form = [[_unityTag]];
 

@@ -5,7 +5,11 @@ class LineAnnotation extends Annotation {
     this.dim,
     this.variable,
     required this.value,
-  });
+
+    int? zIndex,
+  }) : super(
+    zIndex: zIndex,
+  );
 
   /// The dim where the line stands.
   final int? dim;

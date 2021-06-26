@@ -27,3 +27,9 @@ abstract class Coord {
     backgroundColor == other.backgroundColor &&
     backgroundGradient == other.backgroundGradient;
 }
+
+// input:
+// abstract position
+
+// value:
+// render position

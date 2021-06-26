@@ -19,7 +19,7 @@ class CustomElement extends GeomElement {
     ShapeAttr? shape,
     SizeAttr? size,
     Modifier? modifier,
-    Modifier
+    int? zIndex,
   }) : super(
     color: color,
     elevation: elevation,
@@ -29,5 +29,6 @@ class CustomElement extends GeomElement {
     shape: shape,
     size: size,
     modifier: modifier,
+    zIndex: zIndex,
   );
 }

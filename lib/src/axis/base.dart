@@ -57,6 +57,8 @@ class GuideAxis {
     this.gridMapper,
     this.label,
     this.labelMapper,
+    this.zIndex,
+    this.gridZIndex,
   })
     : assert(isSingle([grid, gridMapper], allowNone: true)),
       assert(isSingle([label, labelMapper], allowNone: true));
@@ -85,6 +87,10 @@ class GuideAxis {
 
   final AxisLabel Function(String text, int index, int total)? labelMapper;
 
+  final int? zIndex;
+
+  final int? gridZIndex;
+
   @override
   bool operator ==(Object other) =>
     other is GuideAxis &&
@@ -98,6 +104,8 @@ class GuideAxis {
     tick == other.tick &&
     grid == other.grid &&
     // gridMapper: Function
-    label == other.label;
+    label == other.label &&
     // labelMapper: Function
+    zIndex == other.zIndex &&
+    gridZIndex == other.gridZIndex;
 }

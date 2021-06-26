@@ -30,3 +30,9 @@ abstract class Attr<V> {
     DeepCollectionEquality().equals(signal?.keys, other.signal?.keys) &&  // SignalUpdata: Function
     DeepCollectionEquality().equals(select?.keys, other.select?.keys);  // SignalUpdata: Function
 }
+
+// input:
+// scaled value tuple : Tuple
+
+// value:
+// aes value

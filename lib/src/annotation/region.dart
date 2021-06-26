@@ -10,7 +10,11 @@ class RegionAnnotation extends Annotation {
     this.variable,
     required this.values,
     this.color,
-  });
+
+    int? zIndex,
+  }) : super(
+    zIndex: zIndex,
+  );
 
   final int? dim;
 

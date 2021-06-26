@@ -31,6 +31,7 @@ class Tooltip {
     this.backgroundColor,
     this.radius,
     this.textStyle,
+    this.zIndex,
   });
 
   /// The selection must:
@@ -58,6 +59,8 @@ class Tooltip {
 
   final TextStyle? textStyle;
 
+  final int? zIndex;
+
   @override
   bool operator ==(Object other) =>
     other is Tooltip &&
@@ -69,5 +72,6 @@ class Tooltip {
     size == other.size &&
     backgroundColor == other.backgroundColor &&
     radius == other.radius &&
-    textStyle == other.textStyle;
+    textStyle == other.textStyle &&
+    zIndex == other.zIndex;
 }

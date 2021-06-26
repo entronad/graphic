@@ -14,3 +14,9 @@ abstract class Scale<V, SV extends num> {
     other is Scale<V, SV>;
     // formatter: Function
 }
+
+// input:
+// DataSetOp data tuples
+
+// value:
+// scaled values tuples : List<Tuple>

@@ -18,6 +18,7 @@ abstract class GeomElement {
     this.shape,
     this.size,
     this.modifier,
+    this.zIndex,
   });
 
   final ColorAttr? color;
@@ -36,6 +37,8 @@ abstract class GeomElement {
 
   final Modifier? modifier;
 
+  final int? zIndex;
+
   @override
   bool operator ==(Object other) =>
     other is GeomElement &&
@@ -46,5 +49,6 @@ abstract class GeomElement {
     position == other.position &&
     shape == other.shape &&
     size == other.size &&
-    modifier == modifier;
+    modifier == modifier &&
+    zIndex == other.zIndex;
 }

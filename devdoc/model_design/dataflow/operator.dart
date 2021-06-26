@@ -5,6 +5,7 @@
 class Operator {
   /// 下游 Operators
   /// operator 通过 targets 指向链接起来，根在 dataflow._runtime.root
+  /// 上游 operator 保存在字段 _argops 中
   Set<Operator> targets;
 
   /// 下一个 pulse 跳过 evaluate
@@ -22,10 +23,15 @@ class Operator {
   /// 对名称为 "pulse" 的值也会特殊处理
   /// 
   /// 参数传入就用 Map<String, Object>, Parameters 作为内部类提供功能
+  /// 
+  /// 仅会在 op 的构造函数中或 dataflow.add 时存在params 时调用
   List<Operator> parameters(Map<String, Object> params) {}
 
   /// 遍历所有上游 operators 拉取最新 value
   /// 返回 Parameters 给 update 函数
+  /// 
+  /// 遍历 _argops 中所有上游的 op，如果它在本次 clock 中 modified 了，
+  ///     就将其值取过来设置到 argval 中，以上游op的名称为键
   Parameters marshall([int? clock]) {}
 
   /// 移除此 Operator，通知上游移除它
@@ -36,11 +42,16 @@ class Operator {
   /// 如果 update 没有改变 value，返回 stop
   /// 如果没有定义 update，什么事也不做
   /// 返回值正常是输出的pulse，如果 stop 则通知停止传递，如果null则pulse会穿过
+  /// 
+  /// vega 中原始的 op 类中的 evaluate 只会返回 null 或 stop
   evaluate(Pulse pulse) {}
 
   /// 执行，其中会调用 evaluate
   /// 如果在 pulse 中的 clock 时（和之后）已经 run 过了，则返回 stop
   /// 如果 evaluate 返回的是 null，则直接返回 pulse
   /// 子类不要重写 run，重写 evaluate
+  /// 
+  /// vega 中原始的 op 类中的 evaluate 只会返回 null 或 stop
+  /// 所以 run 只会表示终止或停止传递，但是 Transform 类中会进行计算
   Pulse run(Pulse pulse) {}
 }

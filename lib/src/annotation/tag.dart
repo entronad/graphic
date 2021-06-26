@@ -7,7 +7,11 @@ class TagAnnotation extends Annotation {
     this.variables,
     required this.values,
     this.width,
-  });
+
+    int? zIndex,
+  }) : super(
+    zIndex: zIndex,
+  );
 
   /// Default to the dim 1 and dim 2 variables.
   final List<String>? variables;

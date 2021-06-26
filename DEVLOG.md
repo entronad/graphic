@@ -2176,6 +2176,18 @@ View 的构造函数中安排完runtime后，会在内部执行一次pulse初始
 
 然后显式的调用一次 runAsync
 
+vega 的 scenegraph 将同类型的mark并入到一个mark中，似乎很好
+
+将resize引起的 变化单独处理，似乎很好
+
+这样也就是说一个 scene 对应的是一个 element 整体，它控制着下面一个一个的item，通过 DataJoin 和 Encode 两个运算符连接
+
+scenegraph: 用于生成并返回 scene的工具类
+
+renderer：主要处理resize，render输入根 scene
+
+vega 是通过遍历scene树的方式渲染
+
 
 
 
@@ -2797,3 +2809,102 @@ Shape中，由于用户可以自定义shape，要一个函数强制要求其 判
 geom的几个关键词冲突还是挺多的，加上Element后缀吧
 
 因为 ! 不能重新，所以只能采取构造函数的办法
+
+tuple 由于 id 的存在，还是包装一下好，性能不宜过早考虑
+
+曲线的插值还是实现vega的那些吧
+
+
+
+综合考虑：view分为dataflow 和 scenegraph两层，scene成为一个比较抽象概念与element对等，所以当spec不变它也不会变，属于compile graph的一部分，而且这样scenegraph的节点会很少，绘制的时候直接遍历，且可插入重排。
+
+某些op的末端与scene相连，变化会传递到scene，scene不会再往下传递了，renderer会从scenegraph的root开始paint。scene的主要功能是绘制，不负责传递和计算值，所以它不是op
+
+可能发生的事情：
+
+spec重定义：（spec != old spec，注意这与data的变化无关）完全重构，重绘
+
+data变化：从data的op发生pulse，一直传递到scene，重绘
+
+发生事件：从signal发生的operator 发生pulse，一直传递到scene，重绘
+
+resize：（width，height发生变化）resize 考虑做成一个事件，从 ChartSize发生pulse，一直传递到scene，重绘
+
+堆仅适用于需要频繁存取的情况，而且只能pop，不方便遍历（要遍历可以用索引堆），所以compile之后就不动的不需要用堆，只需要执行完后排序一下。
+
+目前渲染结构首先参考 graphic 0.3，其次参考vega
+
+所有直接调用的绘制方法都称为 paint，重写的称为draw，类型为Draw，Paint类型的样式称为 style
+
+层级设置采用 vega 一样的 zIndex 的方式，默认都是0，默认的顺序是：grid , region, elements, line, tag
+
+vega在dataflow中传递的是pulse，changeset是外部传入的，dataflow.pulse 方法会将changeset转换为pulse
+
+pulse和changeset中保存的是放在 add, mod, rem，source 中的 tuples，（source一般指所有背景数据，不太常用）
+
+由于涉及到大量ip计算，tuple还是包装一下
+
+而 operator param 则好像可以直接用map，（tuple特点是用于list中）
+
+event是一种pulse，但仅限基本 op 使用，
+
+将op的param分为两类，一类固定值的，直接作为类字段，另一类从上游op拉取的，它们的值用一个map保存
+
+run的时候，算完某一个后，会把它的targets压入栈中
+
+在后续event触发的时候，heap就是不断把target放进去算的过程
+
+op 的Parameters还是用map不能用类字段（理由：update要用，要能用set方法统一设置处理），可以设置，设置的时候可以设值或op
+
+Op的params接收的时候可以用Map，但内部需要一个类似Map对象，要保存是否modified
+
+Operator 和 Transform的区别是 op处理tuple的核心是构造时传入的update函数，基本上都用于signal，而transform是子类定义的 transform函数
+
+在context中，operator是通过update定义，而transform 是通过类型名称定义
+
+基于此，将op分为 Updater和transformer两类，transformer需要再具体实现
+
+Operator的变量基本都叫op
+
+vega中允许param某项为list然后list中的某项绑定到不同的op，但是包括这个，以及params的list单项脏检查，似乎都只应用到range设置，因此简化掉，万一真有需求，通过 ‘x:1' 这样的param实现
+
+op 中的source似乎专指pulse源，所以换个词 paramOps
+
+在 vega 中，op并不持有dataflow，pulse持有，我们也先这样弄
+
+感觉pulse并不需要stopPropagation，null就表示停止了，passthrough 直接逻辑上返回输入就可以了
+
+pulse中的几个数组可直接访问，而且常被整体替换
+
+感觉 NO_FIELDS 和 SOURCE不需要单独搞出来
+
+pulse fork和addAll之后，由于是直接取数组，原来的都不能用了
+
+每次 fork的时候要注意source和fields和vaga是反的
+
+addAll 目前似乎并不需要
+
+op中的重要概念：
+
+react：在setParams时，对于非pulse的参数是否将自己注册到上游的targets中，如果注册了，上游变化将触发下游变化
+
+initOnly：在setParams时，是否将上游ops设为initOnly，如果设置了，marshall时从这些ops拉取只会触发一次，拉完后就清空。initOnly只在parse spec时connect时用过，所以不放在构造函数中
+
+注意op的连接关系，push和pull有差别，push通过上游的targets以及下游的op.source，pull通过下游的paramOps，而initOnly则仅是pull内的一种区别
+
+设置时的react、pulse，对targets sources的影响比较复杂
+
+op.source 主要用在 dataflow.getPulse中
+
+skip 和 modified 直接用个bool值
+
+op提供一个直接修改值的方法供dataflow.update使用，返回是否更改
+
+op 内的 paramOps，sourceOps，params，targets 都采取事先就有个空的的模式，用 isEmpty, clear 进行处理
+
+op 先仅存在同步的情况
+
+op.pulse 唯一的作用就是dataflow.pulse 取其中的source tuple，而对于这，0和null是一样的，
+
+因为针对什么时候skip的处理updater和transformer有差异，在skip时无差异，所以调整evaluate的提取
+

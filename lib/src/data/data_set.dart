@@ -27,3 +27,9 @@ class DataSet<D> {
     DeepCollectionEquality().equals(variables, other.variables) &&
     DeepCollectionEquality().equals(transforms, other.transforms);
 }
+
+// input:
+// --
+
+// value:
+// data tuple list : List<Tuple>

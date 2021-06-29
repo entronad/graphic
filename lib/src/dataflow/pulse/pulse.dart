@@ -237,4 +237,12 @@ class Pulse {
 
     return this;
   }
+
+  Pulse runAfter(
+    Hook postrun,
+    {int priority = 0,}
+  ) {
+    dataflow.runAfter(postrun, priority: priority);
+    return this;
+  }
 }

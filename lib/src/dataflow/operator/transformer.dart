@@ -15,7 +15,6 @@ abstract class Transformer<V> extends Operator<V> {
     final params = marshall(pulse.clock);
     final rst = transform(params, pulse);
     params.clear();
-    this.pulse = rst;  // vega only set when rst != null
     return rst;
   }
 }

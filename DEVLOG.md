@@ -2908,3 +2908,31 @@ op.pulse 唯一的作用就是dataflow.pulse 取其中的source tuple，而对�
 
 因为针对什么时候skip的处理updater和transformer有差异，在skip时无差异，所以调整evaluate的提取
 
+感觉还是统一规定op.pulse 一定要等于evaluate的结果比较好，虽然在vaga中transformer里只有结果不为null才更新，但感觉这是个bug
+
+dataflow先只考虑同步的情况
+
+dataflow外部函数都返回this，内部函数随意
+
+函数的布尔值参数尽量设为命名，除非跟在可选位置参数后面不好设置
+
+pulse.encode 和 changeset中的field 都是指的 datajoin中的概念（外加hover），我们不用
+
+既然在Tuple中有了TupleFilter这么好的东西，那就都用上吧
+
+changeset的modify似乎很少用，先写着
+
+先认为pulse和changeset中mod都是存放修改后的值
+
+changeset.modiy似乎仅在vega-function中使用，而这个function似乎也从未被用到
+
+似乎changeset仅起到过 add，移除所有再add，encode 三种作用过
+
+changeset先仅提供增减功能，没有mod
+
+df有异步的功能，op.run先不做异步的功能
+
+prerun和postrun的回调都不需要参数
+
+
+

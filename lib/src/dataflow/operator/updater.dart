@@ -31,24 +31,14 @@ class Updator<V> extends Operator<V> {
       final params = marshall(pulse.clock);
       final v = _update!(params, pulse);
       params.clear();
-      if (v == value) {
-        if (!modified) {
-          // If value and operator are both same, stop propagation.
-          this.pulse = null;
-          return null;
-        }
-        // If operator changed but value is same, pass through. 
-        this.pulse = pulse;
-        return pulse;
+      if (v != value) {
+        value = v;
       }
-      // Update and propagate.
-      value = v;
-      this.pulse = pulse;
-      return pulse;
-    } else {
-      // Pass through.
-      this.pulse = pulse;
-      return pulse;
+      if (!modified) {
+        // If value and operator are both same, stop propagation.
+        return null;
+      }
     }
+    return pulse;
   }
 }

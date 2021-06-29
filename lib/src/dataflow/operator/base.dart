@@ -15,7 +15,7 @@ abstract class Operator<V> {
     bool react = true,]
   ) : id = _opId++ {
     if (params != null) {
-      setParams(params, react);
+      setParams(params, react: react);
     }
   }
   
@@ -56,8 +56,8 @@ abstract class Operator<V> {
   /// Returns all involved operators, including paramOps and sources
   Set<Operator> setParams(
     Map<String, dynamic> params,
-    [bool react = true,
-    initOnly = false,]
+    {bool react = true,
+    initOnly = false,}
   ) {
     final rst = <Operator>{};
 
@@ -121,13 +121,16 @@ abstract class Operator<V> {
       return null;
     }
 
+    Pulse? rst;
     if (skip) {
       skip = false;
-      this.pulse = pulse;
-      return pulse;
+      rst = pulse;
     } else {
-      return evaluete(pulse);
+      rst = evaluete(pulse);
     }
+
+    this.pulse = rst;
+    return rst;
   }
 
   @protected

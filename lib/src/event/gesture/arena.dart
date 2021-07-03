@@ -2,8 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
 
-import 'event.dart';
-
 // GestureType/GestureEvent: output of the arena
 
 enum GestureType {
@@ -35,7 +33,7 @@ enum GestureType {
   scroll,
 }
 
-class GestureEvent extends Event {
+class GestureEvent {
   GestureEvent(
     this.type,
     this.pointerEvent,
@@ -55,6 +53,8 @@ class GestureEvent extends Event {
 
   final Offset? scrollDelta;
 }
+
+typedef GestureEventListener = void Function(GestureEvent);
 
 const _tapDelay = Duration(milliseconds: 250);
 const _touchDelay = Duration(milliseconds: 250);
@@ -94,7 +94,7 @@ enum _ListenerEventCategory {
 }
 
 class GestureArena {
-  final Map<GestureType, List<void Function(GestureEvent)>> _gestureEvents = {};
+  final Map<GestureType, List<GestureEventListener>> _gestureEvents = {};
 
   _ListenerEventCategory? _currentCagegory;
 
@@ -109,16 +109,16 @@ class GestureArena {
 
   Offset? _initialMovePoint;
 
-  void on(GestureType type, void Function(GestureEvent) callback) {
+  void on(GestureType type, GestureEventListener listener) {
     if (_gestureEvents[type] == null) {
       _gestureEvents[type] = [];
     }
-    _gestureEvents[type]!.add(callback);
+    _gestureEvents[type]!.add(listener);
   }
 
   void removeAllEventListener() => _gestureEvents.clear();
 
-  void off([GestureType? type, void Function(GestureEvent)? listener]) {
+  void off([GestureType? type, GestureEventListener? listener]) {
     if (type == null) {
       _gestureEvents.clear();
       return;

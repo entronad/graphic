@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:graphic/src/aes/base.dart';
+import 'package:graphic/src/aes/attr.dart';
 import 'package:graphic/src/event/selection/select.dart';
 import 'package:graphic/src/event/signal.dart';
 import 'package:graphic/src/util/assert.dart';

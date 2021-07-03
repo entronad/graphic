@@ -7,7 +7,7 @@ import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
 
 import 'function.dart';
-import 'modifier/base.dart';
+import 'modifier/modifier.dart';
 
 class IntervalElement extends FunctionElement {
   IntervalElement({

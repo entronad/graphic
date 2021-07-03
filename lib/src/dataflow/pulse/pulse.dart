@@ -14,11 +14,6 @@ abstract class PulseFlags {
   static const modFields = 1<< 5;
 }
 
-// Null means falsy.
-typedef TupleFilter = Tuple? Function(Tuple);
-
-typedef TupleVisitor = void Function(Tuple);
-
 void _visitTuples(
   List<Tuple> tuples,
   TupleVisitor visitor,
@@ -176,8 +171,8 @@ class Pulse {
     return this;
   }
 
-  bool modified([Set<String>? fields, bool noMod = false]) {
-    if (!((noMod || mod.isNotEmpty) && modFields.isNotEmpty)) {
+  bool modified([Set<String>? fields, bool ignoreModCheck = false]) {
+    if (!((!ignoreModCheck || mod.isNotEmpty) && modFields.isNotEmpty)) {
       return false;
     }
     if (fields == null) {

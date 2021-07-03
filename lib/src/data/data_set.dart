@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
-import 'package:graphic/src/transform/base.dart';
+import 'package:graphic/src/transform/transform.dart';
 import 'package:graphic/src/util/assert.dart';
-import 'package:graphic/src/variable/base.dart';
+import 'package:graphic/src/variable/variable.dart';
 
 class DataSet<D> {
   DataSet({

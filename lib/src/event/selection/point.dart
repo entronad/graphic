@@ -1,6 +1,6 @@
 import 'package:graphic/src/event/event.dart';
 
-import 'base.dart';
+import 'selection.dart';
 
 class PointSelection extends Selection {
   PointSelection({

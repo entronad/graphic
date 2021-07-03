@@ -6,7 +6,7 @@ import 'package:graphic/src/aes/position.dart';
 import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
 
-import 'modifier/base.dart';
+import 'modifier/modifier.dart';
 
 abstract class GeomElement {
   GeomElement({

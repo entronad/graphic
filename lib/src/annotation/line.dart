@@ -1,4 +1,4 @@
-import 'base.dart';
+import 'annotation.dart';
 
 class LineAnnotation extends Annotation {
   LineAnnotation({

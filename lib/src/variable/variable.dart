@@ -1,4 +1,4 @@
-import 'package:graphic/src/scale/base.dart';
+import 'package:graphic/src/scale/scale.dart';
 
 typedef Accessor<D, V> = V Function(D);
 

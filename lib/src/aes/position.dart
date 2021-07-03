@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:graphic/src/algebra/varset.dart';
 
-import 'base.dart';
+import 'attr.dart';
 
 class PositionAttr extends Attr<List<Offset>> {
   PositionAttr({

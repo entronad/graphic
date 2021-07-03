@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:graphic/src/event/event.dart';
 
-import 'base.dart';
+import 'selection.dart';
 
 class IntervalSelection extends Selection {
   IntervalSelection({

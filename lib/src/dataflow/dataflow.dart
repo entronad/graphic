@@ -2,11 +2,14 @@
 
 import 'package:collection/collection.dart';
 import 'package:graphic/src/dataflow/pulse/multi_pulse.dart';
+import 'package:graphic/src/event/event.dart';
+import 'package:graphic/src/util/assert.dart';
 
-import 'operator/base.dart';
+import 'operator/operator.dart';
 import 'pulse/pulse.dart';
 import 'change_set.dart';
 import 'tuple.dart';
+import 'event_stream.dart';
 
 typedef Hook = Future<void> Function();
 
@@ -23,22 +26,23 @@ class Dataflow {
     (a, b) => a.qRank - b.qRank,
   );
 
+  // To record input pulses of some operators.
   // Set in pulse(), used in getPulse().
-  final Map<int, Pulse> _input = {};
+  final Map<int, Pulse> _inputs = {};
 
   // {hook: priority}
-  final Map<Hook, int> _postrun = {};
+  final Map<Hook, int> _postruns = {};
 
   Future<Dataflow>? _running;
 
   Operator add(
     Operator op,
     [Map<String, dynamic>? params,
-    bool react = true,]
+    bool reactive = true,]
   ) {
     _rank(op);
     if (params != null) {
-      connect(op, op.setParams(params, react: react));
+      connect(op, op.setParams(params, reactive: reactive));
     }
     touch(op);
     return op;
@@ -86,7 +90,7 @@ class Dataflow {
 
     // pulse.target = op;
 
-    _input[op.id] = changeSet.pulse(pulse, tuples);
+    _inputs[op.id] = changeSet.pulse(pulse, tuples);
 
     return this;
   }
@@ -163,12 +167,12 @@ class Dataflow {
       }
     }
 
-    _input.clear();
+    _inputs.clear();
     _pulse = null;
 
-    if (_postrun.isNotEmpty) {
-      final pr = _postrun.entries.sorted((a, b) => b.value - a.value);
-      _postrun.clear();
+    if (_postruns.isNotEmpty) {
+      final pr = _postruns.entries.sorted((a, b) => b.value - a.value);
+      _postruns.clear();
       for (var entry in pr) {
         await entry.key();
       }
@@ -215,7 +219,7 @@ class Dataflow {
     int priority = 0,}
   ) {
     if (_pulse != null || enqueue) {
-      _postrun[postrun] = priority;
+      _postruns[postrun] = priority;
     } else {
       postrun();
     }
@@ -240,7 +244,7 @@ class Dataflow {
     final sources = op.sources;
     return (sources.length > 1)
       ? MultiPulse(this, _clock, sources.map((so) => so.pulse!).toList())
-      : _input[op.id] ?? _getSinglePulse(_pulse!, sources.first.pulse);
+      : _inputs[op.id] ?? _getSinglePulse(_pulse!, sources.first.pulse);
   }
 
   Pulse _getSinglePulse(Pulse p, Pulse? sp) {
@@ -253,5 +257,50 @@ class Dataflow {
       p.source = sp.source;
     }
     return p;
+  }
+
+  EventStream<E> createEventStream<E extends Event>(
+    EventSource<E> source,
+    EventType type,
+    {EventPredivate<E>? filter,
+    EventListener<E>? listener,}
+  ) {
+    final stream = EventStream<E>(
+      filter: filter,
+      listener: listener,
+    );
+
+    source.on(type, (E event) {
+      stream.emit(event);
+      run();
+    });
+
+    return stream;
+  }
+
+  Dataflow listen<E extends Event, V>(
+    EventStream<E> stream,
+    Operator<V> target,
+    {ChangeSet Function(E)? pulse,
+    V Function(E)? update,}
+  ) {
+    assert(isSingle([pulse, update], allowNone: true));
+
+
+    if (pulse == null && update == null) {
+      stream.listen((event) {
+        touch(target);
+      });
+    } else if (pulse != null) {
+      stream.listen((event) {
+        this.pulse(target, pulse(event));
+      });
+    } else {
+      stream.listen((event) {
+        this.update(target, update!(event));
+      });
+    }
+
+    return this;
   }
 }

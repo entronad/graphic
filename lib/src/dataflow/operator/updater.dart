@@ -1,4 +1,4 @@
-import 'base.dart';
+import 'operator.dart';
 import 'op_params.dart';
 import '../pulse/pulse.dart';
 
@@ -7,10 +7,10 @@ class Updator<V> extends Operator<V> {
     V value,
     [Map<String, dynamic>? params,
     V Function(OpParams params, Pulse pulse)? update,
-    bool react = true]
+    bool reactive = true]
   )
     : _update = update,
-      super(value, params, react);
+      super(value, params, reactive);
 
   V Function(OpParams params, Pulse pulse)? _update;
 

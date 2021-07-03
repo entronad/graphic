@@ -1,4 +1,4 @@
-import 'base.dart';
+import 'operator.dart';
 import 'op_params.dart';
 import '../pulse/pulse.dart';
 

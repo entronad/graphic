@@ -1,6 +1,6 @@
 import 'package:graphic/src/event/selection/select.dart';
 import 'package:graphic/src/event/signal.dart';
-import 'package:graphic/src/shape/base.dart';
+import 'package:graphic/src/shape/shape.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/util/assert.dart';
 

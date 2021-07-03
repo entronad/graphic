@@ -5,7 +5,7 @@ import 'package:flutter/painting.dart';
 import 'package:graphic/src/event/signal.dart';
 import 'package:graphic/src/util/map.dart';
 
-import 'base.dart';
+import 'coord.dart';
 
 class RectCoord extends Coord {
   RectCoord({

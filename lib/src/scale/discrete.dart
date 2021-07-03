@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
 
-import 'base.dart';
+import 'scale.dart';
 
 abstract class DiscreteScale<V> extends Scale<V, int> {
   DiscreteScale({

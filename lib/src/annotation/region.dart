@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:collection/collection.dart';
 
-import 'base.dart';
+import 'annotation.dart';
 
 class RegionAnnotation extends Annotation {
   RegionAnnotation({

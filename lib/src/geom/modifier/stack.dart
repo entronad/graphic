@@ -1,4 +1,4 @@
-import 'base.dart';
+import 'modifier.dart';
 
 class StackModifier extends Modifier {
   @override

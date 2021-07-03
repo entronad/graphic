@@ -2,9 +2,9 @@ import 'view.dart';
 
 /// To store the parsing results.
 class Context {
-  Context(this._controller);
+  Context(this._view);
 
-  View _controller;
+  View _view;
 
   /// Mount all [Desc]s from a [Scope].
   Context mount(Scope) {

@@ -1,13 +1,13 @@
 import 'package:collection/collection.dart';
-import 'package:graphic/src/annotation/base.dart';
-import 'package:graphic/src/axis/base.dart';
-import 'package:graphic/src/coord/base.dart';
+import 'package:graphic/src/annotation/annotation.dart';
+import 'package:graphic/src/axis/axis.dart';
+import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/data/data_set.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/geom/base.dart';
+import 'package:graphic/src/geom/geom_element.dart';
 import 'package:graphic/src/event/event.dart';
-import 'package:graphic/src/event/selection/base.dart';
-import 'package:graphic/src/tooltip/base.dart';
+import 'package:graphic/src/event/selection/selection.dart';
+import 'package:graphic/src/tooltip/tooltip.dart';
 
 class Spec {
   Spec({
@@ -52,4 +52,16 @@ class Spec {
     DeepCollectionEquality().equals(selections, other.selections) &&
     DeepCollectionEquality().equals(onEvent?.keys, onEvent?.keys) &&  // Function
     DeepCollectionEquality().equals(onSelection?.keys, other.onSelection?.keys);  // Function
+  
+  Set<String> diffDataSource(Spec other) {
+    assert(this == other);
+
+    final rst = <String>{};
+    for (var name in data.keys) {
+      if (data[name]?.source != other.data[name]?.source) {
+        rst.add(name);
+      }
+    }
+    return rst;
+  }
 }

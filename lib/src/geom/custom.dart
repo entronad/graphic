@@ -6,8 +6,8 @@ import 'package:graphic/src/aes/position.dart';
 import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
 
-import 'base.dart';
-import 'modifier/base.dart';
+import 'geom_element.dart';
+import 'modifier/modifier.dart';
 
 class CustomElement extends GeomElement {
   CustomElement({

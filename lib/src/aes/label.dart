@@ -3,7 +3,7 @@ import 'package:graphic/src/event/selection/select.dart';
 import 'package:graphic/src/event/signal.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 
-import 'base.dart';
+import 'attr.dart';
 
 class LabelAttr<D> extends Attr<TextSpan> {
   LabelAttr({

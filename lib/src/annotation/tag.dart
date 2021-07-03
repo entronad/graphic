@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
 
-import 'base.dart';
+import 'annotation.dart';
 
 class TagAnnotation extends Annotation {
   TagAnnotation({

@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
-import 'package:graphic/src/scale/base.dart';
+import 'package:graphic/src/scale/scale.dart';
 
-import 'base.dart';
+import 'transform.dart';
 
 class Proportion extends Transform {
   Proportion({

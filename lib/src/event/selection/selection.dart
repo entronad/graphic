@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:graphic/src/event/event.dart';
 
-
 abstract class Selection {
   Selection({
     this.variables,

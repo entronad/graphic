@@ -8,7 +8,9 @@ abstract class Scene {
 
   Path? clip;
 
-  int? zIndex;
+  int zIndex = 0;
+
+  int get layer;
 
   // Help to order stablely.
   int? preOrder;

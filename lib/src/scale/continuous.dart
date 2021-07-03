@@ -1,4 +1,4 @@
-import 'base.dart';
+import 'scale.dart';
 
 abstract class ContinuousScale<V> extends Scale<V, double> {
   ContinuousScale({

@@ -7,7 +7,7 @@ import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
 
 import 'partition.dart';
-import 'modifier/base.dart';
+import 'modifier/modifier.dart';
 
 class PolygonElement extends PartitionElement {
   PolygonElement({

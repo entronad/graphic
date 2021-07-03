@@ -12,10 +12,10 @@ abstract class Operator<V> {
   Operator(
     this.value,
     [Map<String, dynamic>? params,
-    bool react = true,]
+    bool reactive = true,]
   ) : id = _opId++ {
     if (params != null) {
-      setParams(params, react: react);
+      setParams(params, reactive: reactive);
     }
   }
   
@@ -54,9 +54,10 @@ abstract class Operator<V> {
   Pulse? pulse;
 
   /// Returns all involved operators, including paramOps and sources
+  /// The 'pulse' in params map indicates upstream operators in pushing, and has nothing to do with params.
   Set<Operator> setParams(
     Map<String, dynamic> params,
-    {bool react = true,
+    {bool reactive = true,
     initOnly = false,}
   ) {
     final rst = <Operator>{};
@@ -77,7 +78,7 @@ abstract class Operator<V> {
         final value = params[name];
         if (value is Operator) {
           if (value != this) {
-            if (react) {
+            if (reactive) {
               value.targets.add(this);
             }
             rst.add(value);

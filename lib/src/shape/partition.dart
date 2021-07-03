@@ -1,4 +1,4 @@
-import 'base.dart';
+import 'shape.dart';
 
 abstract class PartitionShape extends Shape {
   

@@ -2,6 +2,7 @@ import 'package:graphic/src/util/mask.dart' as mask_util;
 
 import 'pulse.dart';
 import '../dataflow.dart';
+import '../tuple.dart';
 
 /// Created with a list of pulses.
 /// Return a sigle pulse when forked.

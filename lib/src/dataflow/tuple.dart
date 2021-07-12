@@ -10,13 +10,17 @@ typedef TupleFilter = Tuple? Function(Tuple);
 
 // TODO: Tuple equality.
 class Tuple {
-  Tuple(this._payload)
-    : _id = _tupleId++;
+  Tuple([Map<String, dynamic>? init])
+    : _id = _tupleId++,
+      _payload = init ?? {};
 
   final int _id;
+
   final Map<String, dynamic> _payload;
 
   int get id => _id;
+
+  void clear() => _payload.clear();
 
   dynamic operator [](String key) =>
     _payload[key];

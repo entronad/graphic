@@ -2,8 +2,11 @@ import 'operator.dart';
 import 'op_params.dart';
 import '../pulse/pulse.dart';
 
-class Updator<V> extends Operator<V> {
-  Updator(
+/// Updator will not handle the pulse.
+/// It only returns the original pulse or null.
+/// It focuses on value for param of other operators.
+class Updater<V> extends Operator<V> {
+  Updater(
     V value,
     [Map<String, dynamic>? params,
     V Function(OpParams params, Pulse pulse)? update,

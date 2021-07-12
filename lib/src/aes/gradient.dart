@@ -6,7 +6,7 @@ import 'package:graphic/src/util/assert.dart';
 
 import 'single_variable.dart';
 
-class GradientAttr<D> extends SingleVariableAttr<Gradient> {
+class GradientAttr extends SingleVariableAttr<Gradient> {
   GradientAttr({
     Gradient? value,
     String? variable,

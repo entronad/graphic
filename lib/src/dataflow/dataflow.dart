@@ -252,7 +252,7 @@ class Dataflow {
       return sp!;
     }
 
-    p = p.fork();
+    p = p.fork(PulseFlags.background);
     if (sp != null) {
       p.source = sp.source;
     }

@@ -56,7 +56,7 @@ class MultiPulse extends Pulse {
   }
 
   @override
-  bool changed([int flags = PulseFlags.all]) =>
+  bool changed([int flags = PulseFlags.change]) =>
     mask_util.contain(changedFlags, flags);
 
   @override
@@ -73,7 +73,7 @@ class MultiPulse extends Pulse {
     throw UnimplementedError('MultiPulse does not support addFilter.');
 
   @override
-  Pulse materialize([int flags = PulseFlags.all]) =>
+  Pulse materialize([int flags = PulseFlags.change]) =>
     throw UnimplementedError('MultiPulse does not support materiialize.');
   
   @override

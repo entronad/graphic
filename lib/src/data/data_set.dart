@@ -1,5 +1,8 @@
 import 'package:collection/collection.dart';
-import 'package:graphic/src/transform/transform.dart';
+import 'package:graphic/src/dataflow/change_set.dart';
+import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/event/event.dart';
+import 'package:graphic/src/variable/transform/transform.dart';
 import 'package:graphic/src/util/assert.dart';
 import 'package:graphic/src/variable/variable.dart';
 
@@ -22,14 +25,42 @@ class DataSet<D> {
   @override
   bool operator ==(Object other) =>
     other is DataSet<D> &&
-    // TODO: Data source change.
+    // Data source is not diffed in equality operator.
     from == other.from &&
     DeepCollectionEquality().equals(variables, other.variables) &&
     DeepCollectionEquality().equals(transforms, other.transforms);
 }
 
-// input:
-// --
+// data source -> event stream (with pulseData) -> variable operator
 
-// value:
-// data tuple list : List<Tuple>
+class DataEvent<D> extends Event {
+  DataEvent(this.data);
+
+  final List<D> data;
+}
+
+class DataSouce<D> extends EventSource<DataEvent<D>> {
+  final _listeners = <EventListener<DataEvent<D>>>{};
+
+  @override
+  void on(EventType type, EventListener<DataEvent<D>> listener) {
+    assert(type == EventType.changeData);
+    _listeners.add(listener);
+  }
+
+  @override
+  void off([EventType? type, EventListener<DataEvent<D>>? listener]) {
+    assert(type == null || type == EventType.changeData);
+    if (listener != null) {
+      _listeners.remove(listener);
+    } else {
+      _listeners.clear();
+    }
+  }
+
+  void emit(DataEvent<D> event) {
+    for (var listener in _listeners) {
+      listener(event);
+    }
+  }
+}

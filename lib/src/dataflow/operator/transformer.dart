@@ -2,6 +2,8 @@ import 'operator.dart';
 import 'op_params.dart';
 import '../pulse/pulse.dart';
 
+/// Transformers changes pulse.
+/// It does not care about value.
 abstract class Transformer<V> extends Operator<V> {
   Transformer(
     V value,

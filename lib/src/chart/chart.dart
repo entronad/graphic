@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:graphic/src/annotation/annotation.dart';
-import 'package:graphic/src/axis/axis.dart';
+import 'package:graphic/src/guide/annotation/annotation.dart';
+import 'package:graphic/src/guide/axis/axis.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/data/data_set.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
@@ -8,7 +8,7 @@ import 'package:graphic/src/geom/geom_element.dart';
 import 'package:graphic/src/event/event.dart';
 import 'package:graphic/src/event/selection/selection.dart';
 import 'package:graphic/src/parse/spec.dart';
-import 'package:graphic/src/tooltip/tooltip.dart';
+import 'package:graphic/src/guide/tooltip/tooltip.dart';
 
 import 'view.dart';
 

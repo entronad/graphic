@@ -7,7 +7,7 @@ import 'package:graphic/src/util/assert.dart';
 
 import 'single_variable.dart';
 
-class ColorAttr<D> extends SingleVariableAttr<Color> {
+class ColorAttr extends SingleVariableAttr<Color> {
   ColorAttr({
     Color? value,
     String? variable,

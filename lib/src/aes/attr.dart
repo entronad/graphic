@@ -5,7 +5,7 @@ import 'package:graphic/src/dataflow/tuple.dart';
 
 /// An Attr can be determined by algebra/variable, value, or encode, but only one of them can be defined.
 /// Attr can be updated by signal or selection.
-abstract class Attr<V> {
+abstract class Attr<AV> {
   Attr({
     this.value,
     this.encode,
@@ -13,17 +13,17 @@ abstract class Attr<V> {
     this.select,
   });
 
-  final V? value;
+  final AV? value;
 
-  final V Function(Tuple)? encode;
+  final AV Function(Tuple)? encode;
 
-  final Signal<V>? signal;
+  final Signal<AV>? signal;
 
-  final Map<Select, SelectUpdate<V>>? select;
+  final Map<Select, SelectUpdate<AV>>? select;
 
   @override
   bool operator ==(Object other) =>
-    other is Attr<V> &&
+    other is Attr<AV> &&
     value == other.value &&
     signal == other.signal &&
     // encode: Function

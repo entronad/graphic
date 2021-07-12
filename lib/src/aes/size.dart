@@ -5,7 +5,7 @@ import 'package:graphic/src/util/assert.dart';
 
 import 'single_variable.dart';
 
-class SizeAttr<D> extends SingleVariableAttr<double> {
+class SizeAttr extends SingleVariableAttr<double> {
   SizeAttr({
     double? value,
     String? variable,

@@ -3,9 +3,8 @@ export 'src/chart/chart.dart' show Chart;
 export 'src/data/data_set.dart' show DataSet;
 
 export 'src/variable/variable.dart' show Variable;
-
-export 'src/transform/transform.dart' show Transform;
-export 'src/transform/proportion.dart' show Proportion;
+export 'src/variable/transform/transform.dart' show Transform;
+export 'src/variable/transform/proportion.dart' show Proportion;
 
 export 'src/scale/linear.dart' show LinearScale;
 export 'src/scale/ordinal.dart' show OrdinalScale;
@@ -41,13 +40,11 @@ export 'src/shape/polygon.dart' show PolygonShape;
 export 'src/coord/polar.dart' show PolarCoord;
 export 'src/coord/rect.dart' show RectCoord;
 
-export 'src/axis/axis.dart' show Tick, AxisLabel, GuideAxis;
-
-export 'src/tooltip/tooltip.dart' show Tooltip;
-
-export 'src/annotation/line.dart' show LineAnnotation;
-export 'src/annotation/region.dart' show RegionAnnotation;
-export 'src/annotation/tag.dart' show TagAnnotation;
+export 'src/guide/axis/axis.dart' show Tick, AxisLabel, GuideAxis;
+export 'src/guide/tooltip/tooltip.dart' show Tooltip;
+export 'src/guide/annotation/line.dart' show LineAnnotation;
+export 'src/guide/annotation/region.dart' show RegionAnnotation;
+export 'src/guide/annotation/tag.dart' show TagAnnotation;
 
 export 'src/event/event.dart' show Event, EventType;
 export 'src/event/gesture/gesture.dart' show GestureEvent;

@@ -8,10 +8,13 @@ abstract class PulseFlags {
   static const add = 1 << 0;
   static const rem = 1 << 1;
   static const mod = 1 << 2;
-  static const all = add | rem | mod;
   static const reflow = 1 << 3;  /// All tuples in source except for the add, rem and mod tuples.
   static const source = 1 << 4;  /// A 'pass-through' to a backing data source, wheather or not in add, rem and mod tuples.
-  static const modFields = 1<< 5;
+  static const modFields = 1 << 5;
+  static const change = add | rem | mod;
+  static const background = source | modFields;
+  static const all = add | rem | mod | source | modFields;
+  static const none = 0;
 }
 
 void _visitTuples(
@@ -106,22 +109,20 @@ class Pulse {
 
   Set<String> modFields = {};
 
-  Pulse fork(
-    [int flags = PulseFlags.source | PulseFlags.modFields]  // By default, only copy source and modFields.
-  ) => Pulse.from(this, flags);
+  Pulse fork(int flags) => Pulse.from(this, flags);  // Vega's default only copy background.
 
   Pulse clone() {
-    final pulse = fork(PulseFlags.all | PulseFlags.source | PulseFlags.modFields);
+    final pulse = fork(PulseFlags.all);
     pulse.add = [...pulse.add];
     pulse.rem = [...pulse.rem];
     pulse.mod = [...pulse.mod];
     if (pulse.source != null) {
       pulse.source = [...pulse.source!];
     }
-    return pulse.materialize(PulseFlags.all | PulseFlags.source);
+    return pulse.materialize(PulseFlags.change | PulseFlags.source);
   }
 
-  Pulse materialize([int flags = PulseFlags.all]) {
+  Pulse materialize([int flags = PulseFlags.change]) {
     if (mask_util.contain(flags, PulseFlags.add) && addF != null) {
       add = _materializeTuples(add, addF!);
       addF = null;
@@ -143,7 +144,7 @@ class Pulse {
     return this;
   }
 
-  bool changed([int flags = PulseFlags.all]) =>
+  bool changed([int flags = PulseFlags.change]) =>
     (mask_util.contain(flags, PulseFlags.add) && add.isNotEmpty) ||
     (mask_util.contain(flags, PulseFlags.mod) && mod.isNotEmpty) ||
     (mask_util.contain(flags, PulseFlags.rem) && rem.isNotEmpty);
@@ -151,7 +152,7 @@ class Pulse {
   Pulse reflow({bool fork = false}) {
     if (fork) {
       return this
-        .fork(PulseFlags.all | PulseFlags.source | PulseFlags.modFields)
+        .fork(PulseFlags.all)
         .reflow();
     }
 

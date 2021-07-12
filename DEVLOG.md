@@ -2982,3 +2982,108 @@ select不是个事件，而是op，因为它不是“起点”，是个中间环
 
 事件源一般还是叫 on, off，特别是on还带类型的，stream一般叫listen。
 
+event 这一线，只存在推，不存在拉，op与es相连时与params无关，只会直接更改值或发起pulse，因此op的初始值也与es无关
+
+定义多个dataset的目的，是为了同一个图表上可以展示多个数据源，from型dataSet是为了有些操作会改变数据源，注意from的意思仅仅是指和那个数据源源自同一个source，variable等还是独立的
+
+op 哪些作为类成员哪些作为params？在vaga中都是用的params的方式，我们也先这样搞
+
+数据源不需要，它就提供原始pulse
+
+changeData这整个一路都先按重置数据来
+
+tuple中似乎应当保存origin，这个单独弄个字段，而datum似乎没必要保存了，它对数据可视化没意义
+
+有一些部件的定义依赖 tuples 因此他们的解析是个 Updater。
+
+scale的求最值的先单独求，如果确有多处用到再提取 meta data
+
+spec中缺少的值有几种补充方式 1.有固定默认值 2. 从Theme中找 3.需结合tuples确定。
+
+结合tuples的看来要用修改法了，在创建的时候不要求所有数值都可以了
+
+似乎不应该是desc，没有必要，而是直接parse方法，每一类一个统一的parse方法
+
+scaleconv的逻辑：每次（包括初始）都重新检测一次，先用param，后用pulse
+
+初始化时如果想要只遍历一遍逻辑过于复杂，还是有几个就遍历几遍吧。
+
+aes attr 和 coord ，由于可以接受signal，因此应该都是op，selected恐怕也要放到tuples中
+
+当一个op run的时候，它的pulse的几种来源
+
+op只有一个sourceop的时候
+
+1 如果该op记录在 df.\_input 中有pulse，则使用它
+
+2 如果df当前的pulse和sourceop的pulse的clock一样，就用souceop.pulse
+
+3 否则fork一份 df 的当前pulse，并且将它的source指向souceop.pulse的source
+
+如果有多个sourceop
+
+新建一个multipulse传入所有sourceop的pulse
+
+collect这个节点比较关键，pulse经过它之后会变成它的value，似乎pulse.source都指向这里。可能问题的关键就是要区分不同的区域，它们彼此之间用collect连接
+
+所以现在比较确定，数据流变形后，就会变成不同的 souce，它们用 collect 保存。df被分为不同的区域，不同区域内使用的是相同的tuple。
+
+因此tuples仅保留id。id还是比较重要的，否则很多方法都不太方便
+
+对于需要输出pulse的，都是transformer，但是可以无需输入pulse，df.run中会建个空的pulse，所以variable是transformer
+
+datasouce 和 variable之间还是加个collect的操作符吧，说不定今后可以对data进行更精细的操作。collect的作用是将pulse的addmaterialize成value和pulse.source
+
+op的value似乎初始为null的情况还是比较常见的
+
+在一条pulse链路上，有些op能够转换pulse生成新source不同的pulse，在这些op之后会跟个collect，记录source，
+
+sieve 的作用是：一个op要做别的op的param，它的pulse要返回空的，因此当要把pulse source作为其他op的param时，用sieve做个转接。vega scale由于它天生出来就是空pulse，所以可以直接做param
+
+也不是对所有的op来说add, rem, mod都有意义，比如pie，stack都是直接针对source操作。只有仅针对元，且处于pulse链中间的采用到，add，rem，mod的应用也不能依赖前值。
+
+感觉aes之前的，可能都是source型的了。
+
+collect确实是根据pulse中的add，rem先rem再add的，对于数据源更新的办法就是pulse中增加 remF all。collect先不考虑sort
+
+collect和sieve的区别：
+
+collect处理的是变化，它的出口会保留变化，并且会通过变化生成source。提供给collect的pulse需要体现增量修改
+
+sieve保留source，出口为空pulse（一般transformer可以定义source）
+
+几个重要的op：
+
+collect: 将pulse中的add、rem等形成新的source并记录，一般与datajoin、aggregate等一起构成一种数据的起点。注意datajoin、aggregate等依赖于前面的变化，所以collect也只能用来处理变化（它只处理add、rem对现有source的变化），不能处理全新的source。它会传递现有的pulse，所以不作为数据分支的结尾
+
+sieve：收集souce，用来作为其它分支的op的param。它会建新的pulse，且结合它的功能，所以常作为数据分支的结尾
+
+proxy：将param中'value'代理为自己的值，用来作为其它分支的op的param。它会建新的pulse，不做为分支的一部分
+
+values：提取pulse的souce中的某个字段，形成新的数组并记录，给xscale等用，它原封不动返回现有pulse，但似乎一般作为其它op的param，是分支的结束。
+
+branch的划分依据似乎是是不是同一个pulse，而是否要保留pulse就是看是否要保留add、rem等记录。从深层次讲是是处理同一段pulse，还是作为别人的param了。
+
+在同一段branch中途的op，是可以更换source的，更换了的source如果还有用，就用collect收集，但pulse还是保留，这也就是collect为什么都在中途，末尾pulse不用了，直接用sieve。
+
+统计方法型的transformer，一般会把计算结果记录在value中，这样就可以实现增量修改了。
+
+这是以空间换增量的策略，全清是以增量换空间的策略（前面几个op不用记录了）。到底哪个好？
+
+第一个分支：original value，field是variable
+
+第二个分支：scaled value，field是variable，它们中间通过一个tuple到tuple 的map关联
+
+第三个分支：aes value，field是color等属性，但项是与 scaled value一一对应的。
+
+需要多data souce的另一个理由，比如确实有两组完全不相干的数值数据要画在同一个散点图上，完全没有必要拼接分类
+
+一般位于collect之前的op，输入pulse和输出pulse的tuples不一样的（original value之前的variable和transform认为是一组）
+
+由于scale之前有了collect，所以scale本身就已经具有处理各种change的能力了。至于今后事件放哪里再说。假设传入在ScaleConvOp之前，要保证source 已经是新的。
+
+一般transformer处理change的顺序是 rem -> add -> mod
+
+改变pulse类型的运算符中要新建pulse了。
+
+tuple中的键都称为field包括aes的键，spec或param的参数名或变量名都称为name。

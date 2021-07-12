@@ -5,7 +5,7 @@ import 'package:graphic/src/dataflow/tuple.dart';
 
 import 'attr.dart';
 
-class LabelAttr<D> extends Attr<TextSpan> {
+class LabelAttr extends Attr<TextSpan> {
   LabelAttr({
     required TextSpan Function(Tuple) encode,
     Signal<TextSpan>? signal,

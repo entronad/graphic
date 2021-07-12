@@ -21,3 +21,11 @@ abstract class ContinuousScale<V> extends Scale<V, double> {
     min == other.min &&
     max == other.max;
 }
+
+abstract class ContinuousScaleConv<V> extends ScaleConv<V, double> {
+  ContinuousScaleConv(this.min, this.max);
+
+  V? min;
+  
+  V? max;
+}

@@ -58,8 +58,8 @@ arena.GestureType _toArenaType(EventType type) =>
   type == EventType.scaleEnd ? arena.GestureType.scaleEnd :
   throw UnimplementedError('$type has no equivalent GestureType.');
 
-class GestureEventSource extends EventSource<GestureEvent> {
-  GestureEventSource(this._arena);
+class GestureSource extends EventSource<GestureEvent> {
+  GestureSource(this._arena);
 
   final arena.GestureArena _arena;
 

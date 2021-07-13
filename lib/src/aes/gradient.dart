@@ -4,9 +4,9 @@ import 'package:graphic/src/event/signal.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/util/assert.dart';
 
-import 'single_variable.dart';
+import 'channel.dart';
 
-class GradientAttr extends SingleVariableAttr<Gradient> {
+class GradientAttr extends ChannelAttr<Gradient> {
   GradientAttr({
     Gradient? value,
     String? variable,

@@ -36,7 +36,7 @@ final chart1 = Chart(
   )},
   coord: PolarCoord(dim: 1),
   elements: [IntervalElement(
-    position: PositionAttr(algebra: Varset('salesP')),
+    position: Varset('salesP'),
   )],
 );
 
@@ -99,9 +99,7 @@ final chart2 = Chart(
     }
   )},
   elements: [AreaElement(
-    position: PositionAttr(
-      algebra: Varset('day') * Varset('value'),
-    ),
+    position: Varset('day') * Varset('value'),
     gradient: GradientAttr(
       variable: 'group',
       values: [

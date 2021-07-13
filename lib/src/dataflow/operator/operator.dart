@@ -91,7 +91,7 @@ abstract class Operator<V> {
     }
 
     marshall().clear();
-    initOnly = initOnly;  // Only need to switch in setParams.
+    this.initOnly = initOnly;  // Only need to switch in setParams.
 
     return rst;
   }

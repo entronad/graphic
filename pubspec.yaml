@@ -10,6 +10,7 @@ dependencies:
   collection: ^1.15.0
   flutter:
     sdk: flutter
+  vector_math: ^2.1.0
 
 dev_dependencies:
   flutter_test:

@@ -4,9 +4,9 @@ import 'package:graphic/src/shape/shape.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/util/assert.dart';
 
-import 'single_variable.dart';
+import 'channel.dart';
 
-class ShapeAttr extends SingleVariableAttr<Shape> {
+class ShapeAttr extends ChannelAttr<Shape> {
   ShapeAttr({
     Shape? value,
     String? variable,

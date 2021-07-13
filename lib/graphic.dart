@@ -24,7 +24,6 @@ export 'src/aes/color.dart' show ColorAttr;
 export 'src/aes/elevation.dart' show ElevationAttr;
 export 'src/aes/gradient.dart' show GradientAttr;
 export 'src/aes/label.dart' show LabelAttr;
-export 'src/aes/position.dart' show PositionAttr;
 export 'src/aes/shape.dart' show ShapeAttr;
 export 'src/aes/size.dart' show SizeAttr;
 

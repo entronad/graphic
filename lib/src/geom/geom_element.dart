@@ -2,7 +2,7 @@ import 'package:graphic/src/aes/color.dart';
 import 'package:graphic/src/aes/elevation.dart';
 import 'package:graphic/src/aes/gradient.dart';
 import 'package:graphic/src/aes/label.dart';
-import 'package:graphic/src/aes/position.dart';
+import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
 
@@ -29,7 +29,7 @@ abstract class GeomElement {
 
   final LabelAttr? label;
 
-  final PositionAttr? position;
+  final Varset? position;
 
   final ShapeAttr? shape;
 

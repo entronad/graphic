@@ -3004,6 +3004,8 @@ spec中缺少的值有几种补充方式 1.有固定默认值 2. 从Theme中找 
 
 似乎不应该是desc，没有必要，而是直接parse方法，每一类一个统一的parse方法
 
+环节op，如果要处理多态的部件，就统一用一个（比如scale）如果就一个可以通过不同子类实现，parse决定创建那种，（比如transform，coord）
+
 scaleconv的逻辑：每次（包括初始）都重新检测一次，先用param，后用pulse
 
 初始化时如果想要只遍历一遍逻辑过于复杂，还是有几个就遍历几遍吧。
@@ -3087,3 +3089,13 @@ branch的划分依据似乎是是不是同一个pulse，而是否要保留pulse�
 改变pulse类型的运算符中要新建pulse了。
 
 tuple中的键都称为field包括aes的键，spec或param的参数名或变量名都称为name。
+
+updater思考再三，还是采取方法实现update的方式。如果非要update可变，子类再用参数塞到update方法中
+
+对于dim为1的坐标系，coord的convert和invert函数也当成完整的Offset来处理，至于实际的一维坐标怎么画由Offset决定
+
+attr的converter先不要invert函数，可能都不需要，通过关联记录来查找，scaled value tuples 与 aes value tuples的关系是aes op的value
+
+AttrConv本身似乎是一个固定值，不需要op，直接作为param
+
+对于position attr，由于输出值是对用户无意义的坐标点，所以所有attr定义参数都失效了，并不需要positionAttr了，直接就是algebra

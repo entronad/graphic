@@ -1,4 +1,6 @@
 import 'package:collection/collection.dart';
+import 'package:graphic/src/common/converter.dart';
+import 'package:graphic/src/dataflow/operator/updater.dart';
 import 'package:graphic/src/event/selection/select.dart';
 import 'package:graphic/src/event/signal.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
@@ -31,8 +33,19 @@ abstract class Attr<AV> {
     DeepCollectionEquality().equals(select?.keys, other.select?.keys);  // SignalUpdata: Function
 }
 
-// input:
-// scaled value tuple : Tuple
+abstract class AttrConv<SV extends num, AV> extends Converter<SV, AV> {
+  @override
+  SV invert(AV output) {
+    throw UnimplementedError();
+  }
+}
 
-// value:
-// aes value
+/// For any attr specification that has value.
+class ValueAttrConv<AV> extends AttrConv<num, AV> {
+  ValueAttrConv(this.value);
+
+  final AV value;
+
+  @override
+  AV convert(num input) => value;
+}

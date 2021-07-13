@@ -5,9 +5,9 @@ import 'package:graphic/src/event/signal.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/util/assert.dart';
 
-import 'single_variable.dart';
+import 'channel.dart';
 
-class ColorAttr extends SingleVariableAttr<Color> {
+class ColorAttr extends ChannelAttr<Color> {
   ColorAttr({
     Color? value,
     String? variable,
@@ -27,4 +27,12 @@ class ColorAttr extends SingleVariableAttr<Color> {
         signal: signal,
         select: select,
       );
+}
+
+class ContinuousColorConv extends ContinuousChannelConv<Color> {
+  ContinuousColorConv(List<Color> range) : super(range);
+
+  @override
+  Color lerp(Color a, Color b, double t) =>
+    Color.lerp(a, b, t)!;
 }

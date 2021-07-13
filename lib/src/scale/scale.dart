@@ -30,27 +30,6 @@ abstract class ScaleConv<V, SV extends num> extends Converter<V, SV> {
   void complete(List<Tuple> tuples, String field);
 }
 
-Map<String, ScaleConv> _createConvs(OpParams params, Pulse pulse) {
-  final specs = params['specs'] as Map<String, Scale>;
-  final rst = <String, ScaleConv>{};
-  for (var name in specs.keys) {
-    if (specs[name] is OrdinalScale) {
-      final spec = specs[name] as OrdinalScale;
-      rst[name] = OrdinalScaleConv(spec.values)
-        ..complete(pulse.source!, name);
-    } else if (specs[name] is LinearScale) {
-      final spec = specs[name] as LinearScale;
-      rst[name] = LinearScaleConv(spec.min, spec.max)
-        ..complete(pulse.source!, name);
-    } else if (specs[name] is TimeScale) {
-      final spec = specs[name] as TimeScale;
-      rst[name] = TimeScaleConv(spec.min, spec.max)
-        ..complete(pulse.source!, name);
-    }
-  }
-  return rst;
-}
-
 /// params:
 /// - specs: Map<String, Scale>, Scale specs of all variables.
 /// 
@@ -63,7 +42,30 @@ Map<String, ScaleConv> _createConvs(OpParams params, Pulse pulse) {
 class ScaleConvOp extends Updater<Map<String, ScaleConv>> {
   ScaleConvOp(
     Map<String, dynamic> params,
-  ) : super({}, params, _createConvs);  // must be inited by a pulse.
+  ) : super({}, params);
+
+  // must be inited by a pulse.
+  @override
+  Map<String, ScaleConv> update(OpParams params, Pulse pulse) {
+    final specs = params['specs'] as Map<String, Scale>;
+    final rst = <String, ScaleConv>{};
+    for (var name in specs.keys) {
+      if (specs[name] is OrdinalScale) {
+        final spec = specs[name] as OrdinalScale;
+        rst[name] = OrdinalScaleConv(spec.values)
+          ..complete(pulse.source!, name);
+      } else if (specs[name] is LinearScale) {
+        final spec = specs[name] as LinearScale;
+        rst[name] = LinearScaleConv(spec.min, spec.max)
+          ..complete(pulse.source!, name);
+      } else if (specs[name] is TimeScale) {
+        final spec = specs[name] as TimeScale;
+        rst[name] = TimeScaleConv(spec.min, spec.max)
+          ..complete(pulse.source!, name);
+      }
+    }
+    return rst;
+  }
 }
 
 /// params:

@@ -5,34 +5,20 @@ import '../pulse/pulse.dart';
 /// Updator will not handle the pulse.
 /// It only returns the original pulse or null.
 /// It focuses on value for param of other operators.
-class Updater<V> extends Operator<V> {
+abstract class Updater<V> extends Operator<V> {
   Updater(
     V value,
     [Map<String, dynamic>? params,
-    V Function(OpParams params, Pulse pulse)? update,
     bool reactive = true]
-  )
-    : _update = update,
-      super(value, params, reactive);
+  ) : super(value, params, reactive);
 
-  V Function(OpParams params, Pulse pulse)? _update;
-
-  @override
-  OpParams marshall([int clock = -1]) {
-    final rst = super.marshall(clock);
-
-    if (initOnly) {
-      _update = null;
-    }
-
-    return rst;
-  }
+  V update(OpParams params, Pulse pulse);
 
   @override
   Pulse? evaluete(Pulse pulse) {
-    if (_update != null) {
+    if (!initOnly) {
       final params = marshall(pulse.clock);
-      final v = _update!(params, pulse);
+      final v = update(params, pulse);
       params.clear();
       if (v != value) {
         value = v;

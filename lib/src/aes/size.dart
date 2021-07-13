@@ -3,9 +3,9 @@ import 'package:graphic/src/event/signal.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/util/assert.dart';
 
-import 'single_variable.dart';
+import 'channel.dart';
 
-class SizeAttr extends SingleVariableAttr<double> {
+class SizeAttr extends ChannelAttr<double> {
   SizeAttr({
     double? value,
     String? variable,
@@ -25,4 +25,12 @@ class SizeAttr extends SingleVariableAttr<double> {
         signal: signal,
         select: select,
       );
+}
+
+class ContinuousSizeConv extends ContinuousChannelConv<double> {
+  ContinuousSizeConv(List<double> range) : super(range);
+
+  @override
+  double lerp(double a, double b, double t) =>
+    (b - a) * t + a;
 }

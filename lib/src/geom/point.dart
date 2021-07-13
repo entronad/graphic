@@ -2,7 +2,7 @@ import 'package:graphic/src/aes/color.dart';
 import 'package:graphic/src/aes/elevation.dart';
 import 'package:graphic/src/aes/gradient.dart';
 import 'package:graphic/src/aes/label.dart';
-import 'package:graphic/src/aes/position.dart';
+import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
 
@@ -15,7 +15,7 @@ class PointElement extends FunctionElement {
     ElevationAttr? elevation,
     GradientAttr? gradient,
     LabelAttr? label,
-    PositionAttr? position,
+    Varset? position,
     ShapeAttr? shape,
     SizeAttr? size,
     Modifier? modifier,

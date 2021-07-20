@@ -64,34 +64,34 @@ class ChangeSet {
 
   Pulse pulse(Pulse pulse, List<Tuple> tuples) {
     // {id: available}
-    final cur = <int, bool>{};
+    final cur = <Tuple, bool>{};
 
     for (var tuple in tuples) {
-      cur[tuple.id] = true;
+      cur[tuple] = true;
     }
 
     for (var rt in _rem) {
-      cur[rt.id] = false;
+      cur[rt] = false;
     }
 
     for (var rp in _remP) {
       for (var tuple in tuples) {
         if (rp(tuple)) {
-          cur[tuple.id] = false;
+          cur[tuple] = false;
         }
       }
     }
 
     for (var at in _add) {
-      if (cur[at.id] != null) {
-        cur[at.id] = true;
+      if (cur[at] != null) {
+        cur[at] = true;
       } else {
         pulse.add.add(at);
       }
     }
 
     for (var tuple in tuples) {
-      if (cur[tuple.id] == false) {
+      if (cur[tuple] == false) {
         pulse.rem.add(tuple);
       }
     }
@@ -108,14 +108,14 @@ class ChangeSet {
     };
 
     for (var mt in _mod.keys) {
-      if (cur[mt.id] == true) {
+      if (cur[mt] == true) {
         modifyTuple(mt, _mod[mt]!);
       }
     }
 
     for (var mp in _modP.keys) {
       for (var tuple in tuples) {
-        if (mp(tuple) && cur[tuple.id] == true) {
+        if (mp(tuple) && cur[tuple] == true) {
           modifyTuple(tuple, _modP[mp]!);
         }
       }
@@ -123,7 +123,7 @@ class ChangeSet {
 
     if (reflow) {
       pulse.mod = (_rem.isNotEmpty || _remP.isNotEmpty)
-        ? tuples.where((t) => cur[t.id] == true).toList()
+        ? tuples.where((t) => cur[t] == true).toList()
         : [...tuples];
     } else {
       pulse.mod.addAll(modTmp);

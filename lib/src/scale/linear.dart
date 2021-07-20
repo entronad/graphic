@@ -45,4 +45,7 @@ class LinearScaleConv extends ContinuousScaleConv<num> {
       max = max ?? maxTmp;
     }
   }
+
+  @override
+  num get zero => 0;
 }

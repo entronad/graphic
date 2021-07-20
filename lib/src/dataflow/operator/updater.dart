@@ -1,5 +1,6 @@
+import 'package:meta/meta.dart';
+
 import 'operator.dart';
-import 'op_params.dart';
 import '../pulse/pulse.dart';
 
 /// Updator will not handle the pulse.
@@ -7,18 +8,16 @@ import '../pulse/pulse.dart';
 /// It focuses on value for param of other operators.
 abstract class Updater<V> extends Operator<V> {
   Updater(
-    V value,
     [Map<String, dynamic>? params,
+    V? value,
     bool reactive = true]
-  ) : super(value, params, reactive);
-
-  V update(OpParams params, Pulse pulse);
+  ) : super(params, value, reactive);
 
   @override
   Pulse? evaluete(Pulse pulse) {
     if (!initOnly) {
-      final params = marshall(pulse.clock);
-      final v = update(params, pulse);
+      marshall(pulse.clock);
+      final v = update(pulse);
       params.clear();
       if (v != value) {
         value = v;
@@ -30,4 +29,7 @@ abstract class Updater<V> extends Operator<V> {
     }
     return pulse;
   }
+
+  @protected
+  V update(Pulse pulse);
 }

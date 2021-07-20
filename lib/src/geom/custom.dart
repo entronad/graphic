@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:graphic/src/aes/color.dart';
 import 'package:graphic/src/aes/elevation.dart';
 import 'package:graphic/src/aes/gradient.dart';
@@ -32,3 +34,6 @@ class CustomElement extends GeomElement {
     zIndex: zIndex,
   );
 }
+
+/// any => any
+List<Offset> CustomCompleter(List<Offset> position, Offset origin) => position;

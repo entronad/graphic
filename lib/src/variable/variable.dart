@@ -1,4 +1,3 @@
-import 'package:graphic/src/dataflow/operator/op_params.dart';
 import 'package:graphic/src/dataflow/operator/transformer.dart';
 import 'package:graphic/src/dataflow/pulse/pulse.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
@@ -49,14 +48,15 @@ class Variable<D, V> {
 /// - out: original value tuples.
 class VariableOp<D> extends Transformer<List<D>> {
   VariableOp(
-    List<D> value,
     Map<String, dynamic> params,
-  ) : super(value, params);
+    List<D> value,
+  ) : super(params, value);
 
   @override
-  Pulse? transform(OpParams params, Pulse pulse) {
+  Pulse? transform(Pulse pulse) {
     final accessors = params['accessors'] as Map<String, Accessor>;
     final preTuples = params['preTuples'] as List<Tuple>;
+    final value = this.value!;
 
     // On data event(both init and update), remove all tuples and add all new tuples.
     // pulse.source will be added in Collect.

@@ -16,7 +16,7 @@ abstract class DiscreteScale<V> extends Scale<V, int> {
   /// List is to emphasize the order. It's better to be distinct.
   final List<V>? values;
 
-  /// How the postion will align in the band.
+  /// How the position will align in the band.
   /// Default is 0.5 in [0, 1].
   final double? align;
 
@@ -29,9 +29,13 @@ abstract class DiscreteScale<V> extends Scale<V, int> {
 }
 
 abstract class DiscreteScaleConv<V> extends ScaleConv<V, int> {
-  DiscreteScaleConv(this.values);
+  DiscreteScaleConv(this.values, this.align);
 
   List<V>? values;
+
+  double? align;
+
+  double? band;
 
   @override
   void complete(List<Tuple> tuples, String field) {
@@ -42,5 +46,31 @@ abstract class DiscreteScaleConv<V> extends ScaleConv<V, int> {
       }
       values = candidates.toList();
     }
+
+    align = align ?? 0.5;
+    band = 1 / values!.length;
   }
+
+  @override
+  int convert(V input) {
+    assert(values!.contains(input));
+    return values!.indexOf(input);
+  }
+
+  @override
+  V invert(int output) {
+    assert(output >= 0 && output < values!.length);
+    return values![output];
+  }
+
+  @override
+  double normalize(int scaledValue) =>
+    (scaledValue + align!) * band!;
+
+  @override
+  int denormalize(double normalValue) =>
+    (normalValue / band! - align!).round();
+  
+  @override
+  V get zero => values!.first;
 }

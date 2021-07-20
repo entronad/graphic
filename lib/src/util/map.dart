@@ -1,5 +1,12 @@
 import 'package:collection/collection.dart';
 
+extension MapExt<K, V> on Map<K, V> {
+  /// If no such value will throw an exception.
+  K keyOf(V value) => keys.firstWhere(
+    (key) => this[key] == value,
+  );
+}
+
 class MapKeyEquality<E extends Map> implements Equality<E> {
   const MapKeyEquality();
 

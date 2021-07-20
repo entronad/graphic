@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 import 'package:graphic/src/util/mask.dart' as mask_util;
 
 import '../dataflow.dart';
@@ -199,9 +199,9 @@ class Pulse {
   }
 
   TupleFilter _getContainFilter(int flags) {
-    final ids = <int>{};
-    visit(flags, (t) { ids.add(t.id); });
-    return (tuple) => (ids.contains(tuple.id)) ? null : tuple;
+    final tuples = <Tuple>{};
+    visit(flags, (t) { tuples.add(t); });
+    return (tuple) => (tuples.contains(tuple)) ? null : tuple;
   }
 
   Pulse visit(int flags, TupleVisitor visitor) {

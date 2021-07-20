@@ -1,5 +1,4 @@
 import 'package:graphic/src/dataflow/pulse/pulse.dart';
-import 'package:graphic/src/dataflow/operator/op_params.dart';
 import 'package:graphic/src/scale/scale.dart';
 
 import 'transform.dart';
@@ -44,7 +43,7 @@ class MapOp extends TransformOp {
   MapOp(Map<String, dynamic> params) : super(params);
 
   @override
-  Pulse? transform(OpParams params, Pulse pulse) {
+  Pulse? transform(Pulse pulse) {
     final variable = params['variable'] as String;
     final as = params['as'] as String;
     final mapper = params['mapper'] as dynamic Function(dynamic);

@@ -53,4 +53,7 @@ class TimeScaleConv extends ContinuousScaleConv<DateTime> {
       max = max ?? maxTmp;
     }
   }
+
+  @override
+  DateTime get zero => min!;
 }

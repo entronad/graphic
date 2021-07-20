@@ -18,7 +18,7 @@ export 'src/geom/point.dart' show PointElement;
 export 'src/geom/polygon.dart' show PolygonElement;
 export 'src/geom/modifier/dodge.dart' show DodgeModifier;
 export 'src/geom/modifier/stack.dart' show StackModifier;
-export 'src/geom/modifier/symmetric.dart' show SymmetricModifier;
+export 'src/geom/modifier/jitter.dart' show JitterModifier;
 
 export 'src/aes/color.dart' show ColorAttr;
 export 'src/aes/elevation.dart' show ElevationAttr;

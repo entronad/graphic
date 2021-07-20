@@ -1,22 +1,24 @@
+import 'package:meta/meta.dart';
+
 import 'operator.dart';
-import 'op_params.dart';
 import '../pulse/pulse.dart';
 
 /// Transformers changes pulse.
 /// It does not care about value.
 abstract class Transformer<V> extends Operator<V> {
   Transformer(
-    V value,
-    [Map<String, dynamic>? params,]
-  ) : super(value, params);
-
-  Pulse? transform(OpParams params, Pulse pulse);
+    [Map<String, dynamic>? params,
+    V? value,]
+  ) : super(params, value);
 
   @override
   Pulse? evaluete(Pulse pulse) {
-    final params = marshall(pulse.clock);
-    final rst = transform(params, pulse);
+    marshall(pulse.clock);
+    final rst = transform(pulse);
     params.clear();
     return rst;
   }
+
+  @protected
+  Pulse? transform(Pulse pulse);
 }

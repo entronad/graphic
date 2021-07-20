@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:collection/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/dataflow/pulse/pulse.dart';
-import 'package:graphic/src/dataflow/operator/op_params.dart';
 import 'package:graphic/src/event/signal.dart';
 import 'package:graphic/src/util/map.dart';
 
@@ -17,6 +16,7 @@ class RectCoord extends Coord {
     this.verticalRangeSignals,
 
     int? dim,
+    double? dimFill,
     bool? transposed,
     Color? backgroundColor,
     Gradient? backgroundGradient,
@@ -25,6 +25,7 @@ class RectCoord extends Coord {
       assert(verticalRange == null || verticalRange.length == 2),
       super(
         dim: dim,
+        dimFill: dimFill,
         transposed: transposed,
         backgroundColor: backgroundColor,
         backgroundGradient: backgroundGradient,
@@ -53,6 +54,7 @@ class RectCoordConv extends CoordConv {
   RectCoordConv(
     Rect region,
     int dim,
+    double dimFill,
     bool transposed,
     List<double> renderRangeX,  // Render range is bind to render dim, ignoring tansposing.
     List<double> renderRangeY,
@@ -65,7 +67,7 @@ class RectCoordConv extends CoordConv {
         region.bottom - region.height * renderRangeY.first,  // Rect coord is form bottom to top.
         region.bottom - region.height * renderRangeY.last,
       ],
-      super(dim, transposed);
+      super(dim, dimFill, transposed);
     
   final List<double> horizontal;
 
@@ -73,6 +75,10 @@ class RectCoordConv extends CoordConv {
 
   @override
   Offset convert(Offset input) {
+    if (dim == 1) {
+      input = Offset(input.dx, dimFill);
+    }
+
     final getHorizontalInput = transposed ? (Offset p) => p.dy : (Offset p) => p.dx;
     final getVerticalInput = transposed ? (Offset p) => p.dx : (Offset p) => p.dy;
     return Offset(
@@ -93,20 +99,21 @@ class RectCoordConv extends CoordConv {
 
 class RectCoordConvOp extends CoordConvOp<RectCoordConv> {
   RectCoordConvOp(
-    RectCoordConv value,
     Map<String, dynamic> params,
-  ) : super(value, params);
+  ) : super(params);
 
   @override
-  RectCoordConv update(OpParams params, Pulse pulse) {
+  RectCoordConv update(Pulse pulse) {
     final region = params['region'] as Rect;
     final dim = params['dim'] as int;
+    final dimFill = params['dimFill'] as double;
     final transposed = params['transposed'] as bool;
     final renderRangeX = params['renderRangeX'] as List<double>;
     final renderRangeY = params['renderRangeY'] as List<double>;
     return RectCoordConv(
       region,
       dim,
+      dimFill,
       transposed,
       renderRangeX,
       renderRangeY,

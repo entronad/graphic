@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:graphic/src/aes/color.dart';
 import 'package:graphic/src/aes/elevation.dart';
 import 'package:graphic/src/aes/gradient.dart';
@@ -31,4 +33,10 @@ class PolygonElement extends PartitionElement {
     modifier: modifier,
     zIndex: zIndex,
   );
+}
+
+/// [point] => [point]
+List<Offset> PolygonCompleter(List<Offset> position, Offset origin) {
+  assert(position.length == 1);
+  return position;
 }

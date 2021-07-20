@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:graphic/src/scale/scale.dart';
 
 import 'transform.dart';
@@ -13,7 +12,7 @@ class Proportion extends Transform {
 
   final String variable;
 
-  final List<String>? groupBy;
+  final String? groupBy;
 
   final String as;
 
@@ -24,7 +23,7 @@ class Proportion extends Transform {
     other is Proportion &&
     super == other &&
     variable == other.variable &&
-    DeepCollectionEquality().equals(groupBy, other.groupBy) &&
+    groupBy == other.groupBy &&
     as == other.as &&
     scale == other.scale;
 }

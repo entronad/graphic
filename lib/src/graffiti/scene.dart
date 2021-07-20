@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 typedef Draw = void Function(Canvas);
 
 abstract class Scene {
+  Scene([this.clip]);
 
   Path? clip;
 
@@ -15,24 +16,18 @@ abstract class Scene {
   // Help to order stablely.
   int? preOrder;
 
-  void paint(Canvas canvas) {
-    _setCanvas(canvas);
-    draw(canvas);
-    _restoreCanvas(canvas);
-  }
-
-  void _setCanvas(Canvas canvas) {
+  void executePaint(Canvas canvas) {
     canvas.save();
-
     if (clip != null) {
       canvas.clipPath(clip!);
     }
-  }
 
-  @protected
-  void draw(Canvas canvas);
+    paint(canvas);
 
-  void _restoreCanvas(Canvas canvas) {
     canvas.restore();
   }
+
+  /// Subclass override this method.
+  @protected
+  void paint(Canvas canvas);
 }

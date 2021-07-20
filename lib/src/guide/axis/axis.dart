@@ -49,7 +49,7 @@ class GuideAxis {
     this.variables,
     this.tickCount,
     this.nice,
-    this.postion,
+    this.position,
     this.flip,
     this.line,
     this.tick,
@@ -71,7 +71,7 @@ class GuideAxis {
 
   final bool? nice;
 
-  final double? postion;
+  final double? position;
 
   final bool? flip;  // Flip tick and label to other side of the axis.
 
@@ -98,7 +98,7 @@ class GuideAxis {
     DeepCollectionEquality().equals(variables, other.variables) &&
     tickCount == other.tickCount &&
     nice == other.nice &&
-    postion == other.postion &&
+    position == other.position &&
     flip == other.flip &&
     line == other.line &&
     tick == other.tick &&

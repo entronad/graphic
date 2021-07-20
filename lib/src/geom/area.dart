@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:graphic/src/aes/color.dart';
 import 'package:graphic/src/aes/elevation.dart';
 import 'package:graphic/src/aes/gradient.dart';
@@ -31,4 +33,18 @@ class AreaElement extends FunctionElement {
     modifier: modifier,
     zIndex: zIndex,
   );
+}
+
+/// [start, end] | [end] => [start, end]
+List<Offset> AreaCompleter(List<Offset> position, Offset origin) {
+  assert(position.length == 1 || position.length == 2);
+  if (position.length == 1) {
+    final normalZero = origin.dy;
+    final end = position.first;
+    return [
+      Offset(end.dx, normalZero),
+      end,
+    ];
+  }
+  return position;
 }

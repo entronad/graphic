@@ -1,9 +1,11 @@
 import 'package:collection/collection.dart';
-import 'package:graphic/src/aes/attr.dart';
 import 'package:graphic/src/event/selection/select.dart';
 import 'package:graphic/src/event/signal.dart';
 import 'package:graphic/src/util/assert.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/util/map.dart';
+
+import 'aes.dart';
 
 /// To encode one variable to one aes value.
 abstract class ChannelAttr<AV> extends Attr<AV> {
@@ -62,4 +64,26 @@ class DiscreteChannelConv<AV> extends ChannelConv<int, AV> {
 
   @override
   AV convert(int input) => values[input];
+}
+
+/// params:
+/// - attr: String, Aes value this operator handles.
+/// - variable: String, Scaled value tuple field.
+/// - conv: ChannelConv<AV>
+/// - aesRelay: Map<Tuple, Tuple>, Relay from scaled value to aes value.
+class ChannelOp<AV> extends AesOp<AV> {
+  ChannelOp(
+    Map<String, dynamic> params,
+    String attr,
+  ) : super(params, attr);
+
+  @override
+  void aes(Tuple tuple) {
+    final variable = params['variable'] as String;
+    final conv = params['conv'] as ChannelConv<num, AV>;
+    final aesRelay = params['aesRelay'] as Map<Tuple, Tuple>;
+
+    final scaledTuple = aesRelay.keyOf(tuple);
+    tuple[attr] = conv.convert(scaledTuple[variable]);
+  }
 }

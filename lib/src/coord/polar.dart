@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/dataflow/pulse/pulse.dart';
-import 'package:graphic/src/dataflow/operator/op_params.dart';
 import 'package:graphic/src/event/signal.dart';
 import 'package:graphic/src/util/map.dart';
 import 'package:graphic/src/util/transform.dart';
@@ -20,6 +19,7 @@ class PolarCoord extends Coord {
     this.radiusRangeSignals,
 
     int? dim,
+    double? dimFill,
     bool? transposed,
     Color? backgroundColor,
     Gradient? backgroundGradient,
@@ -28,6 +28,7 @@ class PolarCoord extends Coord {
       assert(radiusRange == null || radiusRange.length == 2),
       super(
         dim: dim,
+        dimFill: dimFill,
         transposed: transposed,
         backgroundColor: backgroundColor,
         backgroundGradient: backgroundGradient,
@@ -55,6 +56,7 @@ class PolarCoordConv extends CoordConv {
   PolarCoordConv(
     Rect region,
     int dim,
+    double dimFill,
     bool transposed,
     List<double> renderRangeX,  // Render range is bind to render dim, ignoring tansposing.
     List<double> renderRangeY,
@@ -68,7 +70,7 @@ class PolarCoordConv extends CoordConv {
         min(region.width, region.height) / 2 * renderRangeY.first,
         min(region.width, region.height) / 2 * renderRangeY.last,
       ],
-      super(dim, transposed);
+      super(dim, dimFill, transposed);
 
   final Offset center;
 
@@ -78,6 +80,10 @@ class PolarCoordConv extends CoordConv {
 
   @override
   Offset convert(Offset input) {
+    if (dim == 1) {
+      input = Offset(input.dx, dimFill);
+    }
+
     final getAngleInput = transposed ? (Offset p) => p.dy : (Offset p) => p.dx;
     final getRadiusInput = transposed ? (Offset p) => p.dx : (Offset p) => p.dy;
 
@@ -120,20 +126,21 @@ class PolarCoordConv extends CoordConv {
 
 class PolarCoordConvOp extends CoordConvOp<PolarCoordConv> {
   PolarCoordConvOp(
-    PolarCoordConv value,
     Map<String, dynamic> params,
-  ) : super(value, params);
+  ) : super(params);
 
   @override
-  PolarCoordConv update(OpParams params, Pulse pulse) {
+  PolarCoordConv update(Pulse pulse) {
     final region = params['region'] as Rect;
     final dim = params['dim'] as int;
+    final dimFill = params['dimFill'] as double;
     final transposed = params['transposed'] as bool;
     final renderRangeX = params['renderRangeX'] as List<double>;
     final renderRangeY = params['renderRangeY'] as List<double>;
     return PolarCoordConv(
       region,
       dim,
+      dimFill,
       transposed,
       renderRangeX,
       renderRangeY,

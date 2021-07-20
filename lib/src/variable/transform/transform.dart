@@ -7,5 +7,5 @@ abstract class Transform {
 }
 
 abstract class TransformOp extends Transformer {
-  TransformOp(Map<String, dynamic> params) : super(null, params);
+  TransformOp(Map<String, dynamic> params) : super(params);
 }

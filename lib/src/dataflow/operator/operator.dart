@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 
 import 'op_params.dart';
 import '../pulse/pulse.dart';
@@ -10,8 +10,8 @@ const _pulseParam = 'pulse';
 
 abstract class Operator<V> {
   Operator(
-    this.value,
     [Map<String, dynamic>? params,
+    this.value,
     bool reactive = true,]
   ) : id = _opId++ {
     if (params != null) {
@@ -19,7 +19,7 @@ abstract class Operator<V> {
     }
   }
   
-  V value;
+  V? value;
 
   /// Operators that params depend on.
   final Map<String, Operator> _paramOps = {};
@@ -27,7 +27,8 @@ abstract class Operator<V> {
   @protected
   bool initOnly = false;
 
-  final OpParams _params = OpParams();
+  @protected
+  final OpParams params = OpParams();
 
   /// Upstream operators in pulsing.
   /// Can be entierly reset.
@@ -85,25 +86,26 @@ abstract class Operator<V> {
           }
           _paramOps[name] = value;
         } else {
-          _params.set(name, value);
+          this.params.set(name, value);
         }
       }
     }
 
-    marshall().clear();
+    marshall();
+    params.clear();
     this.initOnly = initOnly;  // Only need to switch in setParams.
 
     return rst;
   }
 
   @protected
-  OpParams marshall([int clock = -1]) {
+  void marshall([int clock = -1]) {
     if (_paramOps.isNotEmpty) {
       for (var name in _paramOps.keys) {
         final op = _paramOps[name];
         // A default -1 clock will ensure param set not foreced.
         final mod = op!.modified && op.clock == clock;
-        _params.set(name, op.value, force: mod);
+        params.set(name, op.value, force: mod);
       }
 
       if (initOnly) {
@@ -114,7 +116,6 @@ abstract class Operator<V> {
         _paramOps.clear();
       }
     }
-    return _params;
   }
 
   Pulse? run(Pulse pulse) {

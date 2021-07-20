@@ -28,4 +28,10 @@ abstract class ContinuousScaleConv<V> extends ScaleConv<V, double> {
   V? min;
   
   V? max;
+
+  @override
+  double normalize(double scaledValue) => scaledValue;
+
+  @override
+  double denormalize(double normalValue) => normalValue;
 }

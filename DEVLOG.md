@@ -1276,7 +1276,7 @@ repaint
 
 
 
-graffity 可能的一种优化方式是 elementRecord 保存 path 和paint，就相当于现在的 RenderShapeProps，然后graffity 直接引用这些信息，避免构建过多对象？不过要先测试一下构建对象是不是瓶颈
+graffiti 可能的一种优化方式是 elementRecord 保存 path 和paint，就相当于现在的 RenderShapeProps，然后graffiti 直接引用这些信息，避免构建过多对象？不过要先测试一下构建对象是不是瓶颈
 
 目前主要的后腿是_sort，移除它可以极大提升效率，是的几万个shape都可轻松画出。仔细查看后，引擎中还是有一些类似计算bbox等的冗余可优化
 
@@ -2834,7 +2834,7 @@ resize：（width，height发生变化）resize 考虑做成一个事件，从 C
 
 目前渲染结构首先参考 graphic 0.3，其次参考vega
 
-所有直接调用的绘制方法都称为 paint，重写的称为draw，类型为Draw，Paint类型的样式称为 style
+所有直接调用的绘制方法都称为 paint，Paint类型的样式称为 style
 
 层级设置采用 vega 一样的 zIndex 的方式，默认都是0，默认的顺序是：grid , region, elements, line, tag
 
@@ -3058,6 +3058,10 @@ sieve保留source，出口为空pulse（一般transformer可以定义source）
 
 collect: 将pulse中的add、rem等形成新的source并记录，一般与datajoin、aggregate等一起构成一种数据的起点。注意datajoin、aggregate等依赖于前面的变化，所以collect也只能用来处理变化（它只处理add、rem对现有source的变化），不能处理全新的source。它会传递现有的pulse，所以不作为数据分支的结尾
 
+Relay: 将一种类型的pulse的change关系传递给另一种类型的pulse，souce tuple 的对应关系保留在value中。
+
+后面的op要用到这个关系的param就叫relay表示当前tuple和原始tuple的关系
+
 sieve：收集souce，用来作为其它分支的op的param。它会建新的pulse，且结合它的功能，所以常作为数据分支的结尾
 
 proxy：将param中'value'代理为自己的值，用来作为其它分支的op的param。它会建新的pulse，不做为分支的一部分
@@ -3099,3 +3103,92 @@ attr的converter先不要invert函数，可能都不需要，通过关联记录�
 AttrConv本身似乎是一个固定值，不需要op，直接作为param
 
 对于position attr，由于输出值是对用户无意义的坐标点，所以所有attr定义参数都失效了，并不需要positionAttr了，直接就是algebra
+
+op的value应当没有初始值，vega中op的value基本都是第一次run的时候创建出来的，没有必要一定在op的构造时创建（比如ConvOp）。起点型的op，value直接获取的，就保留（比如Variable）。要用到value的在开头放一个value = this.value! 提醒自己，或者确实需要的进行懒初始化
+
+对于aes，似乎一个一个用单独的op顺序添加是没问题的，group和modify放到最后
+
+Collect并不会创造tuple，只会将其记录到source中
+
+数组可以多次遍历，优先满足业务解耦的需求，因为多次循环并不会改变算法复杂度。
+
+continuous scale 不能统一抽取，因为不一定是线性的。而channel attr 怎只有线性的了，非线性统一在scale中体现。而discrete scale则可以抽取，因为它都是查表
+
+position的两步还是分开吧，虽然循环有两层，但是分离依然没有增加算法复杂度，
+
+algebra的处理以form为核心。
+
+所有op构造函数params放第一个因为最重要
+
+各属性op：
+
+position: PositionOp -> CoordOp
+
+color: EncodOp\<Color\>
+
+​           ChnnelOp\<Color\> with DiscreteChannelConv\<Color\> or ContinuousColorConv
+
+evaluation: EncodOp\<double\>
+
+​           ChnnelOp\<double\> with DiscreteChannelConv\<double\> or ContinuousEvaluationConv
+
+gradient: EncodOp\<Gradient\>
+
+​           ChnnelOp\<Gradient\> with DiscreteChannelConv\<Gradient\>
+
+label: EncodOp\<TextSpan\>
+
+shape: EncodOp\<Shape\>
+
+​           ChnnelOp\<Shape\> with DiscreteChannelConv\<Shape\>
+
+size: EncodOp\<double\>
+
+​           ChnnelOp\<double\> with DiscreteChannelConv\<double\> or ContinuousSizeConv
+
+
+
+Geom 中line和path合体，用户自行保证数据的顺序，并且可配置不同size
+
+stack和area的堆叠方式，上下两层，null处理还沿用现在的
+
+按照gg的分发，吧symmetric放到dodge和stack中，它们的domain
+
+还是要有group的思想，stack和dodge就用group的模式，用户自行保证一一对应，jitter中的group指的是domain。groupBy 如未指定，将无法modify，但不放在modifier中，因为有时候group不需要modify。
+
+modifer处理的都是normal value。
+
+jitter先只支持在band内的完全随机。
+
+所有的groupBy先只搞一个字段，因为多个笛卡尔积没必要且容易混乱。如确实需要多个，可以拼接新字段
+
+aes中的position只做到abstract position，后面接modify涉及到分组和联动，就要重新处理了，这段就不属于 aes value pulse了，通过value-param的方式连接
+
+如果某个位置固定需要某个环节一次，那么这里的op尽量用通用的，然后用不同的conv进行处理（比如scale，coord，modify）如果是不同环节完成相似功能，用多态（比如aes，比如trans）
+
+由于现在null-safety了，数字是否可用只要判断 isFinite
+
+abstractOriginPoint是有必要的，因为对于abstract point的值，当continuous scale的min不为0时，0不一定对应0，discrete scale也要考虑aligin。
+
+可以考虑和以前一样，将origin的求法放到scaleconv中（因为在外面根据不同类型的original value代入求还是挺麻烦的，不如通过 scale 的不同子类实现）。由于scale conv 是动态生成的，这就要求有一个op求abstract origin。
+
+目前不是所有的 converter 都是convop生成的，比如aes conv都是直接生成的。mdifier还是搞全套吧
+
+abstract point 一律改称 normal point
+
+geom不规定点数，是否需要complete由shape的complete方法决定，这样geom唯一的作用就是规定默认shape
+
+每次绘制时，会取每一个group的第一个shape作为represent，调用它的drawGroup方法。
+
+complete还是应当在shape中定义，但不应当在paint中执行，而应当在group完了，modify（假如有）之前执行
+
+shape中用到多个点的时候，尽量用 0, 1 防止多了
+
+Tuple的id直接用实例代替，因此Tuple只要搞Map<String, dynamic>，Pulse还是要用Tuple的，因为要根据键查找哪些mod了。
+
+在dataflow中，aes attr 依然采用tuple，在进入scene op中传入shape前转换为 aes
+
+complete不应该放在shape中，它处理的是抽象的normal point，目前先不要考虑优化那种，统一的弄个函数。
+
+
+

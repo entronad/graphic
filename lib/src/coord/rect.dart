@@ -76,7 +76,7 @@ class RectCoordConv extends CoordConv {
   @override
   Offset convert(Offset input) {
     if (dim == 1) {
-      input = Offset(input.dx, dimFill);
+      input = Offset(dimFill, input.dy);  // [arbitry domain, single measure]
     }
 
     final getHorizontalInput = transposed ? (Offset p) => p.dy : (Offset p) => p.dx;

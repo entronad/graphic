@@ -3190,5 +3190,47 @@ Tuple的id直接用实例代替，因此Tuple只要搞Map<String, dynamic>，Pul
 
 complete不应该放在shape中，它处理的是抽象的normal point，目前先不要考虑优化那种，统一的弄个函数。
 
+shape中操作的对象成为 group - item
 
+文本的绘制 textPainter 需要 textSpan 和其它属性，每个item的aes仅决定textSpan，其它属性由shape统一决定。textPainter装载好这些特性后，执行一次layout就可以知道它的实际宽高等，以便进行调整。
+
+channel还是需要一个有values和stops构成的，这样能起到palette的作用。这样从attr本身就不能推断到是否连续，都是values来起作用，discrete时查表，continuous时结合stops做渐变
+
+label决定还是不用span了，要干净点
+
+scale 的 align 还是用0-1以便与d3,vega一样
+
+对于极坐标的绘制，需要normal position，因此aes中需要保存
+
+coord前后的点称为 abstract position 和 canvas position。用abstract因为它不仅仅是0-1，而且与实际位置无关。为避免混淆，aes中明确区分这两个属性。这两个词一目了然，而且严格区分，方便在shape中使用
+
+Interval那些shape还是都统一成rect吧
+
+扇区圆角取br/r = tan,这样弧上切的小一些
+
+图形圆角还是尽量用borderRadius，避免与极坐标混淆
+
+逻辑运算符 && 优先级高于 ||
+
+f2中绘制sector时0.0001的判断条件都可以去掉，多此一举。
+
+Paths中的工具类的参数定义，以方便shape使用为准
+
+borderRadius由于x,y可能不同，所以肯定是
+
+size如果没有设置，就不会有aesop，shape中将取shape的default size
+
+x是domain，y是measure，（transposed）相反，一般认为domain不会nan，measure会。通过abstract position 判断 nan，因为这个判断只对数据负责，canvas position shape负责处理
+
+感觉coord op的转换没有必要，还是和之前一样，都放到shape中处理。
+
+对于bar和histogram由于size等机制不同，绘制不能放在一起
+
+sector的label偏移尽量用象限处理。
+
+labelAnchor还是每次都算下吧，因为外面end基本上是必算的，省不了多少，而且到里面再算反而浪费
+
+coord只有一维应当是只有最后一维measure维，domain维挤在一起
+
+smooth只要搞一种吧
 

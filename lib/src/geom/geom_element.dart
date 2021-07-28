@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
+import 'package:graphic/src/aes/aes.dart';
 import 'package:graphic/src/aes/color.dart';
 import 'package:graphic/src/aes/elevation.dart';
 import 'package:graphic/src/aes/gradient.dart';
@@ -138,15 +139,7 @@ class ElementScene extends Scene {
     for (var group in groups) {
       final represent = group.first['shape'] as Shape;
       represent.paintGroup(
-        group.map((tuple) => Aes(
-          color: tuple['color'] as Color,
-          elevation: tuple['elevation'] as double,
-          gradient: tuple['gradient'] as Gradient,
-          label: tuple['label'] as TextSpan,
-          position: tuple['position'] as List<Offset>,
-          shape: tuple['shape'] as Shape,
-          size: tuple['size'] as double,
-        )).toList(),
+        group.map((tuple) => Aes(tuple)).toList(),
         coord,
         canvas,
       );

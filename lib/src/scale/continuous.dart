@@ -10,6 +10,8 @@ abstract class ContinuousScale<V> extends Scale<V, double> {
     formatter: formatter,
   );
 
+  // Can be defined separately.
+
   final V? min;
   
   final V? max;

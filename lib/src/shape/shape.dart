@@ -1,33 +1,8 @@
 import 'dart:ui';
 
-import 'package:flutter/painting.dart';
+import 'package:meta/meta.dart';
+import 'package:graphic/src/aes/aes.dart';
 import 'package:graphic/src/coord/coord.dart';
-
-class Aes {
-  Aes({
-    required this.color,
-    required this.elevation,
-    required this.gradient,
-    required this.label,
-    required this.position,
-    required this.shape,
-    required this.size,
-  });
-
-  final Color color;
-
-  final double elevation;
-
-  final Gradient gradient;
-
-  final TextSpan label;
-
-  final List<Offset> position;
-
-  final Shape shape;
-
-  final double size;
-}
 
 abstract class Shape {
   /// To paint the whole group.
@@ -41,15 +16,20 @@ abstract class Shape {
   );
 
   /// How each item is painted exactly.
+  @protected
   void paintItem(
     Aes item,
     CoordConv coord,
     Canvas canvas,
   );
 
+  @protected
+  double get defaultSize;
+
   /// Force subclasses to implement equality.
   /// It will be used in operator ==.
   /// Usually they must be the same subtype and have equal fields.
+  @protected
   bool equalTo(Object other);
 
   @override

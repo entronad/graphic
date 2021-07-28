@@ -10,7 +10,7 @@ class SizeAttr extends ChannelAttr<double> {
     double? value,
     String? variable,
     List<double>? values,
-    List<double>? range,
+    List<double>? stops,
     double Function(Tuple)? encode,
     Signal<double>? signal,
     Map<Select, SelectUpdate<double>>? select,
@@ -20,7 +20,7 @@ class SizeAttr extends ChannelAttr<double> {
         value: value,
         variable: variable,
         values: values,
-        range: range,
+        stops: stops,
         encode: encode,
         signal: signal,
         select: select,
@@ -28,7 +28,8 @@ class SizeAttr extends ChannelAttr<double> {
 }
 
 class ContinuousSizeConv extends ContinuousChannelConv<double> {
-  ContinuousSizeConv(List<double> range) : super(range);
+  ContinuousSizeConv(List<double> values, List<double> stops)
+    : super(values, stops);
 
   @override
   double lerp(double a, double b, double t) =>

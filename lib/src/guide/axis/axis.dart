@@ -1,7 +1,4 @@
-import 'dart:ui';
-
 import 'package:collection/collection.dart';
-import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/util/assert.dart';
 
@@ -20,27 +17,6 @@ class Tick {
     other is Tick &&
     style == other.style &&
     length == other.length;
-}
-
-class AxisLabel {
-  AxisLabel({
-    this.style,
-    this.offset,
-    this.rotation,
-  });
-
-  final TextStyle? style;
-
-  final Offset? offset;
-
-  final double? rotation;
-
-  @override
-  bool operator ==(Object other) =>
-    other is AxisLabel &&
-    style == other.style &&
-    offset == other.offset &&
-    rotation == other.rotation;
 }
 
 class GuideAxis {
@@ -83,9 +59,9 @@ class GuideAxis {
 
   final StrokeStyle Function(String text, int index, int total)? gridMapper;
 
-  final AxisLabel? label;
+  final LableSyle? label;
 
-  final AxisLabel Function(String text, int index, int total)? labelMapper;
+  final LableSyle Function(String text, int index, int total)? labelMapper;
 
   final int? zIndex;
 

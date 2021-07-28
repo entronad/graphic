@@ -13,17 +13,17 @@ typedef PositionCompleter = List<Offset> Function(List<Offset> position, Offset 
 /// For each tuple:
 /// Firstly compose points by algebra form.
 /// Secondly convert values of points from scaled value to normal value.
-/// Thirdly complete position points by geom.
+/// Thirdly complete abstract position points by geom.
 /// 
 /// params:
 /// - form: AlgForm
 /// - scales: Map<String, ScaleConv>, Scale convertors.
 /// - aesRelay: Map<Tuple, Tuple>, Relay from scaled value to aes value.
 /// - completer: PositonCompleter, Defined by each geom.
-/// - origin: Offset, The normal origin point.
+/// - origin: Offset, The abstract origin point.
 /// 
 /// pulse:
-/// The position field output is normal points.
+/// Create the abstract position field.
 class PositionOp extends AesOp<List<Offset>> {
   PositionOp(
     Map<String, dynamic> params,
@@ -42,8 +42,9 @@ class PositionOp extends AesOp<List<Offset>> {
     for (var term in form) {
       if (term.length == 1) {  // For dim 1 coord.
         position.add(Offset(
-          scales[term[0]]!.normalize(scaledTuple[term[0]]),
-          0,  // This is an arbitry value, and will be replaced by dimFill in coord converter.
+          0,  // Fill the domain dim.
+              // This is an arbitry value, and will be replaced by dimFill in coord converter.
+          scales[term[0]]!.normalize(scaledTuple[term[0]]),  // The only factor is regarded as measure dim.
         ));
       } else {
         position.add(Offset(
@@ -62,7 +63,7 @@ class PositionOp extends AesOp<List<Offset>> {
 /// - scales: Map<String, ScaleConv>, Scale convertors.
 /// 
 /// value: Offset
-/// The normal origin point
+/// The abstract origin point
 class OriginOp extends Updater<Offset> {
   OriginOp(Map<String, dynamic> params) : super(params);
 

@@ -12,7 +12,7 @@ class ColorAttr extends ChannelAttr<Color> {
     Color? value,
     String? variable,
     List<Color>? values,
-    List<Color>? range,
+    List<double>? stops,
     Color Function(Tuple)? encode,
     Signal<Color>? signal,
     Map<Select, SelectUpdate<Color>>? select,
@@ -22,7 +22,7 @@ class ColorAttr extends ChannelAttr<Color> {
         value: value,
         variable: variable,
         values: values,
-        range: range,
+        stops: stops,
         encode: encode,
         signal: signal,
         select: select,
@@ -30,7 +30,8 @@ class ColorAttr extends ChannelAttr<Color> {
 }
 
 class ContinuousColorConv extends ContinuousChannelConv<Color> {
-  ContinuousColorConv(List<Color> range) : super(range);
+  ContinuousColorConv(List<Color> values, List<double> stops)
+    : super(values, stops);
 
   @override
   Color lerp(Color a, Color b, double t) =>

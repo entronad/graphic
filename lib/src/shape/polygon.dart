@@ -1,8 +1,8 @@
 import 'dart:ui';
 
+import 'package:graphic/src/aes/aes.dart';
 import 'package:graphic/src/coord/coord.dart';
 
-import 'shape.dart';
 import 'partition.dart';
 
 abstract class PolygonShape extends PartitionShape {

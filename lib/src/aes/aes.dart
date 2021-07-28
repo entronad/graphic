@@ -1,4 +1,10 @@
+import 'dart:ui';
+
+import 'package:flutter/painting.dart';
 import 'package:collection/collection.dart';
+import 'package:graphic/src/aes/label.dart';
+import 'package:graphic/src/shape/shape.dart';
+import 'package:graphic/src/util/assert.dart';
 import 'package:meta/meta.dart';
 import 'package:graphic/src/common/converter.dart';
 import 'package:graphic/src/dataflow/operator/transformer.dart';
@@ -57,6 +63,39 @@ class ValueAttrConv<AV> extends AttrConv<num, AV> {
 }
 
 // Aes
+
+/// Used for shape painting methods.
+/// Created by aes value tuple.
+class Aes {
+  Aes(Tuple tuple)
+    : color = tuple['color'] as Color?,
+      elevation = tuple['elevation'] as double?,
+      gradient = tuple['gradient'] as Gradient?,
+      label = tuple['label'] as Label?,
+      position = tuple['position'] as List<Offset>,
+      shape = tuple['shape'] as Shape,
+      size = tuple['size'] as double
+    {
+      assert(isSingle([color, gradient]));
+    }
+
+  final Color? color;
+
+  final double? elevation;
+
+  final Gradient? gradient;
+
+  final Label? label;
+
+  /// Composed of normal value of each dim, result of the position operator.
+  /// It can be converted to canvas position by coord in shape.
+  final List<Offset> position;
+
+  final Shape shape;
+
+  /// If needed, default to shape's defaultSize.
+  final double? size;
+}
 
 abstract class AesOp<AV> extends Transformer {
   AesOp(

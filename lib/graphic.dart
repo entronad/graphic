@@ -39,7 +39,7 @@ export 'src/shape/polygon.dart' show PolygonShape;
 export 'src/coord/polar.dart' show PolarCoord;
 export 'src/coord/rect.dart' show RectCoord;
 
-export 'src/guide/axis/axis.dart' show Tick, AxisLabel, GuideAxis;
+export 'src/guide/axis/axis.dart' show Tick, GuideAxis;
 export 'src/guide/tooltip/tooltip.dart' show Tooltip;
 export 'src/guide/annotation/line.dart' show LineAnnotation;
 export 'src/guide/annotation/region.dart' show RegionAnnotation;
@@ -52,6 +52,6 @@ export 'src/event/selection/select.dart' show SelectUpdate, Select;
 export 'src/event/selection/interval.dart' show IntervalSelection;
 export 'src/event/selection/point.dart' show PointSelection;
 
-export 'src/common/styles.dart' show StrokeStyle;
+export 'src/common/styles.dart' show StrokeStyle, LableSyle;
 
 export 'src/dataflow/tuple.dart' show Tuple;

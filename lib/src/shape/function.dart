@@ -1,5 +1,3 @@
 import 'shape.dart';
 
-abstract class FunctionShape extends Shape {
-  
-}
+abstract class FunctionShape extends Shape {}

@@ -3234,3 +3234,5 @@ coord只有一维应当是只有最后一维measure维，domain维挤在一起
 
 smooth只要搞一种吧
 
+voronoi太复杂不画了
+

@@ -88,9 +88,9 @@ abstract class Paths {
   }) {
     path = path ?? Path();
 
-    var arcStart = 0.0;
-    var arcEnd = 0.0;
-    var arcSweep = 0.0;
+    double arcStart;
+    double arcEnd;
+    double arcSweep;
     
     // top
     path.moveTo(

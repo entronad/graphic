@@ -11,10 +11,10 @@ import 'package:graphic/src/shape/util/label.dart';
 import 'function.dart';
 import 'util/paths.dart';
 
-double _canvasAngle(double abstractAngle, PolarCoordConv coord) =>
+double canvasAngle(double abstractAngle, PolarCoordConv coord) =>
   coord.angle.first + (coord.angle.last - coord.angle.first) * abstractAngle;
 
-double _canvasRadius(double abstractRadius, PolarCoordConv coord) =>
+double canvasRadius(double abstractRadius, PolarCoordConv coord) =>
   coord.radius.first + (coord.radius.last - coord.radius.first) * abstractRadius;
 
 abstract class IntervalShape extends FunctionShape {
@@ -66,7 +66,8 @@ class RectShape extends IntervalShape {
     topRight == other.topRight &&
     bottomRight == other.bottomRight &&
     bottomLeft == other.bottomLeft &&
-    histogram == other.histogram;
+    histogram == other.histogram &&
+    labelPosition == other.labelPosition;
 
   @override
   void paintGroup(
@@ -178,8 +179,8 @@ class RectShape extends IntervalShape {
               item,
               coord.radius.last,
               coord.radius.first,
-              _canvasAngle(position[0].dy, coord),
-              _canvasAngle(position[1].dy, coord),
+              canvasAngle(position[0].dy, coord),
+              canvasAngle(position[1].dy, coord),
               true,
               coord.convert(Offset(
                 labelPosition,
@@ -194,14 +195,14 @@ class RectShape extends IntervalShape {
 
           for (var item in group) {
             final position = item.position;
-            final r = _canvasRadius(position[0].dx, coord);
+            final r = canvasRadius(position[0].dx, coord);
             final halfSize = (item.size ?? defaultSize) / 2;
             _paintSector(
               item,
               r - halfSize,
               r + halfSize,
-              _canvasAngle(position[0].dy, coord),
-              _canvasAngle(position[1].dy, coord),
+              canvasAngle(position[0].dy, coord),
+              canvasAngle(position[1].dy, coord),
               false,
               coord.convert(Offset(
                 labelPosition,
@@ -251,8 +252,8 @@ class RectShape extends IntervalShape {
             item,
             coord.radius.last,
             coord.radius.first,
-            _canvasAngle(bandStart, coord),
-            _canvasAngle(bandEnd, coord),
+            canvasAngle(bandStart, coord),
+            canvasAngle(bandEnd, coord),
             true,
             coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
             coord,
@@ -268,8 +269,8 @@ class RectShape extends IntervalShape {
               item,
               coord.radius.last,
               coord.radius.first,
-              _canvasAngle(bandStart, coord),
-              _canvasAngle(bandEnd, coord),
+              canvasAngle(bandStart, coord),
+              canvasAngle(bandEnd, coord),
               true,
               coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
               coord,
@@ -285,8 +286,8 @@ class RectShape extends IntervalShape {
             item,
             coord.radius.last,
             coord.radius.first,
-            _canvasAngle(bandStart, coord),
-            _canvasAngle(bandEnd, coord),
+            canvasAngle(bandStart, coord),
+            canvasAngle(bandEnd, coord),
             true,
             coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
             coord,

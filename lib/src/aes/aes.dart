@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/painting.dart';
 import 'package:collection/collection.dart';
 import 'package:graphic/src/aes/label.dart';
+import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/shape/shape.dart';
 import 'package:graphic/src/util/assert.dart';
 import 'package:meta/meta.dart';

@@ -10,11 +10,13 @@ import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
 import 'package:graphic/src/common/layers.dart';
+import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/coord/coord.dart';
+import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/dataflow/operator/updater.dart';
 import 'package:graphic/src/dataflow/pulse/pulse.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/graffiti/scene.dart';
+import 'package:graphic/src/graffiti/graffiti.dart';
 import 'package:graphic/src/scale/discrete.dart';
 import 'package:graphic/src/scale/scale.dart';
 import 'package:graphic/src/shape/shape.dart';
@@ -113,26 +115,12 @@ class GroupOp extends Updater<List<List<Tuple>>> {
   }
 }
 
-class ElementScene extends Scene {
-  ElementScene(
-    this.groups,
-    this.coord,
-    this.origin,
-    Rect region,
-  ) : super(Path()..addRect(region));
+class ElementPainter extends Painter {
+  ElementPainter(this.groups, this.coord);
 
-  List<List<Tuple>> groups;
+  final List<List<Tuple>> groups;
 
-  CoordConv coord;
-
-  Offset origin;
-
-  void set region(Rect value) {
-    clip = Path()..addRect(value);
-  }
-
-  @override
-  int get layer => Layer.element;
+  final CoordConv coord;
 
   @override
   void paint(Canvas canvas) {
@@ -144,5 +132,30 @@ class ElementScene extends Scene {
         canvas,
       );
     }
+  }
+}
+
+class ElementScene extends Scene {
+  @override
+  int get layer => Layers.element;
+}
+
+class ElementRenderOp extends Render<ElementScene> {
+  ElementRenderOp(
+    Map<String, dynamic> params,
+    ElementScene value,
+  ) : super(params, value);
+
+  @override
+  void render(ElementScene scene) {
+    final zIndex = params['zIndex'] as int;
+    final groups = params['groups'] as List<List<Tuple>>;
+    final coord = params['coord'] as CoordConv;
+    final region = params['region'] as Rect;
+
+    scene
+      ..zIndex = zIndex
+      ..setRegionClip(region, coord is PolarCoordConv)
+      ..painter = ElementPainter(groups, coord);
   }
 }

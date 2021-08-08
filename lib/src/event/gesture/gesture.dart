@@ -24,8 +24,6 @@ class GestureEvent extends Event {
   final ScaleUpdateDetails? scale;
 
   final Offset? scrollDelta;
-
-  
 }
 
 GestureEvent _toGestureEvent(arena.GestureEvent event) =>
@@ -86,4 +84,8 @@ class GestureSource extends EventSource<GestureEvent> {
       _avatars[listener],
     );
   }
+
+  @override
+  void emit(GestureEvent event) =>
+    throw UnimplementedError('Event is emit by arena');
 }

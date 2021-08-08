@@ -3,14 +3,13 @@ import 'dart:math';
 
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/aes/aes.dart';
+import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/shape/util/aes_basic_item.dart';
-import 'package:graphic/src/shape/util/label.dart';
 
 import 'partition.dart';
-import 'interval.dart';
 import 'util/paths.dart';
 
 abstract class PolygonShape extends PartitionShape {}
@@ -113,10 +112,10 @@ class HeatmapShape extends PolygonShape {
           final r0 = coord.transposed ? point.dx - biasX : point.dy - biasY;
           Paths.sector(
             center: coord.center,
-            r: canvasRadius(r, coord),
-            r0: canvasRadius(r0, coord),
-            startAngle: canvasAngle(startAngle, coord),
-            endAngle: canvasAngle(endAngle, coord),
+            r: coord.convertRadius(r),
+            r0: coord.convertRadius(r0),
+            startAngle: coord.convertAngle(startAngle),
+            endAngle: coord.convertAngle(endAngle),
             clockwise: true,
             path: path,
           );

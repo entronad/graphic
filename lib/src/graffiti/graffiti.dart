@@ -1,6 +1,48 @@
 import 'dart:ui';
 
-import 'scene.dart';
+import 'package:meta/meta.dart';
+
+abstract class Painter {
+  /// Subclass override this method.
+  @protected
+  void paint(Canvas canvas);
+}
+
+/// Scene and it's subclass has no paramed constructor,
+///     because params are unknow when they are set to render operator in parsing.
+abstract class Scene {
+  int zIndex = 0;
+
+  @protected
+  int get layer;
+
+  // Help to order stablely.
+  int? _preorder;
+
+  // Make sure to set this before _paint
+  Painter? painter;
+
+  Path? clip;
+
+  /// Set a region as clip.
+  void setRegionClip(Rect region, bool polar) => clip = polar
+    ? (Path()..addOval(Rect.fromCircle(
+        center: region.center,
+        radius: region.shortestSide / 2,
+      )))
+    : (Path()..addRect(region));
+
+  void _paint(Canvas canvas) {
+    canvas.save();
+    if (clip != null) {
+      canvas.clipPath(clip!);
+    }
+
+    painter!.paint(canvas);
+
+    canvas.restore();
+  }
+}
 
 class Graffiti {
   Graffiti(Size size) : _clip = Rect.fromLTWH(
@@ -28,12 +70,24 @@ class Graffiti {
     return this;
   }
 
+  /// Should and only should sort before first paint.
+  /// zIndex -> layer -> preorder
   Graffiti sort() {
+    for (var i = 0; i < _scenes.length; i++) {
+      _scenes[i]._preorder = i;
+    }
     _scenes.sort((a, b) {
       final zIndexRst = a.zIndex - b.zIndex;
-      return zIndexRst != 0
-        ? zIndexRst
-        : a.layer - b.layer;
+      if (zIndexRst != 0) {
+        return zIndexRst;
+      } else {
+        final layerRst = a.layer - b.layer;
+        if (layerRst != 0) {
+          return layerRst;
+        } else {
+          return a._preorder! - b._preorder!;
+        }
+      }
     });
     return this;
   }
@@ -45,7 +99,7 @@ class Graffiti {
     canvas.clipRect(_clip);
 
     for (var scene in _scenes) {
-      scene.executePaint(canvas);
+      scene._paint(canvas);
     }
 
     canvas.restore();

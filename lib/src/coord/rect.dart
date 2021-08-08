@@ -18,8 +18,6 @@ class RectCoord extends Coord {
     int? dim,
     double? dimFill,
     bool? transposed,
-    Color? backgroundColor,
-    Gradient? backgroundGradient,
   })
     : assert(horizontalRange == null || horizontalRange.length == 2),
       assert(verticalRange == null || verticalRange.length == 2),
@@ -27,8 +25,6 @@ class RectCoord extends Coord {
         dim: dim,
         dimFill: dimFill,
         transposed: transposed,
-        backgroundColor: backgroundColor,
-        backgroundGradient: backgroundGradient,
       );
 
   final List<double>? horizontalRange;
@@ -59,19 +55,19 @@ class RectCoordConv extends CoordConv {
     List<double> renderRangeX,  // Render range is bind to render dim, ignoring tansposing.
     List<double> renderRangeY,
   )
-    : horizontal = [
+    : horizontals = [
         region.left + region.width * renderRangeX.first,
         region.left + region.width * renderRangeX.last,
       ],
-      vertical = [
+      verticals = [
         region.bottom - region.height * renderRangeY.first,  // Rect coord is form bottom to top.
         region.bottom - region.height * renderRangeY.last,
       ],
       super(dim, dimFill, transposed);
     
-  final List<double> horizontal;
+  final List<double> horizontals;
 
-  final List<double> vertical;
+  final List<double> verticals;
 
   @override
   Offset convert(Offset input) {
@@ -82,15 +78,15 @@ class RectCoordConv extends CoordConv {
     final getHorizontalInput = transposed ? (Offset p) => p.dy : (Offset p) => p.dx;
     final getVerticalInput = transposed ? (Offset p) => p.dx : (Offset p) => p.dy;
     return Offset(
-      horizontal.first + (horizontal.last - horizontal.first) * getHorizontalInput(input),
-      vertical.first + (vertical.last - vertical.first) * getVerticalInput(input),
+      horizontals.first + (horizontals.last - horizontals.first) * getHorizontalInput(input),
+      verticals.first + (verticals.last - verticals.first) * getVerticalInput(input),
     );
   }
 
   @override
   Offset invert(Offset output) {
-    final horizontalInput = (output.dx - horizontal.first) / (horizontal.last - horizontal.first);
-    final verticalInput = (output.dy - vertical.first) / (vertical.last - vertical.first);
+    final horizontalInput = (output.dx - horizontals.first) / (horizontals.last - horizontals.first);
+    final verticalInput = (output.dy - verticals.first) / (verticals.last - verticals.first);
     return transposed
       ? Offset(verticalInput, horizontalInput)
       : Offset(horizontalInput, verticalInput);

@@ -7,11 +7,19 @@ class TimeScale extends ContinuousScale<DateTime> {
     DateTime? min,
     DateTime? max,
 
+    String? title,
     String Function(DateTime)? formatter,
+    List<DateTime>? ticks,
+    int? tickCount,
+    int? maxTickCount,
   }) : super(
     min: min,
     max: max,
+    title: title,
     formatter: formatter,
+    ticks: ticks,
+    tickCount: tickCount,
+    maxTickCount: maxTickCount,
   );
 }
 
@@ -23,9 +31,46 @@ DateTime _earlier(DateTime a, DateTime b) =>
 
 class TimeScaleConv extends ContinuousScaleConv<DateTime> {
   TimeScaleConv(
-    DateTime? min,
-    DateTime? max,
-  ) : super(min, max);
+    TimeScale spec,
+    List<Tuple> tuples,
+    String variable,
+  ) {
+    // min, max
+    if (spec.min != null && spec.max != null) {
+      min = spec.min;
+      max = spec.max;
+    } else {
+      var minTmp = tuples.first[variable] as DateTime;
+      var maxTmp = minTmp;
+      for (var tuple in tuples) {
+        final value = tuple[variable] as DateTime;
+        minTmp = _earlier(minTmp, value);
+        maxTmp = _later(maxTmp, value);
+      }
+      min = min ?? minTmp;
+      max = max ?? maxTmp;
+    }
+
+    // ticks
+    if (spec.ticks != null) {
+      ticks = spec.ticks;
+    } else {
+      final minMicro = min!.microsecondsSinceEpoch;
+      final maxMicro = max!.microsecondsSinceEpoch;
+      final count = spec.tickCount ?? spec.maxTickCount ?? 5;
+      final step = (maxMicro - minMicro) ~/ (count - 1);
+
+      ticks = [];
+      ticks!.add(min!);
+      for (var i = 1; i < count - 1; i++) {
+        ticks!.add(DateTime.fromMicrosecondsSinceEpoch(minMicro + i * step));
+      }
+      ticks!.add(max!);
+    }
+
+    title = spec.title ?? variable;
+    formatter = spec.formatter ?? defaultFormatter;
+  }
 
   @override
   double convert(DateTime input) =>
@@ -38,22 +83,10 @@ class TimeScaleConv extends ContinuousScaleConv<DateTime> {
       min!.microsecondsSinceEpoch +
       output * (max!.microsecondsSinceEpoch - min!.microsecondsSinceEpoch)
     ).round());
-  
-  @override
-  void complete(List<Tuple> tuples, String field) {
-    if (min == null || max == null) {
-      var minTmp = tuples.first[field] as DateTime;
-      var maxTmp = minTmp;
-      for (var tuple in tuples) {
-        final value = tuple[field] as DateTime;
-        minTmp = _earlier(minTmp, value);
-        maxTmp = _later(maxTmp, value);
-      }
-      min = min ?? minTmp;
-      max = max ?? maxTmp;
-    }
-  }
 
   @override
   DateTime get zero => min!;
+
+  @override
+  String defaultFormatter(DateTime value) => value.toString();
 }

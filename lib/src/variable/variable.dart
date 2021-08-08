@@ -11,27 +11,22 @@ class Variable<D, V> {
   Variable({
     required this.accessor,
     this.scale,
-    this.title,
   });
 
   final Accessor<D, V>? accessor;
 
+  /// Also act like avatar of a variable, keeps it's meta information.
   /// If not provided, a default scale is infered from the type of [V].
   ///     [OrdinalScale] for [String]
   ///     [LinearScale] for [num]
   ///     [TimeScale] for [DateTime]
   final Scale<V, dynamic>? scale;
 
-  /// To represent this variable in tooltip/legend/label/tag.
-  /// Default to use the name of the variable.
-  final String? title;
-
   @override
   bool operator ==(Object other) =>
     other is Variable<D, V> &&
     // accessor: Function
-    scale == other.scale &&
-    title == other.title;
+    scale == other.scale;
 }
 
 /// Variable is the start of pulse, it outpus pulse.
@@ -55,13 +50,13 @@ class VariableOp<D> extends Transformer<List<D>> {
   @override
   Pulse? transform(Pulse pulse) {
     final accessors = params['accessors'] as Map<String, Accessor>;
-    final preTuples = params['preTuples'] as List<Tuple>;
+    final pretuples = params['pretuples'] as List<Tuple>;
     final value = this.value!;
 
     // On data event(both init and update), remove all tuples and add all new tuples.
     // pulse.source will be added in Collect.
     // pulse is clean and useless in original value branch, don't need to fork.
-    pulse.rem = [...preTuples];
+    pulse.rem = [...pretuples];
     for (var datum in value) {
       final tuple = Tuple();
       for (var name in accessors.keys) {

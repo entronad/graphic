@@ -1,7 +1,42 @@
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/aes/label.dart';
+
+class LabelSyle {
+  const LabelSyle({
+    this.style = const TextStyle(),
+    this.offset,
+    this.rotation,
+  });
+
+  /// Note that default color is white.
+  final TextStyle style;
+
+  final Offset? offset;
+
+  final double? rotation;
+
+  @override
+  bool operator ==(Object other) =>
+    other is LabelSyle &&
+    style == other.style &&
+    offset == other.offset &&
+    rotation == other.rotation;
+}
+
+class Label {
+  Label(this.text, this.style);
+
+  final String text;
+
+  final LabelSyle style;
+
+  @override
+  bool operator ==(Object other) =>
+    other is Label &&
+    text == other.text &&
+    style == other.style;
+}
 
 void paintLabel(
   Label label,

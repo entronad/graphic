@@ -2,20 +2,14 @@ import 'dart:ui';
 
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/aes/aes.dart';
+import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/shape/util/aes_basic_item.dart';
-import 'package:graphic/src/shape/util/label.dart';
 
 import 'function.dart';
 import 'util/paths.dart';
-
-double canvasAngle(double abstractAngle, PolarCoordConv coord) =>
-  coord.angle.first + (coord.angle.last - coord.angle.first) * abstractAngle;
-
-double canvasRadius(double abstractRadius, PolarCoordConv coord) =>
-  coord.radius.first + (coord.radius.last - coord.radius.first) * abstractRadius;
 
 abstract class IntervalShape extends FunctionShape {
   @override
@@ -177,10 +171,10 @@ class RectShape extends IntervalShape {
             final position = item.position;
             _paintSector(
               item,
-              coord.radius.last,
-              coord.radius.first,
-              canvasAngle(position[0].dy, coord),
-              canvasAngle(position[1].dy, coord),
+              coord.radiuses.last,
+              coord.radiuses.first,
+              coord.convertAngle(position[0].dy),
+              coord.convertAngle(position[1].dy),
               true,
               coord.convert(Offset(
                 labelPosition,
@@ -195,14 +189,14 @@ class RectShape extends IntervalShape {
 
           for (var item in group) {
             final position = item.position;
-            final r = canvasRadius(position[0].dx, coord);
+            final r = coord.convertRadius(position[0].dx);
             final halfSize = (item.size ?? defaultSize) / 2;
             _paintSector(
               item,
               r - halfSize,
               r + halfSize,
-              canvasAngle(position[0].dy, coord),
-              canvasAngle(position[1].dy, coord),
+              coord.convertAngle(position[0].dy),
+              coord.convertAngle(position[1].dy),
               false,
               coord.convert(Offset(
                 labelPosition,
@@ -228,10 +222,10 @@ class RectShape extends IntervalShape {
           for (var item in group) {
             _paintSector(
               item,
-              coord.radius.last,
-              coord.radius.first,
-              coord.angle.first,
-              coord.angle.last,
+              coord.radiuses.last,
+              coord.radiuses.first,
+              coord.angles.first,
+              coord.angles.last,
               true,
               coord.convert(
                 item.position[0] + (item.position[1] - item.position[0]) * labelPosition
@@ -250,10 +244,10 @@ class RectShape extends IntervalShape {
           double bandEnd = group[1].position.first.dx - position.first.dx;
           _paintSector(
             item,
-            coord.radius.last,
-            coord.radius.first,
-            canvasAngle(bandStart, coord),
-            canvasAngle(bandEnd, coord),
+            coord.radiuses.last,
+            coord.radiuses.first,
+            coord.convertAngle(bandStart),
+            coord.convertAngle(bandEnd),
             true,
             coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
             coord,
@@ -267,10 +261,10 @@ class RectShape extends IntervalShape {
             bandEnd = group[i + 1].position.first.dx - group[i].position.first.dx;
             _paintSector(
               item,
-              coord.radius.last,
-              coord.radius.first,
-              canvasAngle(bandStart, coord),
-              canvasAngle(bandEnd, coord),
+              coord.radiuses.last,
+              coord.radiuses.first,
+              coord.convertAngle(bandStart),
+              coord.convertAngle(bandEnd),
               true,
               coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
               coord,
@@ -284,10 +278,10 @@ class RectShape extends IntervalShape {
           bandEnd = 1;
           _paintSector(
             item,
-            coord.radius.last,
-            coord.radius.first,
-            canvasAngle(bandStart, coord),
-            canvasAngle(bandEnd, coord),
+            coord.radiuses.last,
+            coord.radiuses.first,
+            coord.convertAngle(bandStart),
+            coord.convertAngle(bandEnd),
             true,
             coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
             coord,

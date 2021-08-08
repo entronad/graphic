@@ -2,10 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:graphic/src/aes/aes.dart';
+import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
 
 import 'util/aes_basic_item.dart';
-import 'util/label.dart';
 import 'function.dart';
 
 abstract class PointShape extends FunctionShape {

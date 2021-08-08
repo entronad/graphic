@@ -2,13 +2,13 @@ import 'dart:ui';
 
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/aes/aes.dart';
+import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 
 import 'function.dart';
 import 'util/smooth.dart' as smooth_util;
 import 'util/aes_basic_item.dart';
-import 'util/label.dart';
 
 abstract class AreaShape extends FunctionShape {
   @override

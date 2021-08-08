@@ -41,4 +41,6 @@ abstract class EventSource<E extends Event> {
   void on(EventType type, EventListener<E> listener);
 
   void off([EventType? type, EventListener<E>? listener]);
+
+  void emit(E event);
 }

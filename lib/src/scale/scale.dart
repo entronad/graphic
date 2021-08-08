@@ -1,3 +1,4 @@
+import 'package:graphic/src/util/assert.dart';
 import 'package:meta/meta.dart';
 
 import 'package:graphic/src/common/converter.dart';
@@ -17,23 +18,47 @@ import 'time.dart';
 ///     [double] for continuous.
 abstract class Scale<V, SV extends num> {
   Scale({
+    this.title,
     this.formatter,
-  });
+    this.ticks,
+    this.tickCount,
+    this.maxTickCount,
+  }) : assert(isSingle([ticks, tickCount, maxTickCount], allowNone: true));
+
+  /// To represent this variable in tooltip/legend/label/tag.
+  /// Default to use the name of the variable.
+  final String? title;
 
   final String Function(V)? formatter;
 
+  final List<V>? ticks;
+
+  final int? tickCount;
+
+  final int? maxTickCount;
+
   @override
   bool operator ==(Object other) =>
-    other is Scale<V, SV>;
+    other is Scale<V, SV> &&
+    title == other.title &&
     // formatter: Function
+    ticks == other.ticks &&
+    tickCount == other.tickCount &&
+    maxTickCount == other.maxTickCount;
 }
 
+/// Also act like avatar of a variable, keeps it's meta information.
 /// Because scale converter default params is decided by values,
 ///     it should be completed dynamically. So all params are nullable
 ///     and filled in complete().
 abstract class ScaleConv<V, SV extends num> extends Converter<V, SV> {
-  /// Complete method should always be called before usage.
-  void complete(List<Tuple> tuples, String field);
+  // Fields must be completed in the constructor to make sure it's non-null in run.
+  
+  String? title;
+
+  String Function(V)? formatter;
+
+  List<V>? ticks;
 
   /// Normalize scaled value to [0, 1]
   double normalize(SV scaledValue);
@@ -48,6 +73,9 @@ abstract class ScaleConv<V, SV extends num> extends Converter<V, SV> {
 
   @protected
   V get zero;
+
+  @protected
+  String defaultFormatter(V value);
 }
 
 /// params:
@@ -70,18 +98,16 @@ class ScaleConvOp extends Updater<Map<String, ScaleConv>> {
     final specs = params['specs'] as Map<String, Scale>;
     final rst = <String, ScaleConv>{};
     for (var name in specs.keys) {
+      final tuples = pulse.source!;
       if (specs[name] is OrdinalScale) {
         final spec = specs[name] as OrdinalScale;
-        rst[name] = OrdinalScaleConv(spec.values, spec.align)
-          ..complete(pulse.source!, name);
+        rst[name] = OrdinalScaleConv(spec, tuples, name);
       } else if (specs[name] is LinearScale) {
         final spec = specs[name] as LinearScale;
-        rst[name] = LinearScaleConv(spec.min, spec.max)
-          ..complete(pulse.source!, name);
+        rst[name] = LinearScaleConv(spec, tuples, name);
       } else if (specs[name] is TimeScale) {
         final spec = specs[name] as TimeScale;
-        rst[name] = TimeScaleConv(spec.min, spec.max)
-          ..complete(pulse.source!, name);
+        rst[name] = TimeScaleConv(spec, tuples, name);
       }
     }
     return rst;

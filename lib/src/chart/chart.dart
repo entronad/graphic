@@ -18,6 +18,7 @@ class Chart extends StatefulWidget {
     required Map<String, DataSet> data,
     required List<GeomElement> elements,
     Coord? coord,
+    EdgeInsets? padding,
     List<GuideAxis>? axes,
     Tooltip? tooltip,
     List<Annotation>? annotations,
@@ -29,6 +30,7 @@ class Chart extends StatefulWidget {
     data: data,
     elements: elements,
     coord: coord,
+    padding: padding,
     axes: axes,
     tooltip: tooltip,
     annotations: annotations,
@@ -45,6 +47,7 @@ class Chart extends StatefulWidget {
   _ChartState createState() => _ChartState();
 }
 
+// initState -> build -> getPositionForChild -> paint
 class _ChartState extends State<Chart> {
   View? _view;
 

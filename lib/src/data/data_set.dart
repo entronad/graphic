@@ -1,6 +1,4 @@
 import 'package:collection/collection.dart';
-import 'package:graphic/src/dataflow/change_set.dart';
-import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/event/event.dart';
 import 'package:graphic/src/variable/transform/transform.dart';
 import 'package:graphic/src/util/assert.dart';
@@ -58,6 +56,7 @@ class DataSouce<D> extends EventSource<DataEvent<D>> {
     }
   }
 
+  @override
   void emit(DataEvent<D> event) {
     for (var listener in _listeners) {
       listener(event);

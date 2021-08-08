@@ -1,3 +1,5 @@
+import 'package:graphic/src/dataflow/tuple.dart';
+
 import 'discrete.dart';
 
 class OrdinalScale extends DiscreteScale<String> {
@@ -5,17 +7,29 @@ class OrdinalScale extends DiscreteScale<String> {
     List<String>? values,
     double? align,
 
+    String? title,
     String Function(String)? formatter,
+    List<String>? ticks,
+    int? tickCount,
+    int? maxTickCount,
   }) : super(
     values: values,
     align: align,
+    title: title,
     formatter: formatter,
+    ticks: ticks,
+    tickCount: tickCount,
+    maxTickCount: maxTickCount,
   );
 }
 
-class OrdinalScaleConv extends DiscreteScaleConv<String> {
+class OrdinalScaleConv extends DiscreteScaleConv<String, OrdinalScale> {
   OrdinalScaleConv(
-    List<String>? values,
-    double? align,
-  ) : super(values, align);
+    OrdinalScale spec,
+    List<Tuple> tuples,
+    String variable,
+  ) : super(spec, tuples, variable);
+
+  @override
+  String defaultFormatter(String value) => value;
 }

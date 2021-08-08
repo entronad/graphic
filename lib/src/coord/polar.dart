@@ -21,8 +21,6 @@ class PolarCoord extends Coord {
     int? dim,
     double? dimFill,
     bool? transposed,
-    Color? backgroundColor,
-    Gradient? backgroundGradient,
   })
     : assert(angleRange == null || angleRange.length == 2),
       assert(radiusRange == null || radiusRange.length == 2),
@@ -30,8 +28,6 @@ class PolarCoord extends Coord {
         dim: dim,
         dimFill: dimFill,
         transposed: transposed,
-        backgroundColor: backgroundColor,
-        backgroundGradient: backgroundGradient,
       );
 
   final List<double>? angleRange;
@@ -52,6 +48,10 @@ class PolarCoord extends Coord {
     DeepCollectionEquality(MapKeyEquality()).equals(radiusRangeSignals, radiusRangeSignals);  // SignalUpdata: Function
 }
 
+const canvasAngleStart = -pi / 2;
+
+const canvasAngleEnd = 3 * pi / 2;
+
 class PolarCoordConv extends CoordConv {
   PolarCoordConv(
     Rect region,
@@ -62,11 +62,11 @@ class PolarCoordConv extends CoordConv {
     List<double> renderRangeY,
   )
     : center = region.center,
-      angle = [
-        -pi / 2 + 2 * pi * renderRangeX.first,
-        -pi / 2 + 2 * pi * renderRangeX.last,
+      angles = [
+        canvasAngleStart + (canvasAngleEnd - canvasAngleStart) * renderRangeX.first,
+        canvasAngleStart + (canvasAngleEnd - canvasAngleStart) * renderRangeX.last,
       ],
-      radius = [
+      radiuses = [
         min(region.width, region.height) / 2 * renderRangeY.first,
         min(region.width, region.height) / 2 * renderRangeY.last,
       ],
@@ -74,9 +74,31 @@ class PolarCoordConv extends CoordConv {
 
   final Offset center;
 
-  final List<double> angle;
+  final List<double> angles;
 
-  final List<double> radius;
+  final List<double> radiuses;
+
+  /// abstractAngle to canvasAngle
+  double convertAngle(double abstractAngle) =>
+    angles.first + (angles.last - angles.first) * abstractAngle;
+
+  /// abstractRadius to canvasRadius
+  double convertRadius(double abstractRadius) =>
+    radiuses.first + (radiuses.last - radiuses.first) * abstractRadius;
+  
+  /// canvasAngle to abstractAngle
+  double invertAngle(double canvasAngle) =>
+    (canvasAngle - angles.first) / (angles.last - angles.first);
+  
+  /// canvasRadius to abstarctRadius
+  double invertRadius(double canvasRadius) =>
+    (canvasRadius - radiuses.first) / (radiuses.last - radiuses.first);
+  
+  Offset polarToOffset(double canvasAngle, double canvasRadius) =>
+    Offset(
+      center.dx + cos(canvasAngle) * canvasRadius,
+      center.dy + sin(canvasAngle) * canvasRadius,
+    );
 
   @override
   Offset convert(Offset input) {
@@ -84,22 +106,19 @@ class PolarCoordConv extends CoordConv {
       input = Offset(dimFill, input.dy);  // [arbitry domain, single measure]
     }
 
-    final getAngleInput = transposed ? (Offset p) => p.dy : (Offset p) => p.dx;
-    final getRadiusInput = transposed ? (Offset p) => p.dx : (Offset p) => p.dy;
+    final getAbstractAngle = transposed ? (Offset p) => p.dy : (Offset p) => p.dx;
+    final getAbstractRadius = transposed ? (Offset p) => p.dx : (Offset p) => p.dy;
 
-    final angleOutput = angle.first + (angle.last - angle.first) * getAngleInput(input);
-    final radiusOutput = radius.first + (radius.last - radius.first) * getRadiusInput(input);
-
-    return Offset(
-      center.dx + cos(angleOutput) * radiusOutput,
-      center.dy + sin(angleOutput) * radiusOutput,
+    return polarToOffset(
+      convertAngle(getAbstractAngle(input)),
+      convertRadius(getAbstractRadius(input)),
     );
   }
 
   @override
   Offset invert(Offset output) {
     final axisX = Vector3(1, 0, 0);
-    final startMatrix = Matrix4.rotationZ(angle.first);
+    final startMatrix = Matrix4.rotationZ(angles.first);
     final startVector = startMatrix.transformed3(axisX);
     final pointVector = Vector3(
       output.dx - center.dx,
@@ -111,13 +130,13 @@ class PolarCoordConv extends CoordConv {
     }
 
     var theta = vectorAngle(startVector, pointVector);
-    if ((theta - pi * 2).abs() < 0.001) {
+    if ((theta - (canvasAngleEnd - canvasAngleStart)).abs() < 0.001) {
       theta = 0;
     }
     final length = pointVector.length;
-    final rangeXSwipe = (angle.last - angle.first).abs();
+    final rangeXSwipe = (angles.last - angles.first).abs();
     final ratioX = theta / rangeXSwipe;
-    final ratioY = (length - radius.first) / (radius.last - radius.first);
+    final ratioY = (length - radiuses.first) / (radiuses.last - radiuses.first);
     return transposed
       ? Offset(ratioY, ratioX)
       : Offset(ratioX, ratioY);

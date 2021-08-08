@@ -5,9 +5,17 @@ abstract class ContinuousScale<V> extends Scale<V, double> {
     this.min,
     this.max,
 
+    String? title,
     String Function(V)? formatter,
+    List<V>? ticks,
+    int? tickCount,
+    int? maxTickCount,
   }) : super(
+    title: title,
     formatter: formatter,
+    ticks: ticks,
+    tickCount: tickCount,
+    maxTickCount: maxTickCount,
   );
 
   // Can be defined separately.
@@ -25,8 +33,6 @@ abstract class ContinuousScale<V> extends Scale<V, double> {
 }
 
 abstract class ContinuousScaleConv<V> extends ScaleConv<V, double> {
-  ContinuousScaleConv(this.min, this.max);
-
   V? min;
   
   V? max;

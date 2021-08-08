@@ -2,12 +2,12 @@ import 'dart:ui';
 
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/aes/aes.dart';
+import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
 
 import 'function.dart';
 import 'util/aes_basic_item.dart';
 import 'util/paths.dart';
-import 'util/label.dart';
 
 abstract class LineShape extends FunctionShape {
   @override

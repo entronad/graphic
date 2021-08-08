@@ -3236,3 +3236,44 @@ smooth只要搞一种吧
 
 voronoi太复杂不画了
 
+每个op的params不单独写子类是因为写访问器和构造函数并不会降低字符串写错的概率
+
+关于初始化的地方这样，view的构造放在第一次getPositionForChild中，dataflow里必须有值才能run的op（比如size，variable）构造函数里设置值
+
+region背景不符合可视化精神，移除。
+
+每个variable都有自己的scale，理论上来讲，需要相同scale的variable应该是同一个variable，它们是一一对应的。而在同一维度上，axis也是和variable（scale）是一一对应的。
+
+axis与数据无关，只与scaleConv有关，
+
+关于 variable 目前最现实最简洁的方式，是将元信息放到scale中，由于variable和scale是一一对应的关系，scaleConv就是variable的化身。
+
+tick指抽象的value，小线段叫 tickLine
+
+tick作为抽象的，还是放到scale中吧，理论上更符合gg，实践上方便与min，max的调整结合，作为ticks参数，这样scale conv的计算放到构造函数中，反正每次都是构造新的。
+
+tick的设置采用统一的 ticks-tickCount-maxTickCount 的模式，linear另外有些interval相关。
+
+所有的spec中的默认值在parse中插入，除了动态生成的特殊情况（比如scale）
+
+由于scene要求编译时就生成固定实例，所以当多态参数动态时它本身不可多态（比如决定axis的coord等是动态的），这样就需要painter对象负责多态
+
+查找scales的操作比较简单，就不要徒增op了
+
+axis的内部实现上，按“设置才有”的原则，外面可以根据大项是否有确定用不用默认的
+
+现在region已经和coord没有关系了。为了突出这种无关，coord conv 中不持有 region。对于element和annotation的clip，rect coord的region是一个rect，polar是完整的circle。
+
+style类的class不属于 spec了，默认值都加上。有统一的const的默认值，后面再设置
+
+axis是与region绑定的，与coord的range没有关系，position也是region有关。
+
+在考虑 region和annotation的关系时，一个基本的优先级是先认为coord的区域只会大于region，第二个就是polar只会变动外边缘。或者说polar的 clip region是
+
+region 是图表padding导致的物理限制，对于rect是方形，对于polar是圆形。coord的range反映的是coord所需范围和region之间的抽象关系，超出region（方形或圆形）的部分将不显示（被clip掉）。因此polar是管到整个plane的，不存在缺角度和缺中心的问题。缩放应当主要是rect的coord区域大于region和polar外边缘变动。
+
+为确保axis一直能被看到，它是依附于region的，附着于region的边缘，且在轴线方向上超出region的项不显示。
+
+annotation 是依附于coord范围的，也应当被region所clip
+
+dim顺序，以algebra为准，transpose后的称为canvasDim

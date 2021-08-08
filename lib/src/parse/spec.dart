@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/painting.dart';
 import 'package:graphic/src/guide/annotation/annotation.dart';
 import 'package:graphic/src/guide/axis/axis.dart';
 import 'package:graphic/src/coord/coord.dart';
@@ -14,6 +15,7 @@ class Spec {
     required this.data,
     required this.elements,
     this.coord,
+    this.padding,
     this.axes,
     this.tooltip,
     this.annotations,
@@ -27,6 +29,8 @@ class Spec {
   final List<GeomElement> elements;
 
   final Coord? coord;
+
+  final EdgeInsets? padding;
 
   final List<GuideAxis>? axes;
 
@@ -46,6 +50,7 @@ class Spec {
     DeepCollectionEquality().equals(data, other.data) &&
     DeepCollectionEquality().equals(elements, other.elements) &&
     coord == other.coord &&
+    padding == other.padding &&
     DeepCollectionEquality().equals(axes, other.axes) &&
     tooltip == other.tooltip &&
     DeepCollectionEquality().equals(annotations, other.annotations) &&

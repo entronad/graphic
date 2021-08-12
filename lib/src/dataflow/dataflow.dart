@@ -1,61 +1,38 @@
-
+import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:graphic/src/dataflow/pulse/multi_pulse.dart';
+import 'package:graphic/src/dataflow/event_stream.dart';
 import 'package:graphic/src/event/event.dart';
-import 'package:graphic/src/util/assert.dart';
 
-import 'operator/operator.dart';
-import 'pulse/pulse.dart';
-import 'change_set.dart';
-import 'tuple.dart';
-import 'event_stream.dart';
-
-typedef Hook = Future<void> Function();
+import 'operator.dart';
 
 class Dataflow {
-  int _clock = 0;
-
   int _currentRank = 0;
 
-  Set<Operator> _touched = {};
+  final Set<Operator> _touched = {};
 
-  Pulse? _pulse;
+  final Set<Operator> _consumes = {};
 
-  HeapPriorityQueue<Operator> _heap = HeapPriorityQueue(
-    (a, b) => a.qRank - b.qRank,
+  final HeapPriorityQueue<Operator> _heap = HeapPriorityQueue(
+    (a, b) => a.rank - b.rank,
   );
-
-  // To record input pulses of some operators.
-  // Set in pulse(), used in getPulse().
-  final Map<int, Pulse> _inputs = {};
-
-  // {hook: priority}
-  final Map<Hook, int> _postruns = {};
 
   Future<Dataflow>? _running;
 
-  Operator add(
-    Operator op,
-    [Map<String, dynamic>? params,
-    bool reactive = true,]
-  ) {
+  Operator<V> add<V>(Operator<V> op) {
     _rank(op);
-    if (params != null) {
-      connect(op, op.setParams(params, reactive: reactive));
-    }
-    touch(op);
-    return op;
-  }
+    _touch(op);
 
-  Dataflow connect(Operator target, Set<Operator> sources) {
-    for (var source in sources) {
-      if (target.rank < source.rank) {
-        _rerank(target);
-        return this;
-      }
+    if (op.consume) {
+      _consumes.add(op);
     }
-    return this;
+
+    assert(op.rank > op.sources.values.fold<int>(
+      -1,
+      (rank, p) => max(rank, p.rank)),
+    );
+
+    return op;
   }
 
   void _rank(Operator op) {
@@ -63,200 +40,64 @@ class Dataflow {
     op.rank = _currentRank++;
   }
 
-  void _rerank(Operator op) {
-    final queue = [op];
-
-    while (queue.isNotEmpty) {
-      var cur = queue.removeLast();
-      _rank(cur);
-      for (var target in cur.targets.toList().reversed) {
-        queue.add(target);
-        if (target == op) {
-          throw ArgumentError('Cycle detected in dataflow graph.');
-        }
-      }
-    }
+  void _touch(Operator op) {
+    _touched.add(op);
   }
 
-  Dataflow pulse (
-    Operator op,
-    ChangeSet changeSet,
-    {skip = false,}
-  ) {
-    touch(op, skip: skip);
-
-    final pulse = Pulse(this, _clock + (_pulse != null ? 0 : 1));
-    final tuples = op.pulse?.source ?? <Tuple>[];
-
-    // pulse.target = op;
-
-    _inputs[op.id] = changeSet.pulse(pulse, tuples);
-
-    return this;
-  }
-
-  Dataflow touch(
-    Operator op,
-    {skip = false,}
-  ) {
-    if (_pulse != null) {
-      _enqueue(op);
-    } else {
-      _touched.add(op);
-    }
-    if (skip) {
-      op.skip = true;
-    }
-    return this;
-  }
-
-  Dataflow update<V>(
+  /// Operator value cannot update directly outside the dataflow.
+  /// It can only be updatede by event streams.
+  /// Whe updated, rerun starts form it's targets.
+  void _update<V>(
     Operator<V> op,
     V value,
-    {bool force = false,
-    bool skip = false,}
   ) {
-    if (op.set(value) || force) {
-      touch(op, skip: skip);
+    if (op.update(value)) {
+      _touch(op);
     }
-    return this;
   }
 
-  Dataflow ingest(
-    Operator target,
-    List<Tuple> data,
-  ) => pulse(target, ChangeSet().add(data));
-
-  Future<Dataflow> evaluate(
-    [Hook? prerun,
-    Hook? postrun]
-  ) async {
-    assert(_pulse == null);
-
-    if (prerun != null) {
-      await prerun();
-    }
-
+  Future<Dataflow> evaluate() async {
     if (_touched.isEmpty) {
       return this;
     }
 
-    final clock = ++_clock;
-
-    _pulse = Pulse(this, clock);
-
     for (var op in _touched) {
-      _enqueue(op, force: true);
+      _enqueue(op);
     }
     _touched.clear();
 
     while (_heap.isNotEmpty) {
       final op = _heap.removeFirst();
 
-      if (op.rank != op.qRank) {
-        _enqueue(op, force: true);
-        continue;
-      }
+      final next = op.run();
 
-      final next = op.run(_getPulse(op));
-
-      if (next != null) {
-        for (var targetOp in op.targets) {
-          _enqueue(targetOp);
+      if (next) {
+        for (var target in op.targets) {
+          _enqueue(target);
         }
       }
     }
 
-    _inputs.clear();
-    _pulse = null;
-
-    if (_postruns.isNotEmpty) {
-      final pr = _postruns.entries.sorted((a, b) => b.value - a.value);
-      _postruns.clear();
-      for (var entry in pr) {
-        await entry.key();
-      }
-    }
-
-    if (postrun != null) {
-      await postrun();
+    for (var op in _consumes) {
+      op.update(null);
     }
 
     return this;
   }
 
-  Future<Dataflow> runAsync(
-    [Hook? prerun,
-    Hook? postrun]
-  ) async {
+  void run() async {
     while (_running != null) {
       await _running;
     }
 
-    _running = evaluate(prerun, postrun)
-      .then(
-        (_) {_running = null; return this;},
-        onError:  (_) {_running = null;},
-      );
-    
-    return _running!;
+    _running = evaluate().then(
+      (_) {_running = null; return this;},
+      onError:  (error) {_running = null; throw error;},
+    );
   }
 
-  Dataflow run(
-    [Hook? prerun,
-    Hook? postrun]
-  ) {
-    assert(_pulse == null);
-
-    evaluate(prerun, postrun);
-
-    return this;
-  }
-
-  Dataflow runAfter(
-    Hook postrun,
-    {bool enqueue = false,
-    int priority = 0,}
-  ) {
-    if (_pulse != null || enqueue) {
-      _postruns[postrun] = priority;
-    } else {
-      postrun();
-    }
-    return this;
-  }
-
-  void _enqueue(
-    Operator op,
-    {force = false,}
-  ) {
-    final noPulse = op.clock < _clock;
-    if (noPulse) {
-      op.clock = _clock;
-    }
-    if (noPulse || force) {
-      op.qRank = op.rank;
-      _heap.add(op);
-    }
-  }
-
-  Pulse _getPulse(Operator op) {
-    final sources = op.sources;
-    return (sources.length > 1)
-      ? MultiPulse(this, _clock, sources.map((so) => so.pulse!).toList())
-      : _inputs[op.id] ?? _getSinglePulse(_pulse!, sources.first.pulse);
-  }
-
-  Pulse _getSinglePulse(Pulse p, Pulse? sp) {
-    if (sp?.clock == p.clock) {
-      return sp!;
-    }
-
-    p = p.fork(PulseFlags.background);
-    if (sp != null) {
-      p.source = sp.source;
-    }
-    return p;
+  void _enqueue(Operator op) {
+    _heap.add(op);
   }
 
   EventStream<E> createEventStream<E extends Event>(
@@ -278,29 +119,14 @@ class Dataflow {
     return stream;
   }
 
-  Dataflow listen<E extends Event, V>(
+  /// Register a event stream to update a value keeper operator.
+  void listen<E extends Event, V>(
     EventStream<E> stream,
     Operator<V> target,
-    {ChangeSet Function(E)? pulse,
-    V Function(E)? update,}
+    V Function(E) update,
   ) {
-    assert(isSingle([pulse, update], allowNone: true));
-
-
-    if (pulse == null && update == null) {
-      stream.listen((event) {
-        touch(target);
-      });
-    } else if (pulse != null) {
-      stream.listen((event) {
-        this.pulse(target, pulse(event));
-      });
-    } else {
-      stream.listen((event) {
-        this.update(target, update!(event));
-      });
-    }
-
-    return this;
+    stream.listen((event) {
+      this._update(target, update(event));
+    });
   }
 }

@@ -1,8 +1,7 @@
 import 'dart:ui';
 
-import 'package:graphic/src/event/selection/select.dart';
-import 'package:graphic/src/event/signal.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/event/selection/selection.dart';
 import 'package:graphic/src/util/assert.dart';
 
 import 'channel.dart';
@@ -13,9 +12,8 @@ class ColorAttr extends ChannelAttr<Color> {
     String? variable,
     List<Color>? values,
     List<double>? stops,
-    Color Function(Tuple)? encode,
-    Signal<Color>? signal,
-    Map<Select, SelectUpdate<Color>>? select,
+    Color Function(Original)? encode,
+    Map<String, Map<bool, SelectionUpdate<Color>>>? onSelection,
   }) 
     : assert(isSingle([value, variable, encode])),
       super(
@@ -24,8 +22,7 @@ class ColorAttr extends ChannelAttr<Color> {
         values: values,
         stops: stops,
         encode: encode,
-        signal: signal,
-        select: select,
+        onSelection: onSelection,
       );
 }
 

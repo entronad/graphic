@@ -3277,3 +3277,82 @@ region 是图表padding导致的物理限制，对于rect是方形，对于polar
 annotation 是依附于coord范围的，也应当被region所clip
 
 dim顺序，以algebra为准，transpose后的称为canvasDim
+
+pre 和 post 前缀还是用驼峰吧，
+
+
+
+**重新思考**
+
+初始化/spec发生变化：rebuild整个dataflow
+
+data发生变化：从data开始重算主链路
+
+signal发生：从signal开始重算下游
+
+selection是aes之后的一套新的aes，上游的aes作为initialValue。
+
+静态图特点：
+
+一旦创建结构不会变化（包括rank等）
+
+op只有params和value，params如果是op则是取其值，
+
+value是op的唯一输出，且也仅需以输出为目的设置value，其它状态可可设置成员变量。 render的scene也不作为value了，它是副作用
+
+value可初始化时设置（也可不设置，在第一次run时根据上游param计算）不可更改。
+
+动态的变化以op被关联stream实现，stream发射时update这个op，并touch它，然后run。
+
+op的param只有通过构造函数设置，df.add中也是。
+
+df先只需要异步的run
+
+op的qRank好像不需要了。
+
+preRun postRun好像也没有必要的。
+
+数据特点：
+
+数据也是普通param和value，由于是有向无环图，param和value可以是同一实例
+
+它分为 original，scaled，raw aes，aes四段，每次数据更新都是全量更新，相互之间以index关联。
+
+---
+
+event stream本身是不保存状态的，因此event stream下面要有个存放值的op，它们一般是dataflow的起点，要设置初始值
+
+目前先完全不区别对待value为tuples的op，tuples的不同也以实例区分（每次都不同）
+
+为保证安全，使用tuple的地方一律从collect收集，op的参数中，tuples一般指没有处理好的，而从collect取的叫 originals, scaleds, aeses,
+
+按现在这个思路，aesop适合做成一体的。
+
+因为要与 CustomEncoder 交叉，每个 Attr就不设子类了，通过泛型分别，即Encoder的实现主要区分功能。
+
+设置Encoder的目的是为了所有attr在一次遍历中计算、组装。
+
+吧创建除 positionEncoder 外的其它encoder的创建交给parse 吧
+
+动态变化分为状态切换（initialValue -> value) 和状态转移（preValue -> value)，signal都支持，select仅支持状态切换
+
+aes之后的select要生成新的实例，保证initial aeses不变。
+
+原则上所有op的value都要返回新的实例，这样感觉其实内存占用浪费也不多
+
+几种特殊类型的op
+
+transform，modifier，有可能直接修改返回params中的tuples，所以后接transform的op不能直接取值，需要用一个collect
+
+select为了保证能记录到原始值，整个都重
+
+似乎只有把select放到modifier之后，才能保证有向无环图。
+
+提供select的status和signal的event的op必须具有一个性质，即它的值被用过一次（df run过一次）之后就返回null，这通过op的consume实现。
+
+这样与stream搭接的op，DataSourceOp，SizeOp是不consume的，GestureEventOp，ElementSelectStateusOp 是consume的。
+
+position目前设置为不可通过selection更改。
+
+无论从vega selection的定义上讲还是实践上讲，都应当是从抽象的variable和scaled value对比确定selection。被stack了的，理论上应当只查找x，dodge和jitter都不影响position的查找范围。
+

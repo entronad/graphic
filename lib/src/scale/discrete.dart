@@ -40,7 +40,7 @@ abstract class DiscreteScale<V> extends Scale<V, int> {
 abstract class DiscreteScaleConv<V, SP extends DiscreteScale<V>> extends ScaleConv<V, int> {
   DiscreteScaleConv(
     SP spec,
-    List<Tuple> tuples,
+    List<Original> tuples,
     String variable,
   ) {
     // values

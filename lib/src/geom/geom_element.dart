@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/aes/aes.dart';
 import 'package:graphic/src/aes/color.dart';
 import 'package:graphic/src/aes/elevation.dart';
 import 'package:graphic/src/aes/gradient.dart';
@@ -13,14 +12,11 @@ import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
-import 'package:graphic/src/dataflow/operator/updater.dart';
-import 'package:graphic/src/dataflow/pulse/pulse.dart';
+import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/graffiti.dart';
 import 'package:graphic/src/scale/discrete.dart';
 import 'package:graphic/src/scale/scale.dart';
-import 'package:graphic/src/shape/shape.dart';
-import 'package:graphic/src/util/map.dart';
 
 import 'modifier/modifier.dart';
 
@@ -76,39 +72,30 @@ abstract class GeomElement {
 
 /// Group aes value tuples by element's groupBy field.
 /// If groupBy is null, all tuples will be in the same group.
-/// 
-/// params:
-/// - tuples: List<Tuple>, aes value tuples from the sieve operator of aes value branch.
-/// - groupBy: String?
-/// - scales: Map<String, ScaleConv>
-/// - scaledRelay: Map<Tuple, Tuple>, Relay from original value to scaled value.
-/// - aesRelay: Map<Tuple, Tuple>, Relay from scaled value to aes value.
-/// 
-/// value: List<List<Tuple>>
-class GroupOp extends Updater<List<List<Tuple>>> {
+class GroupOp extends Operator<List<List<Aes>>> {
   GroupOp(Map<String, dynamic> params) : super(params);
 
   @override
-  update(Pulse pulse) {
-    final tuples = params['tuples'] as List<Tuple>;
+  List<List<Aes>> evaluate() {
+    final aeses = params['aeses'] as List<Aes>;
+    final originals = params['originals'] as List<Original>;
     final groupBy = params['groupBy'] as String?;
     final scales = params['scales'] as Map<String, ScaleConv>;
-    final scaledRelay = params['scaledRelay'] as Map<Tuple, Tuple>;
-    final aesRelay = params['aesRelay'] as Map<Tuple, Tuple>;
 
     if (groupBy == null) {
-      return [tuples];
+      return [aeses];
     }
 
     final groupValues = (scales[groupBy] as DiscreteScaleConv).values!;
-    final tmp = <dynamic, List<Tuple>>{};
+    final tmp = <dynamic, List<Aes>>{};
     for (var groupValue in groupValues) {
-      tmp[groupValue] = <Tuple>[];
+      tmp[groupValue] = <Aes>[];
     }
-    
-    for (var tuple in tuples) {
-      final originalTuple = scaledRelay.keyOf(aesRelay.keyOf(tuple));
-      tmp[originalTuple[groupBy]]!.add(tuple);
+
+    for (var i = 0; i < aeses.length; i++) {
+      final aes = aeses[i];
+      final original = originals[i];
+      tmp[original[groupBy]]!.add(aes);
     }
 
     return tmp.values.toList();
@@ -118,16 +105,16 @@ class GroupOp extends Updater<List<List<Tuple>>> {
 class ElementPainter extends Painter {
   ElementPainter(this.groups, this.coord);
 
-  final List<List<Tuple>> groups;
+  final List<List<Aes>> groups;
 
   final CoordConv coord;
 
   @override
   void paint(Canvas canvas) {
     for (var group in groups) {
-      final represent = group.first['shape'] as Shape;
+      final represent = group.first.shape;
       represent.paintGroup(
-        group.map((tuple) => Aes(tuple)).toList(),
+        group,
         coord,
         canvas,
       );
@@ -143,13 +130,13 @@ class ElementScene extends Scene {
 class ElementRenderOp extends Render<ElementScene> {
   ElementRenderOp(
     Map<String, dynamic> params,
-    ElementScene value,
-  ) : super(params, value);
+    ElementScene scene,
+  ) : super(params, scene);
 
   @override
-  void render(ElementScene scene) {
+  void render() {
     final zIndex = params['zIndex'] as int;
-    final groups = params['groups'] as List<List<Tuple>>;
+    final groups = params['groups'] as List<List<Aes>>;
     final coord = params['coord'] as CoordConv;
     final region = params['region'] as Rect;
 

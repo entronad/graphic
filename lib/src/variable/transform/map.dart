@@ -1,4 +1,4 @@
-import 'package:graphic/src/dataflow/pulse/pulse.dart';
+import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/scale/scale.dart';
 
 import 'transform.dart';
@@ -29,30 +29,18 @@ class MapTrans extends Transform {
     scale == other.scale;
 }
 
-/// params:
-/// - variable: String
-/// - as: String
-/// - mapper: dynamic Function(dynamic)
-/// - preTuples: List<Tuples> <- Collect, prior original value tuples form collect after transforms.
-/// 
-/// pulse:
-/// original value tuples
-/// 
-/// TODO: String scale
 class MapOp extends TransformOp {
   MapOp(Map<String, dynamic> params) : super(params);
 
   @override
-  Pulse? transform(Pulse pulse) {
+  List<Original> evaluate() {
+    final tuples = params['tuples'] as List<Original>;
     final variable = params['variable'] as String;
     final as = params['as'] as String;
     final mapper = params['mapper'] as dynamic Function(dynamic);
 
-    // Only handles add.
-    pulse.visit(PulseFlags.add, (tuple) {
+    return tuples..forEach((tuple) {
       tuple[as] = mapper(tuple[variable]);
     });
-
-    return pulse;
   }
 }

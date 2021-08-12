@@ -24,7 +24,7 @@ class Chart extends StatefulWidget {
     List<Annotation>? annotations,
     Map<String, Selection>? selections,
     Map<EventType, void Function(Event)>? onEvent,
-    Map<String, void Function(List<Tuple>)>? onSelection,
+    Map<String, void Function(List<Original>)>? onSelection,
     this.forceRebuild = false,
   }) : spec = Spec(
     data: data,

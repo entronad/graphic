@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/dataflow/pulse/pulse.dart';
 import 'package:graphic/src/event/signal.dart';
 import 'package:graphic/src/util/map.dart';
 import 'package:graphic/src/util/transform.dart';
@@ -149,7 +148,7 @@ class PolarCoordConvOp extends CoordConvOp<PolarCoordConv> {
   ) : super(params);
 
   @override
-  PolarCoordConv update(Pulse pulse) {
+  PolarCoordConv evaluate() {
     final region = params['region'] as Rect;
     final dim = params['dim'] as int;
     final dimFill = params['dimFill'] as double;

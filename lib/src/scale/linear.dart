@@ -43,7 +43,7 @@ class LinearScale extends ContinuousScale<num> {
 class LinearScaleConv extends ContinuousScaleConv<num> {
   LinearScaleConv(
     LinearScale spec,
-    List<Tuple> tuples,
+    List<Original> tuples,
     String variable,
   ) {
     // min, max

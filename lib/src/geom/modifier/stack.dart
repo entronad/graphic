@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'dart:math';
 
-import 'package:graphic/src/dataflow/pulse/pulse.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 
 import 'modifier.dart';
@@ -38,26 +37,26 @@ class StackGeomModifier extends GeomModifer {
   ///     symmetric to zero x line, keeping the relative distance.
   /// Symmetric is mostly used in river chart.
   @override
-  void modify(List<List<Tuple>> value) {
+  void modify(List<List<Aes>> value) {
     for (var i = 1; i < value.length; i++) {
       final group = value[i];
-      final pregroup = value[i - 1];
+      final preGroup = value[i - 1];
       for (var j = 0; j < group.length; j++) {
-        final position = group[j]['position'] as List<Offset>;
-        final preposition = pregroup[j]['position'] as List<Offset>;
+        final position = group[j].position;
+        final prePosition = preGroup[j].position;
 
-        var pretop = normalZero;
-        for (var point in preposition) {
+        var preTop = normalZero;
+        for (var point in prePosition) {
           final y = point.dy;
           if (y.isFinite) {
-            pretop = (pretop - normalZero).abs() >= (y - normalZero).abs() ? pretop : y;
+            preTop = (preTop - normalZero).abs() >= (y - normalZero).abs() ? preTop : y;
           }
         }
 
         for (var k = 0; k < position.length; k++) {
           position[k] = Offset(
             position[k].dx,
-            position[k].dy + (pretop - normalZero),
+            position[k].dy + (preTop - normalZero),
           );
         }
       }
@@ -68,8 +67,8 @@ class StackGeomModifier extends GeomModifer {
         var minY = double.infinity;
         var maxY = double.negativeInfinity;
         for (var group in value) {
-          final tuple = group[i];
-          for (var point in (tuple['position'] as List<Offset>)) {
+          final aes = group[i];
+          for (var point in aes.position) {
             final y = point.dy;
             if (y.isFinite) {
               minY = min(minY, y);
@@ -80,9 +79,9 @@ class StackGeomModifier extends GeomModifer {
 
         final symmetricBias = normalZero - (minY + maxY) / 2;
         for (var group in value) {
-          final tuple = group[i];
-          final oldPosition = tuple['position'] as List<Offset>;
-          tuple['position'] = oldPosition.map(
+          final aes = group[i];
+          final oldPosition = aes.position;
+          aes.position = oldPosition.map(
             (point) => Offset(point.dx, point.dy + symmetricBias),
           ).toList();
         }
@@ -95,7 +94,7 @@ class StackGeomModifierOp extends GeomModiferOp<StackGeomModifier> {
   StackGeomModifierOp(Map<String, dynamic> params) : super(params);
 
   @override
-  StackGeomModifier update(Pulse pulse) {
+  StackGeomModifier evaluate() {
     final symmetric = params['symmetric'] as bool;
     final origin = params['origin'] as Offset;
 

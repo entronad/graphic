@@ -1,19 +1,14 @@
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
-import 'package:collection/collection.dart';
-import 'package:graphic/src/aes/label.dart';
+import 'package:graphic/src/aes/position.dart';
 import 'package:graphic/src/common/label.dart';
+import 'package:graphic/src/dataflow/operator.dart';
+import 'package:graphic/src/event/selection/selection.dart';
 import 'package:graphic/src/shape/shape.dart';
 import 'package:graphic/src/util/assert.dart';
-import 'package:meta/meta.dart';
 import 'package:graphic/src/common/converter.dart';
-import 'package:graphic/src/dataflow/operator/transformer.dart';
-import 'package:graphic/src/dataflow/pulse/pulse.dart';
-import 'package:graphic/src/event/selection/select.dart';
-import 'package:graphic/src/event/signal.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/util/map.dart';
 
 // Attr
 
@@ -23,28 +18,25 @@ abstract class Attr<AV> {
   Attr({
     this.value,
     this.encode,
-    this.signal,
-    this.select,
+    this.onSelection,
   });
 
   final AV? value;
 
   /// Encode original value tuple to aes value.
-  final AV Function(Tuple)? encode;
+  final AV Function(Original)? encode;
 
-  final Signal<AV>? signal;
-
-  final Map<Select, SelectUpdate<AV>>? select;
+  final Map<String, Map<bool, SelectionUpdate<AV>>>? onSelection;
 
   @override
   bool operator ==(Object other) =>
     other is Attr<AV> &&
-    value == other.value &&
-    signal == other.signal &&
+    value == other.value;
     // encode: Function
-    DeepCollectionEquality().equals(signal?.keys, other.signal?.keys) &&  // SignalUpdata: Function
-    DeepCollectionEquality().equals(select?.keys, other.select?.keys);  // SignalUpdata: Function
+    // onSelection: Function
 }
+
+// attr conv
 
 abstract class AttrConv<SV extends num, AV> extends Converter<SV, AV> {
   @override
@@ -53,98 +45,66 @@ abstract class AttrConv<SV extends num, AV> extends Converter<SV, AV> {
   }
 }
 
-/// For any attr specification that has value.
-class ValueAttrConv<AV> extends AttrConv<num, AV> {
-  ValueAttrConv(this.value);
+// encoder
+
+abstract class Encoder<AV> {
+  AV encode(Scaled scaled, Original original);  // Original is for custom encode function.
+}
+
+/// For specs that value is set.
+class ValueAttrEncoder<AV> extends Encoder<AV> {
+  ValueAttrEncoder(this.value);
 
   final AV value;
 
   @override
-  AV convert(num input) => value;
+  AV encode(Scaled scaled, Original original) => value;
 }
 
-// Aes
+/// For specs that encode is set.
+class CustomEncoder<AV> extends Encoder<AV> {
+  CustomEncoder(this.customEncode);
 
-/// Used for shape painting methods.
-/// Created by aes value tuple.
-class Aes {
-  Aes(Tuple tuple)
-    : color = tuple['color'] as Color?,
-      elevation = tuple['elevation'] as double?,
-      gradient = tuple['gradient'] as Gradient?,
-      label = tuple['label'] as Label?,
-      position = tuple['position'] as List<Offset>,
-      shape = tuple['shape'] as Shape,
-      size = tuple['size'] as double
-    {
-      assert(isSingle([color, gradient]));
-    }
-
-  final Color? color;
-
-  final double? elevation;
-
-  final Gradient? gradient;
-
-  final Label? label;
-
-  /// Composed of normal value of each dim, result of the position operator.
-  /// It can be converted to canvas position by coord in shape.
-  final List<Offset> position;
-
-  final Shape shape;
-
-  /// If needed, default to shape's defaultSize.
-  final double? size;
-}
-
-abstract class AesOp<AV> extends Transformer {
-  AesOp(
-    Map<String, dynamic> params,
-    this.attr,
-  ) : super(params);
-
-  final String attr;
+  final AV Function(Original) customEncode;
 
   @override
-  Pulse? transform(Pulse pulse) {
-    pulse.visit(PulseFlags.add, (tuple) {
-      aes(tuple);
-    });
-
-    if (pulse.modFields.contains(attr)) {
-      pulse.visit(PulseFlags.mod, (tuple) {
-        aes(tuple);
-      });
-    }
-
-    return pulse;
-  }
-
-  @protected
-  void aes(Tuple tuple);
+  AV encode(Scaled scaled, Original original)
+    => customEncode(original);
 }
 
-/// All attr can be aesed by an encode operator(except position).
-///
-/// params:
-/// - attr: String, Aes value this operator handles.
-/// - encode: AV Function(Tuple)
-/// - scaledRelay: Map<Tuple, Tuple>, Relay from original value to scaled value.
-/// - aesRelay: Map<Tuple, Tuple>, Relay from scaled value to aes value.
-class EncodeOp<AV> extends AesOp<AV> {
-  EncodeOp(
-    Map<String, dynamic> params,
-    String attr,
-  ) : super(params, attr);
+// op
+
+class AesOp extends Operator<List<Aes>> {
+  AesOp(Map<String, dynamic> params) : super(params);
 
   @override
-  void aes(Tuple tuple) {
-    final encode = params['encode'] as AV Function(Tuple);
-    final scaledRelay = params['scaledRelay'] as Map<Tuple, Tuple>;
-    final aesRelay = params['aesRelay'] as Map<Tuple, Tuple>;
+  List<Aes> evaluate() {
+    final scaleds = params['scaleds'] as List<Scaled>; // From scaled collector operator.
+    final originals = params['originals'] as List<Original>;  // From original collect operator.
+    final positionEncoder = params['positionEncode'] as PositionEncoder; // From PostionOp.
+    final shapeEncoder = params['shapeEncoder'] as Encoder<Shape>;
+    final colorEncoder = params['colorEncoder'] as Encoder<Color>?;
+    final gradientEncoder = params['gradientEncoder'] as Encoder<Gradient>?;
+    final elevationEncoder = params['elevationEncoder'] as Encoder<double>?;
+    final labelEncoder = params['labelEncoder'] as Encoder<Label>?;
+    final sizeEncoder = params['sizeEncoder'] as Encoder<double>?;
 
-    final originalTuple = scaledRelay.keyOf(aesRelay.keyOf(tuple));
-    tuple[attr] = encode(originalTuple);
+    assert(isSingle([colorEncoder, gradientEncoder]));
+
+    final rst = <Aes>[];
+    for (var i = 0; i < scaleds.length; i++) {
+      final scaled = scaleds[i];
+      final original = originals[i];
+      rst.add(Aes(
+        position: positionEncoder.encode(scaled, original),
+        shape: shapeEncoder.encode(scaled, original),
+        color: colorEncoder?.encode(scaled, original),
+        gradient: gradientEncoder?.encode(scaled, original),
+        elevation: elevationEncoder?.encode(scaled, original),
+        label: labelEncoder?.encode(scaled, original),
+        size: sizeEncoder?.encode(scaled, original),
+      ));
+    }
+    return rst;
   }
 }

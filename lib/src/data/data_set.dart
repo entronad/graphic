@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:graphic/src/common/operators/value.dart';
 import 'package:graphic/src/event/event.dart';
 import 'package:graphic/src/variable/transform/transform.dart';
 import 'package:graphic/src/util/assert.dart';
@@ -34,6 +35,9 @@ class DataSet<D> {
 class DataEvent<D> extends Event {
   DataEvent(this.data);
 
+  @override
+  EventType get type => EventType.changeData;
+
   final List<D> data;
 }
 
@@ -62,4 +66,8 @@ class DataSouce<D> extends EventSource<DataEvent<D>> {
       listener(event);
     }
   }
+}
+
+class DataSourceOp<D> extends Value<List<D>> {
+  DataSourceOp(List<D> value) : super(value);
 }

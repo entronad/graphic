@@ -1,6 +1,5 @@
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/event/selection/select.dart';
-import 'package:graphic/src/event/signal.dart';
+import 'package:graphic/src/event/selection/selection.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/util/assert.dart';
 
@@ -11,9 +10,8 @@ class GradientAttr extends ChannelAttr<Gradient> {
     Gradient? value,
     String? variable,
     List<Gradient>? values,  // Only descrete.
-    Gradient Function(Tuple)? encode,
-    Signal<Gradient>? signal,
-    Map<Select, SelectUpdate<Gradient>>? select,
+    Gradient Function(Original)? encode,
+    Map<String, Map<bool, SelectionUpdate<Gradient>>>? onSelection,
   })
     : assert(isSingle([value, variable, encode])),
       super(
@@ -21,7 +19,6 @@ class GradientAttr extends ChannelAttr<Gradient> {
         variable: variable,
         values: values,
         encode: encode,
-        signal: signal,
-        select: select,
+        onSelection: onSelection,
       );
 }

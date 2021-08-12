@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'dart:math';
 
-import 'package:graphic/src/dataflow/pulse/pulse.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/scale/discrete.dart';
 import 'package:graphic/src/scale/scale.dart';
@@ -36,14 +35,14 @@ class JitterGeomModifier extends GeomModifer {
   final double band;
 
   @override
-  void modify(List<List<Tuple>> value) {
+  void modify(List<List<Aes>> value) {
     final random = Random();
 
     for (var group in value) {
-      for (var tuple in group) {
-        final oldPosition = tuple['position'] as List<Offset>;
+      for (var aes in group) {
+        final oldPosition = aes.position;
         final bias = ratio * band * (random.nextDouble() - 0.5);
-        tuple['position'] = oldPosition.map(
+        aes.position = oldPosition.map(
           (point) => Offset(point.dx+ bias, point.dy),
         ).toList();
       }
@@ -55,7 +54,7 @@ class JitterGeomModifierOp extends GeomModiferOp<JitterGeomModifier> {
   JitterGeomModifierOp(Map<String, dynamic> params) : super(params);
 
   @override
-  JitterGeomModifier update(Pulse pulse) {
+  JitterGeomModifier evaluate() {
     final ratio = params['ratio'] as double;
     final form = params['form'] as AlgForm;
     final scales = params['scales'] as Map<String, ScaleConv>;

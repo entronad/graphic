@@ -2,8 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/converter.dart';
-import 'package:graphic/src/dataflow/operator/updater.dart';
-import 'package:graphic/src/dataflow/pulse/pulse.dart';
+import 'package:graphic/src/dataflow/operator.dart';
 
 abstract class Coord {
   Coord({
@@ -49,19 +48,19 @@ abstract class CoordConv extends Converter<Offset, Offset> {
 
 /// params:
 /// All params needed to create a coord converter.
-abstract class CoordConvOp<C extends CoordConv> extends Updater<C> {
+abstract class CoordConvOp<C extends CoordConv> extends Operator<C> {
   CoordConvOp(
     Map<String, dynamic> params,
   ) : super(params);  // The first value should be created in the first run.
 }
 
-class RegionOp extends Updater<Rect> {
+class RegionOp extends Operator<Rect> {
   RegionOp(
     Map<String, dynamic> params,
   ) : super(params);
 
   @override
-  Rect update(Pulse pulse) {
+  Rect evaluate() {
     final size = params['size'] as Size;
     final padding = params['padding'] as EdgeInsets;
 

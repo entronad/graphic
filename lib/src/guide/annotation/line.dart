@@ -96,11 +96,11 @@ class LineAnnotScene extends AnnotScene {
 class LineAnnotRenderOp extends AnnotRenderOp<LineAnnotScene> {
   LineAnnotRenderOp(
     Map<String, dynamic> params,
-    LineAnnotScene value,
-  ) : super(params, value);
+    LineAnnotScene scene,
+  ) : super(params, scene);
 
   @override
-  void render(LineAnnotScene scene) {
+  void render() {
     final dim = params['dim'] as int;
     final variable = params['variable'] as String;
     final value = params['value'];

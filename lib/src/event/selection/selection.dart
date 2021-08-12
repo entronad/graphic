@@ -1,6 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:graphic/src/event/event.dart';
 
+typedef SelectionUpdate<V> = V Function(V initialValue);
+
 abstract class Selection {
   Selection({
     this.variables,

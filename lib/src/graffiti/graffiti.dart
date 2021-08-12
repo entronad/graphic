@@ -17,7 +17,7 @@ abstract class Scene {
   int get layer;
 
   // Help to order stablely.
-  int? _preorder;
+  int? _preOrder;
 
   // Make sure to set this before _paint
   Painter? painter;
@@ -71,10 +71,10 @@ class Graffiti {
   }
 
   /// Should and only should sort before first paint.
-  /// zIndex -> layer -> preorder
+  /// zIndex -> layer -> preOrder
   Graffiti sort() {
     for (var i = 0; i < _scenes.length; i++) {
-      _scenes[i]._preorder = i;
+      _scenes[i]._preOrder = i;
     }
     _scenes.sort((a, b) {
       final zIndexRst = a.zIndex - b.zIndex;
@@ -85,7 +85,7 @@ class Graffiti {
         if (layerRst != 0) {
           return layerRst;
         } else {
-          return a._preorder! - b._preorder!;
+          return a._preOrder! - b._preOrder!;
         }
       }
     });

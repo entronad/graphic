@@ -1,4 +1,5 @@
-import 'package:graphic/src/dataflow/operator/transformer.dart';
+import 'package:graphic/src/dataflow/operator.dart';
+import 'package:graphic/src/dataflow/tuple.dart';
 
 abstract class Transform {
   @override
@@ -6,6 +7,6 @@ abstract class Transform {
     other is Transform;
 }
 
-abstract class TransformOp extends Transformer {
+abstract class TransformOp extends Operator<List<Original>> {
   TransformOp(Map<String, dynamic> params) : super(params);
 }

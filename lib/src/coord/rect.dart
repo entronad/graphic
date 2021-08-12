@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/dataflow/pulse/pulse.dart';
 import 'package:graphic/src/event/signal.dart';
 import 'package:graphic/src/util/map.dart';
 
@@ -99,7 +98,7 @@ class RectCoordConvOp extends CoordConvOp<RectCoordConv> {
   ) : super(params);
 
   @override
-  RectCoordConv update(Pulse pulse) {
+  RectCoordConv evaluate() {
     final region = params['region'] as Rect;
     final dim = params['dim'] as int;
     final dimFill = params['dimFill'] as double;

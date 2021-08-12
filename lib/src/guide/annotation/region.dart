@@ -104,11 +104,11 @@ class RegionAnnotScene extends AnnotScene {
 class RegionAnnotRenderOp extends AnnotRenderOp<RegionAnnotScene> {
   RegionAnnotRenderOp(
     Map<String, dynamic> params,
-    RegionAnnotScene value,
-  ) : super(params, value);
+    RegionAnnotScene scene,
+  ) : super(params, scene);
 
   @override
-  void render(RegionAnnotScene scene) {
+  void render() {
     final dim = params['dim'] as int;
     final variable = params['variable'] as String;
     final values = params['values'] as List;

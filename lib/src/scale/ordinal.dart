@@ -26,7 +26,7 @@ class OrdinalScale extends DiscreteScale<String> {
 class OrdinalScaleConv extends DiscreteScaleConv<String, OrdinalScale> {
   OrdinalScaleConv(
     OrdinalScale spec,
-    List<Tuple> tuples,
+    List<Original> tuples,
     String variable,
   ) : super(spec, tuples, variable);
 

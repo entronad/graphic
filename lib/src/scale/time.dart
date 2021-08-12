@@ -32,7 +32,7 @@ DateTime _earlier(DateTime a, DateTime b) =>
 class TimeScaleConv extends ContinuousScaleConv<DateTime> {
   TimeScaleConv(
     TimeScale spec,
-    List<Tuple> tuples,
+    List<Original> tuples,
     String variable,
   ) {
     // min, max

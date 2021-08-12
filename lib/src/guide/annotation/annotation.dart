@@ -25,6 +25,6 @@ abstract class AnnotScene extends Scene {
 abstract class AnnotRenderOp<S extends AnnotScene> extends Render<S> {
   AnnotRenderOp(
     Map<String, dynamic> params,
-    S value,
-  ) : super(params, value);
+    S scene,
+  ) : super(params, scene);
 }

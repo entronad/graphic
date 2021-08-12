@@ -1,12 +1,9 @@
+import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/util/assert.dart';
 import 'package:meta/meta.dart';
 
 import 'package:graphic/src/common/converter.dart';
-import 'package:graphic/src/dataflow/operator/transformer.dart';
-import 'package:graphic/src/dataflow/operator/updater.dart';
-import 'package:graphic/src/dataflow/pulse/pulse.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/util/map.dart';
 
 import 'ordinal.dart';
 import 'linear.dart';
@@ -87,18 +84,18 @@ abstract class ScaleConv<V, SV extends num> extends Converter<V, SV> {
 /// 
 /// value: Map<String, ScaleConv>
 /// Scale converter of all variables.
-class ScaleConvOp extends Updater<Map<String, ScaleConv>> {
+class ScaleConvOp extends Operator<Map<String, ScaleConv>> {
   ScaleConvOp(
     Map<String, dynamic> params,
   ) : super(params, {});
 
-  // must be inited by a pulse.
   @override
-  Map<String, ScaleConv> update(Pulse pulse) {
+  Map<String, ScaleConv> evaluate() {
+    final tuples = params['tuples'] as List<Original>;
     final specs = params['specs'] as Map<String, Scale>;
+
     final rst = <String, ScaleConv>{};
     for (var name in specs.keys) {
-      final tuples = pulse.source!;
       if (specs[name] is OrdinalScale) {
         final spec = specs[name] as OrdinalScale;
         rst[name] = OrdinalScaleConv(spec, tuples, name);
@@ -121,28 +118,20 @@ class ScaleConvOp extends Updater<Map<String, ScaleConv>> {
 /// pulse:
 /// Newly created scaled value pulse form a relay.
 /// Tuples are empty but change info is from the orininal value pulse.
-class ScaleOp extends Transformer {
+class ScaleOp extends Operator<List<Scaled>> {
   ScaleOp(Map<String, dynamic> params) : super(params);
 
   @override
-  Pulse? transform(Pulse pulse) {
+  List<Scaled> evaluate() {
+    final originals = params['originals'] as List<Original>;  // From original collect operator.
     final convs = params['convs'] as Map<String, ScaleConv>;
-    final relay = params['relay'] as Map<Tuple, Tuple>;
 
-    pulse.visit(PulseFlags.add, (tuple) {
-      final original = relay.keyOf(tuple);
+    return originals.map((original) {
+      final scaled = Scaled();
       for (var field in convs.keys) {
-        tuple[field] = convs[field]!.convert(original[field]);
+        scaled[field] = convs[field]!.convert(original[field]);
       }
-    });
-
-    pulse.visit(PulseFlags.mod, (tuple) {
-      final original = relay.keyOf(tuple);
-      for (var field in pulse.modFields) {
-        tuple[field] = convs[field]!.convert(original[field]);
-      }
-    });
-
-    return pulse;
+      return scaled;
+    }).toList();
   }
 }

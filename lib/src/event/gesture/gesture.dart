@@ -1,20 +1,24 @@
 import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
+import 'package:graphic/src/common/operators/value.dart';
 
 import 'arena.dart' as arena;
 import '../event.dart';
 
 class GestureEvent extends Event {
   GestureEvent(
-    this.type,
+    this._gestureType,
     this.pointerEvent,
     {this.offset,
     this.scale,
     this.scrollDelta,}
   );
 
-  final arena.GestureType type;
+  @override
+  EventType get type => _toEventType(_gestureType);
+
+  final arena.GestureType _gestureType;
 
   final PointerEvent pointerEvent;
 
@@ -35,7 +39,7 @@ GestureEvent _toGestureEvent(arena.GestureEvent event) =>
     scrollDelta: event.scrollDelta,
   );
 
-arena.GestureType _toArenaType(EventType type) =>
+arena.GestureType _toGestureType(EventType type) =>
   type == EventType.tapDown ? arena.GestureType.tapDown :
   type == EventType.tapUp ? arena.GestureType.tapUp :
   type == EventType.tap ? arena.GestureType.tap :
@@ -56,6 +60,27 @@ arena.GestureType _toArenaType(EventType type) =>
   type == EventType.scaleEnd ? arena.GestureType.scaleEnd :
   throw UnimplementedError('$type has no equivalent GestureType.');
 
+EventType _toEventType(arena.GestureType type) =>
+  type == arena.GestureType.tapDown ? EventType.tapDown :
+  type == arena.GestureType.tapUp ? EventType.tapUp :
+  type == arena.GestureType.tap ? EventType.tap :
+  type == arena.GestureType.doubleTap ? EventType.doubleTap :
+  type == arena.GestureType.tapCancel ? EventType.tapCancel :
+  type == arena.GestureType.longPress ? EventType.longPress :
+  type == arena.GestureType.longPressStart ? EventType.longPressStart :
+  type == arena.GestureType.longPressMoveUpdate ? EventType.longPressMoveUpdate :
+  type == arena.GestureType.longPressUp ? EventType.longPressUp :
+  type == arena.GestureType.longPressEnd ? EventType.longPressEnd :
+  type == arena.GestureType.panDown ? EventType.panDown :
+  type == arena.GestureType.panStart ? EventType.panStart :
+  type == arena.GestureType.panUpdate ? EventType.panUpdate :
+  type == arena.GestureType.panEnd ? EventType.panEnd :
+  type == arena.GestureType.panCancel ? EventType.panCancel :
+  type == arena.GestureType.scaleStart ? EventType.scaleStart :
+  type == arena.GestureType.scaleUpdate ? EventType.scaleUpdate :
+  type == arena.GestureType.scaleEnd ? EventType.scaleEnd :
+  throw UnimplementedError('$type has no equivalent EventType.');
+
 class GestureSource extends EventSource<GestureEvent> {
   GestureSource(this._arena);
 
@@ -72,7 +97,7 @@ class GestureSource extends EventSource<GestureEvent> {
     }
 
     _arena.on(
-      _toArenaType(type),
+      _toGestureType(type),
       _avatars[listener]!,
     );
   }
@@ -80,7 +105,7 @@ class GestureSource extends EventSource<GestureEvent> {
   @override
   void off([EventType? type, EventListener<GestureEvent>? listener]) {
     _arena.off(
-      type != null ? _toArenaType(type) : null,
+      type != null ? _toGestureType(type) : null,
       _avatars[listener],
     );
   }
@@ -88,4 +113,11 @@ class GestureSource extends EventSource<GestureEvent> {
   @override
   void emit(GestureEvent event) =>
     throw UnimplementedError('Event is emit by arena');
+}
+
+class GestureEventOp extends Value<GestureEvent> {
+  GestureEventOp(GestureEvent value) : super(value);
+
+  @override
+  bool get consume => true;
 }

@@ -42,7 +42,7 @@ class Spec {
 
   final Map<EventType, void Function(Event)>? onEvent;
 
-  final Map<String, void Function(List<Tuple>)>? onSelection;
+  final Map<String, void Function(List<Original>)>? onSelection;
 
   @override
   bool operator ==(Object other) =>

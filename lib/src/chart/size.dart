@@ -1,11 +1,13 @@
 import 'dart:ui';
 
-import 'package:graphic/src/dataflow/operator/updater.dart';
-import 'package:graphic/src/dataflow/pulse/pulse.dart';
+import 'package:graphic/src/common/operators/value.dart';
 import 'package:graphic/src/event/event.dart';
 
 class ResizeEvent extends Event {
   ResizeEvent(this.size);
+
+  @override
+  EventType get type => EventType.resize;
 
   final Size size;
 }
@@ -37,10 +39,6 @@ class ResizeSouce extends EventSource<ResizeEvent> {
   }
 }
 
-class SizeOp extends Updater<Size> {
-  SizeOp(Size value) : super(null, value);
-
-  // Size value is only set by ResizeSource.
-  @override
-  Size update(Pulse pulse) => value!;
+class SizeOp extends Value<Size> {
+  SizeOp(Size value) : super(value);
 }

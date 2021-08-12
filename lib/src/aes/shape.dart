@@ -1,5 +1,4 @@
-import 'package:graphic/src/event/selection/select.dart';
-import 'package:graphic/src/event/signal.dart';
+import 'package:graphic/src/event/selection/selection.dart';
 import 'package:graphic/src/shape/shape.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/util/assert.dart';
@@ -11,9 +10,8 @@ class ShapeAttr extends ChannelAttr<Shape> {
     Shape? value,
     String? variable,
     List<Shape>? values,  // Only descrete.
-    Shape Function(Tuple)? encode,
-    Signal<Shape>? signal,
-    Map<Select, SelectUpdate<Shape>>? select,
+    Shape Function(Original)? encode,
+    Map<String, Map<bool, SelectionUpdate<Shape>>>? onSelection,
   })
     : assert(isSingle([value, variable, encode])),
       super(
@@ -21,7 +19,6 @@ class ShapeAttr extends ChannelAttr<Shape> {
         variable: variable,
         values: values,
         encode: encode,
-        signal: signal,
-        select: select,
+        onSelection: onSelection,
       );
 }

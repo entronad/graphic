@@ -1,21 +1,11 @@
-import 'package:graphic/src/dataflow/operator/transformer.dart';
-import 'package:graphic/src/dataflow/pulse/pulse.dart';
-import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/dataflow/operator.dart';
 
-class Collect extends Transformer<List<Tuple>> {
-  Collect() : super({}, []);
+/// Collect and provide tuples.
+class Collect<T> extends Operator<List<T>> {
+  Collect(Operator<List<T>> source)
+    : super({'souce' : source});
 
   @override
-  Pulse? transform(Pulse pulse) {
-    final value = this.value!;
-
-    final rst = pulse.fork(PulseFlags.all);
-
-    // Collect is to create new source, so only handles rem and add.
-    rst.visit(PulseFlags.rem, value.remove);
-    value.addAll(rst.materialize(PulseFlags.add).add);
-    pulse.source = value;
-
-    return rst;
-  }
+  List<T> evaluate() =>
+    value = params['souce'] as List<T>;
 }

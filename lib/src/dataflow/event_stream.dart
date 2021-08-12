@@ -1,17 +1,12 @@
 import 'package:graphic/src/event/event.dart';
 
-var _streamId = 1;
-
 class EventStream<E extends Event> {
   EventStream({
     EventPredivate<E>? filter,
     EventListener<E>? listener,
   })
-    : id = _streamId++,
-      _filter = filter,
+    : _filter = filter,
       _listener = listener;
-
-  final int id;
 
   E? _last;
 

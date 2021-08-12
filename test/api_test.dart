@@ -129,12 +129,12 @@ final chart2 = Chart(
           colors: [Color.fromARGB(255, 255, 191, 0), Color.fromARGB(255, 224, 62, 76)],
         ),
       ],
-      select: {
-        Select.not('s'): (init, _) => LinearGradient(
+      onSelection: {
+        's': {false: (init) => LinearGradient(
           begin: Alignment(0, 0),
           end: Alignment(0, 1),
           colors: init.colors.map((c) => c.withAlpha(40)).toList(),
-        ),
+        )},
       },
     ),
     modifier: StackModifier(),

@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:graphic/src/aes/aes.dart';
 import 'package:graphic/src/coord/coord.dart';
+import 'package:graphic/src/dataflow/tuple.dart';
 
 import 'shape.dart';
 

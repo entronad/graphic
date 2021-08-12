@@ -30,7 +30,7 @@ enum EventType {
 
 // TODO: equality
 abstract class Event {
-  
+  EventType get type;
 }
 
 typedef EventListener<E extends Event> = void Function(E);

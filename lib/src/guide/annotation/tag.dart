@@ -64,11 +64,11 @@ class TagAnnotScene extends AnnotScene {
 class TagAnnotRenderOp extends AnnotRenderOp<TagAnnotScene> {
   TagAnnotRenderOp(
     Map<String, dynamic> params,
-    TagAnnotScene value,
-  ) : super(params, value);
+    TagAnnotScene scene,
+  ) : super(params, scene);
 
   @override
-  void render(TagAnnotScene scene) {
+  void render() {
     final variables = params['variables'] as List<String>;
     final values = params['values'] as List;
     final label = params['label'] as Label;

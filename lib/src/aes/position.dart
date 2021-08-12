@@ -1,12 +1,10 @@
 import 'dart:ui';
 
 import 'package:graphic/src/aes/aes.dart';
-import 'package:graphic/src/dataflow/operator/updater.dart';
-import 'package:graphic/src/dataflow/pulse/pulse.dart';
+import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/scale/scale.dart';
-import 'package:graphic/src/util/map.dart';
 
 typedef PositionCompleter = List<Offset> Function(List<Offset> position, Offset origin);
 
@@ -14,47 +12,60 @@ typedef PositionCompleter = List<Offset> Function(List<Offset> position, Offset 
 /// Firstly compose points by algebra form.
 /// Secondly convert values of points from scaled value to normal value.
 /// Thirdly complete abstract position points by geom.
-/// 
-/// params:
-/// - form: AlgForm
-/// - scales: Map<String, ScaleConv>, Scale convertors.
-/// - aesRelay: Map<Tuple, Tuple>, Relay from scaled value to aes value.
-/// - completer: PositonCompleter, Defined by each geom.
-/// - origin: Offset, The abstract origin point.
-/// 
-/// pulse:
-/// Create the abstract position field.
-class PositionOp extends AesOp<List<Offset>> {
-  PositionOp(
-    Map<String, dynamic> params,
-  ) : super(params, 'position');
+class PositionEncoder extends Encoder<List<Offset>> {
+  PositionEncoder(
+    this.form,
+    this.scales,
+    this.completer,
+    this.origin,
+  );
+
+  final AlgForm form;
+
+  final Map<String, ScaleConv> scales;
+
+  final PositionCompleter completer;  // Defined by each geom.
+
+  final Offset origin;
 
   @override
-  void aes(Tuple tuple) {
-    final form = params['form'] as AlgForm;
-    final scales = params['scales'] as Map<String, ScaleConv>;
-    final aesRelay = params['aesRelay'] as Map<Tuple, Tuple>;
-    final completer = params['completer'] as PositionCompleter;
-    final origin = params['origin'] as Offset;
-
-    final scaledTuple = aesRelay.keyOf(tuple);
+  List<Offset> encode(Scaled scaled, Original original) {
     final position = <Offset>[];
     for (var term in form) {
       if (term.length == 1) {  // For dim 1 coord.
         position.add(Offset(
           0,  // Fill the domain dim.
               // This is an arbitry value, and will be replaced by dimFill in coord converter.
-          scales[term[0]]!.normalize(scaledTuple[term[0]]),  // The only factor is regarded as measure dim.
+          scales[term[0]]!.normalize(scaled[term[0]]!),  // The only factor is regarded as measure dim.
         ));
       } else {
         position.add(Offset(
-          scales[term[0]]!.normalize(scaledTuple[term[0]]),
-          scales[term[1]]!.normalize(scaledTuple[term[1]]),
+          scales[term[0]]!.normalize(scaled[term[0]]!),
+          scales[term[1]]!.normalize(scaled[term[1]]!),
         ));
       }
     }
-    
-    tuple['position'] = completer(position, origin);
+    return position;
+  }
+}
+
+/// Position Encode needs a operator to create because it needs dynamic params form other operators.
+class PositionOp extends Operator<PositionEncoder> {
+  PositionOp(Map<String, dynamic> params) : super(params);
+
+  @override
+  PositionEncoder evaluate() {
+    final form = params['form'] as AlgForm;
+    final scales = params['scales'] as Map<String, ScaleConv>;
+    final completer = params['completer'] as PositionCompleter;
+    final origin = params['origin'] as Offset;
+
+    return PositionEncoder(
+      form,
+      scales,
+      completer,
+      origin,
+    );
   }
 }
 
@@ -64,11 +75,11 @@ class PositionOp extends AesOp<List<Offset>> {
 /// 
 /// value: Offset
 /// The abstract origin point
-class OriginOp extends Updater<Offset> {
+class OriginOp extends Operator<Offset> {
   OriginOp(Map<String, dynamic> params) : super(params);
 
   @override
-  Offset update(Pulse pulse) {
+  Offset evaluate() {
     final form = params['form'] as AlgForm;
     final scales = params['scales'] as Map<String, ScaleConv>;
 

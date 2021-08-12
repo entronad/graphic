@@ -7,8 +7,7 @@ import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
-import 'package:graphic/src/dataflow/operator/updater.dart';
-import 'package:graphic/src/dataflow/pulse/pulse.dart';
+import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/graffiti/graffiti.dart';
 import 'package:graphic/src/guide/axis/circular.dart';
 import 'package:graphic/src/guide/axis/horizontal.dart';
@@ -128,11 +127,11 @@ class TickInfo {
 /// -         / AxisRenderOp
 /// TickInfoOp
 /// -         \ GridRenderOp
-class TickInfoOp extends Updater<List<TickInfo>> {
+class TickInfoOp extends Operator<List<TickInfo>> {
   TickInfoOp(Map<String, dynamic> params) : super(params);
 
   @override
-  List<TickInfo> update(Pulse pulse) {
+  List<TickInfo> evaluate() {
     final variable = params['variable'] as String;
     final scales = params['scales'] as Map<String, ScaleConv>;
     final tickLine = params['tickLine'] as TickLine?;
@@ -206,11 +205,11 @@ class AxisScene extends Scene {
 class AxisRenderOp extends Render<AxisScene> {
   AxisRenderOp(
     Map<String, dynamic> params,
-    AxisScene value,
-  ) : super(params, value);
+    AxisScene scene,
+  ) : super(params, scene);
 
   @override
-  void render(AxisScene scene) {
+  void render() {
     final zIndex = params['zIndex'] as int;
     final coord = params['coord'] as CoordConv;
     final region = params['region'] as Rect;
@@ -292,11 +291,11 @@ class GridScene extends Scene {
 class GridRenderOp extends Render<GridScene> {
   GridRenderOp(
     Map<String, dynamic> params,
-    GridScene value,
-  ) : super(params, value);
+    GridScene scene,
+  ) : super(params, scene);
 
   @override
-  void render(GridScene scene) {
+  void render() {
     final gridZIndex = params['gridZIndex'] as int;
     final coord = params['coord'] as CoordConv;
     final region = params['region'] as Rect;

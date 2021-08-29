@@ -19,13 +19,13 @@ abstract class Scene {
   // Help to order stablely.
   int? _preOrder;
 
-  // Make sure to set this before _paint
+  // Make sure to set this before _paint, or _paint will do nothing.
   Painter? painter;
 
   Path? clip;
 
   /// Set a region as clip.
-  void setRegionClip(Rect region, bool polar) => clip = polar
+  void setRegionClip(Rect region, bool circular) => clip = circular
     ? (Path()..addOval(Rect.fromCircle(
         center: region.center,
         radius: region.shortestSide / 2,
@@ -33,14 +33,16 @@ abstract class Scene {
     : (Path()..addRect(region));
 
   void _paint(Canvas canvas) {
-    canvas.save();
-    if (clip != null) {
-      canvas.clipPath(clip!);
+    if (painter != null) {
+      canvas.save();
+      if (clip != null) {
+        canvas.clipPath(clip!);
+      }
+
+      painter!.paint(canvas);
+
+      canvas.restore();
     }
-
-    painter!.paint(canvas);
-
-    canvas.restore();
   }
 }
 

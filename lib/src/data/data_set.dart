@@ -1,33 +1,38 @@
 import 'package:collection/collection.dart';
 import 'package:graphic/src/common/operators/value.dart';
-import 'package:graphic/src/event/event.dart';
+import 'package:graphic/src/interaction/event.dart';
 import 'package:graphic/src/variable/transform/transform.dart';
-import 'package:graphic/src/util/assert.dart';
 import 'package:graphic/src/variable/variable.dart';
 
 class DataSet<D> {
   DataSet({
     this.source,
-    this.from,
     required this.variables,
     this.transforms,
-  }) : assert(isSingle([source, from]));
+    this.changeData,
+  });
 
   final List<D>? source;
-
-  final String? from;
 
   final Map<String, Variable<D, dynamic>> variables;
 
   final List<Transform>? transforms;
 
+  final bool? changeData;
+
   @override
   bool operator ==(Object other) =>
     other is DataSet<D> &&
     // Data source is not diffed in equality operator.
-    from == other.from &&
     DeepCollectionEquality().equals(variables, other.variables) &&
-    DeepCollectionEquality().equals(transforms, other.transforms);
+    DeepCollectionEquality().equals(transforms, other.transforms) &&
+    changeData == other.changeData;
+}
+
+bool dataChanged(DataSet a, DataSet b) {
+  assert(a == b);
+
+  return (a.changeData != false) && (a.source != b.source);
 }
 
 // data source -> event stream (with pulseData) -> variable operator

@@ -299,6 +299,8 @@ class RectShape extends IntervalShape {
     CoordConv coord,
     Canvas canvas,
   ) {
+    assert(item.shape is RectShape);
+
     final path = Path();
     if (rrect) {
       path.addRRect(RRect.fromRectAndCorners(
@@ -323,7 +325,7 @@ class RectShape extends IntervalShape {
         item.label!,
         labelAnchor,
         labelPosition == 1
-          ? (coord.transposed ? Alignment.centerLeft : Alignment.bottomCenter)
+          ? (coord.transposed ? Alignment.centerRight : Alignment.topCenter)
           : Alignment.center,
         canvas,
       );
@@ -341,6 +343,8 @@ class RectShape extends IntervalShape {
     PolarCoordConv coord,
     Canvas canvas,
   ) {
+    assert(item.shape is RectShape);
+
     Path path;
     if (rrect) {
       path = Paths.rsector(
@@ -494,6 +498,8 @@ class FunnelShape extends IntervalShape {
     CoordConv coord,
     Canvas canvas,
   ) {
+    assert(item.shape is FunnelShape);
+
     final path = Path();
     path.addPolygon(corners, true);
     aesBasicItem(
@@ -508,9 +514,9 @@ class FunnelShape extends IntervalShape {
         item.label!,
         labelAnchor,
         labelPosition == 1
-          ? (coord.transposed ? Alignment.centerLeft : Alignment.bottomCenter)
+          ? (coord.transposed ? Alignment.centerRight : Alignment.topCenter)
           : labelPosition == 0
-            ? (coord.transposed ? Alignment.centerRight : Alignment.topCenter)
+            ? (coord.transposed ? Alignment.centerLeft : Alignment.bottomCenter)
             : Alignment.center,
         canvas,
       );

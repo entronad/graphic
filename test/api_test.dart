@@ -23,7 +23,7 @@ final data1 = [
 ];
 
 final chart1 = Chart(
-  data: {'data': DataSet<LinearSales>(
+  data: DataSet<LinearSales>(
     source: data1,
     variables: {
       'year': Variable(accessor: (d) => d.year.toString()),
@@ -33,7 +33,7 @@ final chart1 = Chart(
       variable: 'sales',
       as: 'salesP',
     )]
-  )},
+  ),
   coord: PolarCoord(dim: 1),
   elements: [IntervalElement(
     position: Varset('salesP'),
@@ -81,7 +81,7 @@ final data2 = [
 ];
 
 final chart2 = Chart(
-  data: {'data': DataSet<Map>(
+  data: DataSet<Map>(
     source: data2,
     variables: {
       'day': Variable<Map, String>(
@@ -97,7 +97,7 @@ final chart2 = Chart(
         scale: OrdinalScale(),
       ),
     }
-  )},
+  ),
   elements: [AreaElement(
     position: Varset('day') * Varset('value'),
     gradient: GradientAttr(
@@ -129,7 +129,7 @@ final chart2 = Chart(
           colors: [Color.fromARGB(255, 255, 191, 0), Color.fromARGB(255, 224, 62, 76)],
         ),
       ],
-      onSelection: {
+      onSelect: {
         's': {false: (init) => LinearGradient(
           begin: Alignment(0, 0),
           end: Alignment(0, 1),
@@ -139,8 +139,8 @@ final chart2 = Chart(
     ),
     modifier: StackModifier(),
   )],
-  selections: {'s': PointSelection(
-    variables: ['group'],
+  selects: {'s': PointSelect(
+    variable: 'group',
     nearest: true,
   )},
 );

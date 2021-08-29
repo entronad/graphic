@@ -37,7 +37,7 @@ class StackGeomModifier extends GeomModifer {
   ///     symmetric to zero x line, keeping the relative distance.
   /// Symmetric is mostly used in river chart.
   @override
-  void modify(List<List<Aes>> value) {
+  void modify(AesGroups value) {
     for (var i = 1; i < value.length; i++) {
       final group = value[i];
       final preGroup = value[i - 1];

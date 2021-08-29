@@ -32,6 +32,7 @@ abstract class GeomElement {
     this.modifier,
     this.zIndex,
     this.groupBy,
+    this.selected,
   }) : assert(modifier == null || groupBy != null);
 
   final ColorAttr? color;
@@ -56,6 +57,8 @@ abstract class GeomElement {
   /// Modifier require groups.
   final String? groupBy;
 
+  final Set<int>? selected;
+
   @override
   bool operator ==(Object other) =>
     other is GeomElement &&
@@ -67,16 +70,17 @@ abstract class GeomElement {
     shape == other.shape &&
     size == other.size &&
     modifier == modifier &&
-    zIndex == other.zIndex;
+    zIndex == other.zIndex &&
+    selected == other.selected;
 }
 
 /// Group aes value tuples by element's groupBy field.
 /// If groupBy is null, all tuples will be in the same group.
-class GroupOp extends Operator<List<List<Aes>>> {
+class GroupOp extends Operator<AesGroups> {
   GroupOp(Map<String, dynamic> params) : super(params);
 
   @override
-  List<List<Aes>> evaluate() {
+  AesGroups evaluate() {
     final aeses = params['aeses'] as List<Aes>;
     final originals = params['originals'] as List<Original>;
     final groupBy = params['groupBy'] as String?;
@@ -105,7 +109,7 @@ class GroupOp extends Operator<List<List<Aes>>> {
 class ElementPainter extends Painter {
   ElementPainter(this.groups, this.coord);
 
-  final List<List<Aes>> groups;
+  final AesGroups groups;
 
   final CoordConv coord;
 
@@ -136,13 +140,12 @@ class ElementRenderOp extends Render<ElementScene> {
   @override
   void render() {
     final zIndex = params['zIndex'] as int;
-    final groups = params['groups'] as List<List<Aes>>;
+    final groups = params['groups'] as AesGroups;
     final coord = params['coord'] as CoordConv;
-    final region = params['region'] as Rect;
 
     scene
       ..zIndex = zIndex
-      ..setRegionClip(region, coord is PolarCoordConv)
+      ..setRegionClip(coord.region, coord is PolarCoordConv)
       ..painter = ElementPainter(groups, coord);
   }
 }

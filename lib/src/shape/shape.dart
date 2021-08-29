@@ -26,6 +26,10 @@ abstract class Shape {
   @protected
   double get defaultSize;
 
+  /// Usually the last point represent the statistic value.
+  Offset representPoint(List<Offset> position) =>
+    position.last;
+
   /// Force subclasses to implement equality.
   /// It will be used in operator ==.
   /// Usually they must be the same subtype and have equal fields.

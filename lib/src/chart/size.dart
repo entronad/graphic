@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:graphic/src/common/operators/value.dart';
-import 'package:graphic/src/event/event.dart';
+import 'package:graphic/src/interaction/event.dart';
 
 class ResizeEvent extends Event {
   ResizeEvent(this.size);

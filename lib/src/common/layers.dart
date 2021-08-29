@@ -5,5 +5,7 @@ abstract class Layers {
   static const element = 3;
   static const lineAnnot = 4;
   static const tagAnnot = 5;
-  static const tooltip = 6;
+  static const selector = 6;
+  static const crosshair = 7;
+  static const tooltip = 8;
 }

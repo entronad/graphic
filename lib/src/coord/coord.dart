@@ -34,6 +34,7 @@ abstract class CoordConv extends Converter<Offset, Offset> {
     this.dim,
     this.dimFill,
     this.transposed,
+    this.region,
   );
 
   final int dim;
@@ -41,6 +42,8 @@ abstract class CoordConv extends Converter<Offset, Offset> {
   final double dimFill;
 
   final bool transposed;
+
+  final Rect region;
 
   int getCanvasDim(int dim) =>
     transposed ? (3 - dim) : dim;

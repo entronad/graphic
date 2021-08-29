@@ -48,8 +48,10 @@ class BasicLineShape extends LineShape {
 
     var currentSegment = <Offset>[];
     for (var item in group) {
-      if (item.position.first.dy.isFinite) {
-        final point = coord.convert(item.position.first);
+      assert(item.shape is BasicLineShape);
+
+      if (item.position.last.dy.isFinite) {
+        final point = coord.convert(item.position.last);
         currentSegment.add(point);
         labels[item] = point;
       } else if (currentSegment.isNotEmpty) {
@@ -59,8 +61,8 @@ class BasicLineShape extends LineShape {
     }
     if (
       loop &&
-      group.first.position.first.dy.isFinite &&
-      group.last.position.first.dy.isFinite
+      group.first.position.last.dy.isFinite &&
+      group.last.position.last.dy.isFinite
     ) {
       // Because line can be broken by NaN, loop cannot use close.
       segments.last.add(segments.first.first);
@@ -89,7 +91,7 @@ class BasicLineShape extends LineShape {
         paintLabel(
           item.label!,
           labels[item]!,
-          coord.transposed ? Alignment.centerLeft : Alignment.bottomCenter,
+          coord.transposed ? Alignment.centerRight : Alignment.topCenter,
           canvas,
         );
       }

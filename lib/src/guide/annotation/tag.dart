@@ -75,11 +75,10 @@ class TagAnnotRenderOp extends AnnotRenderOp<TagAnnotScene> {
     final zIndex = params['zIndex'] as int;
     final scales = params['scales'] as Map<String, ScaleConv>;
     final coord = params['coord'] as CoordConv;
-    final region = params['region'] as Rect;
 
     scene
       ..zIndex = zIndex
-      ..setRegionClip(region, coord is PolarCoordConv);
+      ..setRegionClip(coord.region, coord is PolarCoordConv);
     
     final scaleX = scales[variables[0]]!;
     final scaleY = scales[variables[1]]!;

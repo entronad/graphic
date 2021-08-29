@@ -16,6 +16,8 @@ abstract class PointShape extends FunctionShape {
     Canvas canvas,
   ) {
     for (var item in group) {
+      assert(item.shape is PointShape);
+
       item.shape.paintItem(item, coord, canvas);
     }
   }
@@ -59,7 +61,7 @@ abstract class PointShapeBase extends PointShape {
       canvas,
     );
     if (item.label != null) {
-      final point = coord.convert(item.position.first);
+      final point = coord.convert(item.position.last);
       final anchor = Offset(
         point.dx,
         point.dy + (size / 2),
@@ -67,7 +69,7 @@ abstract class PointShapeBase extends PointShape {
       paintLabel(
         item.label!,
         anchor,
-        Alignment.bottomCenter,
+        Alignment.topCenter,
         canvas,
       );
     }
@@ -89,7 +91,7 @@ class CircleShape extends PointShapeBase {
 
   @override
   Path path(Aes item, CoordConv coord) {
-    final point = coord.convert(item.position.first);
+    final point = coord.convert(item.position.last);
     final size = item.size ?? defaultSize;
     return Path()..addOval(Rect.fromCenter(
       center: point,
@@ -112,7 +114,7 @@ class SquareShape extends PointShapeBase {
 
   @override
   Path path(Aes item, CoordConv coord) {
-    final point = coord.convert(item.position.first);
+    final point = coord.convert(item.position.last);
     final size = item.size ?? defaultSize;
     return Path()..addRect(Rect.fromCenter(
       center: point,

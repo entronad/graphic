@@ -116,11 +116,10 @@ class RegionAnnotRenderOp extends AnnotRenderOp<RegionAnnotScene> {
     final zIndex = params['zIndex'] as int;
     final scales = params['scales'] as Map<String, ScaleConv>;
     final coord = params['coord'] as CoordConv;
-    final region = params['region'] as Rect;
 
     scene
       ..zIndex = zIndex
-      ..setRegionClip(region, coord is PolarCoordConv);
+      ..setRegionClip(coord.region, coord is PolarCoordConv);
     
     final scale = scales[variable]!;
     final start = scale.normalize(scale.convert(values.first));

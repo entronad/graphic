@@ -35,7 +35,7 @@ class JitterGeomModifier extends GeomModifer {
   final double band;
 
   @override
-  void modify(List<List<Aes>> value) {
+  void modify(AesGroups value) {
     final random = Random();
 
     for (var group in value) {

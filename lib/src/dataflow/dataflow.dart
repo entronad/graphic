@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:graphic/src/dataflow/event_stream.dart';
-import 'package:graphic/src/event/event.dart';
+import 'package:graphic/src/interaction/event.dart';
 
 import 'operator.dart';
 

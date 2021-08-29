@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/event/signal.dart';
+import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/util/map.dart';
 import 'package:graphic/src/util/transform.dart';
 import 'package:vector_math/vector_math_64.dart';
@@ -69,7 +69,7 @@ class PolarCoordConv extends CoordConv {
         min(region.width, region.height) / 2 * renderRangeY.first,
         min(region.width, region.height) / 2 * renderRangeY.last,
       ],
-      super(dim, dimFill, transposed);
+      super(dim, dimFill, transposed, region);
 
   final Offset center;
 

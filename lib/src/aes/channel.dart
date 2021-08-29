@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:graphic/src/event/selection/selection.dart';
+import 'package:graphic/src/interaction/select/select.dart';
 import 'package:meta/meta.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 
@@ -14,11 +14,11 @@ abstract class ChannelAttr<AV> extends Attr<AV> {
 
     AV? value,
     AV Function(Original)? encode,
-    Map<String, Map<bool, SelectionUpdate<AV>>>? onSelection,
+    Map<String, Map<bool, SelectUpdate<AV>>>? onSelect,
   }) : super(
     value: value,
     encode: encode,
-    onSelection: onSelection,
+    onSelect: onSelect,
   );
 
   final String? variable;

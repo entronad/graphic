@@ -1,4 +1,4 @@
-import 'package:graphic/src/event/selection/selection.dart';
+import 'package:graphic/src/interaction/select/select.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/util/assert.dart';
 
@@ -11,7 +11,7 @@ class SizeAttr extends ChannelAttr<double> {
     List<double>? values,
     List<double>? stops,
     double Function(Original)? encode,
-    Map<String, Map<bool, SelectionUpdate<double>>>? onSelection,
+    Map<String, Map<bool, SelectUpdate<double>>>? onSelect,
   })
     : assert(isSingle([value, variable, encode])),
       super(
@@ -20,7 +20,7 @@ class SizeAttr extends ChannelAttr<double> {
         values: values,
         stops: stops,
         encode: encode,
-        onSelection: onSelection,
+        onSelect: onSelect,
       );
 }
 

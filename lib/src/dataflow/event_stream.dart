@@ -1,4 +1,4 @@
-import 'package:graphic/src/event/event.dart';
+import 'package:graphic/src/interaction/event.dart';
 
 class EventStream<E extends Event> {
   EventStream({

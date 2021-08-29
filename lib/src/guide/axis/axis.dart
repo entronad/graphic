@@ -181,7 +181,6 @@ abstract class AxisPainter<C extends CoordConv> extends Painter {
     this.flip,
     this.line,
     this.coord,
-    this.region,
   );
 
   final List<TickInfo> ticks;
@@ -193,8 +192,6 @@ abstract class AxisPainter<C extends CoordConv> extends Painter {
   final StrokeStyle? line;
 
   final C coord;
-
-  final Rect region;
 }
 
 class AxisScene extends Scene {
@@ -212,7 +209,6 @@ class AxisRenderOp extends Render<AxisScene> {
   void render() {
     final zIndex = params['zIndex'] as int;
     final coord = params['coord'] as CoordConv;
-    final region = params['region'] as Rect;
     final dim = params['dim'] as int;
     final position = params['position'] as double;
     final flip = params['flip'] as bool;
@@ -230,7 +226,6 @@ class AxisRenderOp extends Render<AxisScene> {
           flip,
           line,
           coord,
-          region,
         );
       } else {
         scene.painter = VerticalAxisPainter(
@@ -239,7 +234,6 @@ class AxisRenderOp extends Render<AxisScene> {
           flip,
           line,
           coord,
-          region,
         );
       }
     } else {
@@ -251,7 +245,6 @@ class AxisRenderOp extends Render<AxisScene> {
           flip,
           line,
           coord,
-          region,
         );
       } else {
         scene.painter = RadialAxisPainter(
@@ -260,7 +253,6 @@ class AxisRenderOp extends Render<AxisScene> {
           flip,
           line,
           coord,
-          region,
         );
       }
     }
@@ -273,14 +265,11 @@ abstract class GridPainter<C extends CoordConv> extends Painter {
   GridPainter(
     this.ticks,
     this.coord,
-    this.region,
   );
 
   final List<TickInfo> ticks;
 
   final C coord;
-
-  final Rect region;
 }
 
 class GridScene extends Scene {
@@ -298,7 +287,6 @@ class GridRenderOp extends Render<GridScene> {
   void render() {
     final gridZIndex = params['gridZIndex'] as int;
     final coord = params['coord'] as CoordConv;
-    final region = params['region'] as Rect;
     final dim = params['dim'] as int;
     final ticks = params['ticks'] as List<TickInfo>;
     
@@ -310,13 +298,11 @@ class GridRenderOp extends Render<GridScene> {
         scene.painter = HorizontalGridPainter(
           ticks,
           coord,
-          region,
         );
       } else {
         scene.painter = VerticalGridPainter(
           ticks,
           coord,
-          region,
         );
       }
     } else {
@@ -325,13 +311,11 @@ class GridRenderOp extends Render<GridScene> {
         scene.painter = CircularGridPainter(
           ticks,
           coord,
-          region,
         );
       } else {
         scene.painter = RadialGridPainter(
           ticks,
           coord,
-          region,
         );
       }
     }

@@ -3356,3 +3356,78 @@ position目前设置为不可通过selection更改。
 
 无论从vega selection的定义上讲还是实践上讲，都应当是从抽象的variable和scaled value对比确定selection。被stack了的，理论上应当只查找x，dodge和jitter都不影响position的查找范围。
 
+chart spec 和 dataSource都设置一个三态参数 rebuild 和 changeData，true表示每次都更新，false表示都不更新，null表示根据diff规则。
+
+dataSet不需要名字，因为我们定义时关注的是variable，而variable可以根据index查找dataSet
+
+selection可以定义多个，以实现长按和双击效果不同。但是多个selection之间的 on和 clear不能相同，这样通过 gesture的竞技性保证了selection的竞技性。
+
+对于同一组data，on和off是针对整体的，通过selectes是否为null判断，当on时，每一个element不是selected就是unselected，只需要 int set。
+
+ElementUpdateOp和SelectOp他们的实例对应整个data，在parse中先要筛选出与该data有关的selection。他们都是有状态的，为当前这个data的选中状态，SelectOp通过暂态的Event修改状态。
+
+selection先只考虑针对元素，line area这种不考虑selection
+
+aes在group-modify之前不能获取canvasPostion，因为modify是针对 abstract position的。
+
+检测针对groups，对其中的position通过coord转换， point select的定义是：距离最小，且在邻域范围；interval的定义是在rect中，都有 dim null, x, y 三种模式。variabs的作用是找到点后再添加对应variable相同的点。
+
+select update针对已经group-modify之后的值，原因1要尽量往后放，减少要更新的op，2modify之后的position更准确些。实现上可通过二重index检索。
+
+检索只通过abstract position，shape 族决定默认的dim模式，function（除了point）默认是1，partition，custom默认是null。
+
+由于vega-lite中所有selection的关键词都是select，我们也用这个
+
+很多shape要求每个item的shape是同一族的。
+
+aes还是要加个index的，便于检索
+
+select中的variable只有一个，避免or，and歧义，也够用了，类似groupBy。为避免歧义，PointSelect如果设置了toggle就不可以设置variable。variable的含义是：同时选中该值相等的项，和vega的field一样。
+
+pointselect在单维的情况下，强制nearest方式，testRadius无效。
+
+没有选中点（interval中无点或point中非nearsest模式下点空白），视同触发off
+
+需要处理data为空的情况，现在的逻辑中先认为data不为空。
+
+selector“是由手指创造的”，eventPoints是它的属性。同一时间只有一个当前Selector。它由SelectorOp控制。
+
+而data、coord等是select函数的参数。
+
+select中由于dim定义null是都有，因此没有默认值了。
+
+一般position的最后一个点代表statiscal value，作为 represent position，也可自定义。
+
+tooltip的crosshair无论是g2还是echarts都是要可以跟手和数据点两种模式的。而且可以不同维度分开。
+
+event大类改成interaction，resize，changeData等也是广义上的系统互动。
+
+guide中，scale由于只有两个axis和legend而且常用，放在外面，单独增加个interaction类目，放tooltip和axisPointer（名称取自echarts）
+
+如果dim用null表示xy，则要有个前提，即所有默认的dim都是xy，
+
+对应dim现在有的需求：
+
+1.coord中表示dim数量
+
+2.axis等只能对应到一个dim的表示哪个dim
+
+3.有些比如select等要表示对应到哪个dim或所有dim。
+
+经过思考再三，dim还是用int不用枚举，因为x,y,xy并不是平等的，第一层是“指定维度”和“不指定维度”两层，对应的是int和null。coord还是用dim，这个一般不会误解
+
+还是只要一个数据源了。理论上来讲，没有关联的两组数据不应当放在同一个坐标系上，之前认为的那种需求应当属于facet。
+
+但还是设置个DataSet，这样相当于从data到 originals 是一个独立模块，chart只负责originals，也避免D的泛型写到Chart上
+
+Crosshair和axis类似，也是指到region边缘。
+
+region也由coord持有吧，简化df的拓扑结构。反正coordConv的成员都是final的，也不存在数据一致性问题。这样凡是要用到coord作为参数的地方，就不需要重复的再要region了。
+
+graffiti中setregion还是与coord无关的，它是与图表无关的引擎。
+
+selector的结果中只能用int，否则选择时的逻辑太过复杂
+
+tooltip 和 corsshair 与select的对应，先按最简单的方法，只可对应一个定义好的select
+
+tooltip先不要设置太复杂的格式，仅有一个textStyle设置点颜色大小。

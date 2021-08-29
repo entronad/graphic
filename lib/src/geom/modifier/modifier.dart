@@ -8,23 +8,23 @@ abstract class Modifier {
     other is Modifier;
 }
 
-abstract class GeomModifer extends common.Modifier<List<List<Aes>>> {}
+abstract class GeomModifer extends common.Modifier<AesGroups> {}
 
 abstract class GeomModiferOp<M extends GeomModifer> extends Operator<M> {
   GeomModiferOp(Map<String, dynamic> params) : super(params);
 }
 
 /// params:
-/// - groups: List<List<Aes>>
+/// - groups: AesGroups
 /// - modifier: GeomModifer
 /// 
-/// value: List<List<Aes>>, tuple groups
-class ModifyOp extends Operator<List<List<Aes>>> {
+/// value: AesGroups, tuple groups
+class ModifyOp extends Operator<AesGroups> {
   ModifyOp(Map<String, dynamic> params) : super(params);
 
   @override
-  List<List<Aes>> evaluate() {
-    final groups = params['groups'] as List<List<Aes>>;
+  AesGroups evaluate() {
+    final groups = params['groups'] as AesGroups;
     final modifier = params['modifier'] as GeomModifer;
 
     modifier.modify(groups);

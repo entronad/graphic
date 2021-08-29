@@ -14,18 +14,17 @@ class VerticalAxisPainter extends AxisPainter<RectCoordConv> {
     bool flip,
     StrokeStyle? line,
     RectCoordConv coord,
-    Rect region,
   ) : super(
     ticks,
     position,
     flip,
     line,
     coord,
-    region,
   );
 
   @override
   void paint(Canvas canvas) {
+    final region = coord.region;
     final flipSign = flip ? -1 : 1;
     final x = region.left + position * region.width;
     
@@ -56,7 +55,7 @@ class VerticalAxisPainter extends AxisPainter<RectCoordConv> {
               x - tick.tickLine!.length * flipSign,
               y,
             ),
-            flip ? Alignment.centerLeft : Alignment.centerRight,
+            flip ? Alignment.centerRight : Alignment.centerLeft,
             canvas,
           );
         }
@@ -69,15 +68,14 @@ class VerticalGridPainter extends GridPainter<RectCoordConv> {
   VerticalGridPainter(
     List<TickInfo> ticks,
     RectCoordConv coord,
-    Rect region,
   ) : super(
     ticks,
     coord,
-    region,
   );
 
   @override
   void paint(Canvas canvas) {
+    final region = coord.region;
     for (var tick in ticks) {
       if (tick.grid != null) {
         final coordBottom = coord.verticals.first;

@@ -1,31 +1,33 @@
 import 'package:flutter/widgets.dart';
+import 'package:graphic/src/guide/interaction/crosshair.dart';
+import 'package:graphic/src/guide/interaction/tooltip.dart';
+import 'package:graphic/src/interaction/select/select.dart';
 import 'package:graphic/src/guide/annotation/annotation.dart';
 import 'package:graphic/src/guide/axis/axis.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/data/data_set.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/geom/geom_element.dart';
-import 'package:graphic/src/event/event.dart';
-import 'package:graphic/src/event/selection/selection.dart';
+import 'package:graphic/src/interaction/event.dart';
 import 'package:graphic/src/parse/spec.dart';
-import 'package:graphic/src/guide/tooltip/tooltip.dart';
 
 import 'view.dart';
 
 /// [D]: Type of source data items.
 class Chart extends StatefulWidget {
   Chart({
-    required Map<String, DataSet> data,
+    required DataSet data,
     required List<GeomElement> elements,
     Coord? coord,
     EdgeInsets? padding,
     List<GuideAxis>? axes,
     Tooltip? tooltip,
+    Crosshair? crosshair,
     List<Annotation>? annotations,
-    Map<String, Selection>? selections,
+    Map<String, Select>? selects,
     Map<EventType, void Function(Event)>? onEvent,
-    Map<String, void Function(List<Original>)>? onSelection,
-    this.forceRebuild = false,
+    Map<String, void Function(List<Original>)>? onSelect,
+    this.rebuild,
   }) : spec = Spec(
     data: data,
     elements: elements,
@@ -33,15 +35,16 @@ class Chart extends StatefulWidget {
     padding: padding,
     axes: axes,
     tooltip: tooltip,
+    crosshair: crosshair,
     annotations: annotations,
-    selections: selections,
+    selects: selects,
     onEvent: onEvent,
-    onSelection: onSelection,
+    onSelect: onSelect,
   );
 
   final Spec spec;
 
-  final bool forceRebuild;
+  final bool? rebuild;
 
   @override
   _ChartState createState() => _ChartState();
@@ -62,12 +65,11 @@ class _ChartState extends State<Chart> {
   void didUpdateWidget(covariant Chart oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (widget.forceRebuild || widget.spec != oldWidget.spec) {
+    if (widget.rebuild ?? widget.spec != oldWidget.spec) {
       // TODO: rebuild.
       return;
     }
-    final changedData = widget.spec.diffDataSource(oldWidget.spec);
-    if (changedData.isNotEmpty) {
+    if (dataChanged(widget.spec.data, oldWidget.spec.data)) {
       // TODO: emmit changeData.
     }
   }

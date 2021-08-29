@@ -40,17 +40,18 @@ export 'src/coord/polar.dart' show PolarCoord;
 export 'src/coord/rect.dart' show RectCoord;
 
 export 'src/guide/axis/axis.dart' show TickLine, LabelMapper, GridMapper, GuideAxis;
-export 'src/guide/tooltip/tooltip.dart' show Tooltip;
+export 'src/guide/interaction/tooltip.dart' show Tooltip;
+export 'src/guide/interaction/crosshair.dart' show Crosshair;
 export 'src/guide/annotation/line.dart' show LineAnnotation;
 export 'src/guide/annotation/region.dart' show RegionAnnotation;
 export 'src/guide/annotation/tag.dart' show TagAnnotation;
 
-export 'src/event/event.dart' show Event, EventType;
-export 'src/event/gesture/gesture.dart' show GestureEvent;
-export 'src/event/signal.dart' show SignalUpdate, Signal;
-export 'src/event/selection/selection.dart' show SelectionUpdate;
-export 'src/event/selection/interval.dart' show IntervalSelection;
-export 'src/event/selection/point.dart' show PointSelection;
+export 'src/interaction/event.dart' show Event, EventType;
+export 'src/interaction/gesture/gesture.dart' show GestureEvent;
+export 'src/interaction/signal.dart' show SignalUpdate, Signal;
+export 'src/interaction/select/select.dart' show SelectUpdate;
+export 'src/interaction/select/interval.dart' show IntervalSelect;
+export 'src/interaction/select/point.dart' show PointSelect;
 
 export 'src/common/styles.dart' show StrokeStyle;
 export 'src/common/label.dart' show Label, LabelSyle;

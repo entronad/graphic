@@ -53,6 +53,7 @@ class CandlestickShape extends CustomShape {
     CoordConv coord,
     Canvas canvas,
   ) {
+    assert(item.shape is CandlestickShape);
     // candle stick shape dosen't allow NaN measure value.
 
     final path = Path();
@@ -90,4 +91,8 @@ class CandlestickShape extends CustomShape {
 
     // No label.
   }
+
+  @override
+  Offset representPoint(List<Offset> position) =>
+    position[1];  // end
 }

@@ -66,8 +66,8 @@ class HeatmapShape extends PolygonShape {
     var stepX = double.infinity;
     var stepY = double.infinity;
     for (var i = 0; i < group.length - 1; i++) {
-      final point = group[i].position.first;
-      final nextPoint = group[i + 1].position.first;
+      final point = group[i].position.last;
+      final nextPoint = group[i + 1].position.last;
       final dx = (nextPoint.dx - point.dx).abs();
       final dy = (nextPoint.dy - point.dy).abs();
       if (dx != 0) {
@@ -81,7 +81,9 @@ class HeatmapShape extends PolygonShape {
     final biasY = stepY / 2;
 
     for (var item in group) {
-      final point = item.position.first;
+      assert(item is HeatmapShape);
+
+      final point = item.position.last;
       final path = Path();
       if (coord is RectCoordConv) {
         assert(!sector);

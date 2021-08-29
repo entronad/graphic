@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/event/signal.dart';
+import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/util/map.dart';
 
 import 'coord.dart';
@@ -62,7 +62,7 @@ class RectCoordConv extends CoordConv {
         region.bottom - region.height * renderRangeY.first,  // Rect coord is form bottom to top.
         region.bottom - region.height * renderRangeY.last,
       ],
-      super(dim, dimFill, transposed);
+      super(dim, dimFill, transposed, region);
     
   final List<double> horizontals;
 

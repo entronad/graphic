@@ -14,18 +14,17 @@ class CircularAxisPainter extends AxisPainter<PolarCoordConv> {
     bool flip,
     StrokeStyle? line,
     PolarCoordConv coord,
-    Rect region,
   ) : super(
     ticks,
     position,
     flip,
     line,
     coord,
-    region,
   );
 
   @override
   void paint(Canvas canvas) {
+    final region = coord.region;
     final flipSign = flip ? -1 : 1;
     final r = region.shortestSide * position;
 
@@ -68,15 +67,14 @@ class CircularGridPainter extends GridPainter<PolarCoordConv> {
   CircularGridPainter(
     List<TickInfo> ticks,
     PolarCoordConv coord,
-    Rect region,
   ) : super(
     ticks,
     coord,
-    region,
   );
 
   @override
   void paint(Canvas canvas) {
+    final region = coord.region;
     for (var tick in ticks) {
       if (tick.grid != null) {
         final angle = coord.convertAngle(tick.position);

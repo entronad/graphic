@@ -38,11 +38,29 @@ class Label {
     style == other.style;
 }
 
+Offset getPaintPoint(
+  Offset anchor,
+  double width,
+  double height,
+  Alignment align,
+  Offset? offset,
+) {
+  var paintPoint = Offset(
+    anchor.dx + ((width / (1 - (-1)) * (align.x - (-1)))),
+    anchor.dy + ((height / (1 - (-1)) * (align.y - (-1)))),
+  );
+  if (offset != null) {
+    paintPoint = paintPoint + offset;
+  }
+  return paintPoint;
+}
+
 void paintLabel(
   Label label,
   /// Where to paint the label, usually on top of the shape.
   Offset anchor,
-  /// How the anchor align the babel bounds.
+  /// How the label bounds align the anchor.
+  /// If Label is topLeft, it is [-1, -1].
   Alignment align,
   Canvas canvas,
 ) {
@@ -52,14 +70,13 @@ void paintLabel(
   );
   painter.layout();
   
-  var paintPoint = Offset(
-    anchor.dx - ((painter.width / (1 - (-1)) * (align.x - (-1)))),
-    anchor.dy - ((painter.height / (1 - (-1)) * (align.y - (-1)))),
+  var paintPoint = getPaintPoint(
+    anchor,
+    painter.width,
+    painter.height,
+    align,
+    label.style.offset,
   );
-  final offset = label.style.offset;
-  if (offset != null) {
-    paintPoint = paintPoint + offset;
-  }
   final rotation = label.style.rotation;
   if (rotation != null) {
     canvas.save();

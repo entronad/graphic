@@ -52,6 +52,8 @@ class BasicAreaShape extends AreaShape {
 
     var currentSegment = <List<Offset>>[];
     for (var item in group) {
+      assert(item.shape is BasicAreaShape);
+
       final position = item.position;
       if (position[0].dy.isFinite && position[1].dy.isFinite) {
         final start = coord.convert(position[0]);
@@ -146,7 +148,7 @@ class BasicAreaShape extends AreaShape {
         paintLabel(
           item.label!,
           labels[item]!,
-          coord.transposed ? Alignment.centerLeft : Alignment.bottomCenter,
+          coord.transposed ? Alignment.centerRight : Alignment.topCenter,
           canvas,
         );
       }

@@ -40,7 +40,7 @@ class DodgeGeomModifier extends GeomModifer {
   final double band;
 
   @override
-  void modify(List<List<Aes>> value) {
+  void modify(AesGroups value) {
     final bias = ratio * band;
     var accumulated = 0.0;
 

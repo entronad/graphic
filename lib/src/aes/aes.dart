@@ -4,7 +4,7 @@ import 'package:flutter/painting.dart';
 import 'package:graphic/src/aes/position.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/dataflow/operator.dart';
-import 'package:graphic/src/event/selection/selection.dart';
+import 'package:graphic/src/interaction/select/select.dart';
 import 'package:graphic/src/shape/shape.dart';
 import 'package:graphic/src/util/assert.dart';
 import 'package:graphic/src/common/converter.dart';
@@ -18,7 +18,7 @@ abstract class Attr<AV> {
   Attr({
     this.value,
     this.encode,
-    this.onSelection,
+    this.onSelect,
   });
 
   final AV? value;
@@ -26,14 +26,14 @@ abstract class Attr<AV> {
   /// Encode original value tuple to aes value.
   final AV Function(Original)? encode;
 
-  final Map<String, Map<bool, SelectionUpdate<AV>>>? onSelection;
+  final Map<String, Map<bool, SelectUpdate<AV>>>? onSelect;
 
   @override
   bool operator ==(Object other) =>
     other is Attr<AV> &&
     value == other.value;
     // encode: Function
-    // onSelection: Function
+    // onSelect: Function
 }
 
 // attr conv
@@ -96,6 +96,7 @@ class AesOp extends Operator<List<Aes>> {
       final scaled = scaleds[i];
       final original = originals[i];
       rst.add(Aes(
+        index: i,
         position: positionEncoder.encode(scaled, original),
         shape: shapeEncoder.encode(scaled, original),
         color: colorEncoder?.encode(scaled, original),

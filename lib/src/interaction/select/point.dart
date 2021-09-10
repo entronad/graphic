@@ -2,7 +2,7 @@ import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'dart:ui';
 
-import 'package:graphic/src/interaction/event.dart';
+import 'package:graphic/src/interaction/gesture/arena.dart';
 
 import 'select.dart';
 
@@ -14,8 +14,8 @@ class PointSelect extends Select {
 
     int? dim,
     String? variable,
-    Set<EventType>? on,
-    Set<EventType>? clear,
+    Set<GestureType>? on,
+    Set<GestureType>? clear,
   }) : super(
     dim: dim,
     variable: variable,

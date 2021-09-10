@@ -36,7 +36,7 @@ class IntervalElement extends FunctionElement {
 }
 
 /// [start, end] | [end] => [start, end]
-List<Offset> IntervalCompleter(List<Offset> position, Offset origin) {
+List<Offset> intervalCompleter(List<Offset> position, Offset origin) {
   assert(position.length == 1 || position.length == 2);
   if (position.length == 1) {
     final normalZero = origin.dy;

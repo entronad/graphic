@@ -11,7 +11,7 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/geom/geom_element.dart';
 import 'package:graphic/src/interaction/event.dart';
 
-class Spec {
+class Spec<D> {
   Spec({
     required this.data,
     required this.elements,
@@ -26,7 +26,7 @@ class Spec {
     this.onSelect,
   });
 
-  final DataSet data;
+  final DataSet<D> data;
 
   final List<GeomElement> elements;
 

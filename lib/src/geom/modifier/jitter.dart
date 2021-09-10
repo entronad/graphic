@@ -24,7 +24,7 @@ class JitterModifier extends Modifier {
     ratio == other.ratio;
 }
 
-class JitterGeomModifier extends GeomModifer {
+class JitterGeomModifier extends GeomModifier {
   JitterGeomModifier(
     this.ratio,
     this.band,
@@ -50,7 +50,7 @@ class JitterGeomModifier extends GeomModifer {
   }
 }
 
-class JitterGeomModifierOp extends GeomModiferOp<JitterGeomModifier> {
+class JitterGeomModifierOp extends GeomModifierOp<JitterGeomModifier> {
   JitterGeomModifierOp(Map<String, dynamic> params) : super(params);
 
   @override

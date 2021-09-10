@@ -13,9 +13,9 @@ import 'coord.dart';
 class PolarCoord extends Coord {
   PolarCoord({
     this.angleRange,
-    this.angleRangeSignals,
+    this.angleRangeSignal,
     this.radiusRange,
-    this.radiusRangeSignals,
+    this.radiusRangeSignal,
 
     int? dim,
     double? dimFill,
@@ -31,20 +31,20 @@ class PolarCoord extends Coord {
 
   final List<double>? angleRange;
 
-  final List<Signal<List<double>>>? angleRangeSignals;
+  final Signal<List<double>>? angleRangeSignal;
 
   final List<double>? radiusRange;
 
-  final List<Signal<List<double>>>? radiusRangeSignals;
+  final Signal<List<double>>? radiusRangeSignal;
 
   @override
   bool operator ==(Object other) =>
     other is PolarCoord &&
     super == other &&
     DeepCollectionEquality().equals(angleRange, other.angleRange) &&
-    DeepCollectionEquality(MapKeyEquality()).equals(angleRangeSignals, other.angleRangeSignals) &&  // SignalUpdata: Function
+    DeepCollectionEquality(MapKeyEquality()).equals(angleRangeSignal, other.angleRangeSignal) &&  // SignalUpdata: Function
     DeepCollectionEquality().equals(radiusRange, other.radiusRange) &&
-    DeepCollectionEquality(MapKeyEquality()).equals(radiusRangeSignals, radiusRangeSignals);  // SignalUpdata: Function
+    DeepCollectionEquality(MapKeyEquality()).equals(radiusRangeSignal, radiusRangeSignal);  // SignalUpdata: Function
 }
 
 const canvasAngleStart = -pi / 2;

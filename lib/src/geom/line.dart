@@ -36,7 +36,7 @@ class LineElement extends FunctionElement {
 }
 
 /// [point] => [point]
-List<Offset> LineCompleter(List<Offset> position, Offset origin) {
+List<Offset> lineCompleter(List<Offset> position, Offset origin) {
   assert(position.length == 1);
   return position;
 }

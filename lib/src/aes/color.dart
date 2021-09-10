@@ -14,7 +14,7 @@ class ColorAttr extends ChannelAttr<Color> {
     List<double>? stops,
     Color Function(Original)? encode,
     Map<String, Map<bool, SelectUpdate<Color>>>? onSelect,
-  }) 
+  })
     : assert(isSingle([value, variable, encode])),
       super(
         value: value,

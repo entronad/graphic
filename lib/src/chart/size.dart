@@ -1,7 +1,10 @@
 import 'dart:ui';
 
+import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/operators/value.dart';
 import 'package:graphic/src/interaction/event.dart';
+import 'package:graphic/src/parse/parse.dart';
+import 'package:graphic/src/parse/spec.dart';
 
 class ResizeEvent extends Event {
   ResizeEvent(this.size);
@@ -12,33 +15,18 @@ class ResizeEvent extends Event {
   final Size size;
 }
 
-class ResizeSouce extends EventSource<ResizeEvent> {
-  final _listeners = <EventListener<ResizeEvent>>{};
+class SizeOp extends Value<Size> {}
 
-  @override
-  void on(EventType type, EventListener<ResizeEvent> listener) {
-    assert(type == EventType.resize);
-    _listeners.add(listener);
-  }
+void parseSize(
+  Spec spec,
+  View view,
+  Scope scope,
+) {
+  scope.size = view.add(SizeOp());
 
-  @override
-  void off([EventType? type, EventListener<ResizeEvent>? listener]) {
-    assert(type == null || type == EventType.resize);
-    if (listener != null) {
-      _listeners.remove(listener);
-    } else {
-      _listeners.clear();
-    }
-  }
-
-  @override
-  void emit(ResizeEvent event) {
-    for (var listener in _listeners) {
-      listener(event);
-    }
-  }
-}
-
-class SizeOp extends Value<Size> {
-  SizeOp(Size value) : super(value);
+  view.listen<ResizeEvent, Size>(
+    view.sizeSouce,
+    scope.size!,
+    (event) => event.size,
+  );
 }

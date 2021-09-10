@@ -19,7 +19,7 @@ class StackModifier extends Modifier {
     symmetric == other.symmetric;
 }
 
-class StackGeomModifier extends GeomModifer {
+class StackGeomModifier extends GeomModifier {
   StackGeomModifier(this.symmetric, this.normalZero);
 
   final bool symmetric;
@@ -90,7 +90,7 @@ class StackGeomModifier extends GeomModifer {
   }
 }
 
-class StackGeomModifierOp extends GeomModiferOp<StackGeomModifier> {
+class StackGeomModifierOp extends GeomModifierOp<StackGeomModifier> {
   StackGeomModifierOp(Map<String, dynamic> params) : super(params);
 
   @override

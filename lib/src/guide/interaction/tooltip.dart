@@ -25,6 +25,7 @@ class Tooltip {
     this.elevation,
     this.textStyle,
     this.zIndex,
+    this.element,
   });
 
   /// The select must:
@@ -37,7 +38,7 @@ class Tooltip {
   /// Default to show all.
   final List<String>? variables;
 
-  final bool? followPointer;
+  final List<bool>? followPointer;
 
   final Alignment? align;
 
@@ -55,12 +56,16 @@ class Tooltip {
 
   final int? zIndex;
 
+  /// The tooltip can only refer to one element.
+  /// This is the index in elements.
+  final int? element;
+
   @override
   bool operator ==(Object other) =>
     other is Tooltip &&
     select == other.select &&
     DeepCollectionEquality().equals(variables, other.variables) &&
-    followPointer == other.followPointer &&
+    DeepCollectionEquality().equals(followPointer, other.followPointer) &&
     align == other.align &&
     offset == other.offset &&
     padding == other.padding &&
@@ -68,7 +73,8 @@ class Tooltip {
     radius == other.radius &&
     elevation == other.elevation &&
     textStyle == other.textStyle &&
-    zIndex == other.zIndex;
+    zIndex == other.zIndex &&
+    element == other.element;
 }
 
 class TooltipPainter extends Painter {
@@ -176,7 +182,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
     final backgroundColor = params['backgroundColor'] as Color;
     final radius = params['radius'] as Radius?;
     final elevation = params['elevation'] as double?;
-    final style = params['style'] as TextStyle;
+    final textStyle = params['textStyle'] as TextStyle;
     final followPointer = params['followPointer'] as List<bool>;
     final variables = params['variables'] as List<String>?;
     final scales = params['scales'] as Map<String, ScaleConv>;
@@ -223,7 +229,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
       backgroundColor,
       radius,
       elevation,
-      TextSpan(text: textContent, style: style),
+      TextSpan(text: textContent, style: textStyle),
     );
 
     scene

@@ -36,7 +36,7 @@ class PolygonElement extends PartitionElement {
 }
 
 /// [point] => [point]
-List<Offset> PolygonCompleter(List<Offset> position, Offset origin) {
+List<Offset> polygonCompleter(List<Offset> position, Offset origin) {
   assert(position.length == 1);
   return position;
 }

@@ -33,8 +33,8 @@ enum GestureType {
   scroll,
 }
 
-class GestureEvent {
-  GestureEvent(
+class Gesture {
+  Gesture(
     this.type,
     this.pointerEvent,
     {this.offset,
@@ -54,7 +54,7 @@ class GestureEvent {
   final Offset? scrollDelta;
 }
 
-typedef GestureEventListener = void Function(GestureEvent);
+typedef GestureListener = void Function(Gesture);
 
 const _tapDelay = Duration(milliseconds: 250);
 const _touchDelay = Duration(milliseconds: 250);
@@ -94,7 +94,7 @@ enum _ListenerEventCategory {
 }
 
 class GestureArena {
-  final Map<GestureType, List<GestureEventListener>> _gestureEvents = {};
+  final List<GestureListener?> _listeners = [];
 
   _ListenerEventCategory? _currentCagegory;
 
@@ -109,37 +109,16 @@ class GestureArena {
 
   Offset? _initialMovePoint;
 
-  void on(GestureType type, GestureEventListener listener) {
-    if (_gestureEvents[type] == null) {
-      _gestureEvents[type] = [];
-    }
-    _gestureEvents[type]!.add(listener);
+  int on(GestureListener listener) {
+    _listeners.add(listener);
+    return _listeners.length - 1;
   }
 
-  void removeAllEventListener() => _gestureEvents.clear();
+  void off(int id) =>
+    _listeners[id] = null;
 
-  void off([GestureType? type, GestureEventListener? listener]) {
-    if (type == null) {
-      _gestureEvents.clear();
-      return;
-    }
-
-    if (listener == null) {
-      _gestureEvents.remove(type);
-      return;
-    }
-
-    // Type must not be null if listener is specified.
-    final events = _gestureEvents[type];
-    if (events == null || events.isEmpty) {
-      return;
-    }
-    for (var i = 0; i < events.length; i++) {
-      if (events[i] == listener) {
-        events.removeAt(i);
-      }
-    }
-  }
+  void clear() =>
+    _listeners.clear();
 
   void emit(ListenerEvent listenerEvent) {
     switch (listenerEvent.type) {
@@ -353,16 +332,16 @@ class GestureArena {
     ScaleUpdateDetails? scale,
     Offset? scrollDelta,}
   ) {
-    final event = GestureEvent(
+    final gesture = Gesture(
       gestureType,
       pointerEvent,
       offset: offset,
       scale: scale,
       scrollDelta: scrollDelta,
     );
-    if (_gestureEvents[gestureType] != null) {
-      for (var callback in _gestureEvents[gestureType]!) {
-        callback(event);
+    for (var listener in _listeners) {
+      if (listener != null) {
+        listener(gesture);
       }
     }
   }

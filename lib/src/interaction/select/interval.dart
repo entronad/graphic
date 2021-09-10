@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/interaction/event.dart';
+import 'package:graphic/src/interaction/gesture/arena.dart';
 import 'package:graphic/src/util/math.dart';
 
 import 'select.dart';
@@ -14,7 +14,7 @@ class IntervalSelect extends Select {
 
     int? dim,
     String? variable,
-    Set<EventType>? clear,
+    Set<GestureType>? clear,
   }) : super(
     dim: dim,
     variable: variable,

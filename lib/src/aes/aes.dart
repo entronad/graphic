@@ -1,14 +1,25 @@
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
+import 'package:graphic/graphic.dart';
 import 'package:graphic/src/aes/position.dart';
+import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/dataflow/operator.dart';
+import 'package:graphic/src/geom/geom_element.dart';
 import 'package:graphic/src/interaction/select/select.dart';
+import 'package:graphic/src/parse/parse.dart';
+import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/shape/shape.dart';
 import 'package:graphic/src/util/assert.dart';
 import 'package:graphic/src/common/converter.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+
+import 'channel.dart';
+import 'color.dart';
+import 'elevation.dart';
+import 'shape.dart';
+import 'size.dart';
 
 // Attr
 
@@ -107,5 +118,76 @@ class AesOp extends Operator<List<Aes>> {
       ));
     }
     return rst;
+  }
+}
+
+void parseAes(
+  Spec spec,
+  View view,
+  Scope scope,
+) {
+  for (var elementSpec in spec.elements) {
+    var form = elementSpec.position?.form;
+    // Default position.
+    if (form == null) {
+      final variables = scope.scaleSpecs.keys.toList();
+      form = (Varset(variables[0]) * Varset(variables[1])).form;
+    }
+    scope.forms.add(form); // For geom usage.
+
+    final origin = view.add(OriginOp({
+      'form': form,
+      'scales': scope.scales,
+    }));
+    scope.origins.add(origin);
+
+    final position = view.add(PositionOp({
+      'form': form,
+      'scales': scope.scales,
+      'completer': getPositionCompleter(elementSpec),
+      'origin': origin,
+    }));
+
+    scope.aesesList.add(view.add(AesOp({
+      'scaleds': scope.scaleds,
+      'originals': scope.originals,
+      'positionEncoder': position,
+      'shapeEncoder': getChannelEncoder<Shape>(
+        elementSpec.shape ?? ShapeAttr(value: getDefaultShape(elementSpec)),
+        scope.scaleSpecs,
+        null,
+      ),
+      'colorEncoder': elementSpec.gradient == null  // If gradient is null color will have defult value.
+        ? getChannelEncoder<Color>(
+            elementSpec.color ?? ColorAttr(value: Color(0xff1890ff)),
+            scope.scaleSpecs,
+            (List<Color> values, List<double> stops) => ContinuousColorConv(values, stops),
+          )
+        : null,
+      'gradientEncoder': elementSpec.gradient == null
+        ? null
+        : getChannelEncoder<Gradient>(
+            elementSpec.gradient!,
+            scope.scaleSpecs,
+            null,
+          ),
+      'elevationEncoder': elementSpec.elevation == null
+        ? null
+        : getChannelEncoder<double>(
+            elementSpec.elevation!,
+            scope.scaleSpecs,
+            (List<double> values, List<double> stops) => ContinuousElevationConv(values, stops),
+          ),
+      'labelEncoder': elementSpec.label == null
+        ? null
+        : CustomEncoder<Label>(elementSpec.label!.encode!),
+      'sizeEncoder': elementSpec.size == null
+        ? null
+        : getChannelEncoder<double>(
+            elementSpec.size!,
+            scope.scaleSpecs,
+            (List<double> values, List<double> stops) => ContinuousSizeConv(values, stops),
+          ),
+    })));
   }
 }

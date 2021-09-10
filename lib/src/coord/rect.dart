@@ -10,9 +10,9 @@ import 'coord.dart';
 class RectCoord extends Coord {
   RectCoord({
     this.horizontalRange,
-    this.horizontalRangeSignals,
+    this.horizontalRangeSignal,
     this.verticalRange,
-    this.verticalRangeSignals,
+    this.verticalRangeSignal,
 
     int? dim,
     double? dimFill,
@@ -28,21 +28,21 @@ class RectCoord extends Coord {
 
   final List<double>? horizontalRange;
 
-  final List<Signal<List<double>>>? horizontalRangeSignals;
+  final Signal<List<double>>? horizontalRangeSignal;
 
   /// Rect coord is from bottom to top.
   final List<double>? verticalRange;
 
-  final List<Signal<List<double>>>? verticalRangeSignals;
+  final Signal<List<double>>? verticalRangeSignal;
 
   @override
   bool operator ==(Object other) =>
     other is RectCoord &&
     super == other &&
     DeepCollectionEquality().equals(horizontalRange, other.horizontalRange) &&
-    DeepCollectionEquality(MapKeyEquality()).equals(horizontalRangeSignals, other.horizontalRangeSignals) &&  // SignalUpdata: Function
+    DeepCollectionEquality(MapKeyEquality()).equals(horizontalRangeSignal, other.horizontalRangeSignal) &&  // SignalUpdata: Function
     DeepCollectionEquality().equals(verticalRange, other.verticalRange) &&
-    DeepCollectionEquality(MapKeyEquality()).equals(verticalRangeSignals, verticalRangeSignals);  // SignalUpdata: Function
+    DeepCollectionEquality(MapKeyEquality()).equals(verticalRangeSignal, verticalRangeSignal);  // SignalUpdata: Function
 }
 
 class RectCoordConv extends CoordConv {

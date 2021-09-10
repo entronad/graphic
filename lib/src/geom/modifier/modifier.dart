@@ -8,10 +8,10 @@ abstract class Modifier {
     other is Modifier;
 }
 
-abstract class GeomModifer extends common.Modifier<AesGroups> {}
+abstract class GeomModifier extends common.Modifier<AesGroups> {}
 
-abstract class GeomModiferOp<M extends GeomModifer> extends Operator<M> {
-  GeomModiferOp(Map<String, dynamic> params) : super(params);
+abstract class GeomModifierOp<M extends GeomModifier> extends Operator<M> {
+  GeomModifierOp(Map<String, dynamic> params) : super(params);
 }
 
 /// params:
@@ -25,7 +25,7 @@ class ModifyOp extends Operator<AesGroups> {
   @override
   AesGroups evaluate() {
     final groups = params['groups'] as AesGroups;
-    final modifier = params['modifier'] as GeomModifer;
+    final modifier = params['modifier'] as GeomModifier;
 
     modifier.modify(groups);
 

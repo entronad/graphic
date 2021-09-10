@@ -36,4 +36,4 @@ class CustomElement extends GeomElement {
 }
 
 /// any => any
-List<Offset> CustomCompleter(List<Offset> position, Offset origin) => position;
+List<Offset> customCompleter(List<Offset> position, Offset origin) => position;

@@ -1,18 +1,21 @@
 import 'package:collection/collection.dart';
+import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/operators/value.dart';
 import 'package:graphic/src/interaction/event.dart';
+import 'package:graphic/src/parse/parse.dart';
+import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/variable/transform/transform.dart';
 import 'package:graphic/src/variable/variable.dart';
 
 class DataSet<D> {
   DataSet({
-    this.source,
+    required this.source,
     required this.variables,
     this.transforms,
     this.changeData,
   });
 
-  final List<D>? source;
+  final List<D> source;
 
   final Map<String, Variable<D, dynamic>> variables;
 
@@ -35,10 +38,8 @@ bool dataChanged(DataSet a, DataSet b) {
   return (a.changeData != false) && (a.source != b.source);
 }
 
-// data source -> event stream (with pulseData) -> variable operator
-
-class DataEvent<D> extends Event {
-  DataEvent(this.data);
+class ChangeDataEvent<D> extends Event {
+  ChangeDataEvent(this.data);
 
   @override
   EventType get type => EventType.changeData;
@@ -46,33 +47,22 @@ class DataEvent<D> extends Event {
   final List<D> data;
 }
 
-class DataSouce<D> extends EventSource<DataEvent<D>> {
-  final _listeners = <EventListener<DataEvent<D>>>{};
-
-  @override
-  void on(EventType type, EventListener<DataEvent<D>> listener) {
-    assert(type == EventType.changeData);
-    _listeners.add(listener);
-  }
-
-  @override
-  void off([EventType? type, EventListener<DataEvent<D>>? listener]) {
-    assert(type == null || type == EventType.changeData);
-    if (listener != null) {
-      _listeners.remove(listener);
-    } else {
-      _listeners.clear();
-    }
-  }
-
-  @override
-  void emit(DataEvent<D> event) {
-    for (var listener in _listeners) {
-      listener(event);
-    }
-  }
+class DataOp<D> extends Value<List<D>> {
+  DataOp(List<D> value) : super(value);
 }
 
-class DataSourceOp<D> extends Value<List<D>> {
-  DataSourceOp(List<D> value) : super(value);
+void parseData<D>(
+  Spec<D> spec,
+  View<D> view,
+  Scope<D> scope,
+) {
+  final data = spec.data.source;
+
+  scope.data = view.add(DataOp(data));
+
+  view.listen<ChangeDataEvent<D>, List<D>>(
+    view.dataSouce,
+    scope.data!,
+    (event) => event.data,
+  );
 }

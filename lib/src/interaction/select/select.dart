@@ -1,17 +1,20 @@
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
+import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/interaction/gesture/gesture.dart';
+import 'package:graphic/src/geom/geom_element.dart';
+import 'package:graphic/src/interaction/gesture/arena.dart';
 import 'package:graphic/src/graffiti/graffiti.dart';
+import 'package:graphic/src/parse/parse.dart';
+import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/shape/shape.dart';
 import 'package:collection/collection.dart';
-import 'package:graphic/src/interaction/event.dart';
 
 import 'interval.dart';
 import 'point.dart';
@@ -30,9 +33,9 @@ abstract class Select {
 
   final String? variable;
 
-  final Set<EventType>? on;
+  final Set<GestureType>? on;
 
-  final Set<EventType>? clear;
+  final Set<GestureType>? clear;
 
   @override
   bool operator ==(Object other) =>
@@ -75,16 +78,16 @@ class SelectorOp extends Operator<Selector?> {
   @override
   Selector? evaluate() {
     final specs = params['specs'] as Map<String, Select>;
-    final onTypes = params['selectors'] as Map<EventType, String>;
-    final offTypes = params['offTypes'] as Set<EventType>;
-    final event = params['event'] as GestureEvent?;
+    final onTypes = params['onTypes'] as Map<GestureType, String>;
+    final clearTypes = params['clearTypes'] as Set<GestureType>;
+    final gesture = params['gesture'] as Gesture?;
 
-    if (event == null) {
+    if (gesture == null) {
       return value;
     }
-    final type = event.type;
+    final type = gesture.type;
     final name = onTypes[type];
-    if (offTypes.contains(type)) {
+    if (clearTypes.contains(type)) {
       return null;
     }
     if (name == null) {
@@ -99,16 +102,16 @@ class SelectorOp extends Operator<Selector?> {
         name,
         spec.dim,
         spec.variable,
-        [event.pointerEvent.position],
+        [gesture.pointerEvent.position],
       );
     } else {
       spec as IntervalSelect;
       List<Offset> eventPoints;
-      if (type == EventType.scaleUpdate) {
-        eventPoints = [event.scale!.focalPoint, event.pointerEvent.position];
+      if (type == GestureType.scaleUpdate) {
+        eventPoints = [gesture.scale!.focalPoint, gesture.pointerEvent.position];
       } else { // panUpdate
         if (value is IntervalSelector) {
-          final delta = event.pointerEvent.delta;
+          final delta = gesture.pointerEvent.delta;
           eventPoints = value!.eventPoints
             .map((point) => point + delta)
             .toList();
@@ -130,15 +133,15 @@ class SelectorOp extends Operator<Selector?> {
 
 abstract class SelectorPainter extends Painter {}
 
-class SelecorScene extends Scene {
+class SelectorScene extends Scene {
   @override
   int get layer => Layers.selector;
 }
 
-class SelectorRenderOp extends Render<SelecorScene> {
+class SelectorRenderOp extends Render<SelectorScene> {
   SelectorRenderOp(
     Map<String, dynamic> params,
-    SelecorScene scene,
+    SelectorScene scene,
   ) : super(params, scene);
 
   @override
@@ -203,19 +206,27 @@ V? _update<V>(
 }
 
 /// It is still in the aes scope so share the same aeses instance.
-class ElementUpdateOp extends Operator<AesGroups> {
-  ElementUpdateOp(Map<String, dynamic> params) : super(params);
+class SelectUpdateOp extends Operator<AesGroups> {
+  SelectUpdateOp(Map<String, dynamic> params) : super(params);
 
   @override
   AesGroups evaluate() {
     final groups = params['groups'] as AesGroups;
+    final selector = params['selector'] as Selector;
     final selects = params['selects'] as Set<int>?;
-    final shapeUpdater = params['shapeUpdater'] as Map<bool, SelectUpdate<Shape>>?;
-    final colorUpdater = params['colorUpdater'] as Map<bool, SelectUpdate<Color>>?;
-    final gradientUpdater = params['gradientUpdater'] as Map<bool, SelectUpdate<Gradient>>?;
-    final elevationUpdater = params['elevationUpdater'] as Map<bool, SelectUpdate<double>>?;
-    final labelUpdater = params['labelUpdater'] as Map<bool, SelectUpdate<Label>>?;
-    final sizeUpdater = params['sizeUpdater'] as Map<bool, SelectUpdate<double>>?;
+    final shapeUpdaters = params['shapeUpdaters'] as Map<String, Map<bool, SelectUpdate<Shape>>>?;
+    final colorUpdaters = params['colorUpdaters'] as Map<String, Map<bool, SelectUpdate<Color>>>?;
+    final gradientUpdaters = params['gradientUpdaters'] as Map<String, Map<bool, SelectUpdate<Gradient>>>?;
+    final elevationUpdaters = params['elevationUpdaters'] as Map<String, Map<bool, SelectUpdate<double>>>?;
+    final labelUpdaters = params['labelUpdaters'] as Map<String, Map<bool, SelectUpdate<Label>>>?;
+    final sizeUpdaters = params['sizeUpdaters'] as Map<String, Map<bool, SelectUpdate<double>>>?;
+
+    final shapeUpdater = shapeUpdaters?[selector.name];
+    final colorUpdater = colorUpdaters?[selector.name];
+    final gradientUpdater = gradientUpdaters?[selector.name];
+    final elevationUpdater = elevationUpdaters?[selector.name];
+    final labelUpdater = labelUpdaters?[selector.name];
+    final sizeUpdater = sizeUpdaters?[selector.name];
 
     if (selects == null || (
       shapeUpdater == null &&
@@ -249,5 +260,77 @@ class ElementUpdateOp extends Operator<AesGroups> {
       }
     }
     return rst;
+  }
+}
+
+void parseSelect(
+  Spec spec,
+  View view,
+  Scope scope,
+) {
+  if (spec.selects != null) {
+    final selectSpecs = spec.selects!;
+    final onTypes = <GestureType, String>{};
+    final clearTypes = <GestureType>{};
+    for (var name in selectSpecs.keys) {
+      final selectSpec = selectSpecs[name]!;
+      final on = selectSpec.on ?? (
+        selectSpec is PointSelect
+          ? {GestureType.tap}
+          : {GestureType.scaleUpdate, GestureType.panUpdate}
+      );
+      final clear = selectSpec.clear ?? {};
+      for (var type in on) {
+        assert(!onTypes.keys.contains(type));
+        onTypes[type] = name;
+      }
+      clearTypes.addAll(clear);
+    }
+
+    final selector = view.add(SelectorOp({
+      'specs': selectSpecs,
+      'onTypes': onTypes,
+      'clearTypes': clearTypes,
+      'gesture': scope.gesture,
+    }));
+    scope.selector = selector;
+
+    final selectorScene = view.graffiti.add(SelectorScene());
+    view.add(SelectorRenderOp({
+      'selector': selector,
+    }, selectorScene));
+
+    for (var i = 0; i < spec.elements.length; i++) {
+      final elementSpec = spec.elements[i];
+      final geoms = scope.geomsList[i];
+
+      final selects = view.add(SelectOp({
+        'selector': selector,
+        'groups': geoms,
+        'originals': scope.originals,
+        'coord': scope.coord,
+      }, elementSpec.selected));
+      scope.selectsList.add(selects);
+
+      final update = SelectUpdateOp({
+        'groups': geoms,
+        'selector': selector,
+        'selects': selects,
+        'shapeUpdaters': elementSpec.shape?.onSelect,
+        'colorUpdaters': elementSpec.color?.onSelect,
+        'gradientUpdaters': elementSpec.gradient?.onSelect,
+        'elevationUpdaters': elementSpec.elevation?.onSelect,
+        'labelUpdaters': elementSpec.label?.onSelect,
+        'sizeUpdaters': elementSpec.size?.onSelect,
+      });
+      scope.updateList.add(update);
+
+      final elementScene = view.graffiti.add(ElementScene());
+      view.add(ElementRenderOp({
+        'zIndex': elementSpec.zIndex ?? 0,
+        'groups': update,
+        'coord': scope.coord,
+      }, elementScene));
+    }
   }
 }

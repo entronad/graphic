@@ -1,4 +1,7 @@
+import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/dataflow/operator.dart';
+import 'package:graphic/src/parse/parse.dart';
+import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/util/assert.dart';
 import 'package:meta/meta.dart';
 
@@ -91,20 +94,20 @@ class ScaleConvOp extends Operator<Map<String, ScaleConv>> {
 
   @override
   Map<String, ScaleConv> evaluate() {
-    final tuples = params['tuples'] as List<Original>;
+    final originals = params['originals'] as List<Original>;
     final specs = params['specs'] as Map<String, Scale>;
 
     final rst = <String, ScaleConv>{};
     for (var name in specs.keys) {
       if (specs[name] is OrdinalScale) {
         final spec = specs[name] as OrdinalScale;
-        rst[name] = OrdinalScaleConv(spec, tuples, name);
+        rst[name] = OrdinalScaleConv(spec, originals, name);
       } else if (specs[name] is LinearScale) {
         final spec = specs[name] as LinearScale;
-        rst[name] = LinearScaleConv(spec, tuples, name);
+        rst[name] = LinearScaleConv(spec, originals, name);
       } else if (specs[name] is TimeScale) {
         final spec = specs[name] as TimeScale;
-        rst[name] = TimeScaleConv(spec, tuples, name);
+        rst[name] = TimeScaleConv(spec, originals, name);
       }
     }
     return rst;
@@ -134,4 +137,20 @@ class ScaleOp extends Operator<List<Scaled>> {
       return scaled;
     }).toList();
   }
+}
+
+void parseScale(
+  Spec spec,
+  View view,
+  Scope scope,
+) {
+  scope.scales = view.add(ScaleConvOp({
+    'originals': scope.originals,
+    'specs': scope.scaleSpecs,
+  }));
+
+  scope.scaleds = view.add(ScaleOp({
+    'originals': scope.originals,
+    'convs': scope.scales,
+  }));
 }

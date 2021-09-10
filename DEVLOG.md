@@ -3431,3 +3431,45 @@ selector的结果中只能用int，否则选择时的逻辑太过复杂
 tooltip 和 corsshair 与select的对应，先按最简单的方法，只可对应一个定义好的select
 
 tooltip先不要设置太复杂的格式，仅有一个textStyle设置点颜色大小。
+
+transform 中的 map，filter，sort 传入的对象都是整个original，这三个方法不宜改变variables
+
+parse 函数采用最简单的根据spec往df上add的方法，在view的构造函数中调用。
+
+view构造函数只会构建df，但不会run以及paint，只有事件会导致run。第一次run是在getPositionForChild中resize之后
+
+每一个大项的parse函数单独写，输入需要的spec，op，返回生成的最终op。value型的以及其对应的event source都在parse中解析
+
+arena 应该作为chart的抽象的基础部分，传给view
+
+parse过程中有一些中间结果，似乎确实需要一个scope存放，便于记录一些op和map，统一parse函数的格式。
+
+transform算在variable里面。
+
+collect似乎不需要
+
+多个geom在parse的时候通过index对应
+
+position可以默认为variables的前两个cross
+
+目前默认 attr 要么不设置用默认的，设置了就要把必要的配全
+
+parse的过程原则上集中到模块的总parse函数中。
+
+三大事件源，dataSource是在parseData中，size和gesture单独搞，它们有可能被其它用到，而select在geom中。搞一个signalReducer，向所有signalOp发送统一事件。
+
+gesture arena改造成一个流式的，
+
+arena为防止listener泄露，还是在view中创建实例
+
+每一个 EventType 设置一个 source，因为绝大部分value op 只处理一种 EventType，能提高一点性能，而signal可以采取多次listen的方法。
+
+signal的键主要用来区分gesture、resize、输入信号等。
+
+多个select的时候的clear逻辑比较复杂，所以先采取没有默认clear的方式。
+
+在op params中，由于op和值等价，且每个自身op适用范围小，所以参数名不加后缀，而spec比较特别，故命名类似 conv，spec
+
+scope与parse中，也是spec，conv，加后缀，op不用加后缀
+
+同时表示值和op的命名，以值为主。

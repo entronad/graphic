@@ -47,16 +47,9 @@ abstract class Scene {
 }
 
 class Graffiti {
-  Graffiti(Size size) : _clip = Rect.fromLTWH(
-    0,
-    0,
-    size.width,
-    size.height,
-  );
-
   final _scenes = <Scene>[];
 
-  Rect _clip;
+  Rect? _clip;
 
   void set size(Size value) {
     _clip = Rect.fromLTWH(
@@ -67,14 +60,14 @@ class Graffiti {
     );
   }
 
-  Graffiti add(Scene scene) {
+  S add<S extends Scene>(S scene) {
     _scenes.add(scene);
-    return this;
+    return scene;
   }
 
   /// Should and only should sort before first paint.
   /// zIndex -> layer -> preOrder
-  Graffiti sort() {
+  void sort() {
     for (var i = 0; i < _scenes.length; i++) {
       _scenes[i]._preOrder = i;
     }
@@ -91,14 +84,13 @@ class Graffiti {
         }
       }
     });
-    return this;
   }
 
   /// Used for CustomPainter's paint method.
   /// Won't paint outside size.
   void paint(Canvas canvas) {
     canvas.save();
-    canvas.clipRect(_clip);
+    canvas.clipRect(_clip!);
 
     for (var scene in _scenes) {
       scene._paint(canvas);

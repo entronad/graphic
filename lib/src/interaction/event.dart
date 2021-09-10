@@ -1,30 +1,6 @@
 enum EventType {
-  // Gesture events.
-  tapDown,
-  tapUp,
-  tap,
-  doubleTap,
-  tapCancel,
-  longPress,
-  longPressStart,
-  longPressMoveUpdate,
-  longPressUp,
-  longPressEnd,
-  panDown,
-  panStart,
-  panUpdate,
-  panEnd,
-  panCancel,
-  scaleStart,
-  scaleUpdate,
-  scaleEnd,
-  hover,
-  scroll,
-
-  // Chart container resize.
+  gesture,
   resize,
-
-  // Data source change.
   changeData,
 }
 
@@ -35,12 +11,25 @@ abstract class Event {
 
 typedef EventListener<E extends Event> = void Function(E);
 
-typedef EventPredivate<E extends Event> = bool Function(E);
+class EventSource<E extends Event> {
+  final _listeners = <EventListener<E>?>[];
 
-abstract class EventSource<E extends Event> {
-  void on(EventType type, EventListener<E> listener);
+  int on(EventListener<E> listener) {
+    _listeners.add(listener);
+    return _listeners.length - 1;
+  }
 
-  void off([EventType? type, EventListener<E>? listener]);
+  void off(int id) =>
+    _listeners[id] = null;
 
-  void emit(E event);
+  void clear() =>
+    _listeners.clear();
+
+  void emit(E event) {
+    for (var listener in _listeners) {
+      if (listener != null) {
+        listener(event);
+      }
+    }
+  }
 }

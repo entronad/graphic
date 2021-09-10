@@ -36,7 +36,7 @@ class PointElement extends FunctionElement {
 }
 
 /// [point] => [point]
-List<Offset> PointCompleter(List<Offset> position, Offset origin) {
+List<Offset> pointCompleter(List<Offset> position, Offset origin) {
   assert(position.length == 1);
   return position;
 }

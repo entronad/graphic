@@ -18,6 +18,7 @@ class Crosshair {
     this.styles,
     this.followPointer,
     this.zIndex,
+    this.element,
   });
 
   /// The selection must:
@@ -36,6 +37,10 @@ class Crosshair {
 
   final int? zIndex;
 
+  /// The tooltip can only refer to one element.
+  /// This is the index in elements.
+  final int? element;
+
   @override
   bool operator ==(Object other) =>
     other is Crosshair &&
@@ -43,7 +48,8 @@ class Crosshair {
     dim == other.dim &&
     DeepCollectionEquality().equals(styles, other.styles) &&
     DeepCollectionEquality().equals(followPointer, other.followPointer) &&
-    zIndex == other.zIndex;
+    zIndex == other.zIndex &&
+    element == other.element;
 }
 
 class CrosshairPainter extends Painter {
@@ -127,7 +133,7 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
     final zIndex = params['zIndex'] as int;
     final coord = params['coord'] as CoordConv;
     final groups = params['groups'] as AesGroups;
-    final styles = params['styles'] as List<StrokeStyle?>;
+    final styles = params['styles'] as List<StrokeStyle>;
     final followPointer = params['followPointer'] as List<bool>;
 
     if (selector.name != selectorName) {

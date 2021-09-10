@@ -8,6 +8,7 @@ import 'package:graphic/src/aes/label.dart';
 import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
+import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/coord/coord.dart';
@@ -15,10 +16,28 @@ import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/graffiti.dart';
+import 'package:graphic/src/parse/parse.dart';
+import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/scale/discrete.dart';
 import 'package:graphic/src/scale/scale.dart';
+import 'package:graphic/src/shape/area.dart';
+import 'package:graphic/src/shape/interval.dart';
+import 'package:graphic/src/shape/line.dart';
+import 'package:graphic/src/shape/point.dart';
+import 'package:graphic/src/shape/polygon.dart';
+import 'package:graphic/src/shape/shape.dart';
+import 'package:graphic/src/util/assert.dart';
 
 import 'modifier/modifier.dart';
+import 'modifier/dodge.dart';
+import 'modifier/jitter.dart';
+import 'modifier/stack.dart';
+import 'area.dart';
+import 'custom.dart';
+import 'interval.dart';
+import 'line.dart';
+import 'point.dart';
+import 'polygon.dart';
 
 abstract class GeomElement {
   GeomElement({
@@ -33,7 +52,9 @@ abstract class GeomElement {
     this.zIndex,
     this.groupBy,
     this.selected,
-  }) : assert(modifier == null || groupBy != null);
+  })
+    : assert(modifier == null || groupBy != null),
+      assert(isSingle([color, gradient], allowNone: true));
 
   final ColorAttr? color;
 
@@ -74,8 +95,8 @@ abstract class GeomElement {
     selected == other.selected;
 }
 
-/// Group aes value tuples by element's groupBy field.
-/// If groupBy is null, all tuples will be in the same group.
+/// Group aes value originals by element's groupBy field.
+/// If groupBy is null, all originals will be in the same group.
 class GroupOp extends Operator<AesGroups> {
   GroupOp(Map<String, dynamic> params) : super(params);
 
@@ -147,5 +168,87 @@ class ElementRenderOp extends Render<ElementScene> {
       ..zIndex = zIndex
       ..setRegionClip(coord.region, coord is PolarCoordConv)
       ..painter = ElementPainter(groups, coord);
+  }
+}
+
+// Defaults for each geom.
+
+typedef PositionCompleter = List<Offset> Function(List<Offset> position, Offset origin);
+
+PositionCompleter getPositionCompleter(GeomElement spec) =>
+  spec is AreaElement ? areaCompleter :
+  spec is CustomElement ? customCompleter :
+  spec is IntervalElement ? intervalCompleter :
+  spec is LineElement ? lineCompleter :
+  spec is PointElement ? pointCompleter :
+  spec is PolygonElement ? polygonCompleter :
+  throw UnimplementedError('No such geom $spec.');
+
+Shape getDefaultShape(GeomElement spec) =>
+  spec is AreaElement ? BasicAreaShape() :
+  spec is CustomElement ? throw ArgumentError('Custom geom must designate shape.') :
+  spec is IntervalElement ? RectShape() :
+  spec is LineElement ? BasicLineShape() :
+  spec is PointElement ? CircleShape() :
+  spec is PolygonElement ? HeatmapShape() :
+  throw UnimplementedError('No such geom $spec.');
+
+void parseGeom(
+  Spec spec,
+  View view,
+  Scope scope,
+) {
+  for (var i = 0; i < spec.elements.length; i++) {
+    final elementSpec = spec.elements[i];
+    final aeses = scope.aesesList[i];
+
+    Operator<AesGroups> groups = view.add(GroupOp({
+      'aeses': aeses,
+      'originals': scope.originals,
+      'groupBy': elementSpec.groupBy,
+      'scales': scope.scales,
+    }));
+
+    if (elementSpec.modifier != null) {
+      final modifier = elementSpec.modifier!;
+      final form = scope.forms[i];
+      final origin = scope.origins[i];
+      if (modifier is DodgeModifier) {
+        final geomModifier = view.add(DodgeGeomModifierOp({
+          'ratio': modifier.ratio,
+          'symmetric': modifier.symmetric ?? true,
+          'form': form,
+          'scales': scope.scales,
+          'groups': groups,
+        }));
+        groups = view.add(ModifyOp({
+          'groups': groups,
+          'modifier': geomModifier,
+        }));
+      } else if (modifier is JitterModifier) {
+        final geomModifier = view.add(JitterGeomModifierOp({
+          'ratio': modifier.ratio ?? 0.5,
+          'form': form,
+          'scales': scope.scales,
+        }));
+        groups = view.add(ModifyOp({
+          'groups': groups,
+          'modifier': geomModifier,
+        }));
+      } else if (modifier is StackModifier) {
+        final geomModifier = view.add(StackGeomModifierOp({
+          'symmetric': modifier.symmetric ?? false,
+          'origin': origin,
+        }));
+        groups = view.add(ModifyOp({
+          'groups': groups,
+          'modifier': geomModifier,
+        }));
+      } else {
+        throw UnimplementedError('No such modifier type: $modifier.');
+      }
+    }
+
+    scope.geomsList.add(groups);
   }
 }

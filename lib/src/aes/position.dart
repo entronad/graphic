@@ -4,9 +4,8 @@ import 'package:graphic/src/aes/aes.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/algebra/varset.dart';
+import 'package:graphic/src/geom/geom_element.dart';
 import 'package:graphic/src/scale/scale.dart';
-
-typedef PositionCompleter = List<Offset> Function(List<Offset> position, Offset origin);
 
 /// For each tuple:
 /// Firstly compose points by algebra form.

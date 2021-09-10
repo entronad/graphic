@@ -1,5 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:graphic/src/interaction/select/select.dart';
+import 'package:graphic/src/scale/continuous.dart';
+import 'package:graphic/src/scale/scale.dart';
 import 'package:meta/meta.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 
@@ -15,11 +17,13 @@ abstract class ChannelAttr<AV> extends Attr<AV> {
     AV? value,
     AV Function(Original)? encode,
     Map<String, Map<bool, SelectUpdate<AV>>>? onSelect,
-  }) : super(
-    value: value,
-    encode: encode,
-    onSelect: onSelect,
-  );
+  })
+    : assert(values == null || values.length >= 2),
+      super(
+        value: value,
+        encode: encode,
+        onSelect: onSelect,
+      );
 
   final String? variable;
 
@@ -108,4 +112,43 @@ class ChannelEncoder<AV> extends Encoder<AV> {
   @override
   AV encode(Scaled scaled, Original original) =>
     conv.convert(scaled[field]!);
+}
+
+List<double> _defaultStops(int length) {
+  final step = 1 / (length - 1);
+  final rst = <double>[0];
+  for (var i = 1; i < length - 1; i++) {
+    rst.add(step * i);
+  }
+  rst.add(1);
+  return rst;
+}
+
+Encoder<AV> getChannelEncoder<AV>(
+  ChannelAttr<AV> spec,
+  Map<String, Scale> scaleSpecs,
+  ContinuousChannelConv<AV> Function(List<AV>, List<double>)? getContinuousConv,
+) {
+  if (spec.value != null) {
+    return ValueAttrEncoder<AV>(spec.value!);
+  }
+  if (spec.variable != null) {
+    final field = spec.variable!;
+    final scaleSpec = scaleSpecs[field];
+    ChannelConv<num, AV> conv;
+    if (scaleSpec is ContinuousScale) {
+      assert(getContinuousConv != null, '$spec dose not support continuous.');
+      conv = getContinuousConv!(
+        spec.values!,
+        spec.stops ?? _defaultStops(spec.values!.length),
+      );
+    } else {
+      conv = DiscreteChannelConv(spec.values!);
+    }
+    return ChannelEncoder(field, conv);
+  }
+  if (spec.encode != null) {
+    return CustomEncoder(spec.encode!);
+  }
+  throw ArgumentError('Value, variable, or encode must be set.');
 }

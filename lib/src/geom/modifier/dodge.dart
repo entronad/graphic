@@ -26,7 +26,7 @@ class DodgeModifier extends Modifier {
     symmetric == other.symmetric;
 }
 
-class DodgeGeomModifier extends GeomModifer {
+class DodgeGeomModifier extends GeomModifier {
   DodgeGeomModifier(
     this.ratio,
     this.symmetric,
@@ -68,19 +68,24 @@ class DodgeGeomModifier extends GeomModifer {
   }
 }
 
-class DodgeGeomModifierOp extends GeomModiferOp<DodgeGeomModifier> {
+class DodgeGeomModifierOp extends GeomModifierOp<DodgeGeomModifier> {
   DodgeGeomModifierOp(Map<String, dynamic> params) : super(params);
 
   @override
   DodgeGeomModifier evaluate() {
-    final ratio = params['ratio'] as double;
+    final ratio = params['ratio'] as double?;
     final symmetric = params['symmetric'] as bool;
     final form = params['form'] as AlgForm;
     final scales = params['scales'] as Map<String, ScaleConv>;
+    final groups = params['groups'] as AesGroups;
 
     final xField = form.first[0];
     final band = (scales[xField] as DiscreteScaleConv).band!;
 
-    return DodgeGeomModifier(ratio, symmetric, band);
+    return DodgeGeomModifier(
+      ratio ?? 1 / (groups.length),
+      symmetric,
+      band,
+    );
   }
 }

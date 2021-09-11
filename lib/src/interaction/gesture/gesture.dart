@@ -30,7 +30,7 @@ void parseGesture(
 
   view.listen<GestureEvent, Gesture>(
     view.gestureSource,
-    scope.gesture!,
+    scope.gesture,
     (event) => event.gesture,
   );
 }

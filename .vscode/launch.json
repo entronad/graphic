@@ -2,19 +2,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "debug",
-      "request": "launch",
-      "type": "dart",
-      "program": "./debug/lib/main.dart"
-    },
-    {
-      "name": "performance",
-      "request": "launch",
-      "type": "dart",
-      "flutterMode": "profile",
-      "program": "./debug/lib/main.dart"
-    },
-    {
       "name": "example",
       "request": "launch",
       "type": "dart",

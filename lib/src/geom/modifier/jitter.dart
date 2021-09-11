@@ -60,7 +60,7 @@ class JitterGeomModifierOp extends GeomModifierOp<JitterGeomModifier> {
     final scales = params['scales'] as Map<String, ScaleConv>;
 
     final xField = form.first[0];
-    final band = (scales[xField] as DiscreteScaleConv).band!;
+    final band = (scales[xField] as DiscreteScaleConv).band;
 
     return JitterGeomModifier(ratio, band);
   }

@@ -54,11 +54,11 @@ abstract class Scale<V, SV extends num> {
 abstract class ScaleConv<V, SV extends num> extends Converter<V, SV> {
   // Fields must be completed in the constructor to make sure it's non-null in run.
   
-  String? title;
+  late String title;
 
-  String Function(V)? formatter;
+  late String Function(V) formatter;
 
-  List<V>? ticks;
+  late List<V> ticks;
 
   /// Normalize scaled value to [0, 1]
   double normalize(SV scaledValue);

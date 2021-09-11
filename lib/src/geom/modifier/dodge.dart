@@ -80,7 +80,7 @@ class DodgeGeomModifierOp extends GeomModifierOp<DodgeGeomModifier> {
     final groups = params['groups'] as AesGroups;
 
     final xField = form.first[0];
-    final band = (scales[xField] as DiscreteScaleConv).band!;
+    final band = (scales[xField] as DiscreteScaleConv).band;
 
     return DodgeGeomModifier(
       ratio ?? 1 / (groups.length),

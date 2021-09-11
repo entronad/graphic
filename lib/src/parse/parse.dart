@@ -22,29 +22,29 @@ class Scope<D> {
 
   List<AlgForm> forms = [];
 
-  GestureOp? gesture;
+  late GestureOp gesture;
 
-  SizeOp? size;
+  late SizeOp size;
 
-  DataOp<D>? data;
+  late DataOp<D> data;
 
-  SignalOp? signal;
+  late SignalOp signal;
 
-  Operator<List<Original>>? originals;
+  late Operator<List<Original>> originals;
 
-  ScaleConvOp? scales;
+  late ScaleConvOp scales;
 
-  ScaleOp? scaleds;
+  late ScaleOp scaleds;
 
   List<OriginOp> origins = [];
 
   List<AesOp> aesesList = [];
 
-  CoordConvOp? coord;
+  late CoordConvOp coord;
 
   List<Operator<AesGroups>> geomsList = [];
 
-  SelectorOp? selector;
+  late SelectorOp selector;
 
   List<SelectOp> selectsList = [];
 

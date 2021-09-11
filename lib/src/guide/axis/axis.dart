@@ -143,9 +143,9 @@ class TickInfoOp extends Operator<List<TickInfo>> {
 
     final scale = scales[variable]!;
 
-    final ticks = scale.ticks!.map((value) => TickInfo(
+    final ticks = scale.ticks.map((value) => TickInfo(
       scale.normalize(scale.convert(value)),
-      scale.formatter!(value),
+      scale.formatter(value),
     )).toList();
 
     final total = ticks.length;

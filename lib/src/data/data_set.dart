@@ -62,7 +62,7 @@ void parseData<D>(
 
   view.listen<ChangeDataEvent<D>, List<D>>(
     view.dataSouce,
-    scope.data!,
+    scope.data,
     (event) => event.data,
   );
 }

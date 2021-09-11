@@ -210,12 +210,12 @@ class TooltipRenderOp extends Render<TooltipScene> {
     var field = fields.first;
     var scale = scales[field]!;
     var title = scale.title;
-    var textContent = '$title:${scale.formatter!(original[field])}';
+    var textContent = '$title:${scale.formatter(original[field])}';
     for (var i = 1; i < fields.length; i++) {
       field = fields[i];
       scale = scales[field]!;
       title = scale.title;
-      textContent = textContent + '\n$title:${scale.formatter!(original[field])}';
+      textContent = textContent + '\n$title:${scale.formatter(original[field])}';
     }
     
     final painter = TooltipPainter(

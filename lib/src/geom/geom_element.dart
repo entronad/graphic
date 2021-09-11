@@ -111,7 +111,7 @@ class GroupOp extends Operator<AesGroups> {
       return [aeses];
     }
 
-    final groupValues = (scales[groupBy] as DiscreteScaleConv).values!;
+    final groupValues = (scales[groupBy] as DiscreteScaleConv).values;
     final tmp = <dynamic, List<Aes>>{};
     for (var groupValue in groupValues) {
       tmp[groupValue] = <Aes>[];

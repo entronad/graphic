@@ -26,7 +26,7 @@ void parseSize(
 
   view.listen<ResizeEvent, Size>(
     view.sizeSouce,
-    scope.size!,
+    scope.size,
     (event) => event.size,
   );
 }

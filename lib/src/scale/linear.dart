@@ -64,9 +64,9 @@ class LinearScaleConv extends ContinuousScaleConv<num> {
 
     // ticks
     if (spec.ticks != null) {
-      ticks = spec.ticks;
-      final firstTick = ticks!.first;
-      final lastTick = ticks!.last;
+      ticks = spec.ticks!;
+      final firstTick = ticks.first;
+      final lastTick = ticks.last;
       if (min! > firstTick) {
         min = firstTick;
       }

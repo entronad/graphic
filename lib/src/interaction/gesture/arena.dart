@@ -98,9 +98,9 @@ class GestureArena {
 
   _ListenerEventCategory? _currentCagegory;
 
-  PointerEvent? _lastDown;
+  late PointerEvent _lastDown;
 
-  PointerEvent? _lastUp;
+  late PointerEvent _lastUp;
 
   // Max 2, if add more replace the second.
   final List<PointerEvent> _onScreenPointers = [];
@@ -190,7 +190,7 @@ class GestureArena {
         break;
       default:
         // null
-        final bias = (pointerEvent.localPosition - _lastDown!.localPosition).distance.abs();
+        final bias = (pointerEvent.localPosition - _lastDown.localPosition).distance.abs();
         if (bias > _panBias) {
           _applyCallbacks(GestureType.panStart, pointerEvent);
           _applyCallbacks(GestureType.tapCancel, pointerEvent);
@@ -210,7 +210,7 @@ class GestureArena {
     switch (_currentCagegory) {
       case _ListenerEventCategory.tap:
         // must be doubleTap
-        final bias = (pointerEvent.localPosition - _lastUp!.localPosition).distance.abs();
+        final bias = (pointerEvent.localPosition - _lastUp.localPosition).distance.abs();
         if (bias < _tapBias) {
           _applyCallbacks(GestureType.doubleTap, pointerEvent);
           _applyCallbacks(GestureType.tapCancel, pointerEvent);
@@ -264,7 +264,7 @@ class GestureArena {
   void _onTriggerTap(PointerEvent pointerEvent) {
     if (
       _currentCagegory == _ListenerEventCategory.tap
-      && pointerEvent.pointer == _lastUp!.pointer
+      && pointerEvent.pointer == _lastUp.pointer
     ) {
       _applyCallbacks(GestureType.tapUp, pointerEvent);
       _applyCallbacks(GestureType.tap, pointerEvent);

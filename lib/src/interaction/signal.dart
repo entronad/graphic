@@ -49,17 +49,17 @@ void parseSignal<D>(
   view
     ..listen<Event, Event>(
       view.gestureSource,
-      scope.signal!,
+      scope.signal,
       (event) => event,
     )
     ..listen<Event, Event>(
       view.sizeSouce,
-      scope.signal!,
+      scope.signal,
       (event) => event,
     )
     ..listen<Event, Event>(
       view.dataSouce,
-      scope.signal!,
+      scope.signal,
       (event) => event,
     );
 }

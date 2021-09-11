@@ -45,7 +45,7 @@ abstract class DiscreteScaleConv<V, SP extends DiscreteScale<V>> extends ScaleCo
   ) {
     // values
     if (spec.values != null) {
-      values = spec.values;
+      values = spec.values!;
     } else {
       final candidates = <V>{};
       for (var tuple in tuples) {
@@ -56,10 +56,10 @@ abstract class DiscreteScaleConv<V, SP extends DiscreteScale<V>> extends ScaleCo
 
     // ticks
     if (spec.ticks != null) {
-      ticks = spec.ticks;
+      ticks = spec.ticks!;
     } else {
       ticks = catAutoTicks<V>(
-        categories: values!,
+        categories: values,
         isRounding: spec.tickCount != null,
         maxCount: spec.maxTickCount ?? spec.tickCount,
       );
@@ -67,36 +67,36 @@ abstract class DiscreteScaleConv<V, SP extends DiscreteScale<V>> extends ScaleCo
 
     title = spec.title ?? variable;
     formatter = spec.formatter ?? defaultFormatter;
-    align = align ?? 0.5;
-    band = 1 / values!.length;
+    align = spec.align ?? 0.5;
+    band = 1 / values.length;
   }
 
-  List<V>? values;
+  late List<V> values;
 
-  double? align;
+  late double align;
 
-  double? band;
+  late double band;
 
   @override
   int convert(V input) {
-    assert(values!.contains(input));
-    return values!.indexOf(input);
+    assert(values.contains(input));
+    return values.indexOf(input);
   }
 
   @override
   V invert(int output) {
-    assert(output >= 0 && output < values!.length);
-    return values![output];
+    assert(output >= 0 && output < values.length);
+    return values[output];
   }
 
   @override
   double normalize(int scaledValue) =>
-    (scaledValue + align!) * band!;
+    (scaledValue + align) * band;
 
   @override
   int denormalize(double normalValue) =>
-    (normalValue / band! - align!).round();
+    (normalValue / band - align).round();
   
   @override
-  V get zero => values!.first;
+  V get zero => values.first;
 }

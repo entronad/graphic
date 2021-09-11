@@ -53,7 +53,7 @@ class TimeScaleConv extends ContinuousScaleConv<DateTime> {
 
     // ticks
     if (spec.ticks != null) {
-      ticks = spec.ticks;
+      ticks = spec.ticks!;
     } else {
       final minMicro = min!.microsecondsSinceEpoch;
       final maxMicro = max!.microsecondsSinceEpoch;
@@ -61,11 +61,11 @@ class TimeScaleConv extends ContinuousScaleConv<DateTime> {
       final step = (maxMicro - minMicro) ~/ (count - 1);
 
       ticks = [];
-      ticks!.add(min!);
+      ticks.add(min!);
       for (var i = 1; i < count - 1; i++) {
-        ticks!.add(DateTime.fromMicrosecondsSinceEpoch(minMicro + i * step));
+        ticks.add(DateTime.fromMicrosecondsSinceEpoch(minMicro + i * step));
       }
-      ticks!.add(max!);
+      ticks.add(max!);
     }
 
     title = spec.title ?? variable;

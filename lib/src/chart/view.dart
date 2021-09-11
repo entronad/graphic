@@ -7,6 +7,7 @@ import 'package:graphic/src/graffiti/graffiti.dart';
 import 'package:graphic/src/interaction/event.dart';
 import 'package:graphic/src/interaction/gesture/arena.dart';
 import 'package:graphic/src/interaction/gesture/gesture.dart';
+import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/parse/spec.dart';
 
 class View<D> extends Dataflow {
@@ -14,6 +15,12 @@ class View<D> extends Dataflow {
     arena.on((gesture) {
       gestureSource.emit(GestureEvent(gesture));
     });
+
+    parse(spec, this);
+
+    graffiti.sort();
+
+    run();
   }
 
   final graffiti = Graffiti();

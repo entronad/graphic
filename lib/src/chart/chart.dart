@@ -53,7 +53,7 @@ class Chart<D> extends StatefulWidget {
 
 // initState -> build -> getPositionForChild -> paint
 class _ChartState<D> extends State<Chart<D>> {
-  View<D>? view;
+  late View<D> view;
 
   @override
   void initState() {
@@ -69,40 +69,40 @@ class _ChartState<D> extends State<Chart<D>> {
     if (widget.rebuild ?? widget.spec != oldWidget.spec) {
       view = View<D>(widget.spec);
     } else if (dataChanged(widget.spec.data, oldWidget.spec.data)) {
-      view!.changeData(widget.spec.data.source);
+      view.changeData(widget.spec.data.source);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return CustomSingleChildLayout(
-      delegate: _ChartLayoutDelegate(view!),
+      delegate: _ChartLayoutDelegate(view),
       child: Listener(
         child: CustomPaint(
-          painter: _ChartPainter(view!),
+          painter: _ChartPainter(view),
         ),
         onPointerDown: (event) {
-          view!.arena.emit(
+          view.arena.emit(
             ListenerEvent(ListenerEventType.pointerDown, event),
           );
         },
         onPointerMove: (event) {
-          view!.arena.emit(
+          view.arena.emit(
             ListenerEvent(ListenerEventType.pointerMove, event),
           );
         },
         onPointerUp: (event) {
-          view!.arena.emit(
+          view.arena.emit(
             ListenerEvent(ListenerEventType.pointerUp, event),
           );
         },
         onPointerCancel: (event) {
-          view!.arena.emit(
+          view.arena.emit(
             ListenerEvent(ListenerEventType.pointerCancel, event),
           );
         },
         onPointerSignal: (event) {
-          view!.arena.emit(
+          view.arena.emit(
             ListenerEvent(ListenerEventType.pointerSignal, event),
           );
         },

@@ -17,7 +17,7 @@ abstract class Scene {
   int get layer;
 
   // Help to order stablely.
-  int? _preOrder;
+  late int _preOrder;
 
   // Make sure to set this before _paint, or _paint will do nothing.
   Painter? painter;
@@ -49,7 +49,7 @@ abstract class Scene {
 class Graffiti {
   final _scenes = <Scene>[];
 
-  Rect? _clip;
+  late Rect _clip;
 
   void set size(Size value) {
     _clip = Rect.fromLTWH(
@@ -80,7 +80,7 @@ class Graffiti {
         if (layerRst != 0) {
           return layerRst;
         } else {
-          return a._preOrder! - b._preOrder!;
+          return a._preOrder - b._preOrder;
         }
       }
     });
@@ -90,7 +90,7 @@ class Graffiti {
   /// Won't paint outside size.
   void paint(Canvas canvas) {
     canvas.save();
-    canvas.clipRect(_clip!);
+    canvas.clipRect(_clip);
 
     for (var scene in _scenes) {
       scene._paint(canvas);

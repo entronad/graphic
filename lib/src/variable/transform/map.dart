@@ -2,12 +2,12 @@ import 'package:graphic/src/dataflow/tuple.dart';
 
 import 'transform.dart';
 
-class MapTrans extends Transform {
+class MapTrans extends VariableTransform {
   MapTrans({
     required this.mapper,
   });
 
-  final Original Function(Original) mapper;
+  Original Function(Original) mapper;
 
   @override
   bool operator ==(Object other) =>

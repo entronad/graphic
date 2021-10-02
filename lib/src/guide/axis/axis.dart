@@ -1,5 +1,4 @@
-import 'dart:ui';
-
+import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
@@ -17,14 +16,14 @@ import 'package:graphic/src/scale/scale.dart';
 import 'package:graphic/src/util/assert.dart';
 
 class TickLine {
-  const TickLine({
-    this.style = const StrokeStyle(),
+  TickLine({
+    StrokeStyle? style,
     this.length = 2,
-  });
+  }) : style = style ?? StrokeStyle();
 
-  final StrokeStyle style;
+  StrokeStyle style;
 
-  final double length;
+  double length;
 
   @override
   bool operator ==(Object other) =>
@@ -39,8 +38,8 @@ typedef LabelMapper = LabelSyle? Function(String text, int index, int total);
 
 typedef GridMapper = StrokeStyle? Function(String text, int index, int total);
 
-class GuideAxis<V> {
-  GuideAxis({
+class AxisGuide<V> {
+  AxisGuide({
     this.dim,
     this.variable,
     this.position,
@@ -60,36 +59,36 @@ class GuideAxis<V> {
       assert(isSingle([grid, gridMapper], allowNone: true));
 
   /// By default, axes specification list implies [dim1, dim2].
-  final int? dim;
+  int? dim;
 
   /// The first variable in this dim by default.
-  final String? variable;
+  String? variable;
 
-  final double? position;
+  double? position;
 
-  final bool? flip;  // Flip tick and label to other side of the axis.
+  bool? flip;  // Flip tick and label to other side of the axis.
 
-  final StrokeStyle? line;
+  StrokeStyle? line;
 
-  final TickLine? tickLine;
+  TickLine? tickLine;
 
-  final TickLineMapper? tickLineMapper;
+  TickLineMapper? tickLineMapper;
 
-  final LabelSyle? label;
+  LabelSyle? label;
 
-  final LabelMapper? labelMapper;
+  LabelMapper? labelMapper;
 
-  final StrokeStyle? grid;
+  StrokeStyle? grid;
 
-  final GridMapper? gridMapper;
+  GridMapper? gridMapper;
 
-  final int? zIndex;
+  int? zIndex;
 
-  final int? gridZIndex;
+  int? gridZIndex;
 
   @override
   bool operator ==(Object other) =>
-    other is GuideAxis &&
+    other is AxisGuide &&
     dim == other.dim &&
     variable == other.variable &&
     position == other.position &&
@@ -203,7 +202,8 @@ class AxisRenderOp extends Render<AxisScene> {
   AxisRenderOp(
     Map<String, dynamic> params,
     AxisScene scene,
-  ) : super(params, scene);
+    View view,
+  ) : super(params, scene, view);
 
   @override
   void render() {
@@ -238,7 +238,7 @@ class AxisRenderOp extends Render<AxisScene> {
       }
     } else {
       coord as PolarCoordConv;
-      if (coord.transposed) {
+      if (canvasDim == 1) {
         scene.painter = CircularAxisPainter(
           ticks,
           position,
@@ -281,7 +281,8 @@ class GridRenderOp extends Render<GridScene> {
   GridRenderOp(
     Map<String, dynamic> params,
     GridScene scene,
-  ) : super(params, scene);
+    View view
+  ) : super(params, scene, view);
 
   @override
   void render() {
@@ -292,7 +293,7 @@ class GridRenderOp extends Render<GridScene> {
     
     scene.zIndex = gridZIndex;
 
-    final canvasDim = coord.transposed ? (3 - dim) : dim;
+    final canvasDim = coord.getCanvasDim(dim);
     if (coord is RectCoordConv) {
       if (canvasDim == 1) {
         scene.painter = HorizontalGridPainter(
@@ -307,7 +308,7 @@ class GridRenderOp extends Render<GridScene> {
       }
     } else {
       coord as PolarCoordConv;
-      if (coord.transposed) {
+      if (canvasDim == 1) {
         scene.painter = CircularGridPainter(
           ticks,
           coord,

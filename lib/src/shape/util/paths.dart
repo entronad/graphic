@@ -98,7 +98,7 @@ abstract class Paths {
       sin(startAngle) * (r - topLeft.y) + center.dy,
     );
     arcStart = clockwise ? startAngle + (topLeft.x / r) : startAngle - (topLeft.x / r);
-    arcEnd = clockwise ? endAngle + (topRight.x / r) : endAngle - (topRight.x / r);
+    arcEnd = clockwise ? endAngle - (topRight.x / r) : endAngle + (topRight.x / r);
     arcSweep = clockwise ? arcEnd - arcStart : arcStart - arcEnd;
     // top left
     path.quadraticBezierTo(
@@ -128,7 +128,7 @@ abstract class Paths {
     );
     if (r0 != 0) {
       arcStart = clockwise ? startAngle + (bottomLeft.x / r) : startAngle - (bottomLeft.x / r);
-      arcEnd = clockwise ? endAngle + (bottomRight.x / r) : endAngle - (bottomRight.x / r);
+      arcEnd = clockwise ? endAngle - (bottomRight.x / r) : endAngle + (bottomRight.x / r);
       arcSweep = clockwise ? arcEnd - arcStart : arcStart - arcEnd;
       // bottom right
       path.quadraticBezierTo(

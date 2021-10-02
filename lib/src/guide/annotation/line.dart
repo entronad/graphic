@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/coord/coord.dart';
@@ -21,15 +22,15 @@ class LineAnnotation extends Annotation {
   );
 
   /// The dim where the line stands.
-  final int? dim;
+  int? dim;
 
   /// The first variable in this dim by default.
-  final String? variable;
+  String? variable;
 
   /// The variable value where the line stands.
-  final dynamic value;
+  dynamic value;
 
-  final StrokeStyle? style;
+  StrokeStyle? style;
 
   @override
   bool operator ==(Object other) =>
@@ -97,7 +98,8 @@ class LineAnnotRenderOp extends AnnotRenderOp<LineAnnotScene> {
   LineAnnotRenderOp(
     Map<String, dynamic> params,
     LineAnnotScene scene,
-  ) : super(params, scene);
+    View view,
+  ) : super(params, scene, view);
 
   @override
   void render() {
@@ -111,7 +113,7 @@ class LineAnnotRenderOp extends AnnotRenderOp<LineAnnotScene> {
 
     scene
       ..zIndex = zIndex
-      ..setRegionClip(coord.region, coord is PolarCoordConv);
+      ..setRegionClip(coord.region);
     
     final scale = scales[variable]!;
     final position = scale.normalize(scale.convert(value));

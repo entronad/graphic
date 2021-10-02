@@ -1,3 +1,4 @@
+import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/graffiti/graffiti.dart';
 
@@ -8,13 +9,17 @@ abstract class Render<S extends Scene> extends Operator {
   Render(
     Map<String, dynamic> params,
     this.scene,
+    this.view,
   ) : super(params);
 
   final S scene;
 
+  final View view;
+
   @override
   evaluate() {
     render();
+    view.dirty = true;
   }
 
   void render();

@@ -37,6 +37,7 @@ class Gesture {
   Gesture(
     this.type,
     this.pointerEvent,
+    this.arenaSize,
     {this.offset,
     this.scale,
     this.scrollDelta,}
@@ -45,6 +46,8 @@ class Gesture {
   final GestureType type;
 
   final PointerEvent pointerEvent;
+
+  final Size arenaSize;
 
   // Offset from original point, used for movement.
   final Offset? offset;
@@ -94,6 +97,10 @@ enum _ListenerEventCategory {
 }
 
 class GestureArena {
+  GestureArena(this.size);
+
+  Size size;
+
   final List<GestureListener?> _listeners = [];
 
   _ListenerEventCategory? _currentCagegory;
@@ -150,7 +157,7 @@ class GestureArena {
     }
   }
 
-  void _onPointerDown(PointerEvent pointerEvent) {
+  void _onPointerDown(PointerEvent pointerEvent) async {
     if (_onScreenPointers.length > 1 || _currentCagegory != null) {
       // Without record.
       return;
@@ -158,33 +165,33 @@ class GestureArena {
     _onScreenPointers.add(pointerEvent);
 
     if (_onScreenPointers.length == 2) {
-      _applyCallbacks(GestureType.scaleStart, pointerEvent);
-      _applyCallbacks(GestureType.tapCancel, pointerEvent);
-      _applyCallbacks(GestureType.panCancel, pointerEvent);
+      await _applyCallbacks(GestureType.scaleStart, pointerEvent);
+      await _applyCallbacks(GestureType.tapCancel, pointerEvent);
+      await _applyCallbacks(GestureType.panCancel, pointerEvent);
       _currentCagegory = _ListenerEventCategory.scale;
       _initialScaleOffset = _onScreenPointers[1].localPosition - _onScreenPointers[0].localPosition;
     } else {
-      _applyCallbacks(GestureType.tapDown, pointerEvent);
-      _applyCallbacks(GestureType.panDown, pointerEvent);
+      await _applyCallbacks(GestureType.tapDown, pointerEvent);
+      await _applyCallbacks(GestureType.panDown, pointerEvent);
       _waitForTouch(pointerEvent);
     }
 
     _lastDown = pointerEvent;
   }
 
-  void _onPointerMove(PointerEvent pointerEvent) {
+  void _onPointerMove(PointerEvent pointerEvent) async {
     switch (_currentCagegory) {
       case _ListenerEventCategory.longPress:
         final offset = pointerEvent.localPosition - _initialMovePoint!;
-        _applyCallbacks(GestureType.longPressMoveUpdate, pointerEvent, offset: offset);
+        await _applyCallbacks(GestureType.longPressMoveUpdate, pointerEvent, offset: offset);
         break;
       case _ListenerEventCategory.pan:
         final offset = pointerEvent.localPosition - _initialMovePoint!;
-        _applyCallbacks(GestureType.panUpdate, pointerEvent, offset: offset);
+        await _applyCallbacks(GestureType.panUpdate, pointerEvent, offset: offset);
         break;
       case _ListenerEventCategory.scale:
         final scale = _calculateScale(pointerEvent);
-        _applyCallbacks(GestureType.scaleUpdate, pointerEvent, scale: scale);
+        await _applyCallbacks(GestureType.scaleUpdate, pointerEvent, scale: scale);
         break;
       case _ListenerEventCategory.tap:
         break;
@@ -192,15 +199,15 @@ class GestureArena {
         // null
         final bias = (pointerEvent.localPosition - _lastDown.localPosition).distance.abs();
         if (bias > _panBias) {
-          _applyCallbacks(GestureType.panStart, pointerEvent);
-          _applyCallbacks(GestureType.tapCancel, pointerEvent);
+          await _applyCallbacks(GestureType.panStart, pointerEvent);
+          await _applyCallbacks(GestureType.tapCancel, pointerEvent);
           _currentCagegory = _ListenerEventCategory.pan;
           _initialMovePoint = pointerEvent.localPosition;
         }
     }
   }
 
-  void _onPointerUp(PointerEvent pointerEvent) {
+  void _onPointerUp(PointerEvent pointerEvent) async {
     for (var i = 0; i < _onScreenPointers.length; i++) {
       if (pointerEvent.pointer == _onScreenPointers[i].pointer) {
         _onScreenPointers.removeAt(i);
@@ -212,8 +219,8 @@ class GestureArena {
         // must be doubleTap
         final bias = (pointerEvent.localPosition - _lastUp.localPosition).distance.abs();
         if (bias < _tapBias) {
-          _applyCallbacks(GestureType.doubleTap, pointerEvent);
-          _applyCallbacks(GestureType.tapCancel, pointerEvent);
+          await _applyCallbacks(GestureType.doubleTap, pointerEvent);
+          await _applyCallbacks(GestureType.tapCancel, pointerEvent);
           _currentCagegory = null;
         } else {
           // Without record.
@@ -222,24 +229,24 @@ class GestureArena {
         break;
       case _ListenerEventCategory.longPress:
         final offset = pointerEvent.localPosition - _initialMovePoint!;
-        _applyCallbacks(GestureType.longPressUp, pointerEvent, offset: offset);
-        _applyCallbacks(GestureType.longPressEnd, pointerEvent, offset: offset);
+        await _applyCallbacks(GestureType.longPressUp, pointerEvent, offset: offset);
+        await _applyCallbacks(GestureType.longPressEnd, pointerEvent, offset: offset);
         _currentCagegory = null;
         break;
       case _ListenerEventCategory.pan:
         final offset = pointerEvent.localPosition - _initialMovePoint!;
-        _applyCallbacks(GestureType.panEnd, pointerEvent, offset: offset);
+        await _applyCallbacks(GestureType.panEnd, pointerEvent, offset: offset);
         _currentCagegory = null;
         break;
       case _ListenerEventCategory.scale:
         final scale = _calculateScale(pointerEvent);
-        _applyCallbacks(GestureType.scaleEnd, pointerEvent, scale: scale);
+        await _applyCallbacks(GestureType.scaleEnd, pointerEvent, scale: scale);
         _currentCagegory = null;
         break;
       default:
         // null
         // must be sigleTap
-        _applyCallbacks(GestureType.panCancel, pointerEvent);
+        await _applyCallbacks(GestureType.panCancel, pointerEvent);
         _waitForTap(pointerEvent);
         _currentCagegory = _ListenerEventCategory.tap;
     }
@@ -247,46 +254,48 @@ class GestureArena {
     _lastUp = pointerEvent;
   }
 
-  void _onPointerCancel(PointerEvent pointerEvent) {
+  void _onPointerCancel(PointerEvent pointerEvent) async {
 
   }
 
-  void _onPointerHover(PointerEvent pointerEvent) {
-    _applyCallbacks(GestureType.hover, pointerEvent);
+  void _onPointerHover(PointerEvent pointerEvent) async {
+    await _applyCallbacks(GestureType.hover, pointerEvent);
   }
 
-  void _onPointerSignal(PointerEvent pointerEvent) {
+  void _onPointerSignal(PointerEvent pointerEvent) async {
     if (pointerEvent is PointerScrollEvent) {
-      _applyCallbacks(GestureType.scroll, pointerEvent, scrollDelta: pointerEvent.scrollDelta);
+      await _applyCallbacks(GestureType.scroll, pointerEvent, scrollDelta: pointerEvent.scrollDelta);
     }
   }
 
-  void _onTriggerTap(PointerEvent pointerEvent) {
+  void _onTriggerTap(PointerEvent pointerEvent) async {
     if (
       _currentCagegory == _ListenerEventCategory.tap
       && pointerEvent.pointer == _lastUp.pointer
     ) {
-      _applyCallbacks(GestureType.tapUp, pointerEvent);
-      _applyCallbacks(GestureType.tap, pointerEvent);
+      await _applyCallbacks(GestureType.tapUp, pointerEvent);
+      await _applyCallbacks(GestureType.tap, pointerEvent);
       _currentCagegory = null;
     }
   }
 
-  void _onTriggerTouch(PointerEvent pointerEvent) {
+  void _onTriggerTouch(PointerEvent pointerEvent) async {
     if (
       _currentCagegory == null
       && _onScreenPointers.length == 1
       && pointerEvent.pointer == _onScreenPointers[0].pointer
     ) {
-      _applyCallbacks(GestureType.longPress, pointerEvent);
-      _applyCallbacks(GestureType.longPressStart, pointerEvent);
-      _applyCallbacks(GestureType.tapCancel, pointerEvent);
-      _applyCallbacks(GestureType.panCancel, pointerEvent);
+      await _applyCallbacks(GestureType.longPress, pointerEvent);
+      await _applyCallbacks(GestureType.longPressStart, pointerEvent);
+      await _applyCallbacks(GestureType.tapCancel, pointerEvent);
+      await _applyCallbacks(GestureType.panCancel, pointerEvent);
       _currentCagegory = _ListenerEventCategory.longPress;
       _initialMovePoint = pointerEvent.localPosition;
     }
   }
 
+  /// Gesture.scale is created by arena.
+  /// The scale and rotation is calculated from the initial.
   ScaleUpdateDetails _calculateScale(PointerEvent moveEvent) {
     PointerEvent focalEvent;
     // Ensureed that moveEvent is among _touchingEvents.
@@ -325,16 +334,17 @@ class GestureArena {
     emit(ListenerEvent(ListenerEventType.triggerTouch, pointerEvent));
   }
 
-  void _applyCallbacks(
+  Future<void> _applyCallbacks(
     GestureType gestureType,
     PointerEvent pointerEvent,
     {Offset? offset,
     ScaleUpdateDetails? scale,
     Offset? scrollDelta,}
-  ) {
+  ) async {
     final gesture = Gesture(
       gestureType,
       pointerEvent,
+      size,
       offset: offset,
       scale: scale,
       scrollDelta: scrollDelta,

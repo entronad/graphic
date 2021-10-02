@@ -3460,7 +3460,7 @@ parse的过程原则上集中到模块的总parse函数中。
 
 gesture arena改造成一个流式的，
 
-arena为防止listener泄露，还是在view中创建实例
+~~arena为防止listener泄露，还是在view中创建实例~~
 
 每一个 EventType 设置一个 source，因为绝大部分value op 只处理一种 EventType，能提高一点性能，而signal可以采取多次listen的方法。
 
@@ -3473,3 +3473,81 @@ signal的键主要用来区分gesture、resize、输入信号等。
 scope与parse中，也是spec，conv，加后缀，op不用加后缀
 
 同时表示值和op的命名，以值为主。
+
+---
+
+由于不要限制用户指明泛型，Variable中的scale先强制要求。
+
+op需要有一个标明本轮是否已运行过的标志，因为touched的元素不唯一。不通过类似vega那样记录stamp的方式，因为希望更状态化。
+
+view的构造函数中放入size，强制要求。
+
+给op设置一个 isSouce 属性，是的不touch。
+
+通过accessor而不是variable的泛型，可以判断默认scale而不需要显式的泛型
+
+在没有仔细思考之前，先不上theme，目前来看theme的意义不明确，所有设置可以通过具体的spec实现。只需要合理的设置好默认值。
+
+避免chart泛型的理由不成立了，dataset也没有了存在的必要，反而加深了层级。先把variables平铺出来吧，今后要多数据源的时候再说。
+
+changeData改为三态：true一定change，false一定不change，null，根据==判断。
+
+为避免与widget库中撞名，Transform的基类改名VariableTransform
+
+aes，geom，select 的parse的分布有点乱
+
+guide等由于涉及到null表示不要，因此还是通过defaults来进行设置。
+
+Theme没想明白，先不加，需要方便的放到 Defaults 里。
+
+spec 并没有必要是final的，反而影响了复用部分修改的需求。
+
+element 的初始化 selected 还得带上selector名称，用map的形式更简洁一些，且提醒必须要设置select，不过map中只能有一条记录
+
+每次绘制前，还是要重新sort一下graffiti，因为scene是固定的，但scene上显示什么内容可能会被动态改变，zIndex是动态的。比如selector
+
+在RenderOp中，如需此回合什么都不绘制，需将 scene的painter 设为null，无需设置clip
+
+gesture中需要带arenaSize，因为“在100px的区域划过10px”和“在50px的区域划过10px”不能被认为是完全一样的。这个值用arena的值，因为本身 gesture-arena的值就是抽象的与chart无关的，也好实现。只需要size不需要rect是因为gesture中一般用相对坐标，arena的绝对位置不重要。
+
+对于离散的attr的values，设置的values枚举长度必须大于 scale的值域长度，否则会报错。这样是合理的，因为你不能确定超出部分该如何对应，且这个枚举本身就不应该太长。
+
+GradientAttr也可以是连续的，Gradient类本身就有lerp方法
+
+dataflow中加个dirty字段，只有render op 有一个执行了，才会 repaint。
+
+对于polar coord，要设置一个clamp，r不能小于0，先只这样规定，angle再看看
+
+region的限制是图形的限制，而不是坐标系本身的限制，rect坐标系h和v都是无限的，polar坐标系r必须大于0，所以clip仅切region的矩形.
+
+linearScale 加个margin属性，方便根据数据确定最值
+
+在coord中，rangeXXX反映的是抽象域的大小，具体域的大小rect中固定是region，polar中可自定义。不过注意的是，这个具体域不等于 clip，clip的是region。
+
+canvas绘制阴影要注意，先drawShadow，再drawPath。
+
+如果本体可能是透明的，注意drawShadow的transparentOccluder要设为true，否则会很丑。
+
+axis label的offset不要受tickline影响，因为默认没有tickline，有的话让用户自己调节，否则反而让人困惑
+
+必须确保同一个element中的同一个维度的各variable 的scaleConv 相同，因此首先scaleConv要有等号重载，这项检查最好放在positionOp中
+
+实际图表的代数形式中出现unitTag要怎么办还是要考虑下
+
+现在先不考虑 algform 不齐次需要补 unitTag的问题
+
+关于modifer，感觉还是g2的那种更科学，带串联，带单独的symmetric，这样至少画漏斗图更简单。这就带来了一个逻辑：modify之后的图形 position已经不能反映对应的值了。
+
+需要考虑坐标系中某维度的方向（scale？coordRange？）
+
+shape 中还是需要提供 origin 的，多了总比少了好，比如现在pyramid的逻辑，就应该是收到origin中
+
+数字相等要尽量用差值很小，避免出现浮点数精度问题。
+
+遍历寻找最值时，初始值不能取第一个，因为如果第一个是nan，会导致所有比较无效，应该去正负infi
+
+partition elements 也可以有 radius的，因为分割空间并不一定要完全充满。
+
+borderRadius统一通过 BorderRadius类来
+
+每次页面发生一点变化时，会执行paint。所以paint会被频繁的反复执行。现在paint的输入是group、coord等，paint方法中的计算还是太多了，需要固化更多的东西（类似之前的引擎）

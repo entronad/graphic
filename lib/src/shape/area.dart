@@ -19,6 +19,7 @@ abstract class AreaShape extends FunctionShape {
   void paintItem(
     Aes item,
     CoordConv coord,
+    Offset origin,
     Canvas canvas,
   ) => throw UnimplementedError('Area only paints group.');
 }
@@ -43,6 +44,7 @@ class BasicAreaShape extends AreaShape {
   void paintGroup(
     List<Aes> group,
     CoordConv coord,
+    Offset origin,
     Canvas canvas,
   ) {
     assert(!(coord is PolarCoordConv && coord.transposed));
@@ -65,6 +67,10 @@ class BasicAreaShape extends AreaShape {
         currentSegment = [];
       }
     }
+    if (currentSegment.isNotEmpty) {
+      segments.add(currentSegment);
+    }
+    
     if (
       loop &&
       group.first.position[0].dy.isFinite &&

@@ -1,3 +1,4 @@
+import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/graffiti/graffiti.dart';
 
@@ -6,7 +7,7 @@ abstract class Annotation {
     this.zIndex,
   });
 
-  final int? zIndex;
+  int? zIndex;
 
   @override
   bool operator ==(Object other) =>
@@ -14,17 +15,14 @@ abstract class Annotation {
     zIndex == other.zIndex;
 }
 
-abstract class AnnotPainter extends Painter {
-  
-}
+abstract class AnnotPainter extends Painter {}
 
-abstract class AnnotScene extends Scene {
-  
-}
+abstract class AnnotScene extends Scene {}
 
 abstract class AnnotRenderOp<S extends AnnotScene> extends Render<S> {
   AnnotRenderOp(
     Map<String, dynamic> params,
     S scene,
-  ) : super(params, scene);
+    View view,
+  ) : super(params, scene, view);
 }

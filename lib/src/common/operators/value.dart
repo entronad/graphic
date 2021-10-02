@@ -6,5 +6,8 @@ class Value<V> extends Operator<V> {
   Value([V? value]) : super(null, value);
 
   @override
+  bool get isSouce => true;
+
+  @override
   V evaluate() => throw UnimplementedError('Value operator cannot be touched');
 }

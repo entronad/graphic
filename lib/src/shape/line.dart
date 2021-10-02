@@ -17,6 +17,7 @@ abstract class LineShape extends FunctionShape {
   void paintItem(
     Aes item,
     CoordConv coord,
+    Offset origin,
     Canvas canvas,
   ) => throw UnimplementedError('Line only paints group.');
 }
@@ -41,6 +42,7 @@ class BasicLineShape extends LineShape {
   void paintGroup(
     List<Aes> group,
     CoordConv coord,
+    Offset origin,
     Canvas canvas,
   ) {
     final segments = <List<Offset>>[];
@@ -59,6 +61,10 @@ class BasicLineShape extends LineShape {
         currentSegment = [];
       }
     }
+    if (currentSegment.isNotEmpty) {
+      segments.add(currentSegment);
+    }
+
     if (
       loop &&
       group.first.position.last.dy.isFinite &&

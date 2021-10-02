@@ -2,19 +2,21 @@ import 'dart:ui';
 
 import 'package:flutter/painting.dart';
 
+import 'defaults.dart';
+
 class LabelSyle {
-  const LabelSyle({
-    this.style = const TextStyle(),
+  LabelSyle({
+    TextStyle? style,
     this.offset,
     this.rotation,
-  });
+  }) : this.style = style ?? Defaults.textStyle;
 
   /// Note that default color is white.
-  final TextStyle style;
+  TextStyle style;
 
-  final Offset? offset;
+  Offset? offset;
 
-  final double? rotation;
+  double? rotation;
 
   @override
   bool operator ==(Object other) =>
@@ -25,11 +27,14 @@ class LabelSyle {
 }
 
 class Label {
-  Label(this.text, this.style);
+  Label(
+    this.text,
+    [LabelSyle? style,]
+  ) : this.style = style ?? LabelSyle();
 
-  final String text;
+  String text;
 
-  final LabelSyle style;
+  LabelSyle style;
 
   @override
   bool operator ==(Object other) =>
@@ -46,8 +51,8 @@ Offset getPaintPoint(
   Offset? offset,
 ) {
   var paintPoint = Offset(
-    anchor.dx + ((width / (1 - (-1)) * (align.x - (-1)))),
-    anchor.dy + ((height / (1 - (-1)) * (align.y - (-1)))),
+    anchor.dx - (width / 2) + ((width / 2) * align.x),
+    anchor.dy - (height / 2) + ((height / 2) * align.y),
   );
   if (offset != null) {
     paintPoint = paintPoint + offset;

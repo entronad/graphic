@@ -1,10 +1,10 @@
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 
-abstract class Transform {
+abstract class VariableTransform {
   @override
   bool operator ==(Object other) =>
-    other is Transform;
+    other is VariableTransform;
 }
 
 abstract class TransformOp extends Operator<List<Original>> {

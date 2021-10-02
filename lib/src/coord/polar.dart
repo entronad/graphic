@@ -7,11 +7,16 @@ import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/util/map.dart';
 import 'package:graphic/src/util/transform.dart';
 import 'package:vector_math/vector_math_64.dart';
+import 'package:graphic/src/util/math.dart';
 
 import 'coord.dart';
 
 class PolarCoord extends Coord {
   PolarCoord({
+    this.startAngle,
+    this.endAngle,
+    this.innerRadius,
+    this.radius,
     this.angleRange,
     this.angleRangeSignal,
     this.radiusRange,
@@ -29,27 +34,35 @@ class PolarCoord extends Coord {
         transposed: transposed,
       );
 
-  final List<double>? angleRange;
+  double? startAngle;
 
-  final Signal<List<double>>? angleRangeSignal;
+  double? endAngle;
 
-  final List<double>? radiusRange;
+  double? innerRadius;
 
-  final Signal<List<double>>? radiusRangeSignal;
+  double? radius;
+
+  List<double>? angleRange;
+
+  Signal<List<double>>? angleRangeSignal;
+
+  List<double>? radiusRange;
+
+  Signal<List<double>>? radiusRangeSignal;
 
   @override
   bool operator ==(Object other) =>
     other is PolarCoord &&
     super == other &&
+    startAngle == other.startAngle &&
+    endAngle == other.endAngle &&
+    innerRadius == other.innerRadius &&
+    radius == other.radius &&
     DeepCollectionEquality().equals(angleRange, other.angleRange) &&
     DeepCollectionEquality(MapKeyEquality()).equals(angleRangeSignal, other.angleRangeSignal) &&  // SignalUpdata: Function
     DeepCollectionEquality().equals(radiusRange, other.radiusRange) &&
     DeepCollectionEquality(MapKeyEquality()).equals(radiusRangeSignal, radiusRangeSignal);  // SignalUpdata: Function
 }
-
-const canvasAngleStart = -pi / 2;
-
-const canvasAngleEnd = 3 * pi / 2;
 
 class PolarCoordConv extends CoordConv {
   PolarCoordConv(
@@ -59,17 +72,34 @@ class PolarCoordConv extends CoordConv {
     bool transposed,
     List<double> renderRangeX,  // Render range is bind to render dim, ignoring tansposing.
     List<double> renderRangeY,
+    double regionRadius,
+    double startAngle,
+    double endAngle,
+    double innerRadius,
+    double radius,
   )
-    : center = region.center,
+    : this.startAngle = startAngle,
+      this.endAngle = endAngle,
+      this.innerRadius = innerRadius,
+      this.radius = radius,
+      center = region.center,
       angles = [
-        canvasAngleStart + (canvasAngleEnd - canvasAngleStart) * renderRangeX.first,
-        canvasAngleStart + (canvasAngleEnd - canvasAngleStart) * renderRangeX.last,
+        startAngle + (endAngle - startAngle) * renderRangeX.first,
+        startAngle + (endAngle - startAngle) * renderRangeX.last,
       ],
       radiuses = [
-        min(region.width, region.height) / 2 * renderRangeY.first,
-        min(region.width, region.height) / 2 * renderRangeY.last,
+        innerRadius + (radius - innerRadius) * renderRangeY.first,
+        innerRadius + (radius - innerRadius) * renderRangeY.last,
       ],
       super(dim, dimFill, transposed, region);
+
+  final double startAngle;
+
+  final double endAngle;
+
+  final double innerRadius;
+
+  final double radius;
 
   final Offset center;
 
@@ -83,7 +113,10 @@ class PolarCoordConv extends CoordConv {
 
   /// abstractRadius to canvasRadius
   double convertRadius(double abstractRadius) =>
-    radiuses.first + (radiuses.last - radiuses.first) * abstractRadius;
+    max(
+      radiuses.first + (radiuses.last - radiuses.first) * abstractRadius,
+      0,
+    );
   
   /// canvasAngle to abstractAngle
   double invertAngle(double canvasAngle) =>
@@ -129,7 +162,7 @@ class PolarCoordConv extends CoordConv {
     }
 
     var theta = vectorAngle(startVector, pointVector);
-    if ((theta - (canvasAngleEnd - canvasAngleStart)).abs() < 0.001) {
+    if (theta.equalTo(pi * 2)) {
       theta = 0;
     }
     final length = pointVector.length;
@@ -155,6 +188,13 @@ class PolarCoordConvOp extends CoordConvOp<PolarCoordConv> {
     final transposed = params['transposed'] as bool;
     final renderRangeX = params['renderRangeX'] as List<double>;
     final renderRangeY = params['renderRangeY'] as List<double>;
+    final startAngle = params['startAngle'] as double;
+    final endAngle = params['endAngle'] as double;
+    final innerRadius = params['innerRadius'] as double;
+    final radius = params['radius'] as double;
+
+    final regionRadius = region.shortestSide / 2;
+
     return PolarCoordConv(
       region,
       dim,
@@ -162,6 +202,11 @@ class PolarCoordConvOp extends CoordConvOp<PolarCoordConv> {
       transposed,
       renderRangeX,
       renderRangeY,
+      regionRadius,
+      startAngle,
+      endAngle,
+      innerRadius * regionRadius,
+      radius * regionRadius,
     );
   }
 }

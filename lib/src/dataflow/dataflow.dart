@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:graphic/src/common/operators/value.dart';
 import 'package:graphic/src/interaction/event.dart';
+import 'package:meta/meta.dart';
 
 import 'operator.dart';
 
@@ -13,6 +14,8 @@ class Dataflow {
 
   final Set<Operator> _consumes = {};
 
+  final Set<Operator> _runed = {};
+
   final HeapPriorityQueue<Operator> _heap = HeapPriorityQueue(
     (a, b) => a.rank - b.rank,
   );
@@ -21,8 +24,10 @@ class Dataflow {
 
   O add<O extends Operator>(O op) {
     _rank(op);
-    _touch(op);
-
+    if (!op.isSouce) {
+      _touch(op);
+    }
+    
     if (op.consume) {
       _consumes.add(op);
     }
@@ -58,6 +63,7 @@ class Dataflow {
     }
   }
 
+  @protected
   Future<Dataflow> evaluate() async {
     if (_touched.isEmpty) {
       return this;
@@ -71,9 +77,11 @@ class Dataflow {
     while (_heap.isNotEmpty) {
       final op = _heap.removeFirst();
 
-      final next = op.run();
+      final modified = op.run();
 
-      if (next) {
+      _runed.add(op);
+
+      if (modified) {
         for (var target in op.targets) {
           _enqueue(target);
         }
@@ -84,10 +92,14 @@ class Dataflow {
       op.update(null);
     }
 
+    for (var op in _runed) {
+      op.runed = false;
+    }
+
     return this;
   }
 
-  void run() async {
+  Future<void> run() async {
     while (_running != null) {
       await _running;
     }

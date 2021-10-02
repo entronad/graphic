@@ -4,6 +4,7 @@ import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/coord/polar.dart';
+import 'package:graphic/src/util/math.dart';
 
 import 'axis.dart';
 
@@ -24,15 +25,17 @@ class CircularAxisPainter extends AxisPainter<PolarCoordConv> {
 
   @override
   void paint(Canvas canvas) {
-    final region = coord.region;
     final flipSign = flip ? -1 : 1;
-    final r = region.shortestSide * position;
+    final r = coord.radius * position;
 
     if (line != null) {
-      canvas.drawCircle(
-        region.center,
-        region.shortestSide * position,
-        line!.toPaint(),
+      canvas.drawArc(
+        Rect.fromCircle(center: coord.center, radius: r),
+        coord.startAngle,
+        coord.endAngle - coord.startAngle,
+        false,
+        line!.toPaint()
+          ..style = PaintingStyle.stroke,
       );
     }
 
@@ -41,15 +44,19 @@ class CircularAxisPainter extends AxisPainter<PolarCoordConv> {
       assert(tick.tickLine == null);
 
       final angle = coord.convertAngle(tick.position);
-      if (angle >= canvasAngleStart && angle <= canvasAngleEnd) {
+      if (angle >= coord.startAngle && angle <= coord.endAngle) {
         if (tick.label != null) {
           final labelAnchor = coord.polarToOffset(angle, r);
           Alignment align;
           // According to anchor's quadrant.
           final anchorOffset = labelAnchor - coord.center;
           align = Alignment(
-            anchorOffset.dx == 0 ? 0 : -anchorOffset.dx / anchorOffset.dx.abs() * flipSign,
-            anchorOffset.dy == 0 ? 0 : -anchorOffset.dy / anchorOffset.dy.abs() * flipSign,
+            anchorOffset.dx.equalTo(0)
+              ? 0
+              : anchorOffset.dx / anchorOffset.dx.abs() * flipSign,
+            anchorOffset.dy.equalTo(0)
+              ? 0
+              : anchorOffset.dy / anchorOffset.dy.abs() * flipSign,
           );
           paintLabel(
             Label(tick.text, tick.label!),
@@ -78,10 +85,10 @@ class CircularGridPainter extends GridPainter<PolarCoordConv> {
     for (var tick in ticks) {
       if (tick.grid != null) {
         final angle = coord.convertAngle(tick.position);
-        if (angle >= canvasAngleStart && angle <= canvasAngleEnd) {
+        if (angle >= coord.startAngle && angle <= coord.endAngle) {
           canvas.drawLine(
-            region.center,
-            coord.polarToOffset(angle, region.shortestSide),
+            coord.polarToOffset(angle, coord.innerRadius),
+            coord.polarToOffset(angle, coord.radius),
             tick.grid!.toPaint(),
           );
         }

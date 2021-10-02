@@ -18,11 +18,11 @@ abstract class Operator<V> {
     }
   }
 
-  /// Wheather the value should be consume after dataflow run.
-  bool get consume => false;
-
   @protected
   V? value;
+
+  /// Souce operator can not be touched and can not run.
+  bool get isSouce => false;
 
   @protected
   final params = <String, dynamic>{};
@@ -35,6 +35,12 @@ abstract class Operator<V> {
 
   int rank = -1;
 
+  /// Wheather the value should be consume after dataflow run.
+  bool get consume => false;
+
+  /// Has been runed in this pulse.
+  bool runed = false;
+
   void _marshall() {
     for (var name in sources.keys) {
       final op = sources[name]!;
@@ -44,8 +50,14 @@ abstract class Operator<V> {
 
   /// Return modified.
   bool run() {
+    if (runed) {
+      return false;
+    }
+
     _marshall();
-    return update(evaluate());
+    final modified = update(evaluate());
+    runed = true;
+    return modified;
   }
 
   @protected

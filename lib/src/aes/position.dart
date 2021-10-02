@@ -1,10 +1,11 @@
 import 'dart:ui';
 
 import 'package:graphic/src/aes/aes.dart';
+import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/algebra/varset.dart';
-import 'package:graphic/src/geom/geom_element.dart';
+import 'package:graphic/src/geom/element.dart';
 import 'package:graphic/src/scale/scale.dart';
 
 /// For each tuple:
@@ -44,7 +45,7 @@ class PositionEncoder extends Encoder<List<Offset>> {
         ));
       }
     }
-    return position;
+    return completer(position, origin);
   }
 }
 
@@ -58,6 +59,16 @@ class PositionOp extends Operator<PositionEncoder> {
     final scales = params['scales'] as Map<String, ScaleConv>;
     final completer = params['completer'] as PositionCompleter;
     final origin = params['origin'] as Offset;
+
+    assert(form.variablesByDim.every((dim) {
+      final scale = scales[dim.first];
+      for (var variable in dim) {
+        if (scales[variable] != scale) {
+          return false;
+        }
+      }
+      return true;
+    }));
 
     return PositionEncoder(
       form,
@@ -81,12 +92,21 @@ class OriginOp extends Operator<Offset> {
   Offset evaluate() {
     final form = params['form'] as AlgForm;
     final scales = params['scales'] as Map<String, ScaleConv>;
+    final coord = params['coord'] as CoordConv;
 
-    final xField = form.first[0];
-    final yField = form.first[1];
-    return Offset(
-      scales[xField]!.normalZero,
-      scales[yField]!.normalZero,
-    );
+    if (coord.dim == 1) {
+      final field = form.first[0];
+      return Offset(
+        coord.dimFill,
+        scales[field]!.normalZero,
+      );
+    } else {
+      final xField = form.first[0];
+      final yField = form.first[1];
+      return Offset(
+        scales[xField]!.normalZero,
+        scales[yField]!.normalZero,
+      );
+    }
   }
 }

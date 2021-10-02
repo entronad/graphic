@@ -14,9 +14,9 @@ class DodgeModifier extends Modifier {
   });
 
   /// Dodge ratio of band for each group.
-  final double? ratio;
+  double? ratio;
 
-  final bool? symmetric;
+  bool? symmetric;
 
   @override
   bool operator ==(Object other) =>

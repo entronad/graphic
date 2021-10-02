@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/painting.dart';
 import 'package:collection/collection.dart';
+import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/coord/coord.dart';
@@ -22,11 +23,11 @@ class TagAnnotation extends Annotation {
   );
 
   /// Default to the dim 1 and dim 2 variables.
-  final List<String>? variables;
+  List<String>? variables;
 
-  final List values;
+  List values;
 
-  final Label label;
+  Label label;
 
   @override
   bool operator ==(Object other) =>
@@ -65,7 +66,8 @@ class TagAnnotRenderOp extends AnnotRenderOp<TagAnnotScene> {
   TagAnnotRenderOp(
     Map<String, dynamic> params,
     TagAnnotScene scene,
-  ) : super(params, scene);
+    View view,
+  ) : super(params, scene, view);
 
   @override
   void render() {
@@ -78,7 +80,7 @@ class TagAnnotRenderOp extends AnnotRenderOp<TagAnnotScene> {
 
     scene
       ..zIndex = zIndex
-      ..setRegionClip(coord.region, coord is PolarCoordConv);
+      ..setRegionClip(coord.region);
     
     final scaleX = scales[variables[0]]!;
     final scaleY = scales[variables[1]]!;

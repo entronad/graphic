@@ -7,21 +7,24 @@ import 'package:graphic/src/aes/label.dart';
 import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
+import 'package:graphic/src/shape/polygon.dart';
 
 import 'partition.dart';
 import 'modifier/modifier.dart';
 
-class PolygonElement extends PartitionElement {
+class PolygonElement extends PartitionElement<PolygonShape> {
   PolygonElement({
     ColorAttr? color,
     ElevationAttr? elevation,
     GradientAttr? gradient,
     LabelAttr? label,
     Varset? position,
-    ShapeAttr? shape,
+    ShapeAttr<PolygonShape>? shape,
     SizeAttr? size,
-    Modifier? modifier,
+    List<Modifier>? modifiers,
     int? zIndex,
+    String? groupBy,
+    Map<String, Set<int>>? selected,
   }) : super(
     color: color,
     elevation: elevation,
@@ -30,8 +33,10 @@ class PolygonElement extends PartitionElement {
     position: position,
     shape: shape,
     size: size,
-    modifier: modifier,
+    modifiers: modifiers,
     zIndex: zIndex,
+    groupBy: groupBy,
+    selected: selected,
   );
 }
 

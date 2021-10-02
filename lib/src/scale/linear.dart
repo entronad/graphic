@@ -12,6 +12,8 @@ class LinearScale extends ContinuousScale<num> {
 
     num? min,
     num? max,
+    double? marginMin,
+    double? marginMax,
 
     String? title,
     String Function(num)? formatter,
@@ -21,6 +23,8 @@ class LinearScale extends ContinuousScale<num> {
   }) : super(
     min: min,
     max: max,
+    marginMin: marginMin,
+    marginMax: marginMax,
     title: title,
     formatter: formatter,
     ticks: ticks,
@@ -28,9 +32,9 @@ class LinearScale extends ContinuousScale<num> {
     maxTickCount: maxTickCount,
   );
 
-  final num? tickInterval;
+  num? tickInterval;
 
-  final bool? nice;
+  bool? nice;
 
   @override
   bool operator ==(Object other) =>
@@ -51,15 +55,22 @@ class LinearScaleConv extends ContinuousScaleConv<num> {
       min = spec.min;
       max = spec.max;
     } else {
-      var minTmp = tuples.first[variable] as num;
-      var maxTmp = minTmp;
+      // Can't use the first one in case it is nan.
+      num minTmp = double.infinity;
+      num maxTmp = double.negativeInfinity;
       for (var tuple in tuples) {
         final value = tuple[variable] as num;
-        minTmp = math.min(minTmp, value);
-        maxTmp = math.max(maxTmp, value);
+        if (!value.isNaN) {
+          minTmp = math.min(minTmp, value);
+          maxTmp = math.max(maxTmp, value);
+        }
       }
-      min = min ?? minTmp;
-      max = max ?? maxTmp;
+
+      final range = maxTmp - minTmp;
+      final marginMin = range * (spec.marginMin ?? 0.1);  // TODO: default
+      final marginMax = range * (spec.marginMax ?? 0.1);  // TODO: default
+      min = spec.min ?? minTmp - marginMin;
+      max = spec.max ?? maxTmp + marginMax;
     }
 
     // ticks
@@ -98,7 +109,7 @@ class LinearScaleConv extends ContinuousScaleConv<num> {
         min = calcTicks.first;
         max = calcTicks.last;
       } else {
-        final ticks = <num>[];
+        ticks = [];
         for (var tick in calcTicks) {
           if (tick >= min! && tick <= max!) {
             ticks.add(tick);
@@ -129,4 +140,9 @@ class LinearScaleConv extends ContinuousScaleConv<num> {
 
   @override
   String defaultFormatter(num value) => value.toString();
+
+  @override
+  bool operator ==(Object other) =>
+    other is LinearScaleConv &&
+    super == other;
 }

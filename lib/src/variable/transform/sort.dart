@@ -2,12 +2,12 @@ import 'package:graphic/src/dataflow/tuple.dart';
 
 import 'transform.dart';
 
-class Sort extends Transform {
+class Sort extends VariableTransform {
   Sort({
     required this.compare,
   });
 
-  final Comparator<Original> compare;
+  Comparator<Original> compare;
 
   @override
   bool operator ==(Object other) =>

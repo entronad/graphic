@@ -1,7 +1,6 @@
 import 'package:flutter/painting.dart';
 import 'package:graphic/graphic.dart';
 import 'package:graphic/src/chart/view.dart';
-import 'package:graphic/src/guide/interaction/crosshair.dart';
 import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/parse/spec.dart';
 
@@ -9,6 +8,8 @@ import 'axis/axis.dart';
 import 'annotation/line.dart';
 import 'annotation/region.dart';
 import 'annotation/tag.dart';
+import 'interaction/crosshair.dart';
+import 'interaction/tooltip.dart';
 
 void parseGuide(
   Spec spec,
@@ -37,19 +38,19 @@ void parseGuide(
         'zIndex': axisSpec.zIndex ?? 0,
         'coord': scope.coord,
         'dim': dim,
-        'position': axisSpec.position ?? 0,
+        'position': axisSpec.position ?? 0.0,
         'flip': axisSpec.flip ?? false,
         'line': axisSpec.line,
         'ticks': ticks,
-      }, axisScene));
+      }, axisScene, view));
 
       final gridScene = view.graffiti.add(GridScene());
       view.add(GridRenderOp({
-        'gridZindex': axisSpec.gridZIndex ?? 0,
+        'gridZIndex': axisSpec.gridZIndex ?? 0,
         'coord': scope.coord,
         'dim': dim,
         'ticks': ticks,
-      }, gridScene));
+      }, gridScene, view));
     }
   }
 
@@ -67,7 +68,7 @@ void parseGuide(
           'zIndex': annotSpec.zIndex,
           'scales': scope.scales,
           'coord': scope.coord,
-        }, annotScene));
+        }, annotScene, view));
       } else if (annotSpec is LineAnnotation) {
         final dim = annotSpec.dim ?? 1;
         final variable = annotSpec.variable ?? scope.forms.first.first[dim - 1];
@@ -80,7 +81,7 @@ void parseGuide(
           'zIndex': annotSpec.zIndex,
           'scales': scope.scales,
           'coord': scope.coord,
-        }, annotScene));
+        }, annotScene, view));
       } else if (annotSpec is TagAnnotation) {
         final variables = annotSpec.variables ?? [
           scope.forms.first.first[0],
@@ -94,7 +95,7 @@ void parseGuide(
           'zIndex': annotSpec.zIndex,
           'scales': scope.scales,
           'coord': scope.coord,
-        }, annotScene));
+        }, annotScene, view));
       } else {
         throw UnimplementedError('No such annotation type $annotSpec.');
       }
@@ -134,12 +135,12 @@ void parseGuide(
       'selectorName': crosshairSpec.select ?? spec.selects!.keys.first,
       'selector': scope.selector,
       'selects': scope.selectsList[elementIndex],
-      'zIndex': crosshairSpec.zIndex,
+      'zIndex': crosshairSpec.zIndex ?? 0,
       'coord': scope.coord,
-      'groups': scope.updateList[elementIndex],
+      'groups': scope.groupsList[elementIndex],
       'styles': styles,
       'followPointer': followPointer,
-    }, crosshairScene));
+    }, crosshairScene, view));
   }
 
   if (spec.tooltip != null) {
@@ -158,25 +159,25 @@ void parseGuide(
       followPointer = tooltipSpec.followPointer!;
     }
 
-    final tooltipScene = view.graffiti.add(CrosshairScene());
-    view.add(CrosshairRenderOp({
+    final tooltipScene = view.graffiti.add(TooltipScene());
+    view.add(TooltipRenderOp({
       'selectorName': tooltipSpec.select ?? spec.selects!.keys.first,
       'selector': scope.selector,
       'selects': scope.selectsList[elementIndex],
-      'zIndex': tooltipSpec.zIndex,
+      'zIndex': tooltipSpec.zIndex ?? 0,
       'coord': scope.coord,
-      'groups': scope.updateList[elementIndex],
+      'groups': scope.groupsList[elementIndex],
       'originals': scope.originals,
       'align': tooltipSpec.align ?? Alignment.center,
       'offset': tooltipSpec.offset,
       'padding': tooltipSpec.padding ?? EdgeInsets.all(5),
-      'backgroudColor': tooltipSpec.backgroundColor ?? Color(0xff010101),  // TODO: defalut
+      'backgroundColor': tooltipSpec.backgroundColor ?? Color(0xff010101),  // TODO: defalut
       'radius': tooltipSpec.radius,
-      'elevation': tooltipSpec.elevation ?? 1,  // TODO: defalut
+      'elevation': tooltipSpec.elevation ?? 1.0,  // TODO: defalut
       'textStyle': tooltipSpec.textStyle ?? TextStyle(),  // TODO: defalut
       'followPointer': followPointer,
       'variables': tooltipSpec.variables,
       'scales': scope.scales,
-    }, tooltipScene));
+    }, tooltipScene, view));
   }
 }

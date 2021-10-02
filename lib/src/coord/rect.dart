@@ -26,14 +26,14 @@ class RectCoord extends Coord {
         transposed: transposed,
       );
 
-  final List<double>? horizontalRange;
+  List<double>? horizontalRange;
 
-  final Signal<List<double>>? horizontalRangeSignal;
+  Signal<List<double>>? horizontalRangeSignal;
 
   /// Rect coord is from bottom to top.
-  final List<double>? verticalRange;
+  List<double>? verticalRange;
 
-  final Signal<List<double>>? verticalRangeSignal;
+  Signal<List<double>>? verticalRangeSignal;
 
   @override
   bool operator ==(Object other) =>

@@ -25,15 +25,15 @@ abstract class ChannelAttr<AV> extends Attr<AV> {
         onSelect: onSelect,
       );
 
-  final String? variable;
+  String? variable;
 
   /// Used as gradient stop values for continuous
   ///     and lookup table for discrete.
-  final List<AV>? values;
+  List<AV>? values;
 
   /// Gradient stops when continuous, must have same length to values.
   /// Stops can be decreasing for inverse mapping.
-  final List<double>? stops;
+  List<double>? stops;
 
   @override
   bool operator ==(Object other) =>

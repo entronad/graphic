@@ -16,34 +16,12 @@ abstract class PolygonShape extends PartitionShape {}
 
 class HeatmapShape extends PolygonShape {
   HeatmapShape({
-    this.topLeft = Radius.zero,
-    this.topRight = Radius.zero,
-    this.bottomRight = Radius.zero,
-    this.bottomLeft = Radius.zero,
     this.sector = false,
-  }) : rrect = 
-    topLeft != Radius.zero ||
-    topRight != Radius.zero ||
-    bottomRight != Radius.zero ||
-    bottomLeft != Radius.zero;
+    this.borderRadius,
+  });
 
-  final bool rrect;
-
-  /// Top start angle for polar.
   /// X is circular and y is radial.
-  final Radius topLeft;
-
-  /// Top end angle for polar.
-  /// X is circular and y is radial.
-  final Radius topRight;
-
-  /// Bottom end angle for polar.
-  /// X is circular and y is radial.
-  final Radius bottomRight;
-
-  /// Bottom start angle for polar.
-  /// X is circular and y is radial.
-  final Radius bottomLeft;
+  final BorderRadius? borderRadius;
 
   /// Wheather the polygon is sector in polar coord.
   final bool sector;
@@ -51,16 +29,14 @@ class HeatmapShape extends PolygonShape {
   @override
   bool equalTo(Object other) =>
     other is HeatmapShape &&
-    topLeft == other.topLeft &&
-    topRight == other.topRight &&
-    bottomRight == other.bottomRight &&
-    bottomLeft == other.bottomLeft &&
-    sector == other.sector;
+    sector == other.sector &&
+    borderRadius == other.borderRadius;
 
   @override
   void paintGroup(
     List<Aes> group,
     CoordConv coord,
+    Offset origin,
     Canvas canvas,
   ) {
     var stepX = double.infinity;
@@ -81,7 +57,7 @@ class HeatmapShape extends PolygonShape {
     final biasY = stepY / 2;
 
     for (var item in group) {
-      assert(item is HeatmapShape);
+      assert(item.shape is HeatmapShape);
 
       final point = item.position.last;
       final path = Path();
@@ -92,36 +68,52 @@ class HeatmapShape extends PolygonShape {
           coord.convert(Offset(point.dx - biasX, point.dy + biasY)), // topLeft
           coord.convert(Offset(point.dx + biasX, point.dy - biasY)), // bottomRight
         );
-        if (rrect) {
+        if (borderRadius != null) {
           path.addRRect(RRect.fromRectAndCorners(
             rect,
-            topLeft: topLeft,
-            topRight: topRight,
-            bottomRight: bottomRight,
-            bottomLeft: bottomLeft,
+            topLeft: borderRadius!.topLeft,
+            topRight: borderRadius!.topRight,
+            bottomRight: borderRadius!.bottomRight,
+            bottomLeft: borderRadius!.bottomLeft,
           ));
         } else {
           path.addRect(rect);
         }
       } else {
-        assert(!rrect);
-
         if (sector) {
           coord as PolarCoordConv;
           final startAngle = coord.transposed ? point.dy - biasY : point.dx - biasX;
           final endAngle = coord.transposed? point.dy + biasY : point.dx + biasX;
           final r = coord.transposed ? point.dx + biasX : point.dy + biasY;
           final r0 = coord.transposed ? point.dx - biasX : point.dy - biasY;
-          Paths.sector(
-            center: coord.center,
-            r: coord.convertRadius(r),
-            r0: coord.convertRadius(r0),
-            startAngle: coord.convertAngle(startAngle),
-            endAngle: coord.convertAngle(endAngle),
-            clockwise: true,
-            path: path,
-          );
+          if (borderRadius != null) {
+            Paths.rsector(
+              center: coord.center,
+              r: coord.convertRadius(r),
+              r0: coord.convertRadius(r0),
+              startAngle: coord.convertAngle(startAngle),
+              endAngle: coord.convertAngle(endAngle),
+              clockwise: true,
+              path: path,
+              topLeft: borderRadius!.topLeft,
+              topRight: borderRadius!.topRight,
+              bottomRight: borderRadius!.bottomRight,
+              bottomLeft: borderRadius!.bottomLeft,
+            );
+          } else {
+            Paths.sector(
+              center: coord.center,
+              r: coord.convertRadius(r),
+              r0: coord.convertRadius(r0),
+              startAngle: coord.convertAngle(startAngle),
+              endAngle: coord.convertAngle(endAngle),
+              clockwise: true,
+              path: path,
+            );
+          }
         } else {
+          assert(borderRadius == null);
+
           final vertices = [
             Offset(point.dx - biasX, point.dy + biasY),  // topLeft
             Offset(point.dx + biasX, point.dy + biasY),  // topRight

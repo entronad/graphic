@@ -21,9 +21,9 @@ class IntervalSelect extends Select {
     clear: clear,
   );
 
-  final Color? color;
+  Color? color;
 
-  final int? zIndex;
+  int? zIndex;
 
   @override
   bool operator ==(Object other) =>

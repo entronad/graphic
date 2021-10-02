@@ -9,7 +9,8 @@ class GradientAttr extends ChannelAttr<Gradient> {
   GradientAttr({
     Gradient? value,
     String? variable,
-    List<Gradient>? values,  // Only descrete.
+    List<Gradient>? values,
+    List<double>? stops,
     Gradient Function(Original)? encode,
     Map<String, Map<bool, SelectUpdate<Gradient>>>? onSelect,
   })
@@ -18,7 +19,17 @@ class GradientAttr extends ChannelAttr<Gradient> {
         value: value,
         variable: variable,
         values: values,
+        stops: stops,
         encode: encode,
         onSelect: onSelect,
       );
+}
+
+class ContinuousGradientConv extends ContinuousChannelConv<Gradient> {
+  ContinuousGradientConv(List<Gradient> values, List<double> stops)
+    : super(values, stops);
+
+  @override
+  Gradient lerp(Gradient a, Gradient b, double t) =>
+    Gradient.lerp(a, b, t)!;
 }

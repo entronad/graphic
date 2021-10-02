@@ -6,6 +6,8 @@ class TimeScale extends ContinuousScale<DateTime> {
   TimeScale({
     DateTime? min,
     DateTime? max,
+    double? marginMin,
+    double? marginMax,
 
     String? title,
     String Function(DateTime)? formatter,
@@ -15,6 +17,8 @@ class TimeScale extends ContinuousScale<DateTime> {
   }) : super(
     min: min,
     max: max,
+    marginMin: marginMin,
+    marginMax: marginMax,
     title: title,
     formatter: formatter,
     ticks: ticks,
@@ -47,8 +51,12 @@ class TimeScaleConv extends ContinuousScaleConv<DateTime> {
         minTmp = _earlier(minTmp, value);
         maxTmp = _later(maxTmp, value);
       }
-      min = min ?? minTmp;
-      max = max ?? maxTmp;
+
+      final range = maxTmp.difference(minTmp);
+      final marginMin = range * (spec.marginMin ?? 0.1);  // TODO: default
+      final marginMax = range * (spec.marginMax ?? 0.1);  // TODO: default
+      min = min ?? minTmp.subtract(marginMin);
+      max = max ?? maxTmp.add(marginMax);
     }
 
     // ticks
@@ -89,4 +97,9 @@ class TimeScaleConv extends ContinuousScaleConv<DateTime> {
 
   @override
   String defaultFormatter(DateTime value) => value.toString();
+
+  @override
+  bool operator ==(Object other) =>
+    other is TimeScaleConv &&
+    super == other;
 }

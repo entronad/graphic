@@ -1,14 +1,14 @@
 import 'dart:ui';
 
 class StrokeStyle {
-  const StrokeStyle({
+  StrokeStyle({
     this.color = const Color(0xff000000),
     this.width = 1,
   });
 
-  final Color color;
+  Color color;
 
-  final double width;
+  double width;
 
   bool operator ==(Object other) =>
     other is StrokeStyle &&

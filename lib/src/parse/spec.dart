@@ -6,14 +6,18 @@ import 'package:graphic/src/interaction/select/select.dart';
 import 'package:graphic/src/guide/annotation/annotation.dart';
 import 'package:graphic/src/guide/axis/axis.dart';
 import 'package:graphic/src/coord/coord.dart';
-import 'package:graphic/src/data/data_set.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/geom/geom_element.dart';
+import 'package:graphic/src/geom/element.dart';
 import 'package:graphic/src/interaction/event.dart';
+import 'package:graphic/src/variable/transform/transform.dart';
+import 'package:graphic/src/variable/variable.dart';
 
 class Spec<D> {
   Spec({
     required this.data,
+    this.changeData,
+    required this.variables,
+    this.transforms,
     required this.elements,
     this.coord,
     this.padding,
@@ -26,7 +30,13 @@ class Spec<D> {
     this.onSelect,
   });
 
-  final DataSet<D> data;
+  final List<D> data;
+
+  final bool? changeData;
+
+  final Map<String, Variable<D, dynamic>> variables;
+
+  final List<VariableTransform>? transforms;
 
   final List<GeomElement> elements;
 
@@ -34,11 +44,11 @@ class Spec<D> {
 
   final EdgeInsets? padding;
 
-  final List<GuideAxis>? axes;
+  final List<AxisGuide>? axes;
 
-  final Tooltip? tooltip;
+  final TooltipGuide? tooltip;
 
-  final Crosshair? crosshair;
+  final CrosshairGuide? crosshair;
 
   final List<Annotation>? annotations;
 
@@ -52,6 +62,9 @@ class Spec<D> {
   bool operator ==(Object other) =>
     other is Spec &&
     DeepCollectionEquality().equals(data, other.data) &&
+    changeData == other.changeData &&
+    DeepCollectionEquality().equals(variables, other.variables) &&
+    DeepCollectionEquality().equals(transforms, other.transforms) &&
     DeepCollectionEquality().equals(elements, other.elements) &&
     coord == other.coord &&
     padding == other.padding &&

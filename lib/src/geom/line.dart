@@ -7,21 +7,24 @@ import 'package:graphic/src/aes/label.dart';
 import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
+import 'package:graphic/src/shape/line.dart';
 
 import 'function.dart';
 import 'modifier/modifier.dart';
 
-class LineElement extends FunctionElement {
+class LineElement extends FunctionElement<LineShape> {
   LineElement({
     ColorAttr? color,
     ElevationAttr? elevation,
     GradientAttr? gradient,
     LabelAttr? label,
     Varset? position,
-    ShapeAttr? shape,
+    ShapeAttr<LineShape>? shape,
     SizeAttr? size,
-    Modifier? modifier,
+    List<Modifier>? modifiers,
     int? zIndex,
+    String? groupBy,
+    Map<String, Set<int>>? selected,
   }) : super(
     color: color,
     elevation: elevation,
@@ -30,8 +33,10 @@ class LineElement extends FunctionElement {
     position: position,
     shape: shape,
     size: size,
-    modifier: modifier,
+    modifiers: modifiers,
     zIndex: zIndex,
+    groupBy: groupBy,
+    selected: selected,
   );
 }
 

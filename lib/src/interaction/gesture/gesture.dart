@@ -16,7 +16,7 @@ class GestureEvent extends Event {
   final Gesture gesture;
 }
 
-class GestureOp extends Value<Gesture> {
+class GestureOp extends Value<Gesture?> {
   @override
   bool get consume => true;
 }
@@ -28,7 +28,7 @@ void parseGesture(
 ) {
   scope.gesture = view.add(GestureOp());
 
-  view.listen<GestureEvent, Gesture>(
+  view.listen<GestureEvent, Gesture?>(
     view.gestureSource,
     scope.gesture,
     (event) => event.gesture,

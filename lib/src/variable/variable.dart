@@ -1,4 +1,5 @@
 import 'package:graphic/src/chart/view.dart';
+import 'package:graphic/src/common/reserveds.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/parse/parse.dart';
@@ -23,14 +24,14 @@ class Variable<D, V> {
     this.scale,
   });
 
-  final Accessor<D, V> accessor;
+  Accessor<D, V> accessor;
 
   /// Also act like avatar of a variable, keeps it's meta information.
   /// If not provided, a default scale is infered from the type of [V].
   ///     [OrdinalScale] for [String]
   ///     [LinearScale] for [num]
   ///     [TimeScale] for [DateTime]
-  final Scale<V, num>? scale;
+  Scale<V, num>? scale;
 
   @override
   bool operator ==(Object other) =>
@@ -72,16 +73,17 @@ void parseVariable<D>(
   Scope<D> scope,
 ) {
   final accessors = <String, Accessor<D, dynamic>>{};
-  final variableSpecs = spec.data.variables;
+  final variableSpecs = spec.variables;
   for (var field in variableSpecs.keys) {
-    final variableSpec = variableSpecs[field]!;
-    accessors[field] = variableSpec.accessor;
-    if (variableSpec is Variable<D, String>) {
-      scope.scaleSpecs[field] = variableSpec.scale ?? OrdinalScale();
-    } else if (variableSpec is Variable<D, num>) {
-      scope.scaleSpecs[field] = variableSpec.scale ?? LinearScale();
-    } else if (variableSpec is Variable<D, DateTime>) {
-      scope.scaleSpecs[field] = variableSpec.scale ?? TimeScale();
+    final accessor = variableSpecs[field]!.accessor;
+    final scaleSpec = variableSpecs[field]!.scale;
+    accessors[field] = accessor;
+    if (accessor is Accessor<D, String>) {
+      scope.scaleSpecs[field] = scaleSpec ?? OrdinalScale();
+    } else if (accessor is Accessor<D, num>) {
+      scope.scaleSpecs[field] = scaleSpec ?? LinearScale();
+    } else if (accessor is Accessor<D, DateTime>) {
+      scope.scaleSpecs[field] = scaleSpec ?? TimeScale();
     } else {
       throw ArgumentError('Variable value must be String, num, or DataTime');
     }
@@ -92,7 +94,7 @@ void parseVariable<D>(
     'data': scope.data,
   }));
 
-  final transformSpecs = spec.data.transforms;
+  final transformSpecs = spec.transforms;
   if (transformSpecs != null) {
     for (var transformSpec in transformSpecs) {
       if (transformSpec is Filter) {
@@ -108,13 +110,13 @@ void parseVariable<D>(
       } else if (transformSpec is Proportion) {
         final as = transformSpec.as;
         assert(scope.scaleSpecs[as] == null);
-        scope.scaleSpecs[as] = transformSpec.scale ?? LinearScale();
+        scope.scaleSpecs[as] = transformSpec.scale ?? LinearScale(min: 0, max: 1);
 
         originals = view.add(ProportionOp({
           'originals': originals,
-          'varibale': transformSpec.variable,
+          'variable': transformSpec.variable,
           'groupBy': transformSpec.groupBy,
-          'as': transformSpec.as,
+          'as': as,
         }));
       } else if (transformSpec is Sort) {
         originals = view.add(SortOp({
@@ -122,10 +124,12 @@ void parseVariable<D>(
           'compare': transformSpec.compare,
         }));
       } else {
-        throw UnimplementedError('No such transform.');
+        throw UnimplementedError('No such transform $transformSpec.');
       }
     }
   }
 
   scope.originals = originals;
+
+  assert(Reserveds.legalIdentifiers(scope.scaleSpecs.keys));
 }

@@ -30,7 +30,6 @@ void aesBasicItem(
     : PaintingStyle.fill;
   style.strokeWidth = strokeWidth;
   
-  canvas.drawPath(path, style);
   if (aes.elevation != null) {
     canvas.drawShadow(
       path,
@@ -39,4 +38,5 @@ void aesBasicItem(
       true,
     );
   }
+  canvas.drawPath(path, style);
 }

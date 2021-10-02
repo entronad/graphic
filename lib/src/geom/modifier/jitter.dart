@@ -15,7 +15,7 @@ class JitterModifier extends Modifier {
   });
 
   /// Distribution ratio of band.
-  final double? ratio;
+  double? ratio;
 
   @override
   bool operator ==(Object other) =>

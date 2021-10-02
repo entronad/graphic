@@ -1,9 +1,7 @@
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-
-/// The reversed tag for unity varset.
-const _unityTag = '1';
+import 'package:graphic/src/common/reserveds.dart';
 
 Varset _normalize(Varset varset) {
   var maxOrder = 0;
@@ -14,7 +12,7 @@ Varset _normalize(Varset varset) {
     if (term.length < maxOrder) {
       term
         ..length = maxOrder
-        ..fillRange(term.length, maxOrder, _unityTag);
+        ..fillRange(term.length, maxOrder, Reserveds.unitTag);
     }
   }
   return varset;
@@ -29,13 +27,26 @@ typedef AlgTerm = List<String>;
 /// tag -> term -> form
 typedef AlgForm = List<AlgTerm>;
 
+extension AlgFormExt on AlgForm {
+  List<List<String>> get variablesByDim {
+    final rst = <List<String>>[];
+    for (var term in this) {
+      for (var i = 0; i < term.length; i++) {
+        if (rst.length < term.length) {
+          rst.add([]);
+        }
+        rst[i].add(term[i]);
+      }
+    }
+    return rst;
+  }
+}
+
 /// Since faciting is not supported, nest operator is not supported.
 class Varset {
-  Varset(String tag)
-    : assert(tag != _unityTag),
-      form = [[tag]];
+  Varset(String tag) : form = [[tag]];
 
-  Varset.unity() : form = [[_unityTag]];
+  Varset.unity() : form = [[Reserveds.unitTag]];
 
   Varset._from(Varset source)
     : form = source.form.map(

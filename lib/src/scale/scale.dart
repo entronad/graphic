@@ -1,10 +1,10 @@
+import 'package:collection/collection.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/util/assert.dart';
 import 'package:meta/meta.dart';
-
 import 'package:graphic/src/common/converter.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 
@@ -27,22 +27,22 @@ abstract class Scale<V, SV extends num> {
 
   /// To represent this variable in tooltip/legend/label/tag.
   /// Default to use the name of the variable.
-  final String? title;
+  String? title;
 
-  final String Function(V)? formatter;
+  String Function(V)? formatter;
 
-  final List<V>? ticks;
+  List<V>? ticks;
 
-  final int? tickCount;
+  int? tickCount;
 
-  final int? maxTickCount;
+  int? maxTickCount;
 
   @override
   bool operator ==(Object other) =>
     other is Scale<V, SV> &&
     title == other.title &&
     // formatter: Function
-    ticks == other.ticks &&
+    DeepCollectionEquality().equals(ticks, other.ticks) &&
     tickCount == other.tickCount &&
     maxTickCount == other.maxTickCount;
 }
@@ -76,6 +76,13 @@ abstract class ScaleConv<V, SV extends num> extends Converter<V, SV> {
 
   @protected
   String defaultFormatter(V value);
+
+  @override
+  bool operator ==(Object other) =>
+    other is ScaleConv<V, SV> &&
+    // title don't need to be equal.
+    // formatter: Function
+    DeepCollectionEquality().equals(ticks, other.ticks);
 }
 
 /// params:

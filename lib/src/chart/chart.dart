@@ -6,24 +6,28 @@ import 'package:graphic/src/interaction/select/select.dart';
 import 'package:graphic/src/guide/annotation/annotation.dart';
 import 'package:graphic/src/guide/axis/axis.dart';
 import 'package:graphic/src/coord/coord.dart';
-import 'package:graphic/src/data/data_set.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/geom/geom_element.dart';
+import 'package:graphic/src/geom/element.dart';
 import 'package:graphic/src/interaction/event.dart';
 import 'package:graphic/src/parse/spec.dart';
+import 'package:graphic/src/variable/transform/transform.dart';
+import 'package:graphic/src/variable/variable.dart';
 
 import 'view.dart';
 
 /// [D]: Type of source data items.
 class Chart<D> extends StatefulWidget {
   Chart({
-    required DataSet<D> data,
+    required List<D> data,
+    bool? changeData,
+    required Map<String, Variable<D, dynamic>> variables,
+    List<VariableTransform>? transforms,
     required List<GeomElement> elements,
     Coord? coord,
     EdgeInsets? padding,
-    List<GuideAxis>? axes,
-    Tooltip? tooltip,
-    Crosshair? crosshair,
+    List<AxisGuide>? axes,
+    TooltipGuide? tooltip,
+    CrosshairGuide? crosshair,
     List<Annotation>? annotations,
     Map<String, Select>? selects,
     Map<EventType, void Function(Event)>? onEvent,
@@ -31,6 +35,9 @@ class Chart<D> extends StatefulWidget {
     this.rebuild,
   }) : spec = Spec<D>(
     data: data,
+    changeData: changeData,
+    variables: variables,
+    transforms: transforms,
     elements: elements,
     coord: coord,
     padding: padding,
@@ -53,13 +60,12 @@ class Chart<D> extends StatefulWidget {
 
 // initState -> build -> getPositionForChild -> paint
 class _ChartState<D> extends State<Chart<D>> {
-  late View<D> view;
+  final arena = GestureArena(Size.zero);
 
-  @override
-  void initState() {
-    super.initState();
+  View<D>? view;
 
-    view = View<D>(widget.spec);
+  void repaint() {
+    setState(() {});
   }
 
   @override
@@ -67,42 +73,45 @@ class _ChartState<D> extends State<Chart<D>> {
     super.didUpdateWidget(oldWidget);
 
     if (widget.rebuild ?? widget.spec != oldWidget.spec) {
-      view = View<D>(widget.spec);
-    } else if (dataChanged(widget.spec.data, oldWidget.spec.data)) {
-      view.changeData(widget.spec.data.source);
+      view = null;
+    } else if (
+      widget.spec.changeData == true ||
+      (widget.spec.changeData == null && widget.spec.data != oldWidget.spec.data)
+    ) {
+      view!.changeData(widget.spec.data);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return CustomSingleChildLayout(
-      delegate: _ChartLayoutDelegate(view),
+      delegate: _ChartLayoutDelegate<D>(this),
       child: Listener(
         child: CustomPaint(
-          painter: _ChartPainter(view),
+          painter: _ChartPainter<D>(this),
         ),
         onPointerDown: (event) {
-          view.arena.emit(
+          arena.emit(
             ListenerEvent(ListenerEventType.pointerDown, event),
           );
         },
         onPointerMove: (event) {
-          view.arena.emit(
+          arena.emit(
             ListenerEvent(ListenerEventType.pointerMove, event),
           );
         },
         onPointerUp: (event) {
-          view.arena.emit(
+          arena.emit(
             ListenerEvent(ListenerEventType.pointerUp, event),
           );
         },
         onPointerCancel: (event) {
-          view.arena.emit(
+          arena.emit(
             ListenerEvent(ListenerEventType.pointerCancel, event),
           );
         },
         onPointerSignal: (event) {
-          view.arena.emit(
+          arena.emit(
             ListenerEvent(ListenerEventType.pointerSignal, event),
           );
         },
@@ -113,29 +122,44 @@ class _ChartState<D> extends State<Chart<D>> {
 
 // build -> getPositionForChild -> paint
 
-class _ChartLayoutDelegate extends SingleChildLayoutDelegate {
-  _ChartLayoutDelegate(this.view);
+class _ChartLayoutDelegate<D> extends SingleChildLayoutDelegate {
+  _ChartLayoutDelegate(this.state);
 
-  final View view;
+  final _ChartState<D> state;
 
   @override
   bool shouldRelayout(covariant SingleChildLayoutDelegate oldDelegate) => false;
 
   @override
   Offset getPositionForChild(Size size, Size childSize) {
-    view.resize(size);
+    state.arena.size = size;
+
+    if (state.view == null) {
+      state.view = View<D>(
+        state.widget.spec,
+        size,
+        state.arena,
+        state.repaint,
+      );
+    } else if (size != state.view!.size) {
+      state.view!.resize(size);
+    }
+    
     return super.getPositionForChild(size, childSize);
   }
 }
 
-class _ChartPainter extends CustomPainter {
-  _ChartPainter(this.view);
+class _ChartPainter<D> extends CustomPainter {
+  _ChartPainter(this.state);
 
-  final View view;
+  final _ChartState<D> state;
 
   @override
-  void paint(Canvas canvas, Size size) =>
-    view.graffiti.paint(canvas);
+  void paint(Canvas canvas, Size size) {
+    if (state.view != null) {
+      state.view!.graffiti.paint(canvas);
+    }
+  }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) =>

@@ -6,7 +6,7 @@ import 'package:graphic/src/aes/position.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/dataflow/operator.dart';
-import 'package:graphic/src/geom/geom_element.dart';
+import 'package:graphic/src/geom/element.dart';
 import 'package:graphic/src/interaction/select/select.dart';
 import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/parse/spec.dart';
@@ -18,6 +18,7 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'channel.dart';
 import 'color.dart';
 import 'elevation.dart';
+import 'gradient.dart';
 import 'shape.dart';
 import 'size.dart';
 
@@ -32,12 +33,12 @@ abstract class Attr<AV> {
     this.onSelect,
   });
 
-  final AV? value;
+  AV? value;
 
   /// Encode original value tuple to aes value.
-  final AV Function(Original)? encode;
+  AV Function(Original)? encode;
 
-  final Map<String, Map<bool, SelectUpdate<AV>>>? onSelect;
+  Map<String, Map<bool, SelectUpdate<AV>>>? onSelect;
 
   @override
   bool operator ==(Object other) =>
@@ -92,7 +93,7 @@ class AesOp extends Operator<List<Aes>> {
   List<Aes> evaluate() {
     final scaleds = params['scaleds'] as List<Scaled>; // From scaled collector operator.
     final originals = params['originals'] as List<Original>;  // From original collect operator.
-    final positionEncoder = params['positionEncode'] as PositionEncoder; // From PostionOp.
+    final positionEncoder = params['positionEncoder'] as PositionEncoder; // From PostionOp.
     final shapeEncoder = params['shapeEncoder'] as Encoder<Shape>;
     final colorEncoder = params['colorEncoder'] as Encoder<Color>?;
     final gradientEncoder = params['gradientEncoder'] as Encoder<Gradient>?;
@@ -138,6 +139,7 @@ void parseAes(
     final origin = view.add(OriginOp({
       'form': form,
       'scales': scope.scales,
+      'coord': scope.coord,
     }));
     scope.origins.add(origin);
 
@@ -169,7 +171,7 @@ void parseAes(
         : getChannelEncoder<Gradient>(
             elementSpec.gradient!,
             scope.scaleSpecs,
-            null,
+            (List<Gradient> values, List<double> stops) => ContinuousGradientConv(values, stops),
           ),
       'elevationEncoder': elementSpec.elevation == null
         ? null

@@ -1,3 +1,4 @@
+import 'package:graphic/graphic.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/operators/value.dart';
 import 'package:graphic/src/dataflow/operator.dart';
@@ -11,7 +12,7 @@ typedef SignalUpdate<V, E extends Event> = V Function(V initialValue, V preValue
 
 typedef Signal<V> = Map<EventType, SignalUpdate<V, Event>>;
 
-class SignalOp extends Value<Event> {
+class SignalOp extends Value<Event?> {
   @override
   bool get consume => true;
 }
@@ -47,17 +48,17 @@ void parseSignal<D>(
   scope.signal = view.add(SignalOp());
 
   view
-    ..listen<Event, Event>(
+    ..listen<Event, Event?>(
       view.gestureSource,
       scope.signal,
       (event) => event,
     )
-    ..listen<Event, Event>(
+    ..listen<Event, Event?>(
       view.sizeSouce,
       scope.signal,
       (event) => event,
     )
-    ..listen<Event, Event>(
+    ..listen<Event, Event?>(
       view.dataSouce,
       scope.signal,
       (event) => event,

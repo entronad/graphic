@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'dart:math';
 
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/chart/view.dart';
@@ -21,12 +22,12 @@ abstract class Coord {
 
   /// 1: Only has measure dim, the domain dim is dimFill.
   /// 2: Has both domain and measure dim.
-  final int? dim;
+  int? dim;
 
   /// The normal value in [0, 1] to fill the domain dim.
-  final double? dimFill;
+  double? dimFill;
 
-  final bool? transposed;
+  bool? transposed;
 
   @override
   bool operator ==(Object other) =>
@@ -53,8 +54,10 @@ abstract class CoordConv extends Converter<Offset, Offset> {
 
   final Rect region;
 
-  int getCanvasDim(int dim) =>
-    transposed ? (3 - dim) : dim;
+  int getCanvasDim(int abstractDim) =>
+    dim == 1
+      ? (transposed ? 1 : 2) // The last one is the value dim.
+      : (transposed ? (3 - abstractDim) : abstractDim);
 }
 
 /// params:
@@ -85,16 +88,16 @@ void parseCoord(
   View view,
   Scope scope,
 ) {
-  final coordSpec = spec.coord ?? RectCoord();
-
   final region = view.add(RegionOp({
     'size': scope.size,
     'padding': spec.padding ?? (
-      coordSpec is RectCoord
-        ? EdgeInsets.fromLTRB(40, 5, 10, 20)
-        : EdgeInsets.all(40)
+      spec.coord is PolarCoord
+        ? EdgeInsets.all(40)
+        : EdgeInsets.fromLTRB(40, 5, 10, 20)
     ),
   }));
+
+  final coordSpec = spec.coord ?? RectCoord();
 
   if (coordSpec is RectCoord) {
     Operator<List<double>> horizontalRange = view.add(Value<List<double>>(
@@ -149,13 +152,17 @@ void parseCoord(
       }));
     }
 
-    scope.coord = view.add(RectCoordConvOp({
+    scope.coord = view.add(PolarCoordConvOp({
       'region': region,
       'dim': coordSpec.dim ?? 2,
       'dimFill': coordSpec.dimFill ?? 0.5,
       'transposed': coordSpec.transposed ?? false,
       'renderRangeX': angleRange,
       'renderRangeY': radiusRange,
+      'startAngle': coordSpec.startAngle ?? (-pi / 2),
+      'endAngle': coordSpec.endAngle ?? (3 * pi / 2),
+      'innerRadius': coordSpec.innerRadius ?? 0.0,
+      'radius': coordSpec.radius ?? 1.0,
     }));
   }
 }

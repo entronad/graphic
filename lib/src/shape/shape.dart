@@ -12,6 +12,7 @@ abstract class Shape {
   void paintGroup(
     List<Aes> group,
     CoordConv coord,
+    Offset origin,
     Canvas canvas,
   );
 
@@ -20,6 +21,7 @@ abstract class Shape {
   void paintItem(
     Aes item,
     CoordConv coord,
+    Offset origin,
     Canvas canvas,
   );
 

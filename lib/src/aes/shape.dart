@@ -5,13 +5,13 @@ import 'package:graphic/src/util/assert.dart';
 
 import 'channel.dart';
 
-class ShapeAttr extends ChannelAttr<Shape> {
+class ShapeAttr<S extends Shape> extends ChannelAttr<S> {
   ShapeAttr({
-    Shape? value,
+    S? value,
     String? variable,
-    List<Shape>? values,  // Only descrete.
-    Shape Function(Original)? encode,
-    Map<String, Map<bool, SelectUpdate<Shape>>>? onSelect,
+    List<S>? values,  // Only descrete.
+    S Function(Original)? encode,
+    Map<String, Map<bool, SelectUpdate<S>>>? onSelect,
   })
     : assert(isSingle([value, variable, encode])),
       super(

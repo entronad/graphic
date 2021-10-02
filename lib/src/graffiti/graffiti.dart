@@ -25,12 +25,8 @@ abstract class Scene {
   Path? clip;
 
   /// Set a region as clip.
-  void setRegionClip(Rect region, bool circular) => clip = circular
-    ? (Path()..addOval(Rect.fromCircle(
-        center: region.center,
-        radius: region.shortestSide / 2,
-      )))
-    : (Path()..addRect(region));
+  void setRegionClip(Rect region) =>
+    clip = Path()..addRect(region);
 
   void _paint(Canvas canvas) {
     if (painter != null) {
@@ -47,9 +43,16 @@ abstract class Scene {
 }
 
 class Graffiti {
+  Graffiti(Size size) : _clip = Rect.fromLTWH(
+    0,
+    0,
+    size.width,
+    size.height,
+  );
+
   final _scenes = <Scene>[];
 
-  late Rect _clip;
+  Rect _clip;
 
   void set size(Size value) {
     _clip = Rect.fromLTWH(

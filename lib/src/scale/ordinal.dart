@@ -32,4 +32,9 @@ class OrdinalScaleConv extends DiscreteScaleConv<String, OrdinalScale> {
 
   @override
   String defaultFormatter(String value) => value;
+
+  @override
+  bool operator ==(Object other) =>
+    other is OrdinalScaleConv &&
+    super == other;
 }

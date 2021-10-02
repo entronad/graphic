@@ -51,10 +51,7 @@ class HorizontalAxisPainter extends AxisPainter<RectCoordConv> {
         if (tick.label != null) {
           paintLabel(
             Label(tick.text, tick.label!),
-            Offset(
-              x,
-              y + tick.tickLine!.length * flipSign,
-            ),
+            Offset(x, y),
             flip ? Alignment.topCenter : Alignment.bottomCenter,
             canvas,
           );

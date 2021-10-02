@@ -2,12 +2,12 @@ import 'package:graphic/src/dataflow/tuple.dart';
 
 import 'transform.dart';
 
-class Filter extends Transform {
+class Filter extends VariableTransform {
   Filter({
     required this.filter,
   });
 
-  final bool Function(Original) filter;
+  bool Function(Original) filter;
 
   @override
   bool operator ==(Object other) =>

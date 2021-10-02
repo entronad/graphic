@@ -51,10 +51,7 @@ class VerticalAxisPainter extends AxisPainter<RectCoordConv> {
         if (tick.label != null) {
           paintLabel(
             Label(tick.text, tick.label!),
-            Offset(
-              x - tick.tickLine!.length * flipSign,
-              y,
-            ),
+            Offset(x, y),
             flip ? Alignment.centerRight : Alignment.centerLeft,
             canvas,
           );

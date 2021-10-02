@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/aes/color.dart';
 import 'package:graphic/src/aes/elevation.dart';
@@ -12,7 +13,6 @@ import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/coord/coord.dart';
-import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/graffiti.dart';
@@ -32,6 +32,7 @@ import 'modifier/modifier.dart';
 import 'modifier/dodge.dart';
 import 'modifier/jitter.dart';
 import 'modifier/stack.dart';
+import 'modifier/symmetric.dart';
 import 'area.dart';
 import 'custom.dart';
 import 'interval.dart';
@@ -39,7 +40,7 @@ import 'line.dart';
 import 'point.dart';
 import 'polygon.dart';
 
-abstract class GeomElement {
+abstract class GeomElement<S extends Shape> {
   GeomElement({
     this.color,
     this.elevation,
@@ -48,37 +49,37 @@ abstract class GeomElement {
     this.position,
     this.shape,
     this.size,
-    this.modifier,
+    this.modifiers,
     this.zIndex,
     this.groupBy,
     this.selected,
   })
-    : assert(modifier == null || groupBy != null),
-      assert(isSingle([color, gradient], allowNone: true));
+    : assert(isSingle([color, gradient], allowNone: true)),
+      assert(selected == null || selected.keys.length == 1);
 
-  final ColorAttr? color;
+  ColorAttr? color;
 
-  final ElevationAttr? elevation;
+  ElevationAttr? elevation;
 
-  final GradientAttr? gradient;
+  GradientAttr? gradient;
 
-  final LabelAttr? label;
+  LabelAttr? label;
 
-  final Varset? position;
+  Varset? position;
 
-  final ShapeAttr? shape;
+  ShapeAttr<S>? shape;
 
-  final SizeAttr? size;
+  SizeAttr? size;
 
-  final Modifier? modifier;
+  List<Modifier>? modifiers;
 
-  final int? zIndex;
+  int? zIndex;
 
   /// How element items are grouped.
   /// Modifier require groups.
-  final String? groupBy;
+  String? groupBy;
 
-  final Set<int>? selected;
+  Map<String, Set<int>>? selected;
 
   @override
   bool operator ==(Object other) =>
@@ -90,8 +91,9 @@ abstract class GeomElement {
     position == other.position &&
     shape == other.shape &&
     size == other.size &&
-    modifier == modifier &&
+    DeepCollectionEquality().equals(modifiers, other.modifiers) &&
     zIndex == other.zIndex &&
+    groupBy == other.groupBy &&
     selected == other.selected;
 }
 
@@ -128,11 +130,13 @@ class GroupOp extends Operator<AesGroups> {
 }
 
 class ElementPainter extends Painter {
-  ElementPainter(this.groups, this.coord);
+  ElementPainter(this.groups, this.coord, this.origin);
 
   final AesGroups groups;
 
   final CoordConv coord;
+
+  final Offset origin;
 
   @override
   void paint(Canvas canvas) {
@@ -141,6 +145,7 @@ class ElementPainter extends Painter {
       represent.paintGroup(
         group,
         coord,
+        origin,
         canvas,
       );
     }
@@ -156,18 +161,20 @@ class ElementRenderOp extends Render<ElementScene> {
   ElementRenderOp(
     Map<String, dynamic> params,
     ElementScene scene,
-  ) : super(params, scene);
+    View view,
+  ) : super(params, scene, view);
 
   @override
   void render() {
     final zIndex = params['zIndex'] as int;
     final groups = params['groups'] as AesGroups;
     final coord = params['coord'] as CoordConv;
+    final origin = params['origin'] as Offset;
 
     scene
       ..zIndex = zIndex
-      ..setRegionClip(coord.region, coord is PolarCoordConv)
-      ..painter = ElementPainter(groups, coord);
+      ..setRegionClip(coord.region)
+      ..painter = ElementPainter(groups, coord, origin);
   }
 }
 
@@ -209,46 +216,43 @@ void parseGeom(
       'scales': scope.scales,
     }));
 
-    if (elementSpec.modifier != null) {
-      final modifier = elementSpec.modifier!;
-      final form = scope.forms[i];
-      final origin = scope.origins[i];
-      if (modifier is DodgeModifier) {
-        final geomModifier = view.add(DodgeGeomModifierOp({
-          'ratio': modifier.ratio,
-          'symmetric': modifier.symmetric ?? true,
-          'form': form,
-          'scales': scope.scales,
-          'groups': groups,
-        }));
+    if (elementSpec.modifiers != null) {
+      for (var modifier in elementSpec.modifiers!) {
+        final form = scope.forms[i];
+        final origin = scope.origins[i];
+        GeomModifierOp geomModifier;
+        if (modifier is DodgeModifier) {
+          geomModifier = view.add(DodgeGeomModifierOp({
+            'ratio': modifier.ratio,
+            'symmetric': modifier.symmetric ?? true,
+            'form': form,
+            'scales': scope.scales,
+            'groups': groups,
+          }));
+        } else if (modifier is JitterModifier) {
+          geomModifier = view.add(JitterGeomModifierOp({
+            'ratio': modifier.ratio ?? 0.5,
+            'form': form,
+            'scales': scope.scales,
+          }));
+        } else if (modifier is StackModifier) {
+          geomModifier = view.add(StackGeomModifierOp({
+            'origin': origin,
+          }));
+        } else if (modifier is SymmetricModifier) {
+          geomModifier = view.add(SymmetricGeomModifierOp({
+            'origin': origin,
+          }));
+        } else {
+          throw UnimplementedError('No such modifier type: $modifier.');
+        }
         groups = view.add(ModifyOp({
           'groups': groups,
           'modifier': geomModifier,
         }));
-      } else if (modifier is JitterModifier) {
-        final geomModifier = view.add(JitterGeomModifierOp({
-          'ratio': modifier.ratio ?? 0.5,
-          'form': form,
-          'scales': scope.scales,
-        }));
-        groups = view.add(ModifyOp({
-          'groups': groups,
-          'modifier': geomModifier,
-        }));
-      } else if (modifier is StackModifier) {
-        final geomModifier = view.add(StackGeomModifierOp({
-          'symmetric': modifier.symmetric ?? false,
-          'origin': origin,
-        }));
-        groups = view.add(ModifyOp({
-          'groups': groups,
-          'modifier': geomModifier,
-        }));
-      } else {
-        throw UnimplementedError('No such modifier type: $modifier.');
       }
     }
 
-    scope.geomsList.add(groups);
+    scope.groupsList.add(groups);
   }
 }

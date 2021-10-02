@@ -13,12 +13,13 @@ abstract class PointShape extends FunctionShape {
   void paintGroup(
     List<Aes> group,
     CoordConv coord,
+    Offset origin,
     Canvas canvas,
   ) {
     for (var item in group) {
       assert(item.shape is PointShape);
 
-      item.shape.paintItem(item, coord, canvas);
+      item.shape.paintItem(item, coord, origin, canvas);
     }
   }
 
@@ -43,6 +44,7 @@ abstract class PointShapeBase extends PointShape {
   void paintItem(
     Aes item,
     CoordConv coord,
+    Offset origin,
     Canvas canvas,
   ) {
     for (var point in item.position) {

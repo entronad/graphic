@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:collection/collection.dart';
+import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/common/styles.dart';
@@ -11,8 +12,8 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/graffiti.dart';
 import 'package:graphic/src/interaction/select/point.dart';
 
-class Crosshair {
-  Crosshair({
+class CrosshairGuide {
+  CrosshairGuide({
     this.select,
     this.dim,
     this.styles,
@@ -25,25 +26,25 @@ class Crosshair {
   ///     Be a PointSelection.
   ///     Toggle is false.
   ///     No variable.
-  final String? select;
+  String? select;
 
-  final int? dim;
-
-  /// Single means both.
-  final List<StrokeStyle>? styles;
+  int? dim;
 
   /// Single means both.
-  final List<bool>? followPointer;
+  List<StrokeStyle>? styles;
 
-  final int? zIndex;
+  /// Single means both.
+  List<bool>? followPointer;
+
+  int? zIndex;
 
   /// The tooltip can only refer to one element.
   /// This is the index in elements.
-  final int? element;
+  int? element;
 
   @override
   bool operator ==(Object other) =>
-    other is Crosshair &&
+    other is CrosshairGuide &&
     select == other.select &&
     dim == other.dim &&
     DeepCollectionEquality().equals(styles, other.styles) &&
@@ -123,20 +124,26 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
   CrosshairRenderOp(
     Map<String, dynamic> params,
     CrosshairScene scene,
-  ) : super(params, scene);
+    View view,
+  ) : super(params, scene, view);
 
   @override
   void render() {
     final selectorName = params['selectorName'] as String;
-    final selector = params['selector'] as PointSelector;
-    final selects = params['selects'] as Set<int>;
+    final selector = params['selector'] as PointSelector?;
+    final selects = params['selects'] as Set<int>?;
     final zIndex = params['zIndex'] as int;
     final coord = params['coord'] as CoordConv;
     final groups = params['groups'] as AesGroups;
     final styles = params['styles'] as List<StrokeStyle>;
     final followPointer = params['followPointer'] as List<bool>;
 
-    if (selector.name != selectorName) {
+    if (
+      selector == null ||
+      selects == null ||
+      selector.name != selectorName
+    ) {
+      scene.painter = null;
       return;
     }
 
@@ -164,7 +171,7 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
 
     scene
       ..zIndex = zIndex
-      ..setRegionClip(coord.region, coord is PolarCoordConv)
+      ..setRegionClip(coord.region)
       ..painter = painter;
   }
 }

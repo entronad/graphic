@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:collection/collection.dart';
+import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
@@ -22,13 +23,13 @@ class RegionAnnotation extends Annotation {
     zIndex: zIndex,
   );
 
-  final int? dim;
+  int? dim;
 
-  final String? variable;
+  String? variable;
 
-  final List values;
+  List values;
 
-  final Color? color;
+  Color? color;
 
   @override
   bool operator ==(Object other) =>
@@ -105,7 +106,8 @@ class RegionAnnotRenderOp extends AnnotRenderOp<RegionAnnotScene> {
   RegionAnnotRenderOp(
     Map<String, dynamic> params,
     RegionAnnotScene scene,
-  ) : super(params, scene);
+    View view,
+  ) : super(params, scene, view);
 
   @override
   void render() {
@@ -119,7 +121,7 @@ class RegionAnnotRenderOp extends AnnotRenderOp<RegionAnnotScene> {
 
     scene
       ..zIndex = zIndex
-      ..setRegionClip(coord.region, coord is PolarCoordConv);
+      ..setRegionClip(coord.region);
     
     final scale = scales[variable]!;
     final start = scale.normalize(scale.convert(values.first));

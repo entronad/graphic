@@ -8,7 +8,7 @@ import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/geom/geom_element.dart';
+import 'package:graphic/src/geom/element.dart';
 import 'package:graphic/src/interaction/gesture/arena.dart';
 import 'package:graphic/src/graffiti/graffiti.dart';
 import 'package:graphic/src/parse/parse.dart';
@@ -29,13 +29,13 @@ abstract class Select {
     this.clear,
   });
 
-  final int? dim;
+  int? dim;
 
-  final String? variable;
+  String? variable;
 
-  final Set<GestureType>? on;
+  Set<GestureType>? on;
 
-  final Set<GestureType>? clear;
+  Set<GestureType>? clear;
 
   @override
   bool operator ==(Object other) =>
@@ -142,7 +142,8 @@ class SelectorRenderOp extends Render<SelectorScene> {
   SelectorRenderOp(
     Map<String, dynamic> params,
     SelectorScene scene,
-  ) : super(params, scene);
+    View view,
+  ) : super(params, scene, view);
 
   @override
   void render() {
@@ -212,7 +213,8 @@ class SelectUpdateOp extends Operator<AesGroups> {
   @override
   AesGroups evaluate() {
     final groups = params['groups'] as AesGroups;
-    final selector = params['selector'] as Selector;
+    final selector = params['selector'] as Selector?;
+    final initialSelector = params['initialSelector'] as String?;
     final selects = params['selects'] as Set<int>?;
     final shapeUpdaters = params['shapeUpdaters'] as Map<String, Map<bool, SelectUpdate<Shape>>>?;
     final colorUpdaters = params['colorUpdaters'] as Map<String, Map<bool, SelectUpdate<Color>>>?;
@@ -221,21 +223,30 @@ class SelectUpdateOp extends Operator<AesGroups> {
     final labelUpdaters = params['labelUpdaters'] as Map<String, Map<bool, SelectUpdate<Label>>>?;
     final sizeUpdaters = params['sizeUpdaters'] as Map<String, Map<bool, SelectUpdate<double>>>?;
 
-    final shapeUpdater = shapeUpdaters?[selector.name];
-    final colorUpdater = colorUpdaters?[selector.name];
-    final gradientUpdater = gradientUpdaters?[selector.name];
-    final elevationUpdater = elevationUpdaters?[selector.name];
-    final labelUpdater = labelUpdaters?[selector.name];
-    final sizeUpdater = sizeUpdaters?[selector.name];
+    // For initial selected, use the indecated selecor name.
+    final selectorName = selector?.name ?? initialSelector;
 
-    if (selects == null || (
+    if (selectorName == null || selects == null) {
+      return groups
+        .map((group) => [...group])
+        .toList();
+    }
+
+    final shapeUpdater = shapeUpdaters?[selectorName];
+    final colorUpdater = colorUpdaters?[selectorName];
+    final gradientUpdater = gradientUpdaters?[selectorName];
+    final elevationUpdater = elevationUpdaters?[selectorName];
+    final labelUpdater = labelUpdaters?[selectorName];
+    final sizeUpdater = sizeUpdaters?[selectorName];
+
+    if (
       shapeUpdater == null &&
       colorUpdater == null &&
       gradientUpdater == null &&
       elevationUpdater == null &&
       labelUpdater == null &&
       sizeUpdater == null
-    )) {
+    ) {
       return groups
         .map((group) => [...group])
         .toList();
@@ -247,7 +258,7 @@ class SelectUpdateOp extends Operator<AesGroups> {
       for (var i = 0; i < group.length; i++) {
         final aes = group[i];
         final selected = selects.contains(aes.index);
-        groupRst[i] = Aes(
+        groupRst.add(Aes(
           index: aes.index,
           position: [...aes.position],
           shape: _update(aes.shape, selected, shapeUpdater)!,
@@ -256,8 +267,9 @@ class SelectUpdateOp extends Operator<AesGroups> {
           elevation: _update(aes.elevation, selected, elevationUpdater),
           label: _update(aes.label, selected, labelUpdater),
           size: _update(aes.size, selected, sizeUpdater),
-        );
+        ));
       }
+      rst.add(groupRst);
     }
     return rst;
   }
@@ -298,23 +310,33 @@ void parseSelect(
     final selectorScene = view.graffiti.add(SelectorScene());
     view.add(SelectorRenderOp({
       'selector': selector,
-    }, selectorScene));
+    }, selectorScene, view));
 
     for (var i = 0; i < spec.elements.length; i++) {
       final elementSpec = spec.elements[i];
-      final geoms = scope.geomsList[i];
+      final geom = scope.groupsList[i];
+
+      String? initialSelector;
+
+      Set<int>? initialSelected;
+
+      if (elementSpec.selected != null) {
+        initialSelector = elementSpec.selected!.keys.single;
+        initialSelected = elementSpec.selected![initialSelector];
+      }
 
       final selects = view.add(SelectOp({
         'selector': selector,
-        'groups': geoms,
+        'groups': geom,
         'originals': scope.originals,
         'coord': scope.coord,
-      }, elementSpec.selected));
+      }, initialSelected));
       scope.selectsList.add(selects);
 
-      final update = SelectUpdateOp({
-        'groups': geoms,
+      final update = view.add(SelectUpdateOp({
+        'groups': geom,
         'selector': selector,
+        'initialSelector': initialSelector,
         'selects': selects,
         'shapeUpdaters': elementSpec.shape?.onSelect,
         'colorUpdaters': elementSpec.color?.onSelect,
@@ -322,15 +344,21 @@ void parseSelect(
         'elevationUpdaters': elementSpec.elevation?.onSelect,
         'labelUpdaters': elementSpec.label?.onSelect,
         'sizeUpdaters': elementSpec.size?.onSelect,
-      });
-      scope.updateList.add(update);
-
-      final elementScene = view.graffiti.add(ElementScene());
-      view.add(ElementRenderOp({
-        'zIndex': elementSpec.zIndex ?? 0,
-        'groups': update,
-        'coord': scope.coord,
-      }, elementScene));
+      }));
+      scope.groupsList[i] = update;
     }
+  }
+  for (var i = 0; i < spec.elements.length; i++) {
+    final elementSpec = spec.elements[i];
+    final groups = scope.groupsList[i];
+    final origin = scope.origins[i];
+
+    final elementScene = view.graffiti.add(ElementScene());
+    view.add(ElementRenderOp({
+      'zIndex': elementSpec.zIndex ?? 0,
+      'groups': groups,
+      'coord': scope.coord,
+      'origin': origin,
+    }, elementScene, view));
   }
 }

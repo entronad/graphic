@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/painting.dart';
+import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
@@ -12,8 +13,8 @@ import 'package:graphic/src/graffiti/graffiti.dart';
 import 'package:graphic/src/interaction/select/point.dart';
 import 'package:graphic/src/scale/scale.dart';
 
-class Tooltip {
-  Tooltip({
+class TooltipGuide {
+  TooltipGuide({
     this.select,
     this.variables,
     this.followPointer,
@@ -32,37 +33,37 @@ class Tooltip {
   ///     Be a PointSelection.
   ///     Toggle is false.
   ///     No variable.
-  final String? select;
+  String? select;
 
   /// Variables to show.
   /// Default to show all.
-  final List<String>? variables;
+  List<String>? variables;
 
-  final List<bool>? followPointer;
+  List<bool>? followPointer;
 
-  final Alignment? align;
+  Alignment? align;
 
-  final Offset? offset;
+  Offset? offset;
 
-  final EdgeInsets? padding;
+  EdgeInsets? padding;
 
-  final Color? backgroundColor;
+  Color? backgroundColor;
 
-  final Radius? radius;
+  Radius? radius;
 
-  final double? elevation;
+  double? elevation;
 
-  final TextStyle? textStyle;
+  TextStyle? textStyle;
 
-  final int? zIndex;
+  int? zIndex;
 
   /// The tooltip can only refer to one element.
   /// This is the index in elements.
-  final int? element;
+  int? element;
 
   @override
   bool operator ==(Object other) =>
-    other is Tooltip &&
+    other is TooltipGuide &&
     select == other.select &&
     DeepCollectionEquality().equals(variables, other.variables) &&
     DeepCollectionEquality().equals(followPointer, other.followPointer) &&
@@ -165,13 +166,14 @@ class TooltipRenderOp extends Render<TooltipScene> {
   TooltipRenderOp(
     Map<String, dynamic> params,
     TooltipScene scene,
-  ) : super(params, scene);
+    View view,
+  ) : super(params, scene, view);
 
   @override
   void render() {
     final selectorName = params['selectorName'] as String;
-    final selector = params['selector'] as PointSelector;
-    final selects = params['selects'] as Set<int>;
+    final selector = params['selector'] as PointSelector?;
+    final selects = params['selects'] as Set<int>?;
     final zIndex = params['zIndex'] as int;
     final coord = params['coord'] as CoordConv;
     final groups = params['groups'] as AesGroups;
@@ -187,7 +189,12 @@ class TooltipRenderOp extends Render<TooltipScene> {
     final variables = params['variables'] as List<String>?;
     final scales = params['scales'] as Map<String, ScaleConv>;
 
-    if (selector.name != selectorName) {
+    if (
+      selector == null ||
+      selects == null ||
+      selector.name != selectorName
+    ) {
+      scene.painter = null;
       return;
     }
 
@@ -234,7 +241,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
 
     scene
       ..zIndex = zIndex
-      ..setRegionClip(coord.region, coord is PolarCoordConv)
+      ..setRegionClip(coord.region)
       ..painter = painter;
   }
 }

@@ -3,7 +3,7 @@ import 'package:graphic/src/scale/scale.dart';
 
 import 'transform.dart';
 
-class Proportion extends Transform {
+class Proportion extends VariableTransform {
   Proportion({
     required this.variable,
     this.groupBy,
@@ -11,13 +11,13 @@ class Proportion extends Transform {
     this.scale,
   });
 
-  final String variable;
+  String variable;
 
-  final String? groupBy;
+  String? groupBy;
 
-  final String as;
+  String as;
 
-  final Scale? scale;
+  Scale? scale;
 
   @override
   bool operator ==(Object other) =>

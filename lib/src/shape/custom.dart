@@ -13,11 +13,11 @@ abstract class CustomShape extends Shape {
     throw UnimplementedError('Designate default size in your own custom shape');
 }
 
-/// position: [star, end, max, min]
+/// The order of position points dosen't affect the shape.
 class CandlestickShape extends CustomShape {
   CandlestickShape({
     this.hollow = true,
-    this.strokeWidth = 2,
+    this.strokeWidth = 1,
   });
 
   final bool hollow;
@@ -37,13 +37,14 @@ class CandlestickShape extends CustomShape {
   void paintGroup(
     List<Aes> group,
     CoordConv coord,
+    Offset origin,
     Canvas canvas,
   ) {
     assert(coord is RectCoordConv);
     assert(!coord.transposed);
 
     for (var item in group) {
-      item.shape.paintItem(item, coord, canvas);
+      item.shape.paintItem(item, coord, origin, canvas);
     }
   }
 
@@ -51,6 +52,7 @@ class CandlestickShape extends CustomShape {
   void paintItem(
     Aes item,
     CoordConv coord,
+    Offset origin,
     Canvas canvas,
   ) {
     assert(item.shape is CandlestickShape);
@@ -58,7 +60,6 @@ class CandlestickShape extends CustomShape {
 
     final path = Path();
     
-    // [star, end, max, min]
     final points = item.position.map(
       (p) => coord.convert(p)
     ).toList();

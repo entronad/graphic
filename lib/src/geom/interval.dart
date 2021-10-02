@@ -7,21 +7,24 @@ import 'package:graphic/src/aes/label.dart';
 import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
+import 'package:graphic/src/shape/interval.dart';
 
 import 'function.dart';
 import 'modifier/modifier.dart';
 
-class IntervalElement extends FunctionElement {
+class IntervalElement extends FunctionElement<IntervalShape> {
   IntervalElement({
     ColorAttr? color,
     ElevationAttr? elevation,
     GradientAttr? gradient,
     LabelAttr? label,
     Varset? position,
-    ShapeAttr? shape,
+    ShapeAttr<IntervalShape>? shape,
     SizeAttr? size,
-    Modifier? modifier,
+    List<Modifier>? modifiers,
     int? zIndex,
+    String? groupBy,
+    Map<String, Set<int>>? selected,
   }) : super(
     color: color,
     elevation: elevation,
@@ -30,8 +33,10 @@ class IntervalElement extends FunctionElement {
     position: position,
     shape: shape,
     size: size,
-    modifier: modifier,
+    modifiers: modifiers,
     zIndex: zIndex,
+    groupBy: groupBy,
+    selected: selected,
   );
 }
 

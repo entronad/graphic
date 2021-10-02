@@ -6,7 +6,7 @@ import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/data/data_set.dart';
 import 'package:graphic/src/dataflow/operator.dart';
-import 'package:graphic/src/geom/geom_element.dart';
+import 'package:graphic/src/geom/element.dart';
 import 'package:graphic/src/guide/guide.dart';
 import 'package:graphic/src/interaction/gesture/gesture.dart';
 import 'package:graphic/src/interaction/select/select.dart';
@@ -42,25 +42,23 @@ class Scope<D> {
 
   late CoordConvOp coord;
 
-  List<Operator<AesGroups>> geomsList = [];
+  List<Operator<AesGroups>> groupsList = [];
 
   late SelectorOp selector;
 
   List<SelectOp> selectsList = [];
-
-  List<Operator<AesGroups>> updateList = [];
 }
 
 void parse<D>(Spec<D> spec, View<D> view) {
   final scope = Scope<D>();
-  parseGesture(spec, view, scope);
   parseSize(spec, view, scope);
-  parseData(spec, view, scope);
-  parseSignal(spec, view, scope);
-  parseVariable(spec, view, scope);
+  parseGesture(spec, view, scope);
+  parseData<D>(spec, view, scope);
+  parseSignal<D>(spec, view, scope);
+  parseCoord(spec, view, scope);
+  parseVariable<D>(spec, view, scope);
   parseScale(spec, view, scope);
   parseAes(spec, view, scope);
-  parseCoord(spec, view, scope);
   parseGeom(spec, view, scope);
   parseSelect(spec, view, scope);
   parseGuide(spec, view, scope);

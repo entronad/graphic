@@ -14,6 +14,7 @@ abstract class PartitionShape extends Shape {
   void paintItem(
     Aes item,
     CoordConv coord,
+    Offset origin,
     Canvas canvas,
   ) => throw UnimplementedError('Partition only paints group.');
 }

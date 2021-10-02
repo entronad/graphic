@@ -23,11 +23,11 @@ class PointSelect extends Select {
     clear: clear,
   );
 
-  final bool? toggle;
+  bool? toggle;
 
-  final bool? nearest;
+  bool? nearest;
 
-  final double? testRadius;
+  double? testRadius;
 
   @override
   bool operator ==(Object other) =>

@@ -23,11 +23,11 @@ abstract class DiscreteScale<V> extends Scale<V, int> {
   );
 
   /// List is to emphasize the order. It's better to be distinct.
-  final List<V>? values;
+  List<V>? values;
 
   /// How the position will align in the band.
   /// Default is 0.5 in [0, 1].
-  final double? align;
+  double? align;
 
   @override
   bool operator ==(Object other) =>
@@ -99,4 +99,12 @@ abstract class DiscreteScaleConv<V, SP extends DiscreteScale<V>> extends ScaleCo
   
   @override
   V get zero => values.first;
+
+  @override
+  bool operator ==(Object other) =>
+    other is DiscreteScaleConv<V, SP> &&
+    super == other &&
+    DeepCollectionEquality().equals(values, other.values) &&
+    align == other.align &&
+    band == other.band;
 }

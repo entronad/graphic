@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
+import 'package:graphic/src/graffiti/figure.dart';
 
 import 'defaults.dart';
 
@@ -60,14 +61,13 @@ Offset getPaintPoint(
   return paintPoint;
 }
 
-void paintLabel(
+Figure drawLabel(
   Label label,
   /// Where to paint the label, usually on top of the shape.
   Offset anchor,
   /// How the label bounds align the anchor.
   /// If Label is topLeft, it is [-1, -1].
   Alignment align,
-  Canvas canvas,
 ) {
   final painter = TextPainter(
     text: TextSpan(text: label.text, style: label.style.style),
@@ -84,20 +84,17 @@ void paintLabel(
   );
   final rotation = label.style.rotation;
   if (rotation != null) {
-    canvas.save();
-
     final labelCenter = Offset(
       paintPoint.dx + (painter.width / 2),
       paintPoint.dy + (painter.height / 2),
     );
-    canvas.translate(labelCenter.dx, labelCenter.dy);
-    canvas.rotate(rotation);
-    canvas.translate(-labelCenter.dx, -labelCenter.dy);
-
-    painter.paint(canvas, paintPoint);
-
-    canvas.restore();
+    return RotatedTextFigure(
+      painter,
+      paintPoint,
+      rotation,
+      labelCenter,
+    );
   } else {
-    painter.paint(canvas, paintPoint);
+    return TextFigure(painter, paintPoint);
   }
 }

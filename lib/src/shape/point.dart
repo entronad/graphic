@@ -4,23 +4,27 @@ import 'package:flutter/cupertino.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/graffiti/figure.dart';
 
 import 'util/aes_basic_item.dart';
 import 'function.dart';
 
 abstract class PointShape extends FunctionShape {
   @override
-  void paintGroup(
+  List<Figure> drawGroup(
     List<Aes> group,
     CoordConv coord,
     Offset origin,
-    Canvas canvas,
   ) {
+    final rst = <Figure>[];
+
     for (var item in group) {
       assert(item.shape is PointShape);
 
-      item.shape.paintItem(item, coord, origin, canvas);
+      rst.addAll(item.shape.drawItem(item, coord, origin));
     }
+
+    return rst;
   }
 
   @override
@@ -41,40 +45,41 @@ abstract class PointShapeBase extends PointShape {
     strokeWidth == other.strokeWidth;
 
   @override
-  void paintItem(
+  List<Figure> drawItem(
     Aes item,
     CoordConv coord,
     Offset origin,
-    Canvas canvas,
   ) {
     for (var point in item.position) {
       if (!point.dy.isFinite) {
-        return;
+        continue;
       }
     }
 
+    final rst = <Figure>[];
+
     final path = this.path(item, coord);
     final size = item.size ?? defaultSize;
-    aesBasicItem(
+    rst.addAll(drawBasicItem(
       path,
       item,
       hollow,
       strokeWidth,
-      canvas,
-    );
+    ));
     if (item.label != null) {
-      final point = coord.convert(item.position.last);
+      final point = coord.convert(representPoint(item.position));
       final anchor = Offset(
         point.dx,
         point.dy + (size / 2),
       );
-      paintLabel(
+      rst.add(drawLabel(
         item.label!,
         anchor,
         Alignment.topCenter,
-        canvas,
-      );
+      ));
     }
+
+    return rst;
   }
 
   Path path(Aes item, CoordConv coord);

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/interaction/gesture/arena.dart';
 import 'package:graphic/src/util/math.dart';
 
@@ -113,24 +114,11 @@ class IntervalSelector extends Selector {
   }
 }
 
-class IntervalSelectorPainter extends SelectorPainter {
-  IntervalSelectorPainter(
-    this.start,
-    this.end,
-    this.color,
-  );
-
-  final Offset start;
-
-  final Offset end;
-
-  final Color color;
-
-  @override
-  void paint(Canvas canvas) {
-    canvas.drawRect(
-      Rect.fromPoints(start, end),
-      Paint()..color = color,
-    );
-  }
-}
+List<Figure>? drawIntervalSelector(
+  Offset start,
+  Offset end,
+  Color color,
+) => [PathFigure(
+  Path()..addRect(Rect.fromPoints(start, end)),
+  Paint()..color = color,
+)];

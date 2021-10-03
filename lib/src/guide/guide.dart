@@ -106,30 +106,6 @@ void parseGuide(
     final crosshairSpec = spec.crosshair!;
     final elementIndex = crosshairSpec.element ?? 0;
 
-    List<StrokeStyle> styles;
-    if (crosshairSpec.styles == null) {
-      styles = [StrokeStyle(), StrokeStyle()];
-    } else if (crosshairSpec.styles!.length < 2) {
-      styles = [
-        crosshairSpec.styles!.first,
-        crosshairSpec.styles!.first,
-      ];
-    } else {
-      styles = crosshairSpec.styles!;
-    }
-    
-    List<bool> followPointer;
-    if (crosshairSpec.followPointer == null) {
-      followPointer = [false, false];
-    } else if (crosshairSpec.followPointer!.length < 2) {
-      followPointer = [
-        crosshairSpec.followPointer!.first,
-        crosshairSpec.followPointer!.first,
-      ];
-    } else {
-      followPointer = crosshairSpec.followPointer!;
-    }
-
     final crosshairScene = view.graffiti.add(CrosshairScene());
     view.add(CrosshairRenderOp({
       'selectorName': crosshairSpec.select ?? spec.selects!.keys.first,
@@ -138,26 +114,14 @@ void parseGuide(
       'zIndex': crosshairSpec.zIndex ?? 0,
       'coord': scope.coord,
       'groups': scope.groupsList[elementIndex],
-      'styles': styles,
-      'followPointer': followPointer,
+      'styles': crosshairSpec.styles ?? [StrokeStyle(), StrokeStyle()],
+      'followPointer': crosshairSpec.followPointer ?? [false, false],
     }, crosshairScene, view));
   }
 
   if (spec.tooltip != null) {
     final tooltipSpec = spec.tooltip!;
     final elementIndex = tooltipSpec.element ?? 0;
-    
-    List<bool> followPointer;
-    if (tooltipSpec.followPointer == null) {
-      followPointer = [false, false];
-    } else if (tooltipSpec.followPointer!.length < 2) {
-      followPointer = [
-        tooltipSpec.followPointer!.first,
-        tooltipSpec.followPointer!.first,
-      ];
-    } else {
-      followPointer = tooltipSpec.followPointer!;
-    }
 
     final tooltipScene = view.graffiti.add(TooltipScene());
     view.add(TooltipRenderOp({
@@ -175,7 +139,7 @@ void parseGuide(
       'radius': tooltipSpec.radius,
       'elevation': tooltipSpec.elevation ?? 1.0,  // TODO: defalut
       'textStyle': tooltipSpec.textStyle ?? TextStyle(),  // TODO: defalut
-      'followPointer': followPointer,
+      'followPointer': tooltipSpec.followPointer ?? [false, false],
       'variables': tooltipSpec.variables,
       'scales': scope.scales,
     }, tooltipScene, view));

@@ -5,10 +5,11 @@ import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/util/path.dart';
 
-import 'function.dart';
-import 'util/smooth.dart' as smooth_util;
 import 'util/aes_basic_item.dart';
+import 'function.dart';
 
 abstract class AreaShape extends FunctionShape {
   @override
@@ -16,11 +17,10 @@ abstract class AreaShape extends FunctionShape {
     throw UnimplementedError('Area needs no size.');
 
   @override
-  void paintItem(
+  List<Figure> drawItem(
     Aes item,
     CoordConv coord,
     Offset origin,
-    Canvas canvas,
   ) => throw UnimplementedError('Area only paints group.');
 }
 
@@ -41,11 +41,10 @@ class BasicAreaShape extends AreaShape {
     loop == other.loop;
 
   @override
-  void paintGroup(
+  List<Figure> drawGroup(
     List<Aes> group,
     CoordConv coord,
     Offset origin,
-    Canvas canvas,
   ) {
     assert(!(coord is PolarCoordConv && coord.transposed));
     
@@ -94,7 +93,7 @@ class BasicAreaShape extends AreaShape {
       // Because area is a single closed subpath, cannot use polyline.
       path.moveTo(ends.first.dx, ends.first.dy);
       if (smooth) {
-        final segments = smooth_util.smooth(
+        final segments = getBezierSegments(
           ends,
           false,
           true,
@@ -117,7 +116,7 @@ class BasicAreaShape extends AreaShape {
       path.lineTo(starts.last.dx, starts.last.dy);
       final reversedStarts = starts.reversed.toList();
       if (smooth) {
-        final segments = smooth_util.smooth(
+        final segments = getBezierSegments(
           reversedStarts,
           false,
           true,
@@ -140,24 +139,26 @@ class BasicAreaShape extends AreaShape {
       path.close();
     }
 
+    final rst = <Figure>[];
+
     final represent = group.first;
-    aesBasicItem(
+    rst.addAll(drawBasicItem(
       path,
       represent,
       false,
       0,
-      canvas,
-    );
+    ));
 
     for (var item in labels.keys) {
       if (item.label != null) {
-        paintLabel(
+        rst.add(drawLabel(
           item.label!,
           labels[item]!,
           coord.transposed ? Alignment.centerRight : Alignment.topCenter,
-          canvas,
-        );
+        ));
       }
     }
+
+    return rst;
   }
 }

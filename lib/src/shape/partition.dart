@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/graffiti/figure.dart';
 
 import 'shape.dart';
 
@@ -11,10 +12,9 @@ abstract class PartitionShape extends Shape {
     throw UnimplementedError('Partition dose not involve size.');
   
   @override
-  void paintItem(
+  List<Figure> drawItem(
     Aes item,
     CoordConv coord,
     Offset origin,
-    Canvas canvas,
   ) => throw UnimplementedError('Partition only paints group.');
 }

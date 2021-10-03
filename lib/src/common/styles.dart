@@ -17,6 +17,7 @@ class StrokeStyle {
   
   Paint toPaint([Paint? paint]) =>
     (paint ?? Paint())
+      ..style = PaintingStyle.stroke  // Or the canvas.drawPath will not draw the stoke
       ..color = color
       ..strokeWidth = width;
 }

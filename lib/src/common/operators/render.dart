@@ -1,6 +1,6 @@
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/dataflow/operator.dart';
-import 'package:graphic/src/graffiti/graffiti.dart';
+import 'package:graphic/src/graffiti/scene.dart';
 
 /// Render operator holds scene as effect. It has no value.
 /// The scene is set in constructor an can not be reset.

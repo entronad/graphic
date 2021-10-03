@@ -3,8 +3,9 @@ import 'dart:ui';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/shape/util/aes_basic_item.dart';
+import 'package:graphic/src/graffiti/figure.dart';
 
+import 'util/aes_basic_item.dart';
 import 'shape.dart';
 
 abstract class CustomShape extends Shape {
@@ -34,26 +35,26 @@ class CandlestickShape extends CustomShape {
   double get defaultSize => 10;
 
   @override
-  void paintGroup(
+  List<Figure> drawGroup(
     List<Aes> group,
     CoordConv coord,
     Offset origin,
-    Canvas canvas,
   ) {
     assert(coord is RectCoordConv);
     assert(!coord.transposed);
 
+    final rst = <Figure>[];
     for (var item in group) {
-      item.shape.paintItem(item, coord, origin, canvas);
+      rst.addAll(item.shape.drawItem(item, coord, origin));
     }
+    return rst;
   }
 
   @override
-  void paintItem(
+  List<Figure> drawItem(
     Aes item,
     CoordConv coord,
     Offset origin,
-    Canvas canvas,
   ) {
     assert(item.shape is CandlestickShape);
     // candle stick shape dosen't allow NaN measure value.
@@ -70,11 +71,24 @@ class CandlestickShape extends CustomShape {
     final topEdge = ys[1];
     final bottomEdge = ys[2];
     final bottom = ys[3];
-    
-    path.moveTo(x, top);
-    path.lineTo(x, topEdge);
-    path.moveTo(x, bottomEdge);
-    path.lineTo(x, bottom);
+
+    if (hollow) {
+      path.moveTo(x, top);
+      path.lineTo(x, topEdge);
+      path.moveTo(x, bottomEdge);
+      path.lineTo(x, bottom);
+    } else {
+      // Fill will not draw path.lineTo.
+      final strokeBias = strokeWidth / 2;
+      path.addRect(Rect.fromPoints(
+        Offset(x - strokeBias, top),
+        Offset(x + strokeBias, topEdge),
+      ));
+      path.addRect(Rect.fromPoints(
+        Offset(x - strokeBias, bottomEdge),
+        Offset(x + strokeBias, bottom),
+      ));
+    }
 
     path.addRect(Rect.fromPoints(
       Offset(x - bias, topEdge),
@@ -82,12 +96,11 @@ class CandlestickShape extends CustomShape {
     ));
 
     // Color should be set by color attr encode.
-    aesBasicItem(
+    return drawBasicItem(
       path,
       item,
       hollow,
       strokeWidth,
-      canvas,
     );
 
     // No label.

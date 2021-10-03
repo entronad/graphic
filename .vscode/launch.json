@@ -6,6 +6,13 @@
       "request": "launch",
       "type": "dart",
       "program": "./example/lib/main.dart"
-    }
+    },
+    {
+      "name": "performance",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile",
+      "program": "./example/lib/main.dart"
+    },
   ]
 }

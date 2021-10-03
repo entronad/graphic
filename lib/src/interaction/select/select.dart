@@ -9,6 +9,7 @@ import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/geom/element.dart';
+import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/gesture/arena.dart';
 import 'package:graphic/src/graffiti/graffiti.dart';
 import 'package:graphic/src/parse/parse.dart';
@@ -131,8 +132,6 @@ class SelectorOp extends Operator<Selector?> {
   }
 }
 
-abstract class SelectorPainter extends Painter {}
-
 class SelectorScene extends Scene {
   @override
   int get layer => Layers.selector;
@@ -152,7 +151,7 @@ class SelectorRenderOp extends Render<SelectorScene> {
     if (selector is IntervalSelector) {
       scene
         ..zIndex = selector.zIndex
-        ..painter = IntervalSelectorPainter(
+        ..figures = drawIntervalSelector(
             selector.eventPoints.first,
             selector.eventPoints.last,
             selector.color,

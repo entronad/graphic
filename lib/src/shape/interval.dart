@@ -6,11 +6,12 @@ import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/shape/util/aes_basic_item.dart';
+import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/util/math.dart';
+import 'package:graphic/src/util/path.dart';
 
+import 'util/aes_basic_item.dart';
 import 'function.dart';
-import 'util/paths.dart';
 
 abstract class IntervalShape extends FunctionShape {
   @override
@@ -40,12 +41,13 @@ class RectShape extends IntervalShape {
     borderRadius == other.borderRadius;
 
   @override
-  void paintGroup(
+  List<Figure> drawGroup(
     List<Aes> group,
     CoordConv coord,
     Offset origin,
-    Canvas canvas,
   ) {
+    final rst = <Figure>[];
+
     if (coord is RectCoordConv) {
       if (histogram) {
         // histogram
@@ -57,7 +59,7 @@ class RectShape extends IntervalShape {
         List<Offset> position = item.position;
         double bandStart = 0;
         double bandEnd = (group[1].position.first.dx + position.first.dx) / 2;
-        _paintRect(
+        rst.addAll(_drawRect(
           item,
           Rect.fromPoints(
             coord.convert(Offset(bandStart, position[1].dy)),
@@ -65,15 +67,14 @@ class RectShape extends IntervalShape {
           ),
           coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
           coord,
-          canvas,
-        );
+        ));
         // Middle items.
         for (var i = 1; i < group.length - 1; i++) {
           item = group[i];
           position = item.position;
           bandStart = (group[i].position.first.dx + group[i - 1].position.first.dx) / 2;
           bandEnd = (group[i + 1].position.first.dx + group[i].position.first.dx) / 2;
-          _paintRect(
+          rst.addAll(_drawRect(
             item,
             Rect.fromPoints(
               coord.convert(Offset(bandStart, position[1].dy)),
@@ -81,15 +82,14 @@ class RectShape extends IntervalShape {
             ),
             coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
             coord,
-            canvas,
-          );
+          ));
         }
         // Last item.
         item = group.last;
         position = item.position;
         bandStart = (position.first.dx + group[group.length - 2].position.first.dx) / 2;
         bandEnd = 1;
-        _paintRect(
+        rst.addAll(_drawRect(
           item,
           Rect.fromPoints(
             coord.convert(Offset(bandStart, position[1].dy)),
@@ -97,15 +97,14 @@ class RectShape extends IntervalShape {
           ),
           coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
           coord,
-          canvas,
-        );
+        ));
       } else {
         // bar
 
         for (var item in group) {
           for (var point in item.position) {
             if (!point.dy.isFinite) {
-              return;
+              continue;
             }
           }
           
@@ -128,13 +127,12 @@ class RectShape extends IntervalShape {
               start.dy,
             );
           }
-          _paintRect(
+          rst.addAll(_drawRect(
             item,
             rect,
             start +  (end - start) * labelPosition,
             coord,
-            canvas,
-          );
+          ));
         }
       }
     } else if (coord is PolarCoordConv) {
@@ -146,7 +144,7 @@ class RectShape extends IntervalShape {
 
           for (var item in group) {
             final position = item.position;
-            _paintSector(
+            rst.addAll(_drawSector(
               item,
               coord.radiuses.last,
               coord.radiuses.first,
@@ -158,8 +156,7 @@ class RectShape extends IntervalShape {
                 (position[1].dy + position[0].dy) / 2,
               )),
               coord,
-              canvas,
-            );
+            ));
           }
         } else {
           // race track
@@ -168,7 +165,7 @@ class RectShape extends IntervalShape {
             final position = item.position;
             final r = coord.convertRadius(position[0].dx);
             final halfSize = (item.size ?? defaultSize) / 2;
-            _paintSector(
+            rst.addAll(_drawSector(
               item,
               r - halfSize,
               r + halfSize,
@@ -180,15 +177,13 @@ class RectShape extends IntervalShape {
                 (position[1].dy - position[0].dy) / 2,
               )),
               coord,
-              canvas,
-            );
+            ));
             if (item.label != null) {
-              paintLabel(
+              rst.add(drawLabel(
                 item.label!,
                 coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
                 Alignment.center,
-                canvas,
-              );
+              ));
             }
           }
         }
@@ -197,7 +192,7 @@ class RectShape extends IntervalShape {
           // bull eye
 
           for (var item in group) {
-            _paintSector(
+            rst.addAll(_drawSector(
               item,
               coord.radiuses.last,
               coord.radiuses.first,
@@ -208,8 +203,7 @@ class RectShape extends IntervalShape {
                 item.position[0] + (item.position[1] - item.position[0]) * labelPosition
               ),
               coord,
-              canvas,
-            );
+            ));
           }
         } else {
           // rose
@@ -219,7 +213,7 @@ class RectShape extends IntervalShape {
           List<Offset> position = group.first.position;
           double bandStart = 0;
           double bandEnd = (group[1].position.first.dx + position.first.dx) / 2;
-          _paintSector(
+          rst.addAll(_drawSector(
             item,
             coord.convertRadius(position[1].dy),
             coord.convertRadius(position[0].dy),
@@ -228,15 +222,14 @@ class RectShape extends IntervalShape {
             true,
             coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
             coord,
-            canvas,
-          );
+          ));
           // Middle items.
           for (var i = 1; i < group.length - 1; i++) {
             item = group[i];
             position = item.position;
             bandStart = (group[i].position.first.dx + group[i - 1].position.first.dx) / 2;
             bandEnd = (group[i + 1].position.first.dx + group[i].position.first.dx) / 2;
-            _paintSector(
+            rst.addAll(_drawSector(
               item,
               coord.convertRadius(position[1].dy),
               coord.convertRadius(position[0].dy),
@@ -245,15 +238,14 @@ class RectShape extends IntervalShape {
               true,
               coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
               coord,
-              canvas,
-            );
+            ));
           }
           // Last item.
           item = group.last;
           position = item.position;
           bandStart = (position.first.dx + group[group.length - 2].position.first.dx) / 2;
           bandEnd = 1;
-          _paintSector(
+          rst.addAll(_drawSector(
             item,
             coord.convertRadius(position[1].dy),
             coord.convertRadius(position[0].dy),
@@ -262,19 +254,19 @@ class RectShape extends IntervalShape {
             true,
             coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
             coord,
-            canvas,
-          );
+          ));
         }
       }
     }
+
+    return rst;
   }
 
-  void _paintRect(
+  List<Figure> _drawRect(
     Aes item,
     Rect rect,
     Offset labelAnchor,
     CoordConv coord,
-    Canvas canvas,
   ) {
     assert(item.shape is RectShape);
 
@@ -290,26 +282,30 @@ class RectShape extends IntervalShape {
     } else {
       path.addRect(rect);
     }
-    aesBasicItem(
+
+    final rst = <Figure>[];
+
+    rst.addAll(drawBasicItem(
       path,
       item,
       false,
       0,
-      canvas,
-    );
+    ));
+
     if (item.label != null) {
-      paintLabel(
+      rst.add(drawLabel(
         item.label!,
         labelAnchor,
         labelPosition.equalTo(1)
           ? (coord.transposed ? Alignment.centerRight : Alignment.topCenter)
           : Alignment.center,
-        canvas,
-      );
+      ));
     }
+
+    return rst;
   }
 
-  void _paintSector(
+  List<Figure> _drawSector(
     Aes item,
     double r,
     double r0,
@@ -318,7 +314,6 @@ class RectShape extends IntervalShape {
     bool hasLabel,
     Offset labelAnchor,
     PolarCoordConv coord,
-    Canvas canvas,
   ) {
     assert(item.shape is RectShape);
 
@@ -346,13 +341,16 @@ class RectShape extends IntervalShape {
         clockwise: true,
       );
     }
-    aesBasicItem(
+
+    final rst = <Figure>[];
+
+    rst.addAll(drawBasicItem(
       path,
       item,
       false,
       0,
-      canvas,
-    );
+    ));
+
     if (hasLabel && item.label != null) {
       Alignment align;
       if (labelPosition == 1) {
@@ -369,22 +367,22 @@ class RectShape extends IntervalShape {
       } else {
         align = Alignment.center;
       }
-      paintLabel(
+      rst.add(drawLabel(
         item.label!,
         labelAnchor,
         align,
-        canvas,
-      );
+      ));
     }
+
+    return rst;
   }
 
   @override
-  void paintItem(
+  List<Figure> drawItem(
     Aes item,
     CoordConv coord,
     Offset origin,
-    Canvas canvas,
-  ) => throw UnimplementedError('Use _paintRect or _paintSector instead.');
+  ) => throw UnimplementedError('Use _drawRect or _drawSector instead.');
 }
 
 class FunnelShape extends IntervalShape {
@@ -407,13 +405,14 @@ class FunnelShape extends IntervalShape {
     pyramid == other.pyramid;
 
   @override
-  void paintGroup(
+  List<Figure> drawGroup(
     List<Aes> group,
     CoordConv coord,
     Offset origin,
-    Canvas canvas,
   ) {
     assert(coord is RectCoordConv);
+
+    final rst = <Figure>[];
 
     // First item.
     Aes item = group.first;
@@ -427,13 +426,12 @@ class FunnelShape extends IntervalShape {
       coord.convert(Offset(bandEnd, group[1].position[0].dy)),
       coord.convert(Offset(bandStart, position[0].dy)),
     ];
-    _paintSlope(
+    rst.addAll(_drawSlope(
       item,
       corners,
       coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
       coord,
-      canvas,
-    );
+    ));
     // Middle items.
     for (var i = 1; i < group.length - 1; i++) {
       item = group[i];
@@ -446,13 +444,12 @@ class FunnelShape extends IntervalShape {
         coord.convert(Offset(bandEnd, group[i + 1].position[0].dy)),
         coord.convert(Offset(bandStart, position[0].dy)),
       ];
-      _paintSlope(
+      rst.addAll(_drawSlope(
         item,
         corners,
         coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
         coord,
-        canvas,
-      );
+      ));
     }
     // Last item.
     item = group.last;
@@ -467,35 +464,38 @@ class FunnelShape extends IntervalShape {
       coord.convert(Offset(bandEnd, closeStart)),
       coord.convert(Offset(bandStart, position[0].dy)),
     ];
-    _paintSlope(
+    rst.addAll(_drawSlope(
       item,
       corners,
       coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
       coord,
-      canvas,
-    );
+    ));
+
+    return rst;
   }
 
-  void _paintSlope(
+  List<Figure> _drawSlope(
     Aes item,
     List<Offset> corners,
     Offset labelAnchor,
     CoordConv coord,
-    Canvas canvas,
   ) {
     assert(item.shape is FunnelShape);
 
     final path = Path();
     path.addPolygon(corners, true);
-    aesBasicItem(
+
+    final rst = <Figure>[];
+
+    rst.addAll(drawBasicItem(
       path,
       item,
       false,
       0,
-      canvas,
-    );
+    ));
+
     if (item.label != null) {
-      paintLabel(
+      rst.add(drawLabel(
         item.label!,
         labelAnchor,
         labelPosition.equalTo(1)
@@ -503,16 +503,16 @@ class FunnelShape extends IntervalShape {
           : labelPosition.equalTo(0)
             ? (coord.transposed ? Alignment.centerLeft : Alignment.bottomCenter)
             : Alignment.center,
-        canvas,
-      );
+      ));
     }
+
+    return rst;
   }
 
   @override
-  void paintItem(
+  List<Figure> drawItem(
     Aes item,
     CoordConv coord,
     Offset origin,
-    Canvas canvas,
-  ) => throw UnimplementedError('Use _paintSlope instead.');
+  ) => throw UnimplementedError('Use _drawSlope instead.');
 }

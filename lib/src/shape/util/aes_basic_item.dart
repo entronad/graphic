@@ -1,29 +1,28 @@
 import 'dart:ui';
 
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/shape/util/gradient.dart';
 
 /// Aesthetic the basic item with path provided.
 /// Size is considered in path.
 /// It dosen't include label.
-void aesBasicItem(
+List<Figure> drawBasicItem(
   Path path,
   Aes aes,
   bool hollow,
   double strokeWidth,
-  Canvas canvas,
 ) {
+  final rst = <Figure>[];
+
   final style = Paint();
-  Color? shadowColor;
   if (aes.gradient != null) {
     style.shader = toUIGradient(
       aes.gradient!,
       path.getBounds(),
     );
-    shadowColor = getShadowColor(aes.gradient!);
   } else {
     style.color = aes.color!;
-    shadowColor = aes.color!;
   }
   style.style = hollow
     ? PaintingStyle.stroke
@@ -31,12 +30,20 @@ void aesBasicItem(
   style.strokeWidth = strokeWidth;
   
   if (aes.elevation != null) {
-    canvas.drawShadow(
+    Color? shadowColor;
+    if (aes.gradient != null) {
+      shadowColor = getShadowColor(aes.gradient!);
+    } else {
+      shadowColor = aes.color!;
+    }
+    rst.add(ShadowFigure(
       path,
       shadowColor,
       aes.elevation!,
-      true,
-    );
+    ));
   }
-  canvas.drawPath(path, style);
+
+  rst.add(PathFigure(path, style));
+
+  return rst;
 }

@@ -3550,4 +3550,20 @@ partition elements 也可以有 radius的，因为分割空间并不一定要完
 
 borderRadius统一通过 BorderRadius类来
 
-每次页面发生一点变化时，会执行paint。所以paint会被频繁的反复执行。现在paint的输入是group、coord等，paint方法中的计算还是太多了，需要固化更多的东西（类似之前的引擎）
+每次页面发生一点变化时，会执行paint。所以paint会被频繁的反复执行。现在paint的输入是group、coord等，paint方法中的计算还是太多了，需要固化更多的东西（类似之前的引擎）。
+
+shouldRepaint 起到的作用很有限，绝大部分情况下都是要执行paint的（哪怕shouldRepaint是false）。所以优化主要还是靠简化paint方法
+
+为实现paint函数尽量简单的原则，painter类的paint方法要尽量简单，不出现判断等，功能放到不同的painter类。将判断等逻辑放到op中构建painter的地方。
+
+改造graffiti，存储绘制信息的称为 figure，获取figure的方法称为draw
+
+paths还是放到公共util中吧。不光光是shape中用
+
+Single means both 不是一个好的设计，还是老老实实用 [dim1, dim2] 这种形式
+
+对于Figures为空的优化，内部的根据实际方便来，shape中统一返回非null，在elements中判断是否为空。
+
+如果 Paint的style不是 stroke，drawPath 不会绘制线条，但drawLine会
+
+通过性能测试，优化了 paint 方法后比之前每帧运算时间缩短到原来的 1/2 到 2/3 的样子

@@ -6,8 +6,9 @@ import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
+import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/scale/scale.dart';
-import 'package:graphic/src/shape/util/paths.dart';
+import 'package:graphic/src/util/path.dart';
 
 import 'annotation.dart';
 
@@ -41,62 +42,6 @@ class RegionAnnotation extends Annotation {
     color == color;
 }
 
-class RectRegionAnnotPainter extends AnnotPainter {
-  RectRegionAnnotPainter(
-    this.p1,
-    this.p2,
-    this.color,
-  );
-
-  final Offset p1;
-
-  final Offset p2;
-
-  final Color color;
-
-  @override
-  void paint(Canvas canvas) => canvas.drawRect(
-    Rect.fromPoints(p1, p2),
-    Paint()..color = color,
-  );
-}
-
-class SectorRegionAnnotPainter extends AnnotPainter {
-  SectorRegionAnnotPainter(
-    this.center,
-    this.r,
-    this.r0,
-    this.startAngle,
-    this.endAngle,
-    this.color,
-  );
-
-  final Offset center;
-
-  final double r;
-
-  final double r0;
-
-  final double startAngle;
-
-  final double endAngle;
-
-  final Color color;
-
-  @override
-  void paint(Canvas canvas) => canvas.drawPath(
-    Paths.sector(
-      center: center,
-      r: r,
-      r0: r0,
-      startAngle: startAngle,
-      endAngle: endAngle,
-      clockwise: true,
-    ),
-    Paint()..color = color,
-  );
-}
-
 class RegionAnnotScene extends AnnotScene {
   @override
   int get layer => Layers.regionAnnot;
@@ -128,39 +73,47 @@ class RegionAnnotRenderOp extends AnnotRenderOp<RegionAnnotScene> {
     final end = scale.normalize(scale.convert(values.last));
 
     if (coord is RectCoordConv) {
-      scene.painter = RectRegionAnnotPainter(
-        coord.convert(
+      scene.figures = [PathFigure(
+        Path()..addRect(Rect.fromPoints(
+          coord.convert(
           dim == 1
             ? Offset(start, 0)
             : Offset(0, start),
-        ),
-        coord.convert(
-          dim == 1 
-            ? Offset(end, 1)
-            : Offset(1, end),
-        ),
-        color,
-      );
+          ),
+          coord.convert(
+            dim == 1 
+              ? Offset(end, 1)
+              : Offset(1, end),
+          ),
+        )),
+        Paint()..color = color,
+      )];
     } else {
       coord as PolarCoordConv;
       if (coord.getCanvasDim(dim) == 1) {
-        scene.painter = SectorRegionAnnotPainter(
-          coord.center,
-          coord.radiuses.last,
-          coord.radiuses.first,
-          coord.convertAngle(start),
-          coord.convertAngle(end),
-          color,
-        );
+        scene.figures = [PathFigure(
+          Paths.sector(
+            center: coord.center,
+            r: coord.radiuses.last,
+            r0: coord.radiuses.first,
+            startAngle: coord.convertAngle(start),
+            endAngle: coord.convertAngle(end),
+            clockwise: true,
+          ),
+          Paint()..color = color,
+        )];
       } else {
-        scene.painter = SectorRegionAnnotPainter(
-          coord.center,
-          coord.convertRadius(end),
-          coord.convertRadius(start),
-          coord.angles.first,
-          coord.angles.last,
-          color,
-        );
+        scene.figures = [PathFigure(
+          Paths.sector(
+            center: coord.center,
+            r: coord.convertRadius(end),
+            r0: coord.convertRadius(start),
+            startAngle: coord.angles.first,
+            endAngle: coord.angles.last,
+            clockwise: true,
+          ),
+          Paint()..color = color,
+        )];
       }
     }
   }

@@ -7,7 +7,7 @@ import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/operator.dart';
-import 'package:graphic/src/graffiti/graffiti.dart';
+import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/guide/axis/circular.dart';
 import 'package:graphic/src/guide/axis/horizontal.dart';
 import 'package:graphic/src/guide/axis/radial.dart';
@@ -173,26 +173,6 @@ class TickInfoOp extends Operator<List<TickInfo>> {
 
 // axis
 
-abstract class AxisPainter<C extends CoordConv> extends Painter {
-  AxisPainter(
-    this.ticks,
-    this.position,
-    this.flip,
-    this.line,
-    this.coord,
-  );
-
-  final List<TickInfo> ticks;
-
-  final double position;
-
-  final bool flip;
-
-  final StrokeStyle? line;
-
-  final C coord;
-}
-
 class AxisScene extends Scene {
   @override
   int get layer => Layers.axis;
@@ -220,7 +200,7 @@ class AxisRenderOp extends Render<AxisScene> {
     final canvasDim = coord.getCanvasDim(dim);
     if (coord is RectCoordConv) {
       if (canvasDim == 1) {
-        scene.painter = HorizontalAxisPainter(
+        scene.figures = drawHorizontalAxis(
           ticks,
           position,
           flip,
@@ -228,7 +208,7 @@ class AxisRenderOp extends Render<AxisScene> {
           coord,
         );
       } else {
-        scene.painter = VerticalAxisPainter(
+        scene.figures = drawVerticalAxis(
           ticks,
           position,
           flip,
@@ -239,7 +219,7 @@ class AxisRenderOp extends Render<AxisScene> {
     } else {
       coord as PolarCoordConv;
       if (canvasDim == 1) {
-        scene.painter = CircularAxisPainter(
+        scene.figures = drawCircularAxis(
           ticks,
           position,
           flip,
@@ -247,7 +227,7 @@ class AxisRenderOp extends Render<AxisScene> {
           coord,
         );
       } else {
-        scene.painter = RadialAxisPainter(
+        scene.figures = drawRadialAxis(
           ticks,
           position,
           flip,
@@ -260,17 +240,6 @@ class AxisRenderOp extends Render<AxisScene> {
 }
 
 // grid
-
-abstract class GridPainter<C extends CoordConv> extends Painter {
-  GridPainter(
-    this.ticks,
-    this.coord,
-  );
-
-  final List<TickInfo> ticks;
-
-  final C coord;
-}
 
 class GridScene extends Scene {
   @override
@@ -296,12 +265,12 @@ class GridRenderOp extends Render<GridScene> {
     final canvasDim = coord.getCanvasDim(dim);
     if (coord is RectCoordConv) {
       if (canvasDim == 1) {
-        scene.painter = HorizontalGridPainter(
+        scene.figures = drawHorizontalGrid(
           ticks,
           coord,
         );
       } else {
-        scene.painter = VerticalGridPainter(
+        scene.figures = drawVerticalGrid(
           ticks,
           coord,
         );
@@ -309,12 +278,12 @@ class GridRenderOp extends Render<GridScene> {
     } else {
       coord as PolarCoordConv;
       if (canvasDim == 1) {
-        scene.painter = CircularGridPainter(
+        scene.figures = drawCircularGrid(
           ticks,
           coord,
         );
       } else {
-        scene.painter = RadialGridPainter(
+        scene.figures = drawRadialGrid(
           ticks,
           coord,
         );

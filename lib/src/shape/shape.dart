@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/graffiti/figure.dart';
 import 'package:meta/meta.dart';
 import 'package:graphic/src/coord/coord.dart';
 
@@ -9,20 +10,18 @@ abstract class Shape {
   /// The element scene will take the first item shape as represent,
   ///     and it's paintGroup method decides the basic way to paint the wholw group.
   /// It may call each item shape's paintItem to paint different item shapes seperately.
-  void paintGroup(
+  List<Figure> drawGroup(
     List<Aes> group,
     CoordConv coord,
     Offset origin,
-    Canvas canvas,
   );
 
   /// How each item is painted exactly.
   @protected
-  void paintItem(
+  List<Figure> drawItem(
     Aes item,
     CoordConv coord,
     Offset origin,
-    Canvas canvas,
   );
 
   @protected

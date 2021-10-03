@@ -7,10 +7,11 @@ import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/shape/util/aes_basic_item.dart';
+import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/util/path.dart';
 
+import 'util/aes_basic_item.dart';
 import 'partition.dart';
-import 'util/paths.dart';
 
 abstract class PolygonShape extends PartitionShape {}
 
@@ -33,11 +34,10 @@ class HeatmapShape extends PolygonShape {
     borderRadius == other.borderRadius;
 
   @override
-  void paintGroup(
+  List<Figure> drawGroup(
     List<Aes> group,
     CoordConv coord,
     Offset origin,
-    Canvas canvas,
   ) {
     var stepX = double.infinity;
     var stepY = double.infinity;
@@ -55,6 +55,8 @@ class HeatmapShape extends PolygonShape {
     }
     final biasX = stepX / 2;
     final biasY = stepY / 2;
+
+    final rst = <Figure>[];
 
     for (var item in group) {
       assert(item.shape is HeatmapShape);
@@ -127,21 +129,22 @@ class HeatmapShape extends PolygonShape {
         }
       }
 
-      aesBasicItem(
+      rst.addAll(drawBasicItem(
         path,
         item,
         false,
         0,
-        canvas,
-      );
+      ));
+
       if (item.label != null) {
-        paintLabel(
+        rst.add(drawLabel(
           item.label!,
           coord.convert(point),
           Alignment.center,
-          canvas,
-        );
+        ));
       }
     }
+
+    return rst;
   }
 }

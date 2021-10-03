@@ -1,6 +1,6 @@
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/operators/render.dart';
-import 'package:graphic/src/graffiti/graffiti.dart';
+import 'package:graphic/src/graffiti/scene.dart';
 
 abstract class Annotation {
   Annotation({
@@ -14,8 +14,6 @@ abstract class Annotation {
     other is Annotation &&
     zIndex == other.zIndex;
 }
-
-abstract class AnnotPainter extends Painter {}
 
 abstract class AnnotScene extends Scene {}
 

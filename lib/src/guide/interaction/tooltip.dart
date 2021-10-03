@@ -7,9 +7,9 @@ import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/coord/coord.dart';
-import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/graffiti/graffiti.dart';
+import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/select/point.dart';
 import 'package:graphic/src/scale/scale.dart';
 
@@ -78,85 +78,6 @@ class TooltipGuide {
     element == other.element;
 }
 
-class TooltipPainter extends Painter {
-  TooltipPainter(
-    this.anchor,
-    this.align,
-    this.offset,
-    this.padding,
-    this.backgroundColor,
-    this.radius,
-    this.elevation,
-    this.text,
-  );
-
-  final Offset anchor;  // Canvas point.
-
-  final Alignment align;
-
-  final Offset? offset;
-
-  final EdgeInsets padding;
-
-  final Color backgroundColor;
-
-  final Radius? radius;
-
-  final double? elevation;
-
-  final TextSpan text;
-
-  @override
-  void paint(Canvas canvas) {
-    final painter = TextPainter(
-      text: text,
-      textDirection: TextDirection.ltr,
-    );
-    painter.layout();
-
-    final width = padding.left + painter.width + padding.right;
-    final height = padding.top + painter.height + padding.bottom;
-
-    final paintPoint = getPaintPoint(
-      anchor,
-      width,
-      height,
-      align,
-      offset,
-    );
-
-    final widow = Rect.fromLTWH(
-      paintPoint.dx,
-      paintPoint.dy,
-      width,
-      height,
-    );
-
-    final widowPath = radius == null
-      ? (Path()..addRect(widow))
-      : (Path()..addRRect(RRect.fromRectAndRadius(widow, radius!)));
-    
-    canvas.drawPath(
-      widowPath,
-      Paint()..color = backgroundColor
-    );
-
-    if (elevation != null) {
-      canvas.drawShadow(
-        widowPath,
-        backgroundColor,
-        elevation!,
-        true,
-      );
-    }
-
-    painter.paint(
-      canvas,
-      paintPoint + padding.topLeft,
-    );
-  }
-}
-
 class TooltipScene extends Scene {
   @override
   int get layer => Layers.tooltip;
@@ -194,7 +115,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
       selects == null ||
       selector.name != selectorName
     ) {
-      scene.painter = null;
+      scene.figures = null;
       return;
     }
 
@@ -224,24 +145,59 @@ class TooltipRenderOp extends Render<TooltipScene> {
       title = scale.title;
       textContent = textContent + '\n$title:${scale.formatter(original[field])}';
     }
-    
-    final painter = TooltipPainter(
+
+    final painter = TextPainter(
+      text: TextSpan(text: textContent, style: textStyle),
+      textDirection: TextDirection.ltr,
+    );
+    painter.layout();
+
+    final width = padding.left + painter.width + padding.right;
+    final height = padding.top + painter.height + padding.bottom;
+
+    final paintPoint = getPaintPoint(
       coord.convert(Offset(
         followPointer[0] ? pointer.dx : selected!.dx,
         followPointer[1] ? pointer.dy : selected!.dy,
       )),
+      width,
+      height,
       align,
       offset,
-      padding,
-      backgroundColor,
-      radius,
-      elevation,
-      TextSpan(text: textContent, style: textStyle),
     );
+
+    final widow = Rect.fromLTWH(
+      paintPoint.dx,
+      paintPoint.dy,
+      width,
+      height,
+    );
+
+    final widowPath = radius == null
+      ? (Path()..addRect(widow))
+      : (Path()..addRRect(RRect.fromRectAndRadius(widow, radius)));
+    
+    final figures = <Figure>[];
+
+    if (elevation != null) {
+      figures.add(ShadowFigure(
+        widowPath,
+        backgroundColor,
+        elevation,
+      ));
+    }
+    figures.add(PathFigure(
+      widowPath,
+      Paint()..color = backgroundColor,
+    ));
+    figures.add(TextFigure(
+      painter,
+      paintPoint + padding.topLeft,
+    ));
 
     scene
       ..zIndex = zIndex
       ..setRegionClip(coord.region)
-      ..painter = painter;
+      ..figures = figures.isEmpty ? null : figures;
   }
 }

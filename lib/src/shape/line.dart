@@ -4,21 +4,21 @@ import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/util/path.dart';
 
-import 'function.dart';
 import 'util/aes_basic_item.dart';
-import 'util/paths.dart';
+import 'function.dart';
 
 abstract class LineShape extends FunctionShape {
   @override
   double get defaultSize => 2;
 
   @override
-  void paintItem(
+  List<Figure> drawItem(
     Aes item,
     CoordConv coord,
     Offset origin,
-    Canvas canvas,
   ) => throw UnimplementedError('Line only paints group.');
 }
 
@@ -39,11 +39,10 @@ class BasicLineShape extends LineShape {
     loop == other.loop;
 
   @override
-  void paintGroup(
+  List<Figure> drawGroup(
     List<Aes> group,
     CoordConv coord,
     Offset origin,
-    Canvas canvas,
   ) {
     final segments = <List<Offset>>[];
     final labels = <Aes, Offset>{};
@@ -83,24 +82,26 @@ class BasicLineShape extends LineShape {
       );
     }
 
+    final rst = <Figure>[];
+
     final represent = group.first;
-    aesBasicItem(
+    rst.addAll(drawBasicItem(
       path,
       represent,
       true,
       represent.size ?? defaultSize,
-      canvas,
-    );
+    ));
 
     for (var item in labels.keys) {
       if (item.label != null) {
-        paintLabel(
+        rst.add(drawLabel(
           item.label!,
           labels[item]!,
           coord.transposed ? Alignment.centerRight : Alignment.topCenter,
-          canvas,
-        );
+        ));
       }
     }
+
+    return rst;
   }
 }

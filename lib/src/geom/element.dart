@@ -15,7 +15,9 @@ import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/graffiti/graffiti.dart';
+import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/scale/discrete.dart';
@@ -129,29 +131,6 @@ class GroupOp extends Operator<AesGroups> {
   }
 }
 
-class ElementPainter extends Painter {
-  ElementPainter(this.groups, this.coord, this.origin);
-
-  final AesGroups groups;
-
-  final CoordConv coord;
-
-  final Offset origin;
-
-  @override
-  void paint(Canvas canvas) {
-    for (var group in groups) {
-      final represent = group.first.shape;
-      represent.paintGroup(
-        group,
-        coord,
-        origin,
-        canvas,
-      );
-    }
-  }
-}
-
 class ElementScene extends Scene {
   @override
   int get layer => Layers.element;
@@ -171,10 +150,21 @@ class ElementRenderOp extends Render<ElementScene> {
     final coord = params['coord'] as CoordConv;
     final origin = params['origin'] as Offset;
 
+    final figures = <Figure>[];
+
+    for (var group in groups) {
+      final representShape = group.first.shape;
+      figures.addAll(representShape.drawGroup(
+        group,
+        coord,
+        origin,
+      ));
+    }
+
     scene
       ..zIndex = zIndex
       ..setRegionClip(coord.region)
-      ..painter = ElementPainter(groups, coord, origin);
+      ..figures = figures.isEmpty ? null : figures;
   }
 }
 

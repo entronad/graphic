@@ -5,7 +5,9 @@ import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
+import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/scale/scale.dart';
+import 'package:graphic/src/util/path.dart';
 
 import 'annotation.dart';
 
@@ -42,53 +44,6 @@ class LineAnnotation extends Annotation {
     style == other.style;
 }
 
-class LineAnnotPainter extends AnnotPainter {
-  LineAnnotPainter(
-    this.start,
-    this.end,
-    this.style,
-  );
-
-  final Offset start;
-
-  final Offset end;
-
-  final StrokeStyle style;
-
-  @override
-  void paint(Canvas canvas) =>
-    canvas.drawLine(start, end, style.toPaint());
-}
-
-class ArcLineAnnotPainter extends AnnotPainter {
-  ArcLineAnnotPainter(
-    this.center,
-    this.r,
-    this.startAngle,
-    this.endAngle,
-    this.style,
-  );
-
-  final Offset center;
-
-  final double r;
-
-  final double startAngle;
-
-  final double endAngle;
-
-  final StrokeStyle style;
-
-  @override
-  void paint(Canvas canvas) => canvas.drawArc(
-    Rect.fromCircle(center: center, radius: r),
-    startAngle,
-    endAngle - startAngle,
-    false,
-    style.toPaint(),
-  );
-}
-
 class LineAnnotScene extends AnnotScene {
   @override
   int get layer => Layers.lineAnnot;
@@ -119,27 +74,33 @@ class LineAnnotRenderOp extends AnnotRenderOp<LineAnnotScene> {
     final position = scale.normalize(scale.convert(value));
 
     if (coord is PolarCoordConv && coord.getCanvasDim(dim) == 2) {
-      scene.painter = ArcLineAnnotPainter(
-        coord.center,
-        coord.convertRadius(position),
-        coord.angles.first,
-        coord.angles.last,
-        style,
-      );
+      scene.figures = [PathFigure(
+        Path()..addArc(
+          Rect.fromCircle(
+            center: coord.center,
+            radius: coord.convertRadius(position),
+          ),
+          coord.angles.first,
+          coord.angles.last - coord.angles.first,
+        ),
+        style.toPaint(),
+      )];
     } else {
-      scene.painter = LineAnnotPainter(
-        coord.convert(
-          dim == 1
-            ? Offset(position, 0)
-            : Offset(0, position),
+      scene.figures = [PathFigure(
+        Paths.line(
+          from: coord.convert(
+            dim == 1
+              ? Offset(position, 0)
+              : Offset(0, position),
+          ),
+          to: coord.convert(
+            dim == 1 
+              ? Offset(position, 1)
+              : Offset(1, position),
+          ),
         ),
-        coord.convert(
-          dim == 1 
-            ? Offset(position, 1)
-            : Offset(1, position),
-        ),
-        style,
-      );
+        style.toPaint(),
+      )];
     }
   }
 }

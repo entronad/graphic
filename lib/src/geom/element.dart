@@ -16,7 +16,6 @@ import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
-import 'package:graphic/src/graffiti/graffiti.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/parse/spec.dart';

@@ -40,6 +40,9 @@ export 'src/shape/line.dart' show LineShape, BasicLineShape;
 export 'src/shape/point.dart' show PointShape, CircleShape, SquareShape;
 export 'src/shape/polygon.dart' show PolygonShape, HeatmapShape;
 
+export 'src/graffiti/figure.dart'
+  show Figure, PathFigure, ShadowFigure, TextFigure, RotatedTextFigure;
+
 export 'src/coord/polar.dart' show PolarCoord;
 export 'src/coord/rect.dart' show RectCoord;
 
@@ -49,6 +52,7 @@ export 'src/guide/interaction/tooltip.dart' show TooltipGuide;
 export 'src/guide/interaction/crosshair.dart' show CrosshairGuide;
 export 'src/guide/annotation/line.dart' show LineAnnotation;
 export 'src/guide/annotation/region.dart' show RegionAnnotation;
+export 'src/guide/annotation/mark.dart' show MarkAnnotation;
 export 'src/guide/annotation/tag.dart' show TagAnnotation;
 
 export 'src/interaction/event.dart' show Event, EventType;

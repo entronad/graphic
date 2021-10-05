@@ -1,76 +1,52 @@
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
-import 'package:collection/collection.dart';
-import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/label.dart';
-import 'package:graphic/src/common/layers.dart';
-import 'package:graphic/src/coord/coord.dart';
-import 'package:graphic/src/scale/scale.dart';
+import 'package:graphic/src/graffiti/figure.dart';
 
-import 'annotation.dart';
+import 'figure.dart';
 
-class TagAnnotation extends Annotation {
+class TagAnnotation extends FigureAnnotation {
   TagAnnotation({
-    this.variables,
-    required this.values,
     required this.label,
+    this.align,
 
+    List<String>? variables,
+    List? values,
+    Offset? anchor,
     int? zIndex,
   }) : super(
+    variables: variables,
+    values: values,
+    anchor: anchor,
     zIndex: zIndex,
   );
 
-  /// Default to the dim 1 and dim 2 variables.
-  List<String>? variables;
-
-  List values;
-
   Label label;
+
+  Alignment? align;
 
   @override
   bool operator ==(Object other) =>
     other is TagAnnotation &&
     super == other &&
-    DeepCollectionEquality().equals(variables, other.variables) &&
-    DeepCollectionEquality().equals(values, values) &&
-    label == other.label;
+    label == other.label &&
+    align == other.align;
 }
 
-class TagAnnotScene extends AnnotScene {
-  @override
-  int get layer => Layers.tagAnnot;
-}
-
-class TagAnnotRenderOp extends AnnotRenderOp<TagAnnotScene> {
-  TagAnnotRenderOp(
-    Map<String, dynamic> params,
-    TagAnnotScene scene,
-    View view,
-  ) : super(params, scene, view);
+class TagAnnotOp extends FigureAnnotOp {
+  TagAnnotOp(Map<String, dynamic> params) : super(params);
 
   @override
-  void render() {
-    final variables = params['variables'] as List<String>;
-    final values = params['values'] as List;
+  List<Figure>? evaluate() {
+    final anchor = params['anchor'] as Offset;
     final label = params['label'] as Label;
-    final zIndex = params['zIndex'] as int;
-    final scales = params['scales'] as Map<String, ScaleConv>;
-    final coord = params['coord'] as CoordConv;
-
-    scene
-      ..zIndex = zIndex
-      ..setRegionClip(coord.region);
+    final align = params['align'] as Alignment;
     
-    final scaleX = scales[variables[0]]!;
-    final scaleY = scales[variables[1]]!;
-    scene.figures = [drawLabel(
+    return [drawLabel(
       label,
-      coord.convert(Offset(
-        scaleX.normalize(scaleX.convert(values[0])),
-        scaleY.normalize(scaleY.convert(values[1])),
-      )),
-      Alignment.center,
+      anchor,
+      align,
     )];
   }
 }

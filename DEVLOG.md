@@ -3567,3 +3567,9 @@ Single means both 不是一个好的设计，还是老老实实用 [dim1, dim2] 
 如果 Paint的style不是 stroke，drawPath 不会绘制线条，但drawLine会
 
 通过性能测试，优化了 paint 方法后比之前每帧运算时间缩短到原来的 1/2 到 2/3 的样子
+
+label的align大多数时候是通过内部机制决定的（比如axis的象限、flitp，interval的上中下），用户只通过offset调节。而tag可将align设置成可用户自定义的。
+
+tag如果设置绝对位置，会不限于region，变成全图表可用。
+
+现在有了Figure的概念，可以将tag和figure统一，提供更强大的功能，然后在抽象个tag

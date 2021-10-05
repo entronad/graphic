@@ -7,6 +7,8 @@ import 'package:graphic/src/parse/spec.dart';
 import 'axis/axis.dart';
 import 'annotation/line.dart';
 import 'annotation/region.dart';
+import 'annotation/figure.dart';
+import 'annotation/mark.dart';
 import 'annotation/tag.dart';
 import 'interaction/crosshair.dart';
 import 'interaction/tooltip.dart';
@@ -82,18 +84,44 @@ void parseGuide(
           'scales': scope.scales,
           'coord': scope.coord,
         }, annotScene, view));
-      } else if (annotSpec is TagAnnotation) {
-        final variables = annotSpec.variables ?? [
-          scope.forms.first.first[0],
-          scope.forms.first.first[1],
-        ];
-        final annotScene = view.graffiti.add(LineAnnotScene());
-        view.add(LineAnnotRenderOp({
-          'variables': variables,
-          'values': annotSpec.values,
-          'label': annotSpec.label,
+      } else if (annotSpec is FigureAnnotation) {
+        var anchor;
+        if (annotSpec.anchor != null) {
+          anchor = annotSpec.anchor;
+        } else {
+          anchor = view.add(FigureAnnotAnchorOp({
+            'variables': annotSpec.variables ?? [
+              scope.forms.first.first[0],
+              scope.forms.first.first[1],
+            ],
+            'values': annotSpec.values,
+            'scales': scope.scales,
+            'coord': scope.coord,
+          }));
+        }
+
+        FigureAnnotOp annot;
+        if (annotSpec is MarkAnnotation) {
+          annot = view.add(MarkAnnotOp({
+            'anchor': anchor,
+            'path': annotSpec.path,
+            'style': annotSpec.style,
+            'elevation': annotSpec.elevation,
+          }));
+        } else {
+          annotSpec as TagAnnotation;
+          annot = view.add(TagAnnotOp({
+            'anchor': anchor,
+            'label': annotSpec.label,
+            'align': annotSpec.align ?? Alignment.center,
+          }));
+        }
+
+        final annotScene = view.graffiti.add(FigureAnnotScene());
+        view.add(FigureAnnotRenderOp({
+          'figures': annot,
+          'inRegion': annotSpec.anchor == null,
           'zIndex': annotSpec.zIndex,
-          'scales': scope.scales,
           'coord': scope.coord,
         }, annotScene, view));
       } else {

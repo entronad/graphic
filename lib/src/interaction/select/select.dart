@@ -11,7 +11,6 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/geom/element.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/gesture/arena.dart';
-import 'package:graphic/src/graffiti/graffiti.dart';
 import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/shape/shape.dart';
@@ -103,16 +102,16 @@ class SelectorOp extends Operator<Selector?> {
         name,
         spec.dim,
         spec.variable,
-        [gesture.pointerEvent.position],
+        [gesture.pointerEvent.localPosition],
       );
     } else {
       spec as IntervalSelect;
       List<Offset> eventPoints;
       if (type == GestureType.scaleUpdate) {
-        eventPoints = [gesture.scale!.focalPoint, gesture.pointerEvent.position];
+        eventPoints = [gesture.scale!.focalPoint, gesture.pointerEvent.localPosition];
       } else { // panUpdate
         if (value is IntervalSelector) {
-          final delta = gesture.pointerEvent.delta;
+          final delta = gesture.pointerEvent.localDelta;
           eventPoints = value!.eventPoints
             .map((point) => point + delta)
             .toList();

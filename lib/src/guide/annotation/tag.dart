@@ -13,7 +13,7 @@ class TagAnnotation extends FigureAnnotation {
 
     List<String>? variables,
     List? values,
-    Offset? anchor,
+    Offset Function(Size)? anchor,
     int? zIndex,
   }) : super(
     variables: variables,

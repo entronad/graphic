@@ -29,7 +29,7 @@ List<Figure> drawBasicItem(
     : PaintingStyle.fill;
   style.strokeWidth = strokeWidth;
   
-  if (aes.elevation != null) {
+  if (aes.elevation != null && aes.elevation != 0) {
     Color? shadowColor;
     if (aes.gradient != null) {
       shadowColor = getShadowColor(aes.gradient!);

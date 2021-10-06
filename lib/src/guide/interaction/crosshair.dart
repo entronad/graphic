@@ -83,25 +83,33 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
       return;
     }
 
-    final pointer = coord.invert(selector.eventPoints.first);
-    final index = selects.first;
+    final pointer = coord.invert(selector.eventPoints.last);
 
-    Offset? selected;
-    for (var group in groups) {
-      for (var aes in group) {
-        if (aes.index == index) {
-          selected = aes.representPoint;
-          break;
+    Offset selectedPoint = Offset.zero;
+    int count = 0;
+    final findPoint = (int index) {
+      for (var group in groups) {
+        for (var aes in group) {
+          if (aes.index == index) {
+            count += 1;
+            return aes.representPoint;
+          }
         }
       }
+      return Offset.zero;
+    };
+    for (var index in selects) {
+      selectedPoint += findPoint(index);
     }
+    selectedPoint = selectedPoint / count.toDouble();
+
+    final cross = Offset(
+      followPointer[0] ? pointer.dx : selectedPoint.dx,
+      followPointer[1] ? pointer.dy : selectedPoint.dy,
+    );
 
     final figures = <Figure>[];
 
-    final cross = Offset(
-      followPointer[0] ? pointer.dx : selected!.dx,
-      followPointer[1] ? pointer.dy : selected!.dy,
-    );
     final region = coord.region;
     final canvasStyleX = coord.transposed ? styles[1] : styles[0];
     final canvasStyleY = coord.transposed ? styles[0] : styles[1];

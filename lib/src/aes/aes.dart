@@ -161,7 +161,7 @@ void parseAes(
       ),
       'colorEncoder': elementSpec.gradient == null  // If gradient is null color will have defult value.
         ? getChannelEncoder<Color>(
-            elementSpec.color ?? ColorAttr(value: Color(0xff1890ff)),
+            elementSpec.color ?? ColorAttr(value: Defaults.primaryColor),
             scope.scaleSpecs,
             (List<Color> values, List<double> stops) => ContinuousColorConv(values, stops),
           )

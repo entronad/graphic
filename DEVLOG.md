@@ -3573,3 +3573,13 @@ label的align大多数时候是通过内部机制决定的（比如axis的象限
 tag如果设置绝对位置，会不限于region，变成全图表可用。
 
 现在有了Figure的概念，可以将tag和figure统一，提供更强大的功能，然后在抽象个tag
+
+为强调防止混淆，Mark中命名为relativePath
+
+elevation只是增加了一个阴影，并不能使视图在上层，决定上下层的是绘制顺序
+
+注意 用到gesture.PointerEvent的时候要用localPosition（localFocalPoint)
+
+RenderOp需要处理的不仅仅是figures，还有zIndex和clip，所以没有通用的FigureRenderOp，内部工具一般直接将生成figures的工作放在RenderOp中，但有时候也需要单独的FigureOp（比如抽象提取（FigureAnnot）和用户定制（ToolTip））时。
+
+tooltip可以选中多个tuple，这发生在select 设置了variable或为 interval selector时。因此对tooltip的select不需要做限制，如果选中多个且位置不为followPointer，位置取其中心（主要是为stack服务）。tooltip的输入为多个tuples

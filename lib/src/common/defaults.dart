@@ -24,10 +24,10 @@ SignalUpdate<List<double>, Event> _getRangeUpdate(
 
   if (gesture.type == GestureType.scaleUpdate) {
     final currentDistance = getOffsetDim(
-      gesture.pointerEvent.position - gesture.scale!.focalPoint
+      gesture.pointerEvent.localPosition - gesture.scale!.localFocalPoint,
     ).abs();
     final preDistance = getOffsetDim(
-      gesture.pointerEvent.position - gesture.pointerEvent.delta - gesture.scale!.focalPoint
+      gesture.pointerEvent.localPosition - gesture.pointerEvent.localDelta - gesture.scale!.localFocalPoint,
     ).abs();
     final deltaRatio = (currentDistance - preDistance) / preDistance / 2;
     
@@ -36,7 +36,7 @@ SignalUpdate<List<double>, Event> _getRangeUpdate(
 
     return [pre.first - delta, pre.last + delta];
   } else if (gesture.type == GestureType.panUpdate) {
-    final pan = getOffsetDim(gesture.pointerEvent.delta);
+    final pan = getOffsetDim(gesture.pointerEvent.localDelta);
 
     final preRange = pre.last - pre.first;
     final delta = (pan / getSizeDim(gesture.arenaSize)) * preRange;
@@ -48,6 +48,8 @@ SignalUpdate<List<double>, Event> _getRangeUpdate(
 };
 
 abstract class Defaults {
+  static Color primaryColor = Color(0xff1890ff);
+
   static List<Color> get colors10 => [
     Color(0xff5b8ff9),
     Color(0xff5ad8a6),

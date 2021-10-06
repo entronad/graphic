@@ -67,7 +67,7 @@ void parseGuide(
           'variable': variable,
           'values': annotSpec.values,
           'color': annotSpec.color,
-          'zIndex': annotSpec.zIndex,
+          'zIndex': annotSpec.zIndex ?? 0,
           'scales': scope.scales,
           'coord': scope.coord,
         }, annotScene, view));
@@ -80,16 +80,19 @@ void parseGuide(
           'variable': variable,
           'value': annotSpec.value,
           'style': annotSpec.style,
-          'zIndex': annotSpec.zIndex,
+          'zIndex': annotSpec.zIndex ?? 0,
           'scales': scope.scales,
           'coord': scope.coord,
         }, annotScene, view));
       } else if (annotSpec is FigureAnnotation) {
         var anchor;
         if (annotSpec.anchor != null) {
-          anchor = annotSpec.anchor;
+          anchor = view.add(FigureAnnotSetAnchorOp({
+            'anchor': annotSpec.anchor,
+            'size': scope.size,
+          }));
         } else {
-          anchor = view.add(FigureAnnotAnchorOp({
+          anchor = view.add(FigureAnnotCalcAnchorOp({
             'variables': annotSpec.variables ?? [
               scope.forms.first.first[0],
               scope.forms.first.first[1],
@@ -104,7 +107,7 @@ void parseGuide(
         if (annotSpec is MarkAnnotation) {
           annot = view.add(MarkAnnotOp({
             'anchor': anchor,
-            'path': annotSpec.path,
+            'relativePath': annotSpec.relativePath,
             'style': annotSpec.style,
             'elevation': annotSpec.elevation,
           }));
@@ -121,7 +124,7 @@ void parseGuide(
         view.add(FigureAnnotRenderOp({
           'figures': annot,
           'inRegion': annotSpec.anchor == null,
-          'zIndex': annotSpec.zIndex,
+          'zIndex': annotSpec.zIndex ?? 0,
           'coord': scope.coord,
         }, annotScene, view));
       } else {
@@ -142,7 +145,10 @@ void parseGuide(
       'zIndex': crosshairSpec.zIndex ?? 0,
       'coord': scope.coord,
       'groups': scope.groupsList[elementIndex],
-      'styles': crosshairSpec.styles ?? [StrokeStyle(), StrokeStyle()],
+      'styles': crosshairSpec.styles ?? [
+        StrokeStyle(color: Color(0xffbfbfbf)),
+        StrokeStyle(color: Color(0xffbfbfbf)),
+      ],
       'followPointer': crosshairSpec.followPointer ?? [false, false],
     }, crosshairScene, view));
   }
@@ -163,10 +169,14 @@ void parseGuide(
       'align': tooltipSpec.align ?? Alignment.center,
       'offset': tooltipSpec.offset,
       'padding': tooltipSpec.padding ?? EdgeInsets.all(5),
-      'backgroundColor': tooltipSpec.backgroundColor ?? Color(0xff010101),  // TODO: defalut
-      'radius': tooltipSpec.radius,
-      'elevation': tooltipSpec.elevation ?? 1.0,  // TODO: defalut
-      'textStyle': tooltipSpec.textStyle ?? TextStyle(),  // TODO: defalut
+      'backgroundColor': tooltipSpec.backgroundColor ?? Color(0xf0ffffff),  // TODO: defalut
+      'radius': tooltipSpec.radius ?? Radius.circular(3),
+      'elevation': tooltipSpec.elevation ?? 3.0,  // TODO: defalut
+      'textStyle': tooltipSpec.textStyle ?? TextStyle(
+        color: Color(0xff595959),
+        fontSize: 12,
+      ),  // TODO: defalut
+      'render': tooltipSpec.render,
       'followPointer': tooltipSpec.followPointer ?? [false, false],
       'variables': tooltipSpec.variables,
       'scales': scope.scales,

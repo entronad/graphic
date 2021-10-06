@@ -31,23 +31,36 @@ abstract class FigureAnnotation extends Annotation {
 
   List? values;
 
-  Offset? anchor;
+  /// You may need to know the chart size.
+  Offset Function(Size)? anchor;
 
   @override
   bool operator ==(Object other) =>
     other is FigureAnnotation &&
     super == other &&
     DeepCollectionEquality().equals(variables, other.variables) &&
-    DeepCollectionEquality().equals(values, values) &&
-    anchor == other.anchor;
+    DeepCollectionEquality().equals(values, values);
+    // anchor is Function
 }
 
 abstract class FigureAnnotOp extends Operator<List<Figure>?> {
   FigureAnnotOp(Map<String, dynamic> params) : super(params);
 }
 
-class FigureAnnotAnchorOp extends Operator<Offset> {
-  FigureAnnotAnchorOp(Map<String, dynamic> params) : super(params);
+class FigureAnnotSetAnchorOp extends Operator<Offset> {
+  FigureAnnotSetAnchorOp(Map<String, dynamic> params) : super(params);
+
+  @override
+  Offset evaluate() {
+    final anchor = params['anchor'] as Offset Function(Size);
+    final size = params['size'] as Size;
+
+    return anchor(size);
+  }
+}
+
+class FigureAnnotCalcAnchorOp extends Operator<Offset> {
+  FigureAnnotCalcAnchorOp(Map<String, dynamic> params) : super(params);
 
   @override
   Offset evaluate() {

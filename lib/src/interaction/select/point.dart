@@ -71,7 +71,7 @@ class PointSelector extends Selector {
     Set<int>? preSelects,
     CoordConv coord,
   ) {
-    final canvasPoint = eventPoints.first;
+    final canvasPoint = eventPoints.single;
 
     int nearestIndex = -1;
     double nearestDistance = double.infinity;  // May be abstarct or canvas in different circumstances.

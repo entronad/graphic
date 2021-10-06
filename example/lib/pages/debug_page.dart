@@ -944,11 +944,24 @@ class DebugPage extends StatelessWidget {
                   elements: [IntervalElement(
                     position: Varset('genre') * Varset('sold'),
                     label: LabelAttr(encode: (tuple) => Label(tuple['sold'].toString())),
+                    elevation: ElevationAttr(
+                      value: 0,
+                      onSelect: {'tap': {true: (_) => 5,}}
+                    ),
+                    color: ColorAttr(
+                      value: Defaults.primaryColor,
+                      onSelect: {'tap': {false: (color) => color.withAlpha(100),}}
+                    ),
                   )],
                   axes: [
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
                   ],
+                  selects: {'tap': PointSelect(
+
+                  )},
+                  tooltip: TooltipGuide(),
+                  crosshair: CrosshairGuide(),
                 ),
               ),
             ],

@@ -8,13 +8,13 @@ import 'figure.dart';
 
 class MarkAnnotation extends FigureAnnotation {
   MarkAnnotation({
-    required this.path,
+    required this.relativePath,
     required this.style,
     this.elevation,
 
     List<String>? variables,
     List? values,
-    Offset? anchor,
+    Offset Function(Size)? anchor,
     int? zIndex,
   }) : super(
     variables: variables,
@@ -24,7 +24,7 @@ class MarkAnnotation extends FigureAnnotation {
   );
 
   // Relative, will move to anchor.
-  Path path;
+  Path relativePath;
 
   Paint style;
 
@@ -34,7 +34,7 @@ class MarkAnnotation extends FigureAnnotation {
   bool operator ==(Object other) =>
     other is MarkAnnotation &&
     super == other &&
-    path == other.path &&
+    relativePath == other.relativePath &&
     style == other.style &&
     elevation == other.elevation;
 }
@@ -45,22 +45,25 @@ class MarkAnnotOp extends FigureAnnotOp {
   @override
   List<Figure>? evaluate() {
     final anchor = params['anchor'] as Offset;
-    final path = params['path'] as Path;
+    final relativePath = params['relativePath'] as Path;
     final style = params['style'] as Paint;
     final elevation = params['elevation'] as double?;
 
     final matrix = Matrix4.identity()
       ..leftTranslate(anchor.dx, anchor.dy);
-    final absolutePath = path.transform(matrix.storage);
+    final path = relativePath.transform(matrix.storage);
 
-    final rst = <Figure>[PathFigure(path, style)];
-    if (elevation != null) {
+    final rst = <Figure>[];
+
+    if (elevation != null && elevation != 0) {
       rst.add(ShadowFigure(
-        absolutePath,
+        path,
         style.color,
         elevation,
       ));
     }
+    rst.add(PathFigure(path, style));
+
     return rst;
   }
 }

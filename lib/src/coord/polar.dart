@@ -173,6 +173,20 @@ class PolarCoordConv extends CoordConv {
       ? Offset(ratioY, ratioX)
       : Offset(ratioX, ratioY);
   }
+
+  @override
+  double invertDistance(double canvasDistance, [int? dim]) {
+    assert(dim == null || dim == 1 || dim == 2);
+    final a = canvasDistance / ((innerRadius + radius) * 2); // arc length in middle radius.
+    final r = canvasDistance / (radius - innerRadius).abs();
+    if (dim == 1) {
+      return transposed ? r : a;
+    } else if (dim == 2) {
+      return transposed ? a : r;
+    } else { // null
+      return (a + r) / 2;
+    }
+  }
 }
 
 class PolarCoordConvOp extends CoordConvOp<PolarCoordConv> {

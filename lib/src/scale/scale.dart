@@ -4,7 +4,7 @@ import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/util/assert.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 import 'package:graphic/src/common/converter.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 

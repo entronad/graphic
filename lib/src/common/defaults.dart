@@ -1,18 +1,19 @@
 import 'dart:ui';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/guide/axis/axis.dart';
 import 'package:graphic/src/interaction/event.dart';
-import 'package:graphic/src/interaction/gesture/arena.dart';
-import 'package:graphic/src/interaction/gesture/gesture.dart';
+import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/interaction/signal.dart';
 
 /// The scale and rotation is calculated from the initial.
 /// The state-transform scale should be calculated by pointEvent.
 SignalUpdate<List<double>, Event> _getRangeUpdate(
-  double Function(Offset) getOffsetDim,
+  double Function(ScaleUpdateDetails) getDeltaDim,
+  double Function(ScaleUpdateDetails) getScaleDim,
   double Function(Size) getSizeDim
 ) => (
   List<double> init,
@@ -23,24 +24,32 @@ SignalUpdate<List<double>, Event> _getRangeUpdate(
   final gesture = event.gesture;
 
   if (gesture.type == GestureType.scaleUpdate) {
-    final currentDistance = getOffsetDim(
-      gesture.pointerEvent.localPosition - gesture.scale!.localFocalPoint,
-    ).abs();
-    final preDistance = getOffsetDim(
-      gesture.pointerEvent.localPosition - gesture.pointerEvent.localDelta - gesture.scale!.localFocalPoint,
-    ).abs();
-    final deltaRatio = (currentDistance - preDistance) / preDistance / 2;
-    
+    final detail = gesture.detail as ScaleUpdateDetails;
+
+    if (detail.pointerCount == 1) {
+      // detail.delta is from moveStart, not from pre.
+      final prePan = getDeltaDim(gesture.preScaleDetail!);
+      final pan = getDeltaDim(detail);
+      final deltaRatio = pan - prePan;
+      final delta = deltaRatio / getSizeDim(gesture.chartSize);
+      return [pre.first + delta, pre.last + delta];
+    } else {
+      final preScale = getScaleDim(gesture.preScaleDetail!);
+      final scale = getScaleDim(detail);
+      final deltaRatio = (scale - preScale) / preScale / 2;
+      final preRange = pre.last - pre.first;
+      final delta = deltaRatio * preRange;
+      return [pre.first - delta, pre.last + delta];
+    }
+  } else if (gesture.type == GestureType.scroll) {
+    final step = 0.1;
+    final scrollDelta = gesture.detail as Offset;
+    final deltaRatio = scrollDelta.dy == 0
+      ? 0.0
+      : scrollDelta.dy > 0 ? (step / 2) : (-step / 2);
     final preRange = pre.last - pre.first;
     final delta = deltaRatio * preRange;
-
     return [pre.first - delta, pre.last + delta];
-  } else if (gesture.type == GestureType.panUpdate) {
-    final pan = getOffsetDim(gesture.pointerEvent.localDelta);
-
-    final preRange = pre.last - pre.first;
-    final delta = (pan / getSizeDim(gesture.arenaSize)) * preRange;
-    return [pre.first + delta, pre.last + delta];
   } else if (gesture.type == GestureType.doubleTap) {
     return init;
   }
@@ -130,14 +139,16 @@ abstract class Defaults {
 
   static Signal<List<double>> get horizontalRangeSignal => {
     EventType.gesture: _getRangeUpdate(
-      (offset) => offset.dx,
+      (detail) => detail.delta.dx,
+      (detail) => detail.horizontalScale,
       (size) => size.width,
     ),
   };
 
   static Signal<List<double>> get verticalRangeSignal => {
     EventType.gesture: _getRangeUpdate(
-      (offset) => -offset.dy,
+      (detail) => -detail.delta.dy,
+      (detail) => detail.verticalScale,
       (size) => size.height,
     ),
   };

@@ -2,7 +2,7 @@ import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'dart:ui';
 
-import 'package:graphic/src/interaction/gesture/arena.dart';
+import 'package:graphic/src/interaction/gesture.dart';
 
 import 'select.dart';
 
@@ -71,23 +71,21 @@ class PointSelector extends Selector {
     Set<int>? preSelects,
     CoordConv coord,
   ) {
-    final canvasPoint = eventPoints.single;
-
     int nearestIndex = -1;
-    double nearestDistance = double.infinity;  // May be abstarct or canvas in different circumstances.
+    double nearestDistance = double.infinity;
     void Function(Aes) updateNearest;
+
+    final point = coord.invert(eventPoints.single);
     if (dim == null) {
       updateNearest = (aes) {
-        final p = aes.representPoint;
-        final canvasP = coord.convert(p);
-        final distance = (canvasPoint - canvasP).distance;
+        final offset = aes.representPoint - point;
+        final distance = (offset.dx.abs() + offset.dy.abs()) / 2; // rect neighborhood for effecicy
         if (distance < nearestDistance) {
           nearestIndex = aes.index;
           nearestDistance = distance;  // canvas
         }
       };
     } else {
-      final point = coord.invert(canvasPoint);
       final getProjection = dim == 1
         ? (Offset offset) => offset.dx
         : (Offset offset) => offset.dy;
@@ -108,8 +106,8 @@ class PointSelector extends Selector {
     }
 
     if (!nearest) {
-      if (nearestDistance > testRadius) {
-        return null;
+      if (nearestDistance > coord.invertDistance(testRadius)) {
+        return {};
       }
     }
 

@@ -19,8 +19,8 @@ List<Figure>? drawVerticalAxis(
   final rst = <Figure>[];
 
   final region = coord.region;
-  final flipSign = flip ? -1 : 1;
-  final x = region.left + position * region.width;
+  final flipSign = flip ? -1.0 : 1.0;
+  final x = region.left + region.width * position;
   
   if (line != null) {
     rst.add(PathFigure(

@@ -17,6 +17,7 @@ import 'package:graphic/src/util/assert.dart';
 typedef RenderTooltip = List<Figure> Function(
   Offset anchor,
   List<Original> selectedTuples,
+  Selector selector,
   Map<String, ScaleConv> scales,
 );
 
@@ -25,6 +26,7 @@ class TooltipGuide {
     this.select,
     this.variables,
     this.followPointer,
+    this.anchor,
     this.zIndex,
     this.element,
     this.align,
@@ -34,6 +36,7 @@ class TooltipGuide {
     this.radius,
     this.elevation,
     this.textStyle,
+    this.multiTuples,
     this.render,
   })
     : assert(isSingle([render, align], allowNone: true)),
@@ -42,15 +45,19 @@ class TooltipGuide {
       assert(isSingle([render, backgroundColor], allowNone: true)),
       assert(isSingle([render, radius], allowNone: true)),
       assert(isSingle([render, elevation], allowNone: true)),
-      assert(isSingle([render, textStyle], allowNone: true));
+      assert(isSingle([render, textStyle], allowNone: true)),
+      assert(isSingle([render, multiTuples], allowNone: true));
 
   String? select;
 
   /// Variables to show.
-  /// Default to show all.
+  /// For single selected, rows to show, default to all.
+  /// For multi selected, make sure to be two, first: last, default to first two variables except variable.
   List<String>? variables;
 
   List<bool>? followPointer;
+
+  Offset? anchor;
 
   int? zIndex;
 
@@ -74,6 +81,8 @@ class TooltipGuide {
 
   TextStyle? textStyle;
 
+  bool? multiTuples;
+
   RenderTooltip? render;
 
   @override
@@ -82,6 +91,9 @@ class TooltipGuide {
     select == other.select &&
     DeepCollectionEquality().equals(variables, other.variables) &&
     DeepCollectionEquality().equals(followPointer, other.followPointer) &&
+    anchor == other.anchor &&
+    zIndex == other.zIndex &&
+    element == other.element &&
     align == other.align &&
     offset == other.offset &&
     padding == other.padding &&
@@ -89,8 +101,7 @@ class TooltipGuide {
     radius == other.radius &&
     elevation == other.elevation &&
     textStyle == other.textStyle &&
-    zIndex == other.zIndex &&
-    element == other.element;
+    multiTuples == multiTuples;
     // render is Function.
 }
 
@@ -122,60 +133,71 @@ class TooltipRenderOp extends Render<TooltipScene> {
     final radius = params['radius'] as Radius?;
     final elevation = params['elevation'] as double?;
     final textStyle = params['textStyle'] as TextStyle;
+    final multiTuples = params['multiTuples'] as bool;
     final render = params['render'] as RenderTooltip?;
     final followPointer = params['followPointer'] as List<bool>;
+    final anchor = params['anchor'] as Offset?;
     final variables = params['variables'] as List<String>?;
     final scales = params['scales'] as Map<String, ScaleConv>;
 
     if (
       selector == null ||
       selects == null ||
+      selects.isEmpty ||
       selector.name != selectorName
     ) {
       scene.figures = null;
       return;
     }
 
-    final pointer = coord.invert(selector.eventPoints.last);
-
-    Offset selectedPoint = Offset.zero;
     final selectedOriginals = <Original>[];
-    int count = 0;
-    final findPoint = (int index) {
-      for (var group in groups) {
-        for (var aes in group) {
-          if (aes.index == index) {
-            count += 1;
-            return aes.representPoint;
-          }
-        }
-      }
-      return Offset.zero;
-    };
     for (var index in selects) {
-      selectedPoint += findPoint(index);
       selectedOriginals.add(originals[index]);
     }
-    selectedPoint = selectedPoint / count.toDouble();
 
-    final fields = variables ?? scales.keys.toList();
+    Offset anchorRst;
+    if (anchor != null) {
+      anchorRst = anchor;
+    } else {
+      final pointer = coord.invert(selector.eventPoints.last);
 
-    final anchor = coord.convert(Offset(
-      followPointer[0] ? pointer.dx : selectedPoint.dx,
-      followPointer[1] ? pointer.dy : selectedPoint.dy,
-    ));
+      Offset selectedPoint = Offset.zero;
+      int count = 0;
+      final findPoint = (int index) {
+        for (var group in groups) {
+          for (var aes in group) {
+            if (aes.index == index) {
+              count += 1;
+              return aes.representPoint;
+            }
+          }
+        }
+        return Offset.zero;
+      };
+      for (var index in selects) {
+        selectedPoint += findPoint(index);
+      }
+      selectedPoint = selectedPoint / count.toDouble();
+
+      anchorRst = coord.convert(Offset(
+        followPointer[0] ? pointer.dx : selectedPoint.dx,
+        followPointer[1] ? pointer.dy : selectedPoint.dy,
+      ));
+    }
 
     List<Figure> figures;
     if (render != null) {
       figures = render(
-        anchor,
+        anchorRst,
         selectedOriginals,
+        selector,
         scales,
       );
     } else {
       String textContent = '';
-      if (selectedOriginals.length == 1) {
-        final original = selectedOriginals.single;
+      if (!multiTuples) {
+        final fields = variables ?? scales.keys.toList();
+        final original = selectedOriginals.last;
         var field = fields.first;
         var scale = scales[field]!;
         var title = scale.title;
@@ -187,21 +209,32 @@ class TooltipRenderOp extends Render<TooltipScene> {
           textContent += '\n$title: ${scale.formatter(original[field])}';
         }
       } else {
-        var field = selector.variable;
-        var scale;
-        var title;
-        if (field != null) {
-          scale = scales[field]!;
-          title = scale.title;
-          textContent += '$title: ${scale.formatter(selectedOriginals.first[field])}';
-        }
-        for (var field in fields) {
-          scale = scales[field]!;
-          title = scale.title;
-          textContent += '\n$title:';
-          for (var original in selectedOriginals) {
-            textContent += ' ${scale.formatter(original[field])}';
+        final groupField = selector.variable;
+
+        var fields = variables;
+        if (fields == null) {
+          fields = [];
+          for (var variable in scales.keys) {
+            if (variable != groupField) {
+              fields.add(variable);
+            }
+            if (fields.length == 2) {
+              break;
+            }
           }
+        }
+
+        assert(fields.length == 2);
+
+        if (groupField != null) {
+          textContent += scales[groupField]!.formatter(selectedOriginals.first[groupField]);
+        }
+        for (var original in selectedOriginals) {
+          final domainField = fields.first;
+          final measureField = fields.last;
+          final domainScale = scales[domainField]!;
+          final measureScale = scales[measureField]!;
+          textContent += '\n${domainScale.formatter(original[domainField])}: ${measureScale.formatter(original[measureField])}';
         }
       }
 
@@ -215,11 +248,10 @@ class TooltipRenderOp extends Render<TooltipScene> {
       final height = padding.top + painter.height + padding.bottom;
 
       final paintPoint = getPaintPoint(
-        anchor,
+        offset == null ? anchorRst : anchorRst + offset,
         width,
         height,
         align,
-        offset,
       );
 
       final widow = Rect.fromLTWH(

@@ -5,8 +5,7 @@ import 'package:graphic/src/data/data_set.dart';
 import 'package:graphic/src/dataflow/dataflow.dart';
 import 'package:graphic/src/graffiti/graffiti.dart';
 import 'package:graphic/src/interaction/event.dart';
-import 'package:graphic/src/interaction/gesture/arena.dart';
-import 'package:graphic/src/interaction/gesture/gesture.dart';
+import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/parse/spec.dart';
 
@@ -14,17 +13,10 @@ class View<D> extends Dataflow {
   View(
     Spec<D> spec,
     this.size,
-    this.arena,
     this.repaint,
   )
     : graffiti = Graffiti(size)
   {
-    arena
-      ..clear()
-      ..on((gesture) {
-        gestureSource.emit(GestureEvent(gesture));
-      });
-
     parse<D>(spec, this);
 
     graffiti.sort();
@@ -33,8 +25,6 @@ class View<D> extends Dataflow {
   }
 
   final Size size;
-
-  final GestureArena arena;
 
   final void Function() repaint;
 
@@ -48,11 +38,17 @@ class View<D> extends Dataflow {
 
   bool dirty = false;
 
-  void resize(Size size) =>
-    sizeSouce.emit(ResizeEvent(size));
+  Future<void> gesture(Gesture gesture) async {
+    await gestureSource.emit(GestureEvent(gesture));
+  }
 
-  void changeData(List<D> data) =>
-    dataSouce.emit(ChangeDataEvent(data));
+  Future<void> resize(Size size) async {
+    await sizeSouce.emit(ResizeEvent(size));
+  }
+
+  Future<void> changeData(List<D> data) async {
+    await dataSouce.emit(ChangeDataEvent(data));
+  }
 
   @override
   Future<Dataflow> evaluate() async {

@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 import 'package:graphic/src/coord/coord.dart';
 
 abstract class Shape {

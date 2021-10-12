@@ -10,6 +10,7 @@ class LabelSyle {
     TextStyle? style,
     this.offset,
     this.rotation,
+    this.align,
   }) : this.style = style ?? Defaults.textStyle;
 
   /// Note that default color is white.
@@ -19,12 +20,15 @@ class LabelSyle {
 
   double? rotation;
 
+  Alignment? align;
+
   @override
   bool operator ==(Object other) =>
     other is LabelSyle &&
     style == other.style &&
     offset == other.offset &&
-    rotation == other.rotation;
+    rotation == other.rotation &&
+    align == other.align;
 }
 
 class Label {
@@ -45,21 +49,14 @@ class Label {
 }
 
 Offset getPaintPoint(
-  Offset anchor,
+  Offset axis,
   double width,
   double height,
   Alignment align,
-  Offset? offset,
-) {
-  var paintPoint = Offset(
-    anchor.dx - (width / 2) + ((width / 2) * align.x),
-    anchor.dy - (height / 2) + ((height / 2) * align.y),
-  );
-  if (offset != null) {
-    paintPoint = paintPoint + offset;
-  }
-  return paintPoint;
-}
+) => Offset(
+  axis.dx - (width / 2) + ((width / 2) * align.x),
+  axis.dy - (height / 2) + ((height / 2) * align.y),
+);
 
 Figure drawLabel(
   Label label,
@@ -67,7 +64,7 @@ Figure drawLabel(
   Offset anchor,
   /// How the label bounds align the anchor.
   /// If Label is topLeft, it is [-1, -1].
-  Alignment align,
+  Alignment defaultAlign,
 ) {
   final painter = TextPainter(
     text: TextSpan(text: label.text, style: label.style.style),
@@ -75,24 +72,25 @@ Figure drawLabel(
   );
   painter.layout();
   
+  final axis = label.style.offset == null
+    ? anchor
+    : anchor + label.style.offset!;
+  
+  final align = label.style.align ?? defaultAlign;
+
   var paintPoint = getPaintPoint(
-    anchor,
+    axis,
     painter.width,
     painter.height,
     align,
-    label.style.offset,
   );
   final rotation = label.style.rotation;
   if (rotation != null) {
-    final labelCenter = Offset(
-      paintPoint.dx + (painter.width / 2),
-      paintPoint.dy + (painter.height / 2),
-    );
     return RotatedTextFigure(
       painter,
       paintPoint,
       rotation,
-      labelCenter,
+      axis,
     );
   } else {
     return TextFigure(painter, paintPoint);

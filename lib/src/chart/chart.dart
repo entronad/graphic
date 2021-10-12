@@ -1,7 +1,10 @@
+import 'dart:ui';
+
+import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:graphic/src/guide/interaction/crosshair.dart';
 import 'package:graphic/src/guide/interaction/tooltip.dart';
-import 'package:graphic/src/interaction/gesture/arena.dart';
+import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/interaction/select/select.dart';
 import 'package:graphic/src/guide/annotation/annotation.dart';
 import 'package:graphic/src/guide/axis/axis.dart';
@@ -60,9 +63,17 @@ class Chart<D> extends StatefulWidget {
 
 // initState -> build -> getPositionForChild -> paint
 class _ChartState<D> extends State<Chart<D>> {
-  final arena = GestureArena(Size.zero);
-
   View<D>? view;
+
+  Size size = Size.zero;
+
+  Offset gestureLocalPosition = Offset.zero;
+
+  PointerDeviceKind gestureKind = PointerDeviceKind.unknown;
+
+  Offset? gestureLocalMoveStart;
+
+  ScaleUpdateDetails? gestureScaleDetail;
 
   void repaint() {
     setState(() {});
@@ -87,33 +98,456 @@ class _ChartState<D> extends State<Chart<D>> {
     return CustomSingleChildLayout(
       delegate: _ChartLayoutDelegate<D>(this),
       child: Listener(
-        child: CustomPaint(
-          painter: _ChartPainter<D>(this),
+        child: GestureDetector(
+          child: CustomPaint(
+            painter: _ChartPainter<D>(this),
+          ),
+          onDoubleTap: () {
+            view!.gesture(Gesture(
+              GestureType.doubleTap,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              null,
+            ));
+          },
+          onDoubleTapCancel: () {
+            view!.gesture(Gesture(
+              GestureType.doubleTapCancel,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              null,
+            ));
+          },
+          onDoubleTapDown: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.doubleTapDown,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onForcePressEnd: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.forcePressEnd,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onForcePressPeak: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.forcePressPeak,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onForcePressStart: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.forcePressStart,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onForcePressUpdate: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.forcePressUpdate,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onLongPress: () {
+            view!.gesture(Gesture(
+              GestureType.longPress,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              null,
+            ));
+          },
+          onLongPressCancel: () {
+            view!.gesture(Gesture(
+              GestureType.longPressCancel,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              null,
+            ));
+          },
+          onLongPressDown: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.longPressDown,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onLongPressEnd: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            gestureLocalMoveStart = null;
+            view!.gesture(Gesture(
+              GestureType.longPressEnd,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onLongPressMoveUpdate: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.longPressMoveUpdate,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+              localMoveStart: gestureLocalMoveStart,
+            ));
+          },
+          onLongPressStart: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            gestureLocalMoveStart = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.longPressStart,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onLongPressUp: () {
+            view!.gesture(Gesture(
+              GestureType.longPressUp,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              null,
+            ));
+          },
+          onScaleEnd: (detail) {
+            gestureLocalMoveStart = null;
+            gestureScaleDetail = null;
+            view!.gesture(Gesture(
+              GestureType.scaleEnd,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onScaleStart: (detail) {
+            gestureLocalPosition = detail.localFocalPoint;
+            gestureLocalMoveStart = detail.localFocalPoint;
+            gestureScaleDetail = ScaleUpdateDetails(
+              focalPoint: detail.focalPoint,
+              localFocalPoint: detail.localFocalPoint,
+              pointerCount: detail.pointerCount,
+            );
+            view!.gesture(Gesture(
+              GestureType.scaleStart,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onScaleUpdate: (detail) {
+            gestureLocalPosition = detail.localFocalPoint;
+            view!.gesture(Gesture(
+              GestureType.scaleUpdate,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+              localMoveStart: gestureLocalMoveStart,
+              preScaleDetail: gestureScaleDetail,
+            ));
+            gestureScaleDetail = detail;
+          },
+          onSecondaryLongPress: () {
+            view!.gesture(Gesture(
+              GestureType.secondaryLongPress,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              null,
+            ));
+          },
+          onSecondaryLongPressCancel: () {
+            view!.gesture(Gesture(
+              GestureType.secondaryLongPressCancel,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              null,
+            ));
+          },
+          onSecondaryLongPressDown: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.secondaryLongPressDown,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onSecondaryLongPressEnd: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            gestureLocalMoveStart = null;
+            view!.gesture(Gesture(
+              GestureType.secondaryLongPressEnd,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onSecondaryLongPressMoveUpdate: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.secondaryLongPressMoveUpdate,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+              localMoveStart: gestureLocalMoveStart,
+            ));
+          },
+          onSecondaryLongPressStart: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            gestureLocalMoveStart = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.secondaryLongPressStart,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onSecondaryLongPressUp: () {
+            view!.gesture(Gesture(
+              GestureType.secondaryLongPressUp,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              null,
+            ));
+          },
+          onSecondaryTap: () {
+            view!.gesture(Gesture(
+              GestureType.secondaryTap,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              null,
+            ));
+          },
+          onSecondaryTapCancel: () {
+            view!.gesture(Gesture(
+              GestureType.secondaryTapCancel,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              null,
+            ));
+          },
+          onSecondaryTapDown: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.secondaryTapDown,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onSecondaryTapUp: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.secondaryTapUp,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onTap: () {
+            view!.gesture(Gesture(
+              GestureType.tap,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              null,
+            ));
+          },
+          onTapCancel: () {
+            view!.gesture(Gesture(
+              GestureType.tapCancel,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              null,
+            ));
+          },
+          onTapDown: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.tapDown,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onTapUp: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.tapUp,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onTertiaryLongPress: () {
+            view!.gesture(Gesture(
+              GestureType.tertiaryLongPress,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              null,
+            ));
+          },
+          onTertiaryLongPressCancel: () {
+            view!.gesture(Gesture(
+              GestureType.tertiaryLongPressCancel,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              null,
+            ));
+          },
+          onTertiaryLongPressDown: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.tertiaryLongPressDown,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onTertiaryLongPressEnd: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            gestureLocalMoveStart = null;
+            view!.gesture(Gesture(
+              GestureType.tertiaryLongPressEnd,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onTertiaryLongPressMoveUpdate: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.tertiaryLongPressMoveUpdate,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+              localMoveStart: gestureLocalMoveStart,
+            ));
+          },
+          onTertiaryLongPressStart: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            gestureLocalMoveStart = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.tertiaryLongPressStart,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onTertiaryLongPressUp: () {
+            view!.gesture(Gesture(
+              GestureType.tertiaryLongPressUp,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              null,
+            ));
+          },
+          onTertiaryTapCancel: () {
+            view!.gesture(Gesture(
+              GestureType.tertiaryTapCancel,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              null,
+            ));
+          },
+          onTertiaryTapDown: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.tertiaryTapDown,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
+          onTertiaryTapUp: (detail) {
+            gestureLocalPosition = detail.localPosition;
+            view!.gesture(Gesture(
+              GestureType.tertiaryTapUp,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              detail,
+            ));
+          },
         ),
-        onPointerDown: (event) {
-          arena.emit(
-            ListenerEvent(ListenerEventType.pointerDown, event),
-          );
-        },
-        onPointerMove: (event) {
-          arena.emit(
-            ListenerEvent(ListenerEventType.pointerMove, event),
-          );
-        },
-        onPointerUp: (event) {
-          arena.emit(
-            ListenerEvent(ListenerEventType.pointerUp, event),
-          );
-        },
-        onPointerCancel: (event) {
-          arena.emit(
-            ListenerEvent(ListenerEventType.pointerCancel, event),
-          );
+        onPointerHover: (event) {
+          gestureKind = event.kind;
+          gestureLocalPosition = event.localPosition;
+          view!.gesture(Gesture(
+            GestureType.hover,
+            gestureKind,
+            gestureLocalPosition,
+            size,
+            null,
+          ));
         },
         onPointerSignal: (event) {
-          arena.emit(
-            ListenerEvent(ListenerEventType.pointerSignal, event),
-          );
+          gestureLocalPosition = event.localPosition;
+          if (event is PointerScrollEvent) {
+            view!.gesture(Gesture(
+              GestureType.scroll,
+              gestureKind,
+              gestureLocalPosition,
+              size,
+              event.scrollDelta,
+            ));
+          }
         },
       ),
     );
@@ -132,13 +566,12 @@ class _ChartLayoutDelegate<D> extends SingleChildLayoutDelegate {
 
   @override
   Offset getPositionForChild(Size size, Size childSize) {
-    state.arena.size = size;
+    state.size = size;
 
     if (state.view == null) {
       state.view = View<D>(
         state.widget.spec,
         size,
-        state.arena,
         state.repaint,
       );
     } else if (size != state.view!.size) {

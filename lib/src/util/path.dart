@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:vector_math/vector_math_64.dart';
+import 'package:graphic/src/util/math.dart';
 
 import 'transform.dart';
 
@@ -50,6 +51,28 @@ abstract class Paths {
 
     final sweepAngle = clockwise ? endAngle - startAngle : startAngle - endAngle;
 
+    if (sweepAngle.abs().equalTo(pi * 2)) {
+      sector(
+        center: center,
+        r: r,
+        r0: r0,
+        startAngle: 0,
+        endAngle: pi,
+        clockwise: true,
+        path: path,
+      );
+      sector(
+        center: center,
+        r: r,
+        r0: r0,
+        startAngle: pi,
+        endAngle: pi * 2,
+        clockwise: true,
+        path: path,
+      );
+      return path;
+    }
+
     path.moveTo(cos(startAngle) * r + center.dx, sin(startAngle) * r + center.dy);
     path.arcTo(
       Rect.fromCircle(center: center, radius: r),
@@ -85,6 +108,28 @@ abstract class Paths {
     Path? path,
   }) {
     path = path ?? Path();
+
+    if ((endAngle - startAngle).abs().equalTo(pi * 2)) {
+      sector(
+        center: center,
+        r: r,
+        r0: r0,
+        startAngle: 0,
+        endAngle: pi,
+        clockwise: true,
+        path: path,
+      );
+      sector(
+        center: center,
+        r: r,
+        r0: r0,
+        startAngle: pi,
+        endAngle: pi * 2,
+        clockwise: true,
+        path: path,
+      );
+      return path;
+    }
 
     double arcStart;
     double arcEnd;

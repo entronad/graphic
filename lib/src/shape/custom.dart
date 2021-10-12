@@ -5,7 +5,7 @@ import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 
-import 'util/aes_basic_item.dart';
+import 'util/draw_basic_item.dart';
 import 'shape.dart';
 
 abstract class CustomShape extends Shape {

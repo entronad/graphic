@@ -9,6 +9,7 @@ export 'src/variable/transform/map.dart' show MapTrans;
 export 'src/variable/transform/proportion.dart' show Proportion;
 export 'src/variable/transform/sort.dart' show Sort;
 
+export 'src/scale/scale.dart' show ScaleConv;
 export 'src/scale/linear.dart' show LinearScale;
 export 'src/scale/ordinal.dart' show OrdinalScale;
 export 'src/scale/time.dart' show TimeScale;
@@ -39,6 +40,7 @@ export 'src/shape/interval.dart' show IntervalShape, RectShape, FunnelShape;
 export 'src/shape/line.dart' show LineShape, BasicLineShape;
 export 'src/shape/point.dart' show PointShape, CircleShape, SquareShape;
 export 'src/shape/polygon.dart' show PolygonShape, HeatmapShape;
+export 'src/shape/util/draw_basic_item.dart' show drawBasicItem;
 
 export 'src/graffiti/figure.dart'
   show Figure, PathFigure, ShadowFigure, TextFigure, RotatedTextFigure;
@@ -56,15 +58,14 @@ export 'src/guide/annotation/mark.dart' show MarkAnnotation;
 export 'src/guide/annotation/tag.dart' show TagAnnotation;
 
 export 'src/interaction/event.dart' show Event, EventType;
-export 'src/interaction/gesture/gesture.dart' show GestureEvent;
-export 'src/interaction/gesture/arena.dart' show Gesture, GestureType;
+export 'src/interaction/gesture.dart' show GestureType, Gesture, GestureEvent;
 export 'src/interaction/signal.dart' show SignalUpdate, Signal;
-export 'src/interaction/select/select.dart' show SelectUpdate;
+export 'src/interaction/select/select.dart' show SelectUpdate, Selector;
 export 'src/interaction/select/interval.dart' show IntervalSelect;
 export 'src/interaction/select/point.dart' show PointSelect;
 
 export 'src/common/styles.dart' show StrokeStyle;
-export 'src/common/label.dart' show Label, LabelSyle;
+export 'src/common/label.dart' show Label, LabelSyle, drawLabel, getPaintPoint;
 export 'src/common/defaults.dart' show Defaults;
 
 export 'src/dataflow/tuple.dart' show Original;

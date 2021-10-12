@@ -19,8 +19,8 @@ List<Figure>? drawHorizontalAxis(
   final rst = <Figure>[];
 
   final region = coord.region;
-  final flipSign = flip ? -1 : 1;
-  final y = region.bottom - position * region.height;
+  final flipSign = flip ? -1.0 : 1.0;
+  final y = region.bottom - region.height * position;
 
   if (line != null) {
     rst.add(PathFigure(

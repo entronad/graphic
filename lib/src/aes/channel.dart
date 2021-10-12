@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:graphic/src/interaction/select/select.dart';
 import 'package:graphic/src/scale/continuous.dart';
 import 'package:graphic/src/scale/scale.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 
 import 'aes.dart';

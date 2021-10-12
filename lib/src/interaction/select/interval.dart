@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
-import 'package:graphic/src/interaction/gesture/arena.dart';
+import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/util/math.dart';
 
 import 'select.dart';
@@ -95,7 +95,7 @@ class IntervalSelector extends Selector {
     }
 
     if (rst.isEmpty) {
-      return null;
+      return rst;
     }
 
     if (variable != null) {

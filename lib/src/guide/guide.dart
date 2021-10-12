@@ -116,7 +116,6 @@ void parseGuide(
           annot = view.add(TagAnnotOp({
             'anchor': anchor,
             'label': annotSpec.label,
-            'align': annotSpec.align ?? Alignment.center,
           }));
         }
 
@@ -158,8 +157,10 @@ void parseGuide(
     final elementIndex = tooltipSpec.element ?? 0;
 
     final tooltipScene = view.graffiti.add(TooltipScene());
+    final selectorName = tooltipSpec.select ?? spec.selects!.keys.first;
+    final multiTuples = tooltipSpec.multiTuples ?? ((spec.selects![selectorName] is PointSelect) ? false : true);
     view.add(TooltipRenderOp({
-      'selectorName': tooltipSpec.select ?? spec.selects!.keys.first,
+      'selectorName': selectorName,
       'selector': scope.selector,
       'selects': scope.selectsList[elementIndex],
       'zIndex': tooltipSpec.zIndex ?? 0,
@@ -176,8 +177,10 @@ void parseGuide(
         color: Color(0xff595959),
         fontSize: 12,
       ),  // TODO: defalut
+      'multiTuples': multiTuples,
       'render': tooltipSpec.render,
       'followPointer': tooltipSpec.followPointer ?? [false, false],
+      'anchor': tooltipSpec.anchor,
       'variables': tooltipSpec.variables,
       'scales': scope.scales,
     }, tooltipScene, view));

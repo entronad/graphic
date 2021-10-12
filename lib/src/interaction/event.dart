@@ -25,7 +25,7 @@ class EventSource<E extends Event> {
   void clear() =>
     _listeners.clear();
 
-  void emit(E event) {
+  Future<void> emit (E event) async {
     for (var listener in _listeners) {
       if (listener != null) {
         listener(event);

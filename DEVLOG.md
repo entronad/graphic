@@ -3568,7 +3568,7 @@ Single means both 不是一个好的设计，还是老老实实用 [dim1, dim2] 
 
 通过性能测试，优化了 paint 方法后比之前每帧运算时间缩短到原来的 1/2 到 2/3 的样子
 
-label的align大多数时候是通过内部机制决定的（比如axis的象限、flitp，interval的上中下），用户只通过offset调节。而tag可将align设置成可用户自定义的。
+~~label的align大多数时候是通过内部机制决定的（比如axis的象限、flitp，interval的上中下），用户只通过offset调节。而tag可将align设置成可用户自定义的。~~    align 应当作为label的一个属性，放在LabelStyle中。因为它和offset地位相等，并且两者结合控制label的旋转，只有它可设置了，才能控制旋转轴。即anchor + offset是旋转轴，然后再根据align确定paintpoint。但是align的默认值有其特殊性，特别是在极坐标下，需要动态计算，所以labelStyle中其可为null，paintLabel函数中的为。default align 参数
 
 tag如果设置绝对位置，会不限于region，变成全图表可用。
 
@@ -3583,3 +3583,41 @@ elevation只是增加了一个阴影，并不能使视图在上层，决定上�
 RenderOp需要处理的不仅仅是figures，还有zIndex和clip，所以没有通用的FigureRenderOp，内部工具一般直接将生成figures的工作放在RenderOp中，但有时候也需要单独的FigureOp（比如抽象提取（FigureAnnot）和用户定制（ToolTip））时。
 
 tooltip可以选中多个tuple，这发生在select 设置了variable或为 interval selector时。因此对tooltip的select不需要做限制，如果选中多个且位置不为followPointer，位置取其中心（主要是为stack服务）。tooltip的输入为多个tuples
+
+当处于滑动的组件中时，onPointerDown第二次似乎失效了。
+
+重构以 gestureDetector为基础的手势事件
+
+由于 scaledetail 没有PointerDeviceKind，所以需要在gesture中加入。经实验发现，任何point一定是以hover开始，所以就从这里更新
+
+现在遵从touch first 的原则，kind分为mouse和其它（都当做touch）
+
+对scroll和hover还是封装一下，因为pointerEvent是底层的，gestureDetector是对他们的封装，因此hover和scroll也封装。
+
+pointerMove 总是会发生，在scale之前发生，当scale只有一点时，pointerMove与scale的位置一样。
+
+scale当有两点时，只能用来计算比例，因为focalPoint是它们的焦点，pointerMove的点也是跳动的，不能确定是哪个，它的scale是自开始起的，所以需要一个preDetail
+
+还需要一个moveStart，才能实现画框的功能。
+
+scale的localPosition就统一取focalPoint吧，两点的时候反正也没啥用，跳来跳去的pointerMove更没用
+
+由于scale的功能限制，现在interval scale 的功能改为
+
+先统一采用pan就是移动的方式，一个因为移动端框内外不太好选，另一个让用户养成双击取消的习惯。
+
+scale中的几个delta并不是距离上次的delta，而是距离panstart的delta
+
+tooltip也给搞个类似figureAnnotation的anchor。
+
+select要做到完全的值检测，是有意义的：1，不需要每个点都convert，只要invert一次；2，使得单维度监测有意义。但缺点就是：interval selector 在ploar下必然是扇区。pointSelector的test距离要设计一下。
+
+polar到底怎么搞还没想好，先规定interval只可用于rect坐标系
+
+首先 testRadius 需要是实际长度，比较直观。对于单维度的，直接转换，对于全维度的，取平均值
+
+发生手势时，selector一定存在，设置select的逻辑，一定会返回set，没选中就是空的。由于selectedPoint初始值是 0,0，所以没选中假设选中的位置就是 0, 0。tooltip再加个逻辑没选中不渲染。
+
+radial标签的位置是：在轴线顺时针的后方，它和circular 的”外侧“情况还不太一样。还是用 if else 直观。
+
+环通过两个半圆绘制

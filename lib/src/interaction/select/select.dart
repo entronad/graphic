@@ -1,16 +1,19 @@
 import 'dart:ui';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/coord/coord.dart';
+import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/geom/element.dart';
+import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/graffiti/scene.dart';
-import 'package:graphic/src/interaction/gesture/arena.dart';
+import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/shape/shape.dart';
@@ -97,28 +100,62 @@ class SelectorOp extends Operator<Selector?> {
     if (spec is PointSelect) {
       return PointSelector(
         spec.toggle ?? false,  // TODO: defalut
-        spec.nearest ?? true,  // TODO: defalut
-        spec.testRadius ?? 5,  // TODO: defalut
+        spec.nearest ?? false,  // TODO: defalut
+        spec.testRadius ?? 10.0,  // TODO: defalut
         name,
         spec.dim,
         spec.variable,
-        [gesture.pointerEvent.localPosition],
+        [gesture.localPosition],
       );
     } else {
       spec as IntervalSelect;
       List<Offset> eventPoints;
-      if (type == GestureType.scaleUpdate) {
-        eventPoints = [gesture.scale!.focalPoint, gesture.pointerEvent.localPosition];
-      } else { // panUpdate
-        if (value is IntervalSelector) {
-          final delta = gesture.pointerEvent.localDelta;
-          eventPoints = value!.eventPoints
-            .map((point) => point + delta)
-            .toList();
-        } else {
-          return value;
+
+      if (value == null) {
+        if (gesture.type == GestureType.scaleUpdate) {
+          final detail = gesture.detail as ScaleUpdateDetails;
+
+          if (detail.pointerCount == 1) {
+            eventPoints = [gesture.localMoveStart!, gesture.localPosition];
+          } else {  // scale
+            return null;
+          }
+        } else {  // scroll
+          return null;
+        }
+      } else {
+        final prePoints = value!.eventPoints;
+
+        if (gesture.type == GestureType.scaleUpdate) {
+          final detail = gesture.detail as ScaleUpdateDetails;
+
+          if (detail.pointerCount == 1) {
+            if (gesture.localMoveStart == prePoints.first) {
+              eventPoints = [gesture.localMoveStart!, gesture.localPosition];
+            } else {
+              final delta = detail.delta - gesture.preScaleDetail!.delta;
+              eventPoints = [prePoints.first + delta, prePoints.last + delta];
+            }
+          } else {  // scale
+            final preScale = gesture.preScaleDetail!.scale;
+            final scale = detail.scale;
+            final deltaRatio = (scale - preScale) / preScale / 2;
+            final preOffset = prePoints.last - prePoints.first;
+            final delta = preOffset * deltaRatio;
+            eventPoints = [prePoints.first - delta, prePoints.last + delta];
+          }
+        } else {  // scroll
+          final step = 0.1;
+          final scrollDelta = gesture.detail as Offset;
+          final deltaRatio = scrollDelta.dy == 0
+            ? 0.0
+            : scrollDelta.dy > 0 ? (step / 2) : (-step / 2);
+          final preOffset = prePoints.last - prePoints.first;
+          final delta = preOffset * deltaRatio;
+          eventPoints = [prePoints.first - delta, prePoints.last + delta];
         }
       }
+
       return IntervalSelector(
         spec.color ?? Color(0x10101010),  // TODO: defalut
         spec.zIndex ?? 0,  // TODO: defalut
@@ -155,6 +192,8 @@ class SelectorRenderOp extends Render<SelectorScene> {
             selector.eventPoints.last,
             selector.color,
           );
+    } else {
+      scene.figures = null;
     }
   }
 }
@@ -284,12 +323,15 @@ void parseSelect(
     final clearTypes = <GestureType>{};
     for (var name in selectSpecs.keys) {
       final selectSpec = selectSpecs[name]!;
+
+      assert(!(selectSpec is IntervalSelect && spec.coord is PolarCoord));
+
       final on = selectSpec.on ?? (
         selectSpec is PointSelect
           ? {GestureType.tap}
-          : {GestureType.scaleUpdate, GestureType.panUpdate}
+          : {GestureType.scaleUpdate, GestureType.scroll}
       );
-      final clear = selectSpec.clear ?? {};
+      final clear = selectSpec.clear ?? {GestureType.doubleTap};
       for (var type in on) {
         assert(!onTypes.keys.contains(type));
         onTypes[type] = name;

@@ -90,6 +90,20 @@ class RectCoordConv extends CoordConv {
       ? Offset(verticalInput, horizontalInput)
       : Offset(horizontalInput, verticalInput);
   }
+
+  @override
+  double invertDistance(double canvasDistance, [int? dim]) {
+    assert(dim == null || dim == 1 || dim == 2);
+    final h = canvasDistance / (horizontals.last - horizontals.first).abs();
+    final v = canvasDistance / (verticals.last - verticals.first).abs();
+    if (dim == 1) {
+      return transposed ? v : h;
+    } else if (dim == 2) {
+      return transposed ? h : v;
+    } else { // null
+      return (h + v) / 2;
+    }
+  }
 }
 
 class RectCoordConvOp extends CoordConvOp<RectCoordConv> {

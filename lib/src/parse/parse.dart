@@ -8,7 +8,7 @@ import 'package:graphic/src/data/data_set.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/geom/element.dart';
 import 'package:graphic/src/guide/guide.dart';
-import 'package:graphic/src/interaction/gesture/gesture.dart';
+import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/interaction/select/select.dart';
 import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/scale/scale.dart';

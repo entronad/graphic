@@ -7,10 +7,11 @@ import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/guide/axis/radial.dart';
 import 'package:graphic/src/util/math.dart';
 import 'package:graphic/src/util/path.dart';
 
-import 'util/aes_basic_item.dart';
+import 'util/draw_basic_item.dart';
 import 'function.dart';
 
 abstract class IntervalShape extends FunctionShape {
@@ -179,10 +180,12 @@ class RectShape extends IntervalShape {
               coord,
             ));
             if (item.label != null) {
+              final labelAnchor = coord.convert(position[0] + (position[1] - position[0]) * labelPosition);
+              final anchorOffset = labelAnchor - coord.center;
               rst.add(drawLabel(
                 item.label!,
-                coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
-                Alignment.center,
+                labelAnchor,
+                radialLabelAlign(anchorOffset) * -1,
               ));
             }
           }
@@ -194,8 +197,8 @@ class RectShape extends IntervalShape {
           for (var item in group) {
             rst.addAll(_drawSector(
               item,
-              coord.radiuses.last,
-              coord.radiuses.first,
+              coord.convertRadius(item.position[1].dy),
+              coord.convertRadius(item.position[0].dy),
               coord.angles.first,
               coord.angles.last,
               true,
@@ -352,11 +355,11 @@ class RectShape extends IntervalShape {
     ));
 
     if (hasLabel && item.label != null) {
-      Alignment align;
+      Alignment defaultAlign;
       if (labelPosition == 1) {
         // According to anchor's quadrant.
         final anchorOffset = labelAnchor - coord.center;
-        align = Alignment(
+        defaultAlign = Alignment(
           anchorOffset.dx.equalTo(0)
             ? 0
             : anchorOffset.dx / anchorOffset.dx.abs(),
@@ -365,12 +368,12 @@ class RectShape extends IntervalShape {
             : anchorOffset.dy / anchorOffset.dy.abs(),
         );
       } else {
-        align = Alignment.center;
+        defaultAlign = Alignment.center;
       }
       rst.add(drawLabel(
         item.label!,
         labelAnchor,
-        align,
+        defaultAlign,
       ));
     }
 

@@ -19,8 +19,8 @@ List<Figure>? drawCircularAxis(
 ) {
   final rst = <Figure>[];
 
-  final flipSign = flip ? -1 : 1;
-  final r = coord.radius * position;
+  final flipSign = flip ? -1.0 : 1.0;
+  final r = coord.innerRadius + (coord.radius - coord.innerRadius) * position;
 
   if (line != null) {
     rst.add(PathFigure(
@@ -42,21 +42,21 @@ List<Figure>? drawCircularAxis(
     if (angle >= coord.startAngle && angle <= coord.endAngle) {
       if (tick.label != null) {
         final labelAnchor = coord.polarToOffset(angle, r);
-        Alignment align;
+        Alignment defaultAlign;
         // According to anchor's quadrant.
         final anchorOffset = labelAnchor - coord.center;
-        align = Alignment(
+        defaultAlign = Alignment(
           anchorOffset.dx.equalTo(0)
             ? 0
-            : anchorOffset.dx / anchorOffset.dx.abs() * flipSign,
+            : anchorOffset.dx / anchorOffset.dx.abs(),
           anchorOffset.dy.equalTo(0)
             ? 0
-            : anchorOffset.dy / anchorOffset.dy.abs() * flipSign,
-        );
+            : anchorOffset.dy / anchorOffset.dy.abs(),
+        ) * flipSign;
         rst.add(drawLabel(
           Label(tick.text, tick.label!),
           labelAnchor,
-          align,
+          defaultAlign,
         ));
       }
     }

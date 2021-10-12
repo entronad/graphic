@@ -59,20 +59,20 @@ class RotatedTextFigure extends TextFigure {
     TextPainter painter,
     Offset offset,
     this.rotation,
-    this.center,
+    this.axis,
   ) : super(painter, offset);
 
   final double rotation;
 
-  final Offset center;
+  final Offset axis;
 
   @override
   void paint(Canvas canvas) {
     canvas.save();
 
-    canvas.translate(center.dx, center.dy);
+    canvas.translate(axis.dx, axis.dy);
     canvas.rotate(rotation);
-    canvas.translate(-center.dx, -center.dy);
+    canvas.translate(-axis.dx, -axis.dy);
 
     super.paint(canvas);
 

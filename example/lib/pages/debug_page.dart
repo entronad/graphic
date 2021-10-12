@@ -21,6 +21,61 @@ class DebugPage extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Container(
+                margin: const EdgeInsets.only(bottom: 40),
+                width: 350,
+                height: 350,
+                child: Chart(
+                  data: basicData,
+                  variables: {
+                    'genre': Variable(
+                      accessor: (Map map) => map['genre'] as String,
+                    ),
+                    'sold': Variable(
+                      accessor: (Map map) => map['sold'] as num,
+                      scale: LinearScale(min: 0),
+                    ),
+                  },
+                  elements: [IntervalElement(
+                    position: Varset('genre') * Varset('sold'),
+                    label: LabelAttr(encode: (tuple) => Label(tuple['sold'].toString())),
+                    color: ColorAttr(
+                      variable: 'genre',
+                      values: Defaults.colors10,
+                    ),
+                  )],
+                  coord: PolarCoord(transposed: true),
+                ),
+              ),
+
+              Container(
+                margin: const EdgeInsets.only(bottom: 40),
+                width: 350,
+                height: 350,
+                child: Chart(
+                  data: basicData,
+                  variables: {
+                    'genre': Variable(
+                      accessor: (Map map) => map['genre'] as String,
+                    ),
+                    'sold': Variable(
+                      accessor: (Map map) => map['sold'] as num,
+                      scale: LinearScale(max: 1200),
+                    ),
+                  },
+                  elements: [IntervalElement(
+                    position: Varset('sold'),
+                    color: ColorAttr(
+                      variable: 'genre',
+                      values: Defaults.colors10,
+                    ),
+                    groupBy: 'genre',
+                    modifiers: [StackModifier()],
+                  )],
+                  coord: PolarCoord(dim: 1),
+                ),
+              ),
+
+              Container(
                 margin: const EdgeInsets.only(top: 40),
                 width: 350,
                 height: 300,
@@ -57,6 +112,7 @@ class DebugPage extends StatelessWidget {
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
                   ],
+                  coord: RectCoord(horizontalRangeSignal: Defaults.horizontalRangeSignal),
                 ),
               ),
 
@@ -181,11 +237,13 @@ class DebugPage extends StatelessWidget {
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
                   ],
+                  selects: {'tap': PointSelect()},
+                  tooltip: TooltipGuide(),
                 ),
               ),
-
+              
               Container(
-                margin: const EdgeInsets.only(top: 40),
+                margin: const EdgeInsets.only(top: 100),
                 width: 350,
                 height: 300,
                 child: Chart(
@@ -205,49 +263,11 @@ class DebugPage extends StatelessWidget {
                     ),
                   },
                   elements: [PointElement(
-                    size: SizeAttr(value: 15),
-                    elevation: ElevationAttr(variable: '2', values: [0, 8]),
-                    color: ColorAttr(variable: '4', values: Defaults.colors10),
+                    size: SizeAttr(variable: '2', values: [5, 20]),
+                    // color: ColorAttr(variable: '4', values: Defaults.colors10, onSelect: {'choose': {true: (_) => Colors.red}}),
                     shape: ShapeAttr(variable: '4', values: [
-                      CircleShape(),
-                      SquareShape(),
-                    ]),
-                  )],
-                  axes: [
-                    Defaults.circularAxis,
-                    Defaults.radialAxis,
-                  ],
-                  coord: PolarCoord(),
-                ),
-              ),
-
-              Container(
-                margin: const EdgeInsets.only(top: 40),
-                width: 350,
-                height: 300,
-                child: Chart(
-                  data: scatterData,
-                  variables: {
-                    '0': Variable(
-                      accessor: (List datum) => datum[0] as num,
-                    ),
-                    '1': Variable(
-                      accessor: (List datum) => datum[1] as num,
-                    ),
-                    '2': Variable(
-                      accessor: (List datum) => datum[2] as num,
-                    ),
-                    '4': Variable(
-                      accessor: (List datum) => datum[4].toString(),
-                    ),
-                  },
-                  elements: [PointElement(
-                    size: SizeAttr(value: 15),
-                    elevation: ElevationAttr(variable: '2', values: [0, 8]),
-                    color: ColorAttr(variable: '4', values: Defaults.colors10),
-                    shape: ShapeAttr(variable: '4', values: [
-                      CircleShape(),
-                      SquareShape(),
+                      CircleShape(hollow: true),
+                      SquareShape(hollow: true),
                     ]),
                   )],
                   axes: [
@@ -256,11 +276,13 @@ class DebugPage extends StatelessWidget {
                   ],
                   coord: RectCoord(
                     horizontalRange: [0.05, 0.95],
-                    verticalRange: [0.05, 0.95]
+                    verticalRange: [0.05, 0.95],
+                    horizontalRangeSignal: Defaults.horizontalRangeSignal,
+                    verticalRangeSignal: Defaults.verticalRangeSignal,
                   ),
                 ),
               ),
-              
+
               Container(
                 margin: const EdgeInsets.only(top: 40),
                 width: 350,
@@ -283,20 +305,84 @@ class DebugPage extends StatelessWidget {
                   },
                   elements: [PointElement(
                     size: SizeAttr(variable: '2', values: [5, 20]),
-                    color: ColorAttr(variable: '4', values: Defaults.colors10),
+                    color: ColorAttr(variable: '4', values: Defaults.colors10, onSelect: {'choose': {true: (_) => Colors.red}}),
                     shape: ShapeAttr(variable: '4', values: [
                       CircleShape(hollow: true),
                       SquareShape(hollow: true),
                     ]),
                   )],
                   axes: [
-                    Defaults.horizontalAxis,
-                    Defaults.verticalAxis,
+                    Defaults.circularAxis
+                      ..position = 1
+                      ..grid = null
+                      ..flip = true,
+                    Defaults.radialAxis
+                      ..position = 0.2
+                      ..grid = null
+                      ..flip = true,
+                  ],
+                  coord: PolarCoord(),
+                  selects: {'choose': PointSelect()},
+                  tooltip: TooltipGuide(
+                    anchor: Offset.zero,
+                    align: Alignment.bottomRight,
+                    multiTuples: true,
+                  ),
+                ),
+              ),
+
+              Container(
+                margin: const EdgeInsets.only(top: 40),
+                width: 350,
+                height: 300,
+                child: Chart(
+                  data: scatterData,
+                  variables: {
+                    '0': Variable(
+                      accessor: (List datum) => datum[0] as num,
+                    ),
+                    '1': Variable(
+                      accessor: (List datum) => datum[1] as num,
+                    ),
+                    '2': Variable(
+                      accessor: (List datum) => datum[2] as num,
+                    ),
+                    '4': Variable(
+                      accessor: (List datum) => datum[4].toString(),
+                    ),
+                  },
+                  elements: [PointElement(
+                    size: SizeAttr(variable: '2', values: [5, 20]),
+                    color: ColorAttr(variable: '4', values: Defaults.colors10, onSelect: {'choose': {true: (_) => Colors.red}}),
+                    shape: ShapeAttr(variable: '4', values: [
+                      CircleShape(hollow: true),
+                      SquareShape(hollow: true),
+                    ]),
+                  )],
+                  axes: [
+                    Defaults.horizontalAxis
+                      ..flip = true
+                      ..label!.offset = Offset(0, -7.5)
+                      ..position = 1
+                      ..tickLine = TickLine(),
+                    Defaults.verticalAxis
+                      ..flip = true
+                      ..label!.offset = Offset(7.5, 0)
+                      ..position = 1
+                      ..tickLine = TickLine(),
                   ],
                   coord: RectCoord(
                     horizontalRange: [0.05, 0.95],
-                    verticalRange: [0.05, 0.95]
+                    verticalRange: [0.05, 0.95],
+                    // transposed: true,
                   ),
+                  selects: {'choose': PointSelect(toggle: true)},
+                  tooltip: TooltipGuide(
+                    anchor: Offset.zero,
+                    align: Alignment.bottomRight,
+                    multiTuples: true,
+                  ),
+                  padding: EdgeInsets.all(40),
                 ),
               ),
 
@@ -569,6 +655,11 @@ class DebugPage extends StatelessWidget {
                     modifiers: [StackModifier()],
                   )],
                   coord: PolarCoord(transposed: true, dim: 1),
+                  selects: {'tap': PointSelect(
+
+                  )},
+                  tooltip: TooltipGuide(),
+                  crosshair: CrosshairGuide(),
                 ),
               ),
 
@@ -664,7 +755,17 @@ class DebugPage extends StatelessWidget {
                     shape: ShapeAttr(value: RectShape(histogram: true)),
                     color: ColorAttr(variable: 'genre', values: Defaults.colors10),
                   )],
+                  axes: [
+                    Defaults.circularAxis,
+                    Defaults.radialAxis,
+                  ],
                   coord: PolarCoord(),
+                  selects: {'tap': PointSelect(
+                    on: {GestureType.scaleUpdate, GestureType.tapDown, GestureType.longPressMoveUpdate},
+                    dim: 1,
+                  )},
+                  tooltip: TooltipGuide(followPointer: [false, true]),
+                  crosshair: CrosshairGuide(followPointer: [false, true]),
                 ),
               ),
 
@@ -702,6 +803,11 @@ class DebugPage extends StatelessWidget {
                       ..grid = Defaults.strokeStyle,
                   ],
                   coord: RectCoord(transposed: true),
+                  selects: {'tap': PointSelect(
+                    variable: 'index',
+                  )},
+                  tooltip: TooltipGuide(),
+                  crosshair: CrosshairGuide(),
                 ),
               ),
 
@@ -739,6 +845,12 @@ class DebugPage extends StatelessWidget {
                       ..grid = Defaults.strokeStyle,
                   ],
                   coord: RectCoord(transposed: true),
+                  selects: {'tap': PointSelect(
+                    variable: 'index',
+                    dim: 1,
+                  )},
+                  tooltip: TooltipGuide(),
+                  crosshair: CrosshairGuide(),
                 ),
               ),
 
@@ -771,6 +883,11 @@ class DebugPage extends StatelessWidget {
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
                   ],
+                  selects: {'tap': PointSelect(
+                    variable: 'index',
+                  )},
+                  tooltip: TooltipGuide(),
+                  crosshair: CrosshairGuide(),
                 ),
               ),
 
@@ -803,6 +920,11 @@ class DebugPage extends StatelessWidget {
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
                   ],
+                  selects: {'tap': PointSelect(
+                    variable: 'index',
+                  )},
+                  tooltip: TooltipGuide(),
+                  crosshair: CrosshairGuide(),
                 ),
               ),
 
@@ -826,15 +948,20 @@ class DebugPage extends StatelessWidget {
                   elements: [IntervalElement(
                     position: Varset('index') * Varset('value'),
                     groupBy: 'type',
-                    label: LabelAttr(encode: (tuple) => Label(tuple['value'].toString())),
                     color: ColorAttr(variable: 'type', values: Defaults.colors10),
-                    modifiers: [DodgeModifier()],
+                    modifiers: [DodgeModifier(ratio: 0.12)],
                     size: SizeAttr(value: 4),
                   )],
                   axes: [
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
                   ],
+                  selects: {'tap': PointSelect(
+                    variable: 'index',
+                    dim: 1,
+                  )},
+                  tooltip: TooltipGuide(),
+                  crosshair: CrosshairGuide(),
                 ),
               ),
 
@@ -923,7 +1050,12 @@ class DebugPage extends StatelessWidget {
                       ..line = null
                       ..grid = Defaults.strokeStyle,
                   ],
+                  selects: {'tap': PointSelect(
+
+                  )},
                   coord: RectCoord(transposed: true),
+                  tooltip: TooltipGuide(),
+                  crosshair: CrosshairGuide(),
                 ),
               ),
 
@@ -960,8 +1092,50 @@ class DebugPage extends StatelessWidget {
                   selects: {'tap': PointSelect(
 
                   )},
-                  tooltip: TooltipGuide(),
+                  tooltip: TooltipGuide(render: simpleTooltip),
                   crosshair: CrosshairGuide(),
+                ),
+              ),
+
+              Container(
+                margin: const EdgeInsets.only(bottom: 40),
+                width: 350,
+                height: 300,
+                child: Chart(
+                  data: basicData,
+                  variables: {
+                    'genre': Variable(
+                      accessor: (Map map) => map['genre'] as String,
+                    ),
+                    'sold': Variable(
+                      accessor: (Map map) => map['sold'] as num,
+                    ),
+                  },
+                  elements: [IntervalElement(
+                    position: Varset('genre') * Varset('sold'),
+                    label: LabelAttr(encode: (tuple) => Label(tuple['sold'].toString())),
+                    elevation: ElevationAttr(
+                      value: 0,
+                      onSelect: {'tap': {true: (_) => 5,}}
+                    ),
+                    color: ColorAttr(
+                      value: Defaults.primaryColor,
+                      onSelect: {'tap': {false: (color) => color.withAlpha(100),}}
+                    ),
+                  )],
+                  axes: [
+                    Defaults.horizontalAxis,
+                    Defaults.verticalAxis,
+                  ],
+                  selects: {'tap': PointSelect(
+                    on: {GestureType.scaleUpdate, GestureType.tapDown, GestureType.longPressMoveUpdate},
+                    dim: 1,
+                  )},
+                  tooltip: TooltipGuide(
+                    render: simpleTooltip,
+                    followPointer: [false, true]
+                  ),
+                  crosshair: CrosshairGuide(followPointer: [false, true]),
                 ),
               ),
             ],
@@ -970,4 +1144,109 @@ class DebugPage extends StatelessWidget {
       ),
     );
   }
+}
+
+List<Figure> simpleTooltip(
+  Offset anchor,
+  List<Original> selectedTuples,
+  Selector selector,
+  Map<String, ScaleConv> scales,
+) {
+  List<Figure> figures;
+
+  String textContent = '';
+  if (selectedTuples.length == 1) {
+    final fields = scales.keys.toList();
+    final original = selectedTuples.single;
+    var field = fields.first;
+    var scale = scales[field]!;
+    var title = scale.title;
+    textContent += '$title: ${scale.formatter(original[field])}';
+    for (var i = 1; i < fields.length; i++) {
+      field = fields[i];
+      scale = scales[field]!;
+      title = scale.title;
+      textContent += '\n$title: ${scale.formatter(original[field])}';
+    }
+  } else {
+    final groupField = selector.variable;
+
+    final fields = <String>[];
+    for (var variable in scales.keys) {
+      if (variable != groupField) {
+        fields.add(variable);
+      }
+      if (fields.length == 2) {
+        break;
+      }
+    }
+
+    assert(fields.length == 2);
+
+    if (groupField != null) {
+      textContent += scales[groupField]!.formatter(selectedTuples.first[groupField]);
+    }
+    for (var original in selectedTuples) {
+      final domainField = fields.first;
+      final measureField = fields.last;
+      final domainScale = scales[domainField]!;
+      final measureScale = scales[measureField]!;
+      textContent += '\n${domainScale.formatter(original[domainField])}: ${measureScale.formatter(original[measureField])}';
+    }
+  }
+
+  const textStyle = TextStyle(fontSize: 12);
+  const padding = EdgeInsets.all(5);
+  const align = Alignment.topRight;
+  const offset = Offset(5, -5);
+  const radius = null;
+  const elevation = 1.0;
+  const backgroundColor = Colors.black;
+
+  final painter = TextPainter(
+    text: TextSpan(text: textContent, style: textStyle),
+    textDirection: TextDirection.ltr,
+  );
+  painter.layout();
+
+  final width = padding.left + painter.width + padding.right;
+  final height = padding.top + painter.height + padding.bottom;
+
+  final paintPoint = getPaintPoint(
+    offset == null ? anchor : anchor + offset,
+    width,
+    height,
+    align,
+  );
+
+  final widow = Rect.fromLTWH(
+    paintPoint.dx,
+    paintPoint.dy,
+    width,
+    height,
+  );
+
+  final widowPath = radius == null
+    ? (Path()..addRect(widow))
+    : (Path()..addRRect(RRect.fromRectAndRadius(widow, radius)));
+  
+  figures = <Figure>[];
+
+  if (elevation != null && elevation != 0) {
+    figures.add(ShadowFigure(
+      widowPath,
+      backgroundColor,
+      elevation,
+    ));
+  }
+  figures.add(PathFigure(
+    widowPath,
+    Paint()..color = backgroundColor,
+  ));
+  figures.add(TextFigure(
+    painter,
+    paintPoint + padding.topLeft,
+  ));
+
+  return figures;
 }

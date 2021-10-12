@@ -10,6 +10,35 @@ import 'package:graphic/src/util/path.dart';
 
 import 'axis.dart';
 
+/// Always behind the axis in clockwise forword.
+Alignment radialLabelAlign(Offset offset) {
+  if (offset.dx.equalTo(0)) {
+    if (offset.dy.equalTo(0)) {
+      return Alignment.center;
+    } else if (offset.dy > 0) {
+      return Alignment.centerRight;
+    } else {  // offset.dy < 0
+      return Alignment.centerLeft;
+    }
+  } else if (offset.dx > 0) {
+    if (offset.dy.equalTo(0)) {
+      return Alignment.topCenter;
+    } else if (offset.dy > 0) {
+      return Alignment.topRight;
+    } else {  // offset.dy < 0
+      return Alignment.topLeft;
+    }
+  } else {  // offset.dx < 0
+    if (offset.dy.equalTo(0)) {
+      return Alignment.bottomCenter;
+    } else if (offset.dy > 0) {
+      return Alignment.bottomRight;
+    } else {  // offset.dy < 0
+      return Alignment.bottomLeft;
+    }
+  }
+}
+
 List<Figure>? drawRadialAxis(
   List<TickInfo> ticks,
   double position,
@@ -19,8 +48,8 @@ List<Figure>? drawRadialAxis(
 ) {
   final rst = <Figure>[];
 
-  final flipSign = flip ? -1 : 1;
-  final angle = coord.startAngle + position * coord.endAngle;
+  final flipSign = flip ? -1.0 : 1.0;
+  final angle = coord.startAngle + (coord.endAngle - coord.startAngle) * position;
 
   if (line != null) {
     rst.add(PathFigure(
@@ -40,21 +69,11 @@ List<Figure>? drawRadialAxis(
     if (r >= coord.innerRadius && r <= coord.radius) {
       if (tick.label != null) {
         final labelAnchor = coord.polarToOffset(angle, r);
-        Alignment align;
-        // According to anchor's quadrant.
         final anchorOffset = labelAnchor - coord.center;
-        align = Alignment(
-          anchorOffset.dx.equalTo(0)
-            ? 1
-            : anchorOffset.dx / anchorOffset.dx.abs() * flipSign,
-          anchorOffset.dy.equalTo(0)
-            ? -1
-            : anchorOffset.dy / anchorOffset.dy.abs() * flipSign,
-        );
         rst.add(drawLabel(
           Label(tick.text, tick.label!),
           labelAnchor,
-          align,
+          radialLabelAlign(anchorOffset) * flipSign,
         ));
       }
     }

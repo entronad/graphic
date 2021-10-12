@@ -12,6 +12,7 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/select/point.dart';
+import 'package:graphic/src/interaction/select/select.dart';
 import 'package:graphic/src/util/path.dart';
 
 class CrosshairGuide {
@@ -66,7 +67,7 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
   @override
   void render() {
     final selectorName = params['selectorName'] as String;
-    final selector = params['selector'] as PointSelector?;
+    final selector = params['selector'] as Selector?;
     final selects = params['selects'] as Set<int>?;
     final zIndex = params['zIndex'] as int;
     final coord = params['coord'] as CoordConv;
@@ -116,21 +117,19 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
     if (coord is RectCoordConv) {
       final canvasCross = coord.convert(cross);
       if (canvasStyleX != null) {
-        final canvasX = coord.transposed ? canvasCross.dy : canvasCross.dx;
         figures.add(PathFigure(
           Paths.line(
-            from: Offset(canvasX, region.top),
-            to: Offset(canvasX, region.bottom),
+            from: Offset(canvasCross.dx, region.top),
+            to: Offset(canvasCross.dx, region.bottom),
           ),
           canvasStyleX.toPaint(),
         ));
       }
       if (canvasStyleY != null) {
-        final canvasY = coord.transposed ? canvasCross.dx : canvasCross.dy;
         figures.add(PathFigure(
           Paths.line(
-            from: Offset(region.left, canvasY),
-            to: Offset(region.right, canvasY),
+            from: Offset(region.left, canvasCross.dy),
+            to: Offset(region.right, canvasCross.dy),
           ),
           canvasStyleY.toPaint(),
         ));
@@ -143,8 +142,8 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
         );
         figures.add(PathFigure(
           Paths.line(
-            from: region.center,
-            to: polarCoord.polarToOffset(angle, region.shortestSide),
+            from: polarCoord.polarToOffset(angle, coord.innerRadius),
+            to: polarCoord.polarToOffset(angle, coord.radius),
           ),
           canvasStyleX.toPaint(),
         ));

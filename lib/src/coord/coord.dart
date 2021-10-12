@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/converter.dart';
@@ -58,6 +59,8 @@ abstract class CoordConv extends Converter<Offset, Offset> {
     dim == 1
       ? (transposed ? 1 : 2) // The last one is the value dim.
       : (transposed ? (3 - abstractDim) : abstractDim);
+  
+  double invertDistance(double canvasDistance, [int? dim]);
 }
 
 /// params:

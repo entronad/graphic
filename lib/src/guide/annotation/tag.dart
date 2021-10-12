@@ -9,7 +9,6 @@ import 'figure.dart';
 class TagAnnotation extends FigureAnnotation {
   TagAnnotation({
     required this.label,
-    this.align,
 
     List<String>? variables,
     List? values,
@@ -24,14 +23,11 @@ class TagAnnotation extends FigureAnnotation {
 
   Label label;
 
-  Alignment? align;
-
   @override
   bool operator ==(Object other) =>
     other is TagAnnotation &&
     super == other &&
-    label == other.label &&
-    align == other.align;
+    label == other.label;
 }
 
 class TagAnnotOp extends FigureAnnotOp {
@@ -41,12 +37,11 @@ class TagAnnotOp extends FigureAnnotOp {
   List<Figure>? evaluate() {
     final anchor = params['anchor'] as Offset;
     final label = params['label'] as Label;
-    final align = params['align'] as Alignment;
     
     return [drawLabel(
       label,
       anchor,
-      align,
+      Alignment.center,
     )];
   }
 }

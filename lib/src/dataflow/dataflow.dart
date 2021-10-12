@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:graphic/src/common/operators/value.dart';
 import 'package:graphic/src/interaction/event.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 
 import 'operator.dart';
 

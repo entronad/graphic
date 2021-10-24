@@ -5,26 +5,25 @@ import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/guide/axis/axis.dart';
-import 'package:graphic/src/interaction/event.dart';
-import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/interaction/signal.dart';
+import 'package:graphic/src/interaction/gesture.dart';
 
 /// The scale and rotation is calculated from the initial.
-/// The state-transform scale should be calculated by pointEvent.
-SignalUpdate<List<double>, Event> _getRangeUpdate(
+/// The state-transform scale should be calculated by pointSignal.
+SignalUpdate<List<double>> _getRangeUpdate(
   double Function(ScaleUpdateDetails) getDeltaDim,
   double Function(ScaleUpdateDetails) getScaleDim,
   double Function(Size) getSizeDim
 ) => (
   List<double> init,
   List<double> pre,
-  Event event,
+  Signal signal,
 ) {
-  event as GestureEvent;
-  final gesture = event.gesture;
+  signal as GestureSignal;
+  final gesture = signal.gesture;
 
   if (gesture.type == GestureType.scaleUpdate) {
-    final detail = gesture.detail as ScaleUpdateDetails;
+    final detail = gesture.details as ScaleUpdateDetails;
 
     if (detail.pointerCount == 1) {
       // detail.delta is from moveStart, not from pre.
@@ -43,7 +42,7 @@ SignalUpdate<List<double>, Event> _getRangeUpdate(
     }
   } else if (gesture.type == GestureType.scroll) {
     final step = 0.1;
-    final scrollDelta = gesture.detail as Offset;
+    final scrollDelta = gesture.details as Offset;
     final deltaRatio = scrollDelta.dy == 0
       ? 0.0
       : scrollDelta.dy > 0 ? (step / 2) : (-step / 2);
@@ -137,19 +136,15 @@ abstract class Defaults {
     grid: strokeStyle,
   );
 
-  static Signal<List<double>> get horizontalRangeSignal => {
-    EventType.gesture: _getRangeUpdate(
-      (detail) => detail.delta.dx,
-      (detail) => detail.horizontalScale,
-      (size) => size.width,
-    ),
-  };
+  static SignalUpdate<List<double>> get horizontalRangeSignal => _getRangeUpdate(
+    (detail) => detail.delta.dx,
+    (detail) => detail.horizontalScale,
+    (size) => size.width,
+  );
 
-  static Signal<List<double>> get verticalRangeSignal => {
-    EventType.gesture: _getRangeUpdate(
-      (detail) => -detail.delta.dy,
-      (detail) => detail.verticalScale,
-      (size) => size.height,
-    ),
-  };
+  static SignalUpdate<List<double>> get verticalRangeSignal => _getRangeUpdate(
+    (detail) => -detail.delta.dy,
+    (detail) => detail.verticalScale,
+    (size) => size.height,
+  );
 }

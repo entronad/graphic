@@ -4,10 +4,12 @@ import 'dart:ui';
 
 import 'package:graphic/src/interaction/gesture.dart';
 
-import 'select.dart';
+import 'selection.dart';
 
-class PointSelect extends Select {
-  PointSelect({
+/// The selection to select discrete data values.
+class PointSelection extends Selection {
+  /// Creates a point selection.
+  PointSelection({
     this.toggle,
     this.nearest,
     this.testRadius,
@@ -23,15 +25,26 @@ class PointSelect extends Select {
     clear: clear,
   );
 
+  /// Whether triggered tuples should be toggled (inserted or removed from) or replace
+  /// existing selected tuples.
+  /// 
+  /// If null, a default false is set.
   bool? toggle;
 
+  /// To select the tuple nearest to the pointer in the coordinate, Even if it's
+  /// out of [testRadius].
+  /// 
+  /// If null, a default true is set.
   bool? nearest;
 
+  /// Radius of the pointer test.
+  /// 
+  /// If null, a default 10 is set.
   double? testRadius;
 
   @override
   bool operator ==(Object other) =>
-    other is PointSelect &&
+    other is PointSelection &&
     super == other &&
     toggle == other.toggle &&
     nearest == other.nearest &&
@@ -50,7 +63,6 @@ class PointSelector extends Selector {
     List<Offset> eventPoints,  // [point]
   )
     : assert(toggle != true || variable == null),
-      assert(dim == null || nearest),
       super(
         name,
         dim,
@@ -67,7 +79,7 @@ class PointSelector extends Selector {
   @override
   Set<int>? select(
     AesGroups groups,
-    List<Original> originals,
+    List<Tuple> tuples,
     Set<int>? preSelects,
     CoordConv coord,
   ) {
@@ -113,9 +125,9 @@ class PointSelector extends Selector {
 
     if (variable != null) {  // Not toggle.
       final rst = <int>{};
-      final value = originals[nearestIndex][variable];
-      for (var i = 0; i < originals.length; i++) {
-        if (originals[i][variable] == value) {
+      final value = tuples[nearestIndex][variable];
+      for (var i = 0; i < tuples.length; i++) {
+        if (tuples[i][variable] == value) {
           rst.add(i);
         }
       }

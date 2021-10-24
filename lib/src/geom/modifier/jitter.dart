@@ -8,13 +8,19 @@ import 'package:graphic/src/algebra/varset.dart';
 
 import 'modifier.dart';
 
-/// Only support uniform random in the band.
+/// The specification of a jitter modifier.
+/// 
+/// The jitter mothed moves objects randomly in their local neighborhood. The random
+/// distribution is uniform.
 class JitterModifier extends Modifier {
+  /// Creates a jitter modifier.
   JitterModifier({
     this.ratio,
   });
 
-  /// Distribution ratio of band.
+  /// Ratio of the local neighborhood to the descrete band for each group.
+  /// 
+  /// If null, a default 0.5 is set.
   double? ratio;
 
   @override

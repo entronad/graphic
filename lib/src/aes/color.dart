@@ -1,19 +1,21 @@
 import 'dart:ui';
 
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/interaction/select/select.dart';
+import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/util/assert.dart';
 
 import 'channel.dart';
 
+/// The specification of a color attribute.
 class ColorAttr extends ChannelAttr<Color> {
+  /// Creates a color attribute.
   ColorAttr({
     Color? value,
     String? variable,
     List<Color>? values,
     List<double>? stops,
-    Color Function(Original)? encode,
-    Map<String, Map<bool, SelectUpdate<Color>>>? onSelect,
+    Color Function(Tuple)? encode,
+    Map<String, Map<bool, SelectionUpdate<Color>>>? onSelection,
   })
     : assert(isSingle([value, variable, encode])),
       super(
@@ -22,7 +24,7 @@ class ColorAttr extends ChannelAttr<Color> {
         values: values,
         stops: stops,
         encode: encode,
-        onSelect: onSelect,
+        onSelection: onSelection,
       );
 }
 

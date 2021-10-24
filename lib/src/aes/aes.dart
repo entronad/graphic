@@ -7,7 +7,7 @@ import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/geom/element.dart';
-import 'package:graphic/src/interaction/select/select.dart';
+import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/shape/shape.dart';
@@ -24,21 +24,39 @@ import 'size.dart';
 
 // Attr
 
-/// An Attr can be determined by algebra/variable, value, or encode, but only one of them can be defined.
-/// Attr can be updated by signal or selection.
+/// The specification of an aesthetic attribute.
+/// 
+/// Aesthetic attributes determin how an element item is perceived. An attribute
+/// value usually represent an variable value of a tuple. the encoding rules form
+/// data to attribute value can be defined in various ways (See details in the properties).
+/// 
+/// The generic [AV] is the type of attribute value.
 abstract class Attr<AV> {
+  /// Creates an aesthetic attribute.
   Attr({
     this.value,
     this.encode,
-    this.onSelect,
+    this.onSelection,
   });
 
+  /// Indicates a attribute value for all tuples directly.
   AV? value;
 
-  /// Encode original value tuple to aes value.
-  AV Function(Original)? encode;
+  /// Indicates how to get attribute form a tuple directly.
+  AV Function(Tuple)? encode;
 
-  Map<String, Map<bool, SelectUpdate<AV>>>? onSelect;
+  /// Attribute updates when a selection occurs.
+  /// 
+  /// The keys of outer map are names of selections defined, and Corresponding definitions
+  /// will only react to their on selections.
+  /// 
+  /// The keys of inner map are selection states. True means selected and false
+  /// means unselected. The corresponding updates will react when the tuple is in
+  /// That state.
+  /// 
+  /// Not that this definition is only meaningfull when a selection orrurs. If there
+  /// is no current selection, tuples are neither selected or unselected.
+  Map<String, Map<bool, SelectionUpdate<AV>>>? onSelection;
 
   @override
   bool operator ==(Object other) =>
@@ -60,7 +78,7 @@ abstract class AttrConv<SV extends num, AV> extends Converter<SV, AV> {
 // encoder
 
 abstract class Encoder<AV> {
-  AV encode(Scaled scaled, Original original);  // Original is for custom encode function.
+  AV encode(Scaled scaled, Tuple tuple);  // Tuple is for custom encode function.
 }
 
 /// For specs that value is set.
@@ -70,18 +88,18 @@ class ValueAttrEncoder<AV> extends Encoder<AV> {
   final AV value;
 
   @override
-  AV encode(Scaled scaled, Original original) => value;
+  AV encode(Scaled scaled, Tuple tuple) => value;
 }
 
 /// For specs that encode is set.
 class CustomEncoder<AV> extends Encoder<AV> {
   CustomEncoder(this.customEncode);
 
-  final AV Function(Original) customEncode;
+  final AV Function(Tuple) customEncode;
 
   @override
-  AV encode(Scaled scaled, Original original)
-    => customEncode(original);
+  AV encode(Scaled scaled, Tuple tuple)
+    => customEncode(tuple);
 }
 
 // op
@@ -92,7 +110,7 @@ class AesOp extends Operator<List<Aes>> {
   @override
   List<Aes> evaluate() {
     final scaleds = params['scaleds'] as List<Scaled>; // From scaled collector operator.
-    final originals = params['originals'] as List<Original>;  // From original collect operator.
+    final tuples = params['tuples'] as List<Tuple>;  // From tuple collect operator.
     final positionEncoder = params['positionEncoder'] as PositionEncoder; // From PostionOp.
     final shapeEncoder = params['shapeEncoder'] as Encoder<Shape>;
     final colorEncoder = params['colorEncoder'] as Encoder<Color>?;
@@ -106,16 +124,16 @@ class AesOp extends Operator<List<Aes>> {
     final rst = <Aes>[];
     for (var i = 0; i < scaleds.length; i++) {
       final scaled = scaleds[i];
-      final original = originals[i];
+      final tuple = tuples[i];
       rst.add(Aes(
         index: i,
-        position: positionEncoder.encode(scaled, original),
-        shape: shapeEncoder.encode(scaled, original),
-        color: colorEncoder?.encode(scaled, original),
-        gradient: gradientEncoder?.encode(scaled, original),
-        elevation: elevationEncoder?.encode(scaled, original),
-        label: labelEncoder?.encode(scaled, original),
-        size: sizeEncoder?.encode(scaled, original),
+        position: positionEncoder.encode(scaled, tuple),
+        shape: shapeEncoder.encode(scaled, tuple),
+        color: colorEncoder?.encode(scaled, tuple),
+        gradient: gradientEncoder?.encode(scaled, tuple),
+        elevation: elevationEncoder?.encode(scaled, tuple),
+        label: labelEncoder?.encode(scaled, tuple),
+        size: sizeEncoder?.encode(scaled, tuple),
       ));
     }
     return rst;
@@ -152,7 +170,7 @@ void parseAes(
 
     scope.aesesList.add(view.add(AesOp({
       'scaleds': scope.scaleds,
-      'originals': scope.originals,
+      'tuples': scope.tuples,
       'positionEncoder': position,
       'shapeEncoder': getChannelEncoder<Shape>(
         elementSpec.shape ?? ShapeAttr(value: getDefaultShape(elementSpec)),

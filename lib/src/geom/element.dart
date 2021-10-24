@@ -41,7 +41,12 @@ import 'line.dart';
 import 'point.dart';
 import 'polygon.dart';
 
+/// The specification of a geometory element.
+/// 
+/// A geometory element applies a certain graphing rule to get a graph from the
+/// tuples.
 abstract class GeomElement<S extends Shape> {
+  /// Creates a geometory element.
   GeomElement({
     this.color,
     this.elevation,
@@ -58,28 +63,73 @@ abstract class GeomElement<S extends Shape> {
     : assert(isSingle([color, gradient], allowNone: true)),
       assert(selected == null || selected.keys.length == 1);
 
+  /// The color attribute of this element.
+  /// 
+  /// Only one in [color] and [gradient] can be set.
+  /// 
+  /// If null and [gradient] is also null, a default `ColorAttr(value: Defaults.primaryColor)`
+  /// is set.
   ColorAttr? color;
 
+  /// The shadow elevation attribute of this element.
   ElevationAttr? elevation;
 
+  /// The gradient attribute of this element.
+  /// 
+  /// Only one in [color] and [gradient] can be set.
   GradientAttr? gradient;
 
+  /// The label attribute of this element.
   LabelAttr? label;
 
+  /// Algebra expression of the element position.
+  /// 
+  /// See details about graphic algebra in [Varset].
+  /// 
+  /// A certain type of graphing requires a certain count of variables in each
+  /// dimension. If not satisfied, The geometory types have their own rules tring
+  /// to complete the points. See details in subclasses.
+  /// 
+  /// If null, a crossing of first 2 variables is set by default.
   Varset? position;
 
+  /// The shape attribute of this element.
+  /// 
+  /// If null, a default shape is set according to the geometory type. See details
+  /// in subclasses.
   ShapeAttr<S>? shape;
 
+  /// The size attribute of this element.
+  /// 
+  /// If null, a default size is set according to the shape definition (See details
+  /// in [Shape.defaultSize]).
+  /// 
+  /// See also:
+  /// 
+  /// - [Shape.defaultSize], the default size setting of each shape.
   SizeAttr? size;
 
+  /// The collision modifiers applied to this element.
+  /// 
+  /// They are applied in order of the list index.
+  /// 
+  /// If set, a [groupBy] is required.
   List<Modifier>? modifiers;
 
+  /// The z index of this element.
+  /// 
+  /// If null, a default 0 is set.
   int? zIndex;
 
-  /// How element items are grouped.
-  /// Modifier require groups.
+  /// The variable by which the tuples are grouped.
+  /// 
+  /// The grouping is usfull to seperate line and area shapes, and is requred for
+  /// [modifiers].
   String? groupBy;
 
+  /// The selection name and selected tuple indexes triggered initially.
+  /// 
+  /// The map must be single entried.
   Map<String, Set<int>>? selected;
 
   @override
@@ -98,15 +148,15 @@ abstract class GeomElement<S extends Shape> {
     selected == other.selected;
 }
 
-/// Group aes value originals by element's groupBy field.
-/// If groupBy is null, all originals will be in the same group.
+/// Group aes value tuples by element's groupBy field.
+/// If groupBy is null, all tuples will be in the same group.
 class GroupOp extends Operator<AesGroups> {
   GroupOp(Map<String, dynamic> params) : super(params);
 
   @override
   AesGroups evaluate() {
     final aeses = params['aeses'] as List<Aes>;
-    final originals = params['originals'] as List<Original>;
+    final tuples = params['tuples'] as List<Tuple>;
     final groupBy = params['groupBy'] as String?;
     final scales = params['scales'] as Map<String, ScaleConv>;
 
@@ -122,8 +172,8 @@ class GroupOp extends Operator<AesGroups> {
 
     for (var i = 0; i < aeses.length; i++) {
       final aes = aeses[i];
-      final original = originals[i];
-      tmp[original[groupBy]]!.add(aes);
+      final tuple = tuples[i];
+      tmp[tuple[groupBy]]!.add(aes);
     }
 
     return tmp.values.toList();
@@ -153,7 +203,7 @@ class ElementRenderOp extends Render<ElementScene> {
 
     for (var group in groups) {
       final representShape = group.first.shape;
-      figures.addAll(representShape.drawGroup(
+      figures.addAll(representShape.renderGroup(
         group,
         coord,
         origin,
@@ -200,7 +250,7 @@ void parseGeom(
 
     Operator<AesGroups> groups = view.add(GroupOp({
       'aeses': aeses,
-      'originals': scope.originals,
+      'tuples': scope.tuples,
       'groupBy': elementSpec.groupBy,
       'scales': scope.scales,
     }));

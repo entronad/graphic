@@ -5,24 +5,36 @@ import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 
-import 'util/draw_basic_item.dart';
+import 'util/render_basic_item.dart';
 import 'shape.dart';
 
+/// The shape for the custom element.
+/// 
+/// See also:
+/// 
+/// - [CustomElement], which this shape is for.
 abstract class CustomShape extends Shape {
   @override
   double get defaultSize =>
     throw UnimplementedError('Designate default size in your own custom shape');
 }
 
-/// The order of position points dosen't affect the shape.
+/// A candle stick shape.
+/// 
+/// ** We insist that the price of a subject matter of investment is determined
+/// by its intrinsic value. Too much attention to the short-term fluctuations in
+/// prices is harmful. Thus a candle stick chart may misslead your investment decision.**
 class CandlestickShape extends CustomShape {
+  /// Creates a candle stick shape.
   CandlestickShape({
     this.hollow = true,
     this.strokeWidth = 1,
   });
 
+  /// whether the sticks are hollow.
   final bool hollow;
 
+  /// The stroke width of the stick.
   final double strokeWidth;
 
   @override
@@ -35,7 +47,7 @@ class CandlestickShape extends CustomShape {
   double get defaultSize => 10;
 
   @override
-  List<Figure> drawGroup(
+  List<Figure> renderGroup(
     List<Aes> group,
     CoordConv coord,
     Offset origin,
@@ -45,13 +57,13 @@ class CandlestickShape extends CustomShape {
 
     final rst = <Figure>[];
     for (var item in group) {
-      rst.addAll(item.shape.drawItem(item, coord, origin));
+      rst.addAll(item.shape.renderItem(item, coord, origin));
     }
     return rst;
   }
 
   @override
-  List<Figure> drawItem(
+  List<Figure> renderItem(
     Aes item,
     CoordConv coord,
     Offset origin,
@@ -78,7 +90,7 @@ class CandlestickShape extends CustomShape {
       path.moveTo(x, bottomEdge);
       path.lineTo(x, bottom);
     } else {
-      // Fill will not draw path.lineTo.
+      // Fill will not render path.lineTo.
       final strokeBias = strokeWidth / 2;
       path.addRect(Rect.fromPoints(
         Offset(x - strokeBias, top),
@@ -96,7 +108,7 @@ class CandlestickShape extends CustomShape {
     ));
 
     // Color should be set by color attr encode.
-    return drawBasicItem(
+    return renderBasicItem(
       path,
       item,
       hollow,

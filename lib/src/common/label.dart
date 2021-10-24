@@ -5,7 +5,16 @@ import 'package:graphic/src/graffiti/figure.dart';
 
 import 'defaults.dart';
 
+/// The style of a [Label].
+/// 
+/// It includes not only styles of text, but also position settings to the anchor
+/// point.
+/// 
+/// See also:
+/// 
+/// - [renderLabel], renders a label with an anchor point.
 class LabelSyle {
+  /// Creates a label style.
   LabelSyle({
     TextStyle? style,
     this.offset,
@@ -13,13 +22,20 @@ class LabelSyle {
     this.align,
   }) : this.style = style ?? Defaults.textStyle;
 
-  /// Note that default color is white.
+  /// The text style of the label.
+  /// 
+  /// Note that the default color is white.
   TextStyle style;
 
+  /// The offset of the label from the anchor.
   Offset? offset;
 
+  /// The rotation of the label.
+  /// 
+  /// The rotation axis is the anchor point with [offset].
   double? rotation;
 
+  /// How the label align to the anchor point.
   Alignment? align;
 
   @override
@@ -31,14 +47,21 @@ class LabelSyle {
     align == other.align;
 }
 
+/// Specification of a label.
+/// 
+/// A label is a span of text with styles. In is used for [LabelAttr], [TagAnnotation],
+/// etc in the chart.
 class Label {
+  /// Creates a label.
   Label(
     this.text,
     [LabelSyle? style,]
   ) : this.style = style ?? LabelSyle();
 
+  /// The label text.
   String text;
 
+  /// The label style.
   LabelSyle style;
 
   @override
@@ -48,6 +71,9 @@ class Label {
     style == other.style;
 }
 
+/// Calculates the real paint point for [TextPainter.paint].
+/// 
+/// The [axis] is the anchor point with the [Label]'s offset. 
 Offset getPaintPoint(
   Offset axis,
   double width,
@@ -58,12 +84,13 @@ Offset getPaintPoint(
   axis.dy - (height / 2) + ((height / 2) * align.y),
 );
 
-Figure drawLabel(
+/// Gets the figure of a label.
+/// 
+/// The default align of lables is various in different situations, so it can be
+/// configured by [defaultAlign] in this method.
+Figure renderLabel(
   Label label,
-  /// Where to paint the label, usually on top of the shape.
   Offset anchor,
-  /// How the label bounds align the anchor.
-  /// If Label is topLeft, it is [-1, -1].
   Alignment defaultAlign,
 ) {
   final painter = TextPainter(

@@ -6,12 +6,17 @@ import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 
-import 'util/draw_basic_item.dart';
+import 'util/render_basic_item.dart';
 import 'function.dart';
 
+/// The shape for the point element.
+/// 
+/// See also:
+/// 
+/// - [PointElement], which this shape is for.
 abstract class PointShape extends FunctionShape {
   @override
-  List<Figure> drawGroup(
+  List<Figure> renderGroup(
     List<Aes> group,
     CoordConv coord,
     Offset origin,
@@ -21,7 +26,7 @@ abstract class PointShape extends FunctionShape {
     for (var item in group) {
       assert(item.shape is PointShape);
 
-      rst.addAll(item.shape.drawItem(item, coord, origin));
+      rst.addAll(item.shape.renderItem(item, coord, origin));
     }
 
     return rst;
@@ -31,11 +36,15 @@ abstract class PointShape extends FunctionShape {
   double get defaultSize => 5;
 }
 
+/// The base class of point shapes.
 abstract class PointShapeBase extends PointShape {
+  /// Creates a point shape base.
   PointShapeBase(this.hollow, this.strokeWidth);
 
+  /// Whether this point shape is hollow.
   final bool hollow;
 
+  /// The stroke width of this point shape when it's hollow.
   final double strokeWidth;
 
   @override
@@ -45,7 +54,7 @@ abstract class PointShapeBase extends PointShape {
     strokeWidth == other.strokeWidth;
 
   @override
-  List<Figure> drawItem(
+  List<Figure> renderItem(
     Aes item,
     CoordConv coord,
     Offset origin,
@@ -60,7 +69,7 @@ abstract class PointShapeBase extends PointShape {
 
     final path = this.path(item, coord);
     final size = item.size ?? defaultSize;
-    rst.addAll(drawBasicItem(
+    rst.addAll(renderBasicItem(
       path,
       item,
       hollow,
@@ -72,7 +81,7 @@ abstract class PointShapeBase extends PointShape {
         point.dx,
         point.dy + (size / 2),
       );
-      rst.add(drawLabel(
+      rst.add(renderLabel(
         item.label!,
         anchor,
         Alignment.topCenter,
@@ -85,7 +94,9 @@ abstract class PointShapeBase extends PointShape {
   Path path(Aes item, CoordConv coord);
 }
 
+/// A circle shape.
 class CircleShape extends PointShapeBase {
+  /// Creates a circle shape.
   CircleShape({
     bool hollow = false,
     double strokeWidth = 1,
@@ -108,7 +119,9 @@ class CircleShape extends PointShapeBase {
   }
 }
 
+/// A square shape.
 class SquareShape extends PointShapeBase {
+  /// Creates a square shape.
   SquareShape({
     bool hollow = false,
     double strokeWidth = 1,

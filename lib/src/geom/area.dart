@@ -12,7 +12,18 @@ import 'package:graphic/src/shape/area.dart';
 import 'function.dart';
 import 'modifier/modifier.dart';
 
+/// The specification of an area element.
+/// 
+/// An area graphing produces a graph containing all points within the region between
+/// two lines.
+/// 
+/// It will check and complete position points by the rule of:
+/// 
+/// ```
+/// [start, end] | [end] => [start, end]
+/// ```
 class AreaElement extends FunctionElement<AreaShape> {
+  /// Creates an area element.
   AreaElement({
     ColorAttr? color,
     ElevationAttr? elevation,

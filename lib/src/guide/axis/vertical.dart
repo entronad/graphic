@@ -9,7 +9,7 @@ import 'package:graphic/src/util/path.dart';
 
 import 'axis.dart';
 
-List<Figure>? drawVerticalAxis(
+List<Figure>? renderVerticalAxis(
   List<TickInfo> ticks,
   double position,
   bool flip,
@@ -47,7 +47,7 @@ List<Figure>? drawVerticalAxis(
         ));
       }
       if (tick.label != null) {
-        rst.add(drawLabel(
+        rst.add(renderLabel(
           Label(tick.text, tick.label!),
           Offset(x, y),
           flip ? Alignment.centerRight : Alignment.centerLeft,
@@ -59,7 +59,7 @@ List<Figure>? drawVerticalAxis(
   return rst.isEmpty ? null : rst;
 }
 
-List<Figure>? drawVerticalGrid(
+List<Figure>? renderVerticalGrid(
   List<TickInfo> ticks,
   RectCoordConv coord,
 ) {

@@ -2,6 +2,9 @@ import 'package:graphic/src/dataflow/tuple.dart';
 
 import 'continuous.dart';
 
+/// The specification of a time scale.
+/// 
+/// It converts [DateTime] to [double]s normalized to `[0, 1]` linearly.
 class TimeScale extends ContinuousScale<DateTime> {
   TimeScale({
     DateTime? min,
@@ -36,7 +39,7 @@ DateTime _earlier(DateTime a, DateTime b) =>
 class TimeScaleConv extends ContinuousScaleConv<DateTime> {
   TimeScaleConv(
     TimeScale spec,
-    List<Original> tuples,
+    List<Tuple> tuples,
     String variable,
   ) {
     // min, max

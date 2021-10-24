@@ -12,7 +12,14 @@ import 'package:graphic/src/shape/custom.dart';
 import 'element.dart';
 import 'modifier/modifier.dart';
 
+/// The specification of a custom element.
+/// 
+/// A custom element has no special graphing rule, its graph is determined by the
+/// [CustomShape].
+/// 
+/// it will not check or complete the position points.
 class CustomElement extends GeomElement<CustomShape> {
+  /// Creates a custom element.
   CustomElement({
     ColorAttr? color,
     ElevationAttr? elevation,

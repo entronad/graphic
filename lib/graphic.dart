@@ -1,7 +1,7 @@
 export 'src/chart/chart.dart' show Chart;
-export 'src/chart/size.dart' show ResizeEvent;
+export 'src/chart/size.dart' show ResizeSignal;
 
-export 'src/data/data_set.dart' show ChangeDataEvent;
+export 'src/data/data_set.dart' show ChangeDataSignal;
 
 export 'src/variable/variable.dart' show Variable;
 export 'src/variable/transform/filter.dart' show Filter;
@@ -9,7 +9,6 @@ export 'src/variable/transform/map.dart' show MapTrans;
 export 'src/variable/transform/proportion.dart' show Proportion;
 export 'src/variable/transform/sort.dart' show Sort;
 
-export 'src/scale/scale.dart' show ScaleConv;
 export 'src/scale/linear.dart' show LinearScale;
 export 'src/scale/ordinal.dart' show OrdinalScale;
 export 'src/scale/time.dart' show TimeScale;
@@ -40,32 +39,33 @@ export 'src/shape/interval.dart' show IntervalShape, RectShape, FunnelShape;
 export 'src/shape/line.dart' show LineShape, BasicLineShape;
 export 'src/shape/point.dart' show PointShape, CircleShape, SquareShape;
 export 'src/shape/polygon.dart' show PolygonShape, HeatmapShape;
-export 'src/shape/util/draw_basic_item.dart' show drawBasicItem;
+export 'src/shape/util/render_basic_item.dart' show renderBasicItem;
 
 export 'src/graffiti/figure.dart'
   show Figure, PathFigure, ShadowFigure, TextFigure, RotatedTextFigure;
 
-export 'src/coord/polar.dart' show PolarCoord;
-export 'src/coord/rect.dart' show RectCoord;
+export 'src/coord/coord.dart' show CoordConv;
+export 'src/coord/polar.dart' show PolarCoord, PolarCoordConv;
+export 'src/coord/rect.dart' show RectCoord, RectCoordConv;
 
 export 'src/guide/axis/axis.dart'
   show TickLine, TickLineMapper, LabelMapper, GridMapper, AxisGuide;
-export 'src/guide/interaction/tooltip.dart' show TooltipGuide;
+export 'src/guide/interaction/tooltip.dart' show TooltipGuide, RenderTooltip;
 export 'src/guide/interaction/crosshair.dart' show CrosshairGuide;
 export 'src/guide/annotation/line.dart' show LineAnnotation;
 export 'src/guide/annotation/region.dart' show RegionAnnotation;
 export 'src/guide/annotation/mark.dart' show MarkAnnotation;
 export 'src/guide/annotation/tag.dart' show TagAnnotation;
+export 'src/guide/annotation/custom.dart' show CustomAnnotation;
 
-export 'src/interaction/event.dart' show Event, EventType;
-export 'src/interaction/gesture.dart' show GestureType, Gesture, GestureEvent;
-export 'src/interaction/signal.dart' show SignalUpdate, Signal;
-export 'src/interaction/select/select.dart' show SelectUpdate, Selector;
-export 'src/interaction/select/interval.dart' show IntervalSelect;
-export 'src/interaction/select/point.dart' show PointSelect;
+export 'src/interaction/signal.dart' show Signal, SignalType, SignalUpdate;
+export 'src/interaction/gesture.dart' show GestureType, Gesture, GestureSignal;
+export 'src/interaction/selection/selection.dart' show SelectionUpdate;
+export 'src/interaction/selection/interval.dart' show IntervalSelection;
+export 'src/interaction/selection/point.dart' show PointSelection;
 
 export 'src/common/styles.dart' show StrokeStyle;
-export 'src/common/label.dart' show Label, LabelSyle, drawLabel, getPaintPoint;
+export 'src/common/label.dart' show Label, LabelSyle, renderLabel, getPaintPoint;
 export 'src/common/defaults.dart' show Defaults;
 
-export 'src/dataflow/tuple.dart' show Original;
+export 'src/dataflow/tuple.dart' show Tuple, Aes;

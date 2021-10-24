@@ -2,11 +2,16 @@ import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 
+/// The specification of an annotation.
 abstract class Annotation {
+  /// Creates an annotation.
   Annotation({
     this.zIndex,
   });
 
+  /// The z index of this annotation.
+  /// 
+  /// If null, a default 0 is set.
   int? zIndex;
 
   @override

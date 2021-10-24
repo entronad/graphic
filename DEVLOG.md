@@ -2404,7 +2404,7 @@ vega-view API 会暴露vega架构中的对象，方便调试
 
 ~~可不可给element的shape属性注册一个relative symbol的方式来做legend？~~ shape 属性还是用函数吧，legend自己考虑
 
-~~维度用什么？1,2,3，‘x', 'y', 'z'，~~还是Dim.x, Dim.y？
+~~维度用什么？1,2,3，‘x', 'y', 'z'，~~还是Dim.x, Dim.y？**都用数字，指定维度叫dim，维度数叫dimCount，用数字更简洁纯正**
 
 guide 可以拆分为 axis, legend, annot（annotation），去掉guide这一层，g2也是这样的
 
@@ -2470,7 +2470,9 @@ geography：留给专业的
 
 edge：图可视化一般也是专门的
 
-感觉在 fpr 语法中的运算符还是直接用函数形式比较好，可模仿rx，因为这样直观易接受
+**Custom/tag/mark annotaiont 可以实现title，legend等大部分功能**
+
+感觉在 fpr 语法中的运算符还是直接用函数形式比较好，可模仿rx，因为这样直观易接受 **目前的高级gesture系统似乎不再需要事件的 fpr 了**
 
 感觉在specification中会大量用到字符串作为标识符去指代某些变量，因为那些变量还没有被生成，比如signal的定义
 
@@ -3352,7 +3354,7 @@ select为了保证能记录到原始值，整个都重
 
 这样与stream搭接的op，DataSourceOp，SizeOp是不consume的，GestureEventOp，ElementSelectStateusOp 是consume的。
 
-position目前设置为不可通过selection更改。
+position目前设置为不可通过selection更改。**select之后如果需要图形的变化，通过shape更改**
 
 无论从vega selection的定义上讲还是实践上讲，都应当是从抽象的variable和scaled value对比确定selection。被stack了的，理论上应当只查找x，dodge和jitter都不影响position的查找范围。
 
@@ -3421,6 +3423,8 @@ guide中，scale由于只有两个axis和legend而且常用，放在外面，单
 但还是设置个DataSet，这样相当于从data到 originals 是一个独立模块，chart只负责originals，也避免D的泛型写到Chart上
 
 Crosshair和axis类似，也是指到region边缘。
+
+**对于极坐标的region边缘这个问题，对于element，不设限制，取rect region 的自然边缘。crosshair、axis这类背景型的，取坐标定义的扇区**
 
 region也由coord持有吧，简化df的拓扑结构。反正coordConv的成员都是final的，也不存在数据一致性问题。这样凡是要用到coord作为参数的地方，就不需要重复的再要region了。
 
@@ -3621,3 +3625,57 @@ polar到底怎么搞还没想好，先规定interval只可用于rect坐标系
 radial标签的位置是：在轴线顺时针的后方，它和circular 的”外侧“情况还不太一样。还是用 if else 直观。
 
 环通过两个半圆绘制
+
+感觉coord中还是要用dimCount，“维度数量”和“指定维度”进行区分
+
+dartdoc会合并getter和setter，并以setter为准
+
+注释在注解之前
+
+控制行长在80左右
+
+chart的对内对外通信先不弄了。
+
+为方便使用者理解，将Original命名为Tuple，它对外来说最重要，占个常用的好名字。
+
+spec还是都采用可null的形式，在spec中注明默认值。并且以 if null 这种方式表述。意义上确实可以“没有“的不用特别注明
+
+对应成员变量的注释（包括函数），要么是名词，要么用 Indicate 开头，
+
+注释 this的使用规定只是说要指代对象时要用this不要用the，别的要特指的情况可以用this
+
+signal 还是不要用map了，由于不能指定泛型没什么意义，还使得层级和概念特别复杂。
+
+还是应该叫selection，这是类型名，vaga中是那个字段叫select，但是暗示这个对象叫selection
+
+~~select、signal是概念总称，触发是selection和event，处理是update，字段分别叫 onSelect, onXXXSignal。event 经过signal op 集中发射后，就称为signal，有时候signal就是指的event本身。~~  感觉event和signal是完全重合的概念，将event术语完全替换为signal。select也统一到selection，减少概念方便统一
+
+SignalUpdate 似乎并不需要区分event类型了，因为signal本身就是一个统一集中发射的东西，SignalUpdate要能处理所有类似的event
+
+signal是一个信号，selection是一个状态，信号改变状态，onXXSignal要处理的是离散的信号，onSelection要处理的是不同的状态。
+
+nearest还是要默认true的，因为绝大部分人在非点图中认为只要在图形范围内就能选中
+
+行文中更多的以数据tuple为主体对象。
+
+geometory element 的定义中抢到graphing的概念
+
+区分一套element和单个element用 element series 和 element item
+
+tooltip render 中引进 selector 和 scaleconv的目的是要variable和 title，而这些本就应该是用户定制的，因此不需要引入，还加重了心智负担。假如是要造一个比较通用，可以用高阶函数。
+
+不要用draw这个方法名了，统一到render，只提供figures或将figures设置到scene。
+
+图表的size在生成时还是叫 size，使用时除非发生冲突，否则还是用size，尽量在doc中表明含义。
+
+
+
+## TODO
+
+group selection
+
+tooltip grammar
+
+legend grammar
+
+in and out communication

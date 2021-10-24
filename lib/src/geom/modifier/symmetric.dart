@@ -5,6 +5,10 @@ import 'package:graphic/src/dataflow/tuple.dart';
 
 import 'modifier.dart';
 
+/// The specification of a symmetric modifier.
+/// 
+/// The symmetric method redistributes all position points symmetricly around the
+/// zero, keeping their relative position unchanged.
 class SymmetricModifier extends Modifier {
   @override
   bool operator ==(Object other) =>

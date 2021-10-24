@@ -2,12 +2,18 @@ import 'package:graphic/src/dataflow/tuple.dart';
 
 import 'transform.dart';
 
+/// The transform to sort the tuple list.
+/// 
+/// See also:
+/// - [Tuple], the original value tuple.
 class Sort extends VariableTransform {
+  /// Creates sort transform.
   Sort({
     required this.compare,
   });
 
-  Comparator<Original> compare;
+  /// The comparison function for sorting.
+  Comparator<Tuple> compare;
 
   @override
   bool operator ==(Object other) =>
@@ -20,10 +26,10 @@ class SortOp extends TransformOp {
   SortOp(Map<String, dynamic> params) : super(params);
 
   @override
-  List<Original> evaluate() {
-    final originals = params['originals'] as List<Original>;
-    final compare = params['compare'] as Comparator<Original>;
+  List<Tuple> evaluate() {
+    final tuples = params['tuples'] as List<Tuple>;
+    final compare = params['compare'] as Comparator<Tuple>;
 
-    return originals..sort(compare);
+    return tuples..sort(compare);
   }
 }

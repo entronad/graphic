@@ -14,23 +14,44 @@ import 'transform/map.dart';
 import 'transform/proportion.dart';
 import 'transform/sort.dart';
 
+/// Signature for [Variable.accessor].
+/// 
+/// See also:
+/// 
+/// - [Variable], which uses the signature to define an accessor.
 typedef Accessor<D, V> = V Function(D);
 
-/// [D]: Type of source data items.
-/// [V]: Type of variable value.
+/// The specification of a variable.
+/// 
+/// Instead of raw [Spec.data], the chart reorgnize datum to "original value tuple"
+/// (See details in [Tuple]) for internal usage. The variable defines how to create
+/// a field in original value tuple form input datum, and the scale specification
+/// of the field.
+/// 
+/// The generic [D] is the type of datum in [Spec.data] list, and [V] is the type
+/// of field value. [V] can only be [String], [num] or [DateTime].
+/// 
+/// See also:
+/// 
+/// - [Tuple], the original value tuple.
 class Variable<D, V> {
+  /// Creates a variable specification.
   Variable({
     required this.accessor,
     this.scale,
-  });
+  }) : assert(
+    accessor is Accessor<D, String> ||
+    accessor is Accessor<D, num> ||
+    accessor is Accessor<D, DateTime>
+  );
 
+  /// Indicates how to get the variable value from a datum.
   Accessor<D, V> accessor;
 
-  /// Also act like avatar of a variable, keeps it's meta information.
-  /// If not provided, a default scale is infered from the type of [V].
-  ///     [OrdinalScale] for [String]
-  ///     [LinearScale] for [num]
-  ///     [TimeScale] for [DateTime]
+  /// Scale specification of this variable.
+  /// 
+  /// If null, a default scale is inferred from type [V], [OrdinalScale] for [String],
+  /// [LinearScale] for [num], and [TimeScale] for [DateTime]
   Scale<V, num>? scale;
 
   @override
@@ -44,19 +65,19 @@ class Variable<D, V> {
 /// - accessors: Map<String, accessor>
 /// - data: List<D>
 /// 
-/// value: List<Original>
-/// Original tuples
-class VariableOp<D> extends Operator<List<Original>> {
+/// value: List<Tuple>
+/// Tuple tuples
+class VariableOp<D> extends Operator<List<Tuple>> {
   VariableOp(Map<String, dynamic> params) : super(params);
 
   @override
-  List<Original> evaluate() {
+  List<Tuple> evaluate() {
     final accessors = params['accessors'] as Map<String, Accessor<D, dynamic>>;
     final data = params['data'] as List<D>;
 
-    final rst = <Original>[];
+    final rst = <Tuple>[];
     for (var datum in data) {
-      final tuple = Original();
+      final tuple = Tuple();
       for (var name in accessors.keys) {
         tuple[name] = accessors[name]!(datum);
       }
@@ -89,7 +110,7 @@ void parseVariable<D>(
     }
   }
 
-  Operator<List<Original>> originals = view.add(VariableOp<D>({
+  Operator<List<Tuple>> tuples = view.add(VariableOp<D>({
     'accessors': accessors,
     'data': scope.data,
   }));
@@ -98,13 +119,13 @@ void parseVariable<D>(
   if (transformSpecs != null) {
     for (var transformSpec in transformSpecs) {
       if (transformSpec is Filter) {
-        originals = view.add(FilterOp({
-          'originals': originals,
-          'filter': transformSpec.filter,
+        tuples = view.add(FilterOp({
+          'tuples': tuples,
+          'test': transformSpec.test,
         }));
       } else if (transformSpec is MapTrans) {
-        originals = view.add(MapOp({
-          'originals': originals,
+        tuples = view.add(MapOp({
+          'tuples': tuples,
           'mapper': transformSpec.mapper,
         }));
       } else if (transformSpec is Proportion) {
@@ -112,15 +133,15 @@ void parseVariable<D>(
         assert(scope.scaleSpecs[as] == null);
         scope.scaleSpecs[as] = transformSpec.scale ?? LinearScale(min: 0, max: 1);
 
-        originals = view.add(ProportionOp({
-          'originals': originals,
+        tuples = view.add(ProportionOp({
+          'tuples': tuples,
           'variable': transformSpec.variable,
           'groupBy': transformSpec.groupBy,
           'as': as,
         }));
       } else if (transformSpec is Sort) {
-        originals = view.add(SortOp({
-          'originals': originals,
+        tuples = view.add(SortOp({
+          'tuples': tuples,
           'compare': transformSpec.compare,
         }));
       } else {
@@ -129,7 +150,7 @@ void parseVariable<D>(
     }
   }
 
-  scope.originals = originals;
+  scope.tuples = tuples;
 
   assert(Reserveds.legalIdentifiers(scope.scaleSpecs.keys));
 }

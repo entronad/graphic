@@ -7,29 +7,40 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/util/path.dart';
 
-import 'util/draw_basic_item.dart';
+import 'util/render_basic_item.dart';
 import 'function.dart';
 
+/// The shape for the line element.
+/// 
+/// See also:
+/// 
+/// - [LineElement], which this shape is for.
 abstract class LineShape extends FunctionShape {
   @override
   double get defaultSize => 2;
 
   @override
-  List<Figure> drawItem(
+  List<Figure> renderItem(
     Aes item,
     CoordConv coord,
     Offset origin,
   ) => throw UnimplementedError('Line only paints group.');
 }
 
+/// A basic line shape.
 class BasicLineShape extends LineShape {
+  /// Creates a basic line shape.
   BasicLineShape({
     this.smooth = false,
     this.loop = false,
   });
 
+  /// Whether this line is smooth.
   final bool smooth;
 
+  /// Whether to connect the last point to the first point.
+  /// 
+  /// This is usefull in the polar coordinate.
   final bool loop;
 
   @override
@@ -39,7 +50,7 @@ class BasicLineShape extends LineShape {
     loop == other.loop;
 
   @override
-  List<Figure> drawGroup(
+  List<Figure> renderGroup(
     List<Aes> group,
     CoordConv coord,
     Offset origin,
@@ -85,7 +96,7 @@ class BasicLineShape extends LineShape {
     final rst = <Figure>[];
 
     final represent = group.first;
-    rst.addAll(drawBasicItem(
+    rst.addAll(renderBasicItem(
       path,
       represent,
       true,
@@ -94,7 +105,7 @@ class BasicLineShape extends LineShape {
 
     for (var item in labels.keys) {
       if (item.label != null) {
-        rst.add(drawLabel(
+        rst.add(renderLabel(
           item.label!,
           labels[item]!,
           coord.transposed ? Alignment.centerRight : Alignment.topCenter,

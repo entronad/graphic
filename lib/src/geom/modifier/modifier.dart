@@ -2,6 +2,10 @@ import 'package:graphic/src/common/modifier.dart' as common;
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 
+/// The specification of a collision modifier.
+/// 
+/// A collision modifier defines a method to modify the position of element items,
+/// avoiding visual overlapping.
 abstract class Modifier {
   @override
   bool operator ==(Object other) =>

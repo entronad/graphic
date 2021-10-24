@@ -10,7 +10,7 @@ import 'package:graphic/src/util/path.dart';
 
 import 'axis.dart';
 
-List<Figure>? drawCircularAxis(
+List<Figure>? renderCircularAxis(
   List<TickInfo> ticks,
   double position,
   bool flip,
@@ -20,7 +20,7 @@ List<Figure>? drawCircularAxis(
   final rst = <Figure>[];
 
   final flipSign = flip ? -1.0 : 1.0;
-  final r = coord.innerRadius + (coord.radius - coord.innerRadius) * position;
+  final r = coord.startRadius + (coord.endRadius - coord.startRadius) * position;
 
   if (line != null) {
     rst.add(PathFigure(
@@ -53,7 +53,7 @@ List<Figure>? drawCircularAxis(
             ? 0
             : anchorOffset.dy / anchorOffset.dy.abs(),
         ) * flipSign;
-        rst.add(drawLabel(
+        rst.add(renderLabel(
           Label(tick.text, tick.label!),
           labelAnchor,
           defaultAlign,
@@ -65,7 +65,7 @@ List<Figure>? drawCircularAxis(
   return rst.isEmpty ? null : rst;
 }
 
-List<Figure>? drawCircularGrid(
+List<Figure>? renderCircularGrid(
   List<TickInfo> ticks,
   PolarCoordConv coord,
 ) {
@@ -77,8 +77,8 @@ List<Figure>? drawCircularGrid(
       if (angle >= coord.startAngle && angle <= coord.endAngle) {
         rst.add(PathFigure(
           Paths.line(
-            from: coord.polarToOffset(angle, coord.innerRadius),
-            to: coord.polarToOffset(angle, coord.radius),
+            from: coord.polarToOffset(angle, coord.startRadius),
+            to: coord.polarToOffset(angle, coord.endRadius),
           ),
           tick.grid!.toPaint(),
         ));

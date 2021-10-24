@@ -12,7 +12,17 @@ import 'package:graphic/src/shape/point.dart';
 import 'function.dart';
 import 'modifier/modifier.dart';
 
+/// The specification of a point element.
+/// 
+/// A point graphing produces a set of geometric points.
+/// 
+/// It will check and complete position points by the rule of:
+/// 
+/// ```
+/// [point] => [point]
+/// ```
 class PointElement extends FunctionElement<PointShape> {
+  /// Creates a point element.
   PointElement({
     ColorAttr? color,
     ElevationAttr? elevation,

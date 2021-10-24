@@ -12,7 +12,18 @@ import 'package:graphic/src/shape/polygon.dart';
 import 'partition.dart';
 import 'modifier/modifier.dart';
 
+/// The specification of a polygon element.
+/// 
+/// A polygon graphing can tile a surface or space, filling the space with mutually
+/// exclusive polygons.
+/// 
+/// It will check and complete position points by the rule of:
+/// 
+/// ```
+/// [point] => [point]
+/// ```
 class PolygonElement extends PartitionElement<PolygonShape> {
+  /// Creates a polygon element.
   PolygonElement({
     ColorAttr? color,
     ElevationAttr? elevation,

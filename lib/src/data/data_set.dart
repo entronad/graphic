@@ -1,15 +1,24 @@
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/operators/value.dart';
-import 'package:graphic/src/interaction/event.dart';
+import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/parse/spec.dart';
 
-class ChangeDataEvent<D> extends Event {
-  ChangeDataEvent(this.data);
+/// The signal that may be emitted when data changes.
+/// 
+/// Whether to emit a change data signal is also affected by [Spec.changeData].
+/// 
+/// See also:
+/// 
+/// - [Spec.changeData], The behavior of whether to emit this signal when data changes.
+class ChangeDataSignal<D> extends Signal {
+  /// Creates a change data signal.
+  ChangeDataSignal(this.data);
 
   @override
-  EventType get type => EventType.changeData;
+  SignalType get type => SignalType.changeData;
 
+  /// The new data.
   final List<D> data;
 }
 
@@ -24,9 +33,9 @@ void parseData<D>(
 ) {
   scope.data = view.add(DataOp(spec.data));
 
-  view.listen<ChangeDataEvent<D>, List<D>>(
+  view.listen<ChangeDataSignal<D>, List<D>>(
     view.dataSouce,
     scope.data,
-    (event) => event.data,
+    (signal) => signal.data,
   );
 }

@@ -11,7 +11,9 @@ import 'package:graphic/src/util/path.dart';
 
 import 'annotation.dart';
 
+/// The specification of a line annotation.
 class LineAnnotation extends Annotation {
+  /// Creates a line annotation.
   LineAnnotation({
     this.dim,
     this.variable,
@@ -23,15 +25,20 @@ class LineAnnotation extends Annotation {
     zIndex: zIndex,
   );
 
-  /// The dim where the line stands.
+  /// The dimension where the line stands.
+  /// 
+  /// If null, a default 1 is set.
   int? dim;
 
-  /// The first variable in this dim by default.
+  /// The variable refered to for position.
+  /// 
+  /// If null, the first variable assigned to [dim] is set by default.
   String? variable;
 
-  /// The variable value where the line stands.
+  /// The value of [variable] for position.
   dynamic value;
 
+  /// The stroke style of this line.
   StrokeStyle? style;
 
   @override

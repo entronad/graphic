@@ -4,6 +4,15 @@ import 'package:graphic/src/dataflow/tuple.dart';
 
 import 'modifier.dart';
 
+/// The specification of a stack modifier.
+/// 
+/// The stack method cummulates elements in order of the values on a splitter.
+/// It makes every point in a position adds the top point y of corresponding position
+/// of the previous group.
+/// 
+/// To be meaningfull:
+/// - For all groups, x must be of same ordered discrete values.
+/// - Y values must be all positive or all negtive.
 class StackModifier extends Modifier {
   @override
   bool operator ==(Object other) =>

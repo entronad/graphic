@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:graphic/src/interaction/select/select.dart';
+import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/scale/continuous.dart';
 import 'package:graphic/src/scale/scale.dart';
 import 'package:flutter/foundation.dart';
@@ -7,32 +7,37 @@ import 'package:graphic/src/dataflow/tuple.dart';
 
 import 'aes.dart';
 
-/// To encode one variable to one aes value.
+/// The specification of a channel aesthetic attribute.
+/// 
+/// It encodes a single variable to a value. The encoding will be lerping for continous
+/// [variable] scale, and lookup table for discrete scale.
 abstract class ChannelAttr<AV> extends Attr<AV> {
+  /// Creates a channel aesthetic attribute.
   ChannelAttr({
     this.variable,
     this.values,
     this.stops,
 
     AV? value,
-    AV Function(Original)? encode,
-    Map<String, Map<bool, SelectUpdate<AV>>>? onSelect,
+    AV Function(Tuple)? encode,
+    Map<String, Map<bool, SelectionUpdate<AV>>>? onSelection,
   })
     : assert(values == null || values.length >= 2),
       super(
         value: value,
         encode: encode,
-        onSelect: onSelect,
+        onSelection: onSelection,
       );
 
+  /// The variable this attribute encodes from.
   String? variable;
 
-  /// Used as gradient stop values for continuous
-  ///     and lookup table for discrete.
+  /// Target attribute values.
   List<AV>? values;
 
-  /// Gradient stops when continuous, must have same length to values.
-  /// Stops can be decreasing for inverse mapping.
+  /// Stops corresponding to [values].
+  /// 
+  /// If null, default average stops will be set.
   List<double>? stops;
 
   @override
@@ -110,7 +115,7 @@ class ChannelEncoder<AV> extends Encoder<AV> {
   final ChannelConv<num, AV> conv;
 
   @override
-  AV encode(Scaled scaled, Original original) =>
+  AV encode(Scaled scaled, Tuple tuple) =>
     conv.convert(scaled[field]!);
 }
 

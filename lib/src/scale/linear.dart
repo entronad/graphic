@@ -2,10 +2,15 @@ import 'dart:math' as math;
 
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/scale/auto_ticks/num.dart';
+import 'package:graphic/src/util/assert.dart';
 
 import 'continuous.dart';
 
+/// The specification of a linear scale.
+/// 
+/// It converts [num] to [double]s normalized to `[0, 1]` linearly.
 class LinearScale extends ContinuousScale<num> {
+  /// Creates a linear scale.
   LinearScale({
     this.tickInterval,
     this.nice,
@@ -20,20 +25,25 @@ class LinearScale extends ContinuousScale<num> {
     List<num>? ticks,
     int? tickCount,
     int? maxTickCount,
-  }) : super(
-    min: min,
-    max: max,
-    marginMin: marginMin,
-    marginMax: marginMax,
-    title: title,
-    formatter: formatter,
-    ticks: ticks,
-    tickCount: tickCount,
-    maxTickCount: maxTickCount,
-  );
+  })
+    : assert(isSingle([ticks, tickCount, maxTickCount, tickInterval], allowNone: true)),
+      assert(isSingle([ticks, nice], allowNone: true)),
+      super(
+        min: min,
+        max: max,
+        marginMin: marginMin,
+        marginMax: marginMax,
+        title: title,
+        formatter: formatter,
+        ticks: ticks,
+        tickCount: tickCount,
+        maxTickCount: maxTickCount,
+      );
 
+  /// The interval between two ticks.
   num? tickInterval;
 
+  /// Weither to calculate the ticks to nice numbers.
   bool? nice;
 
   @override
@@ -47,7 +57,7 @@ class LinearScale extends ContinuousScale<num> {
 class LinearScaleConv extends ContinuousScaleConv<num> {
   LinearScaleConv(
     LinearScale spec,
-    List<Original> tuples,
+    List<Tuple> tuples,
     String variable,
   ) {
     // min, max

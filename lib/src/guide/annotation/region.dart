@@ -12,7 +12,9 @@ import 'package:graphic/src/util/path.dart';
 
 import 'annotation.dart';
 
+/// The specification of a region annotation.
 class RegionAnnotation extends Annotation {
+  /// Creates a region annotation.
   RegionAnnotation({
     this.dim,
     this.variable,
@@ -24,12 +26,22 @@ class RegionAnnotation extends Annotation {
     zIndex: zIndex,
   );
 
+  /// The dimension where this region stands.
+  /// 
+  /// If null, a default 1 is set.
   int? dim;
 
+  /// The variable refered to for position.
+  /// 
+  /// If null, the first variable assigned to [dim] is set by default.
   String? variable;
 
+  /// The values of [variable] for position.
+  /// 
+  /// It is of 2 values for start and end respectively.
   List values;
 
+  /// The color of this region.
   Color? color;
 
   @override

@@ -42,19 +42,70 @@ extension AlgFormExt on AlgForm {
   }
 }
 
-/// Since faciting is not supported, nest operator is not supported.
+/// To define a varset.
+/// 
+/// Varset means variable set in graphic algebra. Varsets, connected with operators,
+/// create an algebra expression. The algebra expression specifies how variable
+/// values are assigned to position dimensions. There are 2 operators for now:
+/// 
+/// - [*], called **cross**, which assigns variables to different dimensions (Usually
+/// x and y) in order.
+/// 
+/// - [+], called **blend**, which assigns variables to a same dimension in order.
+/// The meaning of the variables respectively in that dimension is determined by
+/// geometory type.
+/// 
+/// For example:
+/// 
+/// A `name` variable for x and a `score` varable for y:
+/// 
+/// ```dart
+/// Varset('name') * Varset('score')
+/// ```
+/// 
+/// A `date` variable for x, and y is a bar between minimum price (variable `min`)
+/// and maximum price (variable `max`):
+/// 
+/// ```dart
+/// Varset('date') * (Varset('min') + Varset('max'))
+/// ```
+/// 
+/// The two operators are associative and distributive, but not commutative (Because
+/// the assigning is in order):
+/// 
+/// ```dart
+/// Varset('date') * (Varset('min') + Varset('max')) == Varset('date') * Varset('min') + Varset('date') * Varset('max')
+/// Varset('name') * Varset('score') != Varset('score') * Varset('name')
+/// Varset('min') + Varset('max') != Varset('max') + Varset('min')
+/// ```
+/// 
+/// Return type of the two operators is also [Varset], thus a whole algebra expression
+/// is also [Varset] type.
+/// 
+/// Note that this algebra is derived from the Grammer of Graphics. For easy understanding,
+/// explainations above are not strict definitions. Because facets are not supported
+/// for now, the nest([/]) operator is not provided.
 class Varset {
+  /// Creates a varset with the variable name.
   Varset(String tag) : form = [[tag]];
 
+  /// Creates a unity varset.
+  /// 
+  /// A unity varset is a placeholder in dimension assigning, it represents no variable.
   Varset.unity() : form = [[Reserveds.unitTag]];
 
+  /// Creates a same varset from another one.
   Varset._from(Varset source)
     : form = source.form.map(
       (term) => [...term],
     ).toList();
 
+  /// Creates an empty varset.
   Varset._empty() : form = [];
 
+  /// The storage of the algebra expression.
+  /// 
+  /// The operators guarantee that the expression is an algebracal form.
   final AlgForm form;
 
   @override
@@ -62,28 +113,28 @@ class Varset {
     other is Varset &&
     DeepCollectionEquality().equals(form, other.form);
 
-  /// The blend operator in the graphics algebra.
-  /// Append all terms and normalize the orders.
-  /// This will generate a new Varset.
+  /// The blend operator.
   Varset operator +(Varset other) {
+    // The result is a new varset instance.
     final rst = Varset._from(this);
+    // Apends all terms.
     rst.form.addAll(other.form);
 
+    // Normalize the result to guarentee a form.
     return _normalize(rst);
   }
 
-  /// The corss operator in the graphics algebra.
-  /// Cartisien production of two froms.
-  /// This will generate a new Varset.
+  /// The cross operator.
   Varset operator *(Varset other) {
+    // The result is a new varset instance.
     final rst = Varset._empty();
+    // Cartisien production of two froms, which is also a form.
     for (var a in form) {
       for (var b in other.form) {
         rst.form.add([...a, ...b]);
       }
     }
 
-    // A form cross another form is a form.
     return rst;
   }
 }

@@ -2,12 +2,18 @@ import 'package:graphic/src/dataflow/tuple.dart';
 
 import 'transform.dart';
 
+/// The transform to map each tuple to a new tuple.
+/// 
+/// See also:
+/// - [Tuple], the original value tuple.
 class MapTrans extends VariableTransform {
+  /// Creates a map transform.
   MapTrans({
     required this.mapper,
   });
 
-  Original Function(Original) mapper;
+  /// Indicates how to get the new tuple from each tuple.
+  Tuple Function(Tuple) mapper;
 
   @override
   bool operator ==(Object other) =>
@@ -20,10 +26,10 @@ class MapOp extends TransformOp {
   MapOp(Map<String, dynamic> params) : super(params);
 
   @override
-  List<Original> evaluate() {
-    final originals = params['originals'] as List<Original>;
-    final mapper = params['mapper'] as Original Function(Original);
+  List<Tuple> evaluate() {
+    final tuples = params['tuples'] as List<Tuple>;
+    final mapper = params['mapper'] as Tuple Function(Tuple);
 
-    return originals.map((original) => mapper(original)).toList();
+    return tuples.map((tuple) => mapper(tuple)).toList();
   }
 }

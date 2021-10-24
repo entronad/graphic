@@ -29,7 +29,7 @@ class PositionEncoder extends Encoder<List<Offset>> {
   final Offset origin;
 
   @override
-  List<Offset> encode(Scaled scaled, Original original) {
+  List<Offset> encode(Scaled scaled, Tuple tuple) {
     final position = <Offset>[];
     for (var term in form) {
       if (term.length == 1) {  // For dim 1 coord.
@@ -94,7 +94,7 @@ class OriginOp extends Operator<Offset> {
     final scales = params['scales'] as Map<String, ScaleConv>;
     final coord = params['coord'] as CoordConv;
 
-    if (coord.dim == 1) {
+    if (coord.dimCount == 1) {
       final field = form.first[0];
       return Offset(
         coord.dimFill,

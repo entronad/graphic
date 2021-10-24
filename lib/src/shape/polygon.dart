@@ -10,21 +10,33 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/util/path.dart';
 
-import 'util/draw_basic_item.dart';
+import 'util/render_basic_item.dart';
 import 'partition.dart';
 
+/// The shape for the polygon element.
+/// 
+/// See also:
+/// 
+/// - [PolygonElement], which this shape is for.
 abstract class PolygonShape extends PartitionShape {}
 
+/// A heatmap shape.
 class HeatmapShape extends PolygonShape {
+  /// Creates a heatmap.
   HeatmapShape({
     this.sector = false,
     this.borderRadius,
   });
 
-  /// X is circular and y is radial.
+  /// The border radius of the rectangle or sector.
+  /// 
+  /// For a sector, [Radius.x] is circular, [Radius.y] is radial, top is outer side,
+  /// bottom is inner side, left is anticlockwise, right is clockwise.
+  /// 
+  /// This will not work for polygon tiles in a polar coordinate.
   final BorderRadius? borderRadius;
 
-  /// Wheather the polygon is sector in polar coord.
+  /// Wheather the tiles are sectors or polygons in a polar coordinate.
   final bool sector;
 
   @override
@@ -34,7 +46,7 @@ class HeatmapShape extends PolygonShape {
     borderRadius == other.borderRadius;
 
   @override
-  List<Figure> drawGroup(
+  List<Figure> renderGroup(
     List<Aes> group,
     CoordConv coord,
     Offset origin,
@@ -129,7 +141,7 @@ class HeatmapShape extends PolygonShape {
         }
       }
 
-      rst.addAll(drawBasicItem(
+      rst.addAll(renderBasicItem(
         path,
         item,
         false,
@@ -137,7 +149,7 @@ class HeatmapShape extends PolygonShape {
       ));
 
       if (item.label != null) {
-        rst.add(drawLabel(
+        rst.add(renderLabel(
           item.label!,
           coord.convert(point),
           Alignment.center,

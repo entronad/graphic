@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:graphic/src/common/operators/value.dart';
-import 'package:graphic/src/interaction/event.dart';
+import 'package:graphic/src/interaction/signal.dart';
 import 'package:flutter/foundation.dart';
 
 import 'operator.dart';
@@ -114,10 +114,10 @@ class Dataflow {
     _heap.add(op);
   }
 
-  int listen<E extends Event, V>(
-    EventSource<E> source,
+  int listen<S extends Signal, V>(
+    SignalSource<S> source,
     Value<V> target,
-    V Function(E) update,
+    V Function(S) update,
   ) {
     return source.on((event) {
       _update(target, update(event));

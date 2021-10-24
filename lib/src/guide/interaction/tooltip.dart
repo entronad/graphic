@@ -10,21 +10,26 @@ import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/graffiti/scene.dart';
-import 'package:graphic/src/interaction/select/select.dart';
+import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/scale/scale.dart';
 import 'package:graphic/src/util/assert.dart';
 
+/// Gets the figures of a tooltip.
+/// 
+/// The [anchor] is the result either set directly or calculated.
 typedef RenderTooltip = List<Figure> Function(
   Offset anchor,
-  List<Original> selectedTuples,
-  Selector selector,
-  Map<String, ScaleConv> scales,
+  List<Tuple> selectedTuples,
 );
 
+/// The specification of a tooltip
+/// 
+/// A default tooltip construct and style is provided with slight configurations,
+/// But you can deeply custom your own tooltip with [render] property.
 class TooltipGuide {
+  /// Creates a tooltip.
   TooltipGuide({
-    this.select,
-    this.variables,
+    this.selection,
     this.followPointer,
     this.anchor,
     this.zIndex,
@@ -37,6 +42,7 @@ class TooltipGuide {
     this.elevation,
     this.textStyle,
     this.multiTuples,
+    this.variables,
     this.render,
   })
     : assert(isSingle([render, align], allowNone: true)),
@@ -46,52 +52,106 @@ class TooltipGuide {
       assert(isSingle([render, radius], allowNone: true)),
       assert(isSingle([render, elevation], allowNone: true)),
       assert(isSingle([render, textStyle], allowNone: true)),
-      assert(isSingle([render, multiTuples], allowNone: true));
+      assert(isSingle([render, multiTuples], allowNone: true)),
+      assert(isSingle([render, variables], allowNone: true));
 
-  String? select;
+  /// The selection this tooltip reacts to.
+  /// 
+  /// If null, the first selection is set by default.
+  String? selection;
 
-  /// Variables to show.
-  /// For single selected, rows to show, default to all.
-  /// For multi selected, make sure to be two, first: last, default to first two variables except variable.
-  List<String>? variables;
-
+  /// Whether the position for each dimension follows the pointer or stick to selected
+  /// points.
+  /// 
+  /// If null, a default `[false, false]` is set.
   List<bool>? followPointer;
 
-  Offset? anchor;
+  /// Indicates the anchor position of this tooltip directly.
+  /// 
+  /// This is a function with chart size as input that you may need to calculate
+  /// the position.
+  /// 
+  /// If set, this tooltip will no longer follow the pointer or the selected point.
+  Offset Function(Size)? anchor;
 
+  /// The z index of this tooltip.
+  /// 
+  /// If null, a default 0 is set.
   int? zIndex;
 
-  /// The tooltip can only refer to one element.
-  /// This is the index in elements.
+  /// Which element series this tooltip reacts to.
+  /// 
+  /// This is an index in [Spec.elements].
+  /// 
+  /// The crosshair can only reacts to one element series.
+  /// 
+  /// If null, the first element series is set by default.
   int? element;
 
-  // Render params.
-
+  /// How this tooltip align to the anchor.
+  /// 
+  /// If null, a default `Alignment.center` is set.
   Alignment? align;
 
+  /// The offset of the tooltip form the anchor.
   Offset? offset;
 
+  /// The padding form the content to the window border of this tooltip.
+  /// 
+  /// If null, a default `EdgeInsets.all(5)` is set.
   EdgeInsets? padding;
 
+  /// The background color of this tooltip window.
+  /// 
+  /// If null, a default `Color(0xf0ffffff)` is set.
   Color? backgroundColor;
 
+  /// The border radius of this tooltip window.
+  /// 
+  /// If null, a default `Radius.circular(3)` is set.
   Radius? radius;
 
+  /// The shadow elevation of this tooltip window.
+  /// 
+  /// If null, a default 3 is set.
   double? elevation;
 
+  /// The text style of this tooltip content.
+  /// 
+  /// If null, a default `TextStyle(color: Color(0xff595959), fontSize: 12,)` is
+  /// set.
   TextStyle? textStyle;
 
+  /// Whether to show multiple tuples or only single tuple in this tooltip.
+  /// 
+  /// For single tuple, [variables] are layed in rows showing title and value. For
+  /// multiple tuples, tuples are layed in rows showing the 2 [variables] values.
+  /// 
+  /// If null, A default false if [selection] is [PointSelection] and true if [IntervalSelection]
+  /// is set.
   bool? multiTuples;
 
+  /// The variable values of tuples to show on in this tooltip.
+  /// 
+  /// The layout of variable displaying is determined by [multiTuples]. For multiple
+  /// tuples, the varable counts must be 2.
+  /// 
+  /// If null, It will be set to all variables for single tuple and first 2 variables
+  /// except [Selection.variable] for multiple tuples.
+  List<String>? variables;
+
+  /// Indicates a custom render funcion of this tooltip.
+  /// 
+  /// If set, [align], [offset], [padding], [backgroundColor], [radius], [elevation],
+  /// [textStyle], [multiTuples], and [variables] are useless and not allowed.
   RenderTooltip? render;
 
   @override
   bool operator ==(Object other) =>
     other is TooltipGuide &&
-    select == other.select &&
-    DeepCollectionEquality().equals(variables, other.variables) &&
+    selection == other.selection &&
     DeepCollectionEquality().equals(followPointer, other.followPointer) &&
-    anchor == other.anchor &&
+    // anchor is Function.
     zIndex == other.zIndex &&
     element == other.element &&
     align == other.align &&
@@ -101,7 +161,8 @@ class TooltipGuide {
     radius == other.radius &&
     elevation == other.elevation &&
     textStyle == other.textStyle &&
-    multiTuples == multiTuples;
+    multiTuples == multiTuples &&
+    DeepCollectionEquality().equals(variables, other.variables);
     // render is Function.
 }
 
@@ -125,7 +186,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
     final zIndex = params['zIndex'] as int;
     final coord = params['coord'] as CoordConv;
     final groups = params['groups'] as AesGroups;
-    final originals = params['originals'] as List<Original>;
+    final tuples = params['tuples'] as List<Tuple>;
     final align = params['align'] as Alignment;
     final offset = params['offset'] as Offset?;
     final padding = params['padding'] as EdgeInsets;
@@ -136,7 +197,8 @@ class TooltipRenderOp extends Render<TooltipScene> {
     final multiTuples = params['multiTuples'] as bool;
     final render = params['render'] as RenderTooltip?;
     final followPointer = params['followPointer'] as List<bool>;
-    final anchor = params['anchor'] as Offset?;
+    final anchor = params['anchor'] as Offset Function(Size)?;
+    final size = params['size'] as Size;
     final variables = params['variables'] as List<String>?;
     final scales = params['scales'] as Map<String, ScaleConv>;
 
@@ -150,14 +212,14 @@ class TooltipRenderOp extends Render<TooltipScene> {
       return;
     }
 
-    final selectedOriginals = <Original>[];
+    final selectedTuples = <Tuple>[];
     for (var index in selects) {
-      selectedOriginals.add(originals[index]);
+      selectedTuples.add(tuples[index]);
     }
 
     Offset anchorRst;
     if (anchor != null) {
-      anchorRst = anchor;
+      anchorRst = anchor(size);
     } else {
       final pointer = coord.invert(selector.eventPoints.last);
 
@@ -189,24 +251,22 @@ class TooltipRenderOp extends Render<TooltipScene> {
     if (render != null) {
       figures = render(
         anchorRst,
-        selectedOriginals,
-        selector,
-        scales,
+        selectedTuples,
       );
     } else {
       String textContent = '';
       if (!multiTuples) {
         final fields = variables ?? scales.keys.toList();
-        final original = selectedOriginals.last;
+        final tuple = selectedTuples.last;
         var field = fields.first;
         var scale = scales[field]!;
         var title = scale.title;
-        textContent += '$title: ${scale.formatter(original[field])}';
+        textContent += '$title: ${scale.formatter(tuple[field])}';
         for (var i = 1; i < fields.length; i++) {
           field = fields[i];
           scale = scales[field]!;
           title = scale.title;
-          textContent += '\n$title: ${scale.formatter(original[field])}';
+          textContent += '\n$title: ${scale.formatter(tuple[field])}';
         }
       } else {
         final groupField = selector.variable;
@@ -227,14 +287,14 @@ class TooltipRenderOp extends Render<TooltipScene> {
         assert(fields.length == 2);
 
         if (groupField != null) {
-          textContent += scales[groupField]!.formatter(selectedOriginals.first[groupField]);
+          textContent += scales[groupField]!.formatter(selectedTuples.first[groupField]);
         }
-        for (var original in selectedOriginals) {
+        for (var tuple in selectedTuples) {
           final domainField = fields.first;
           final measureField = fields.last;
           final domainScale = scales[domainField]!;
           final measureScale = scales[measureField]!;
-          textContent += '\n${domainScale.formatter(original[domainField])}: ${measureScale.formatter(original[measureField])}';
+          textContent += '\n${domainScale.formatter(tuple[domainField])}: ${measureScale.formatter(tuple[measureField])}';
         }
       }
 

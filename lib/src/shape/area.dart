@@ -8,30 +8,41 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/util/path.dart';
 
-import 'util/draw_basic_item.dart';
+import 'util/render_basic_item.dart';
 import 'function.dart';
 
+/// The shape for the area element.
+/// 
+/// See also:
+/// 
+/// - [AreaElement], which this shape is for.
 abstract class AreaShape extends FunctionShape {
   @override
   double get defaultSize =>
     throw UnimplementedError('Area needs no size.');
 
   @override
-  List<Figure> drawItem(
+  List<Figure> renderItem(
     Aes item,
     CoordConv coord,
     Offset origin,
   ) => throw UnimplementedError('Area only paints group.');
 }
 
+/// A basic area shape.
 class BasicAreaShape extends AreaShape {
+  /// Creates a basic area shape.
   BasicAreaShape({
     this.smooth = false,
     this.loop = false,
   });
 
+  /// Whether the surface lines of this area are smooth.
   final bool smooth;
 
+  /// Whether to connect the last point to the first point.
+  /// 
+  /// This is usefull in the polar coordinate.
   final bool loop;
 
   @override
@@ -41,7 +52,7 @@ class BasicAreaShape extends AreaShape {
     loop == other.loop;
 
   @override
-  List<Figure> drawGroup(
+  List<Figure> renderGroup(
     List<Aes> group,
     CoordConv coord,
     Offset origin,
@@ -142,7 +153,7 @@ class BasicAreaShape extends AreaShape {
     final rst = <Figure>[];
 
     final represent = group.first;
-    rst.addAll(drawBasicItem(
+    rst.addAll(renderBasicItem(
       path,
       represent,
       false,
@@ -151,7 +162,7 @@ class BasicAreaShape extends AreaShape {
 
     for (var item in labels.keys) {
       if (item.label != null) {
-        rst.add(drawLabel(
+        rst.add(renderLabel(
           item.label!,
           labels[item]!,
           coord.transposed ? Alignment.centerRight : Alignment.topCenter,

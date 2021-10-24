@@ -3,16 +3,19 @@ import 'dart:ui';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/operators/value.dart';
-import 'package:graphic/src/interaction/event.dart';
+import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/parse/spec.dart';
 
-class ResizeEvent extends Event {
-  ResizeEvent(this.size);
+/// The signal emitted when chart size changes.
+class ResizeSignal extends Signal {
+  /// Creates a resize signal.
+  ResizeSignal(this.size);
 
   @override
-  EventType get type => EventType.resize;
+  SignalType get type => SignalType.resize;
 
+  /// New size of chart.
   final Size size;
 }
 
@@ -27,9 +30,9 @@ void parseSize(
 ) {
   scope.size = view.add(SizeOp(view.size));
 
-  view.listen<ResizeEvent, Size>(
+  view.listen<ResizeSignal, Size>(
     view.sizeSouce,
     scope.size,
-    (event) => event.size,
+    (signal) => signal.size,
   );
 }

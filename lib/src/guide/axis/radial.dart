@@ -39,7 +39,7 @@ Alignment radialLabelAlign(Offset offset) {
   }
 }
 
-List<Figure>? drawRadialAxis(
+List<Figure>? renderRadialAxis(
   List<TickInfo> ticks,
   double position,
   bool flip,
@@ -54,8 +54,8 @@ List<Figure>? drawRadialAxis(
   if (line != null) {
     rst.add(PathFigure(
       Paths.line(
-        from: coord.polarToOffset(angle, coord.innerRadius),
-        to: coord.polarToOffset(angle, coord.radius),
+        from: coord.polarToOffset(angle, coord.startRadius),
+        to: coord.polarToOffset(angle, coord.endRadius),
       ),
       line.toPaint(),
     ));
@@ -66,11 +66,11 @@ List<Figure>? drawRadialAxis(
     assert(tick.tickLine == null);
 
     final r = coord.convertRadius(tick.position);
-    if (r >= coord.innerRadius && r <= coord.radius) {
+    if (r >= coord.startRadius && r <= coord.endRadius) {
       if (tick.label != null) {
         final labelAnchor = coord.polarToOffset(angle, r);
         final anchorOffset = labelAnchor - coord.center;
-        rst.add(drawLabel(
+        rst.add(renderLabel(
           Label(tick.text, tick.label!),
           labelAnchor,
           radialLabelAlign(anchorOffset) * flipSign,
@@ -82,7 +82,7 @@ List<Figure>? drawRadialAxis(
   return rst.isEmpty ? null : rst;
 }
 
-List<Figure>? drawRadialGrid(
+List<Figure>? renderRadialGrid(
   List<TickInfo> ticks,
   PolarCoordConv coord,
 ) {
@@ -91,7 +91,7 @@ List<Figure>? drawRadialGrid(
   for (var tick in ticks) {
     if (tick.grid != null) {
       final r = coord.convertRadius(tick.position);
-      if (r >= coord.innerRadius && r <= coord.radius) {
+      if (r >= coord.startRadius && r <= coord.endRadius) {
         rst.add(PathFigure(
           Path()..addArc(
             Rect.fromCircle(center: coord.center, radius: r),

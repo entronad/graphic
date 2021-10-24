@@ -6,7 +6,9 @@ import 'package:graphic/src/graffiti/figure.dart';
 
 import 'figure.dart';
 
+/// The specification of a tag annotation.
 class TagAnnotation extends FigureAnnotation {
+  /// Creates a tag annotation.
   TagAnnotation({
     required this.label,
 
@@ -21,6 +23,7 @@ class TagAnnotation extends FigureAnnotation {
     zIndex: zIndex,
   );
 
+  /// The label definition of this tag.
   Label label;
 
   @override
@@ -38,7 +41,7 @@ class TagAnnotOp extends FigureAnnotOp {
     final anchor = params['anchor'] as Offset;
     final label = params['label'] as Label;
     
-    return [drawLabel(
+    return [renderLabel(
       label,
       anchor,
       Alignment.center,

@@ -12,7 +12,9 @@ import 'package:graphic/src/util/assert.dart';
 
 import 'annotation.dart';
 
+/// The Specification of a figure annotation.
 abstract class FigureAnnotation extends Annotation {
+  /// Creates a figure annotation.
   FigureAnnotation({
     this.variables,
     this.values,
@@ -26,12 +28,21 @@ abstract class FigureAnnotation extends Annotation {
         zIndex: zIndex,
       );
 
-  /// Default to the dim 1 and dim 2 variables.
+  /// The variables in each dimension refered to for position.
+  /// 
+  /// If null, the first variables assigned to each dimension are set by default.
   List<String>? variables;
 
+  /// The values of [variables] for position.
   List? values;
 
-  /// You may need to know the chart size.
+  /// Indicates the anchor position of this annotation directly.
+  /// 
+  /// This is a function with chart size as input that you may need to calculate
+  /// the position.
+  /// 
+  /// If set, this annotation's position will no longer determined by [variables]
+  /// and [values].
   Offset Function(Size)? anchor;
 
   @override

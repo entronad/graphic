@@ -5,21 +5,33 @@ import 'package:flutter/widgets.dart';
 import 'package:graphic/src/guide/interaction/crosshair.dart';
 import 'package:graphic/src/guide/interaction/tooltip.dart';
 import 'package:graphic/src/interaction/gesture.dart';
-import 'package:graphic/src/interaction/select/select.dart';
+import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/guide/annotation/annotation.dart';
 import 'package:graphic/src/guide/axis/axis.dart';
 import 'package:graphic/src/coord/coord.dart';
-import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/geom/element.dart';
-import 'package:graphic/src/interaction/event.dart';
 import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/variable/transform/transform.dart';
 import 'package:graphic/src/variable/variable.dart';
 
 import 'view.dart';
 
-/// [D]: Type of source data items.
+/// A widget to display the chart.
+/// 
+/// All specification properties are declared in the constructor and then collected
+/// by a [spec] property to build the chart. See details in [Spec] class.
+/// 
+/// Usually, if any specification or data is changed, the chart will rebuild or
+/// reevaluate automatically. Some subtle setting is controlled by [rebuild] and
+/// [changeData] (See [Spec.changeData]).
+/// 
+/// The generic [D] is the type of datum in [data] list.
+/// 
+/// See also:
+/// 
+/// - [Spec], to see the specification property details.
 class Chart<D> extends StatefulWidget {
+  /// Creates a chart widget.
   Chart({
     required List<D> data,
     bool? changeData,
@@ -32,9 +44,7 @@ class Chart<D> extends StatefulWidget {
     TooltipGuide? tooltip,
     CrosshairGuide? crosshair,
     List<Annotation>? annotations,
-    Map<String, Select>? selects,
-    Map<EventType, void Function(Event)>? onEvent,
-    Map<String, void Function(List<Original>)>? onSelect,
+    Map<String, Selection>? selections,
     this.rebuild,
   }) : spec = Spec<D>(
     data: data,
@@ -48,13 +58,22 @@ class Chart<D> extends StatefulWidget {
     tooltip: tooltip,
     crosshair: crosshair,
     annotations: annotations,
-    selects: selects,
-    onEvent: onEvent,
-    onSelect: onSelect,
+    selections: selections,
   );
 
+  /// Specification of the chart.
+  /// 
+  /// Properties are collected from the [Chart] constructor.
   final Spec<D> spec;
 
+  /// The behavior when widget is updated.
+  /// 
+  /// If null, new [spec] will be compared with the old one, and chart will rebuild
+  /// only when [spec] is changed.
+  /// 
+  /// If true, chart will always rebuild.
+  /// 
+  /// If false, chart will never rebuild.
   final bool? rebuild;
 
   @override

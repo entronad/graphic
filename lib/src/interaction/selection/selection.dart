@@ -11,7 +11,6 @@ import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/geom/element.dart';
-import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/parse/parse.dart';
@@ -22,32 +21,76 @@ import 'package:collection/collection.dart';
 import 'interval.dart';
 import 'point.dart';
 
-typedef SelectUpdate<V> = V Function(V initialValue);
-
-abstract class Select {
-  Select({
+/// The specification of a selection.
+/// 
+/// A selection is a data query driven by [Gesture]s. When a selection is triggered,
+/// data tuples become either selected or unselected states, thus may causing their
+/// aesthetic attributes change if [Attr.onSelection] is defined.
+/// 
+/// See also:
+/// 
+/// - [SelectionUpdate], updates an aesthetic attribute value when the selection
+/// state changes.
+/// - [Attr.onSelection], where selection updates are defined.
+abstract class Selection {
+  /// Creates a selection.
+  Selection({
     this.dim,
     this.variable,
     this.on,
     this.clear,
   });
 
+  /// Which diemsion of data values will be tested.
+  /// 
+  /// If null, all dimensions will be tested.
   int? dim;
 
+  /// If set, all tuples sharing the same this variable value with the selected
+  /// tuple, will also be selected.
   String? variable;
 
+  /// Gesture types that trigger this selection.
+  /// 
+  /// Note that if multiple selections is declared, they can not have conflicting
+  /// [on] gesture types.
+  /// 
+  /// If null, a default `{GestureType.tap}` is set for [PointSelecion].
+  /// 
+  /// [IntervalSelection]'s [on] is fixed to `{GestureType.scaleUpdate, GestureType.scroll}`.
   Set<GestureType>? on;
 
+  /// Gesture types that will clear selections.
+  /// 
+  /// Note that any triggered [clear] type will clear any current selection, even
+  /// if it's defined in another selection.
+  /// 
+  /// If null, a default `{GestureType.doubleTap}` is set.
   Set<GestureType>? clear;
 
   @override
   bool operator ==(Object other) =>
-    other is Select &&
+    other is Selection &&
     dim == other.dim &&
     variable == other.variable &&
     DeepCollectionEquality().equals(on, other.on) &&
     DeepCollectionEquality().equals(clear, other.clear);
 }
+
+/// Updates an easthetic attribute value when the selection state of an element
+/// item changes.
+/// 
+/// You can define different selection updates for different selections and selection
+/// states (See details in [Attr.onSelection]).
+/// 
+/// The [initialValue] is the original item attribute value (Set or calculated.).
+/// 
+/// Make sure the return value is a different instance from initialValue.
+/// 
+/// See also:
+/// 
+/// - [Attr.onSelection], where selection updates are defined.
+typedef SelectionUpdate<V> = V Function(V initialValue);
 
 // selector
 
@@ -69,7 +112,7 @@ abstract class Selector {
 
   Set<int>? select(
     AesGroups groups,
-    List<Original> originals,
+    List<Tuple> tuples,
     Set<int>? preSelects,
     CoordConv coord,
   );
@@ -80,7 +123,7 @@ class SelectorOp extends Operator<Selector?> {
 
   @override
   Selector? evaluate() {
-    final specs = params['specs'] as Map<String, Select>;
+    final specs = params['specs'] as Map<String, Selection>;
     final onTypes = params['onTypes'] as Map<GestureType, String>;
     final clearTypes = params['clearTypes'] as Set<GestureType>;
     final gesture = params['gesture'] as Gesture?;
@@ -97,10 +140,10 @@ class SelectorOp extends Operator<Selector?> {
       return value;
     }
     final spec = specs[onTypes[type]]!;
-    if (spec is PointSelect) {
+    if (spec is PointSelection) {
       return PointSelector(
         spec.toggle ?? false,  // TODO: defalut
-        spec.nearest ?? false,  // TODO: defalut
+        spec.nearest ?? true,  // TODO: defalut
         spec.testRadius ?? 10.0,  // TODO: defalut
         name,
         spec.dim,
@@ -108,12 +151,12 @@ class SelectorOp extends Operator<Selector?> {
         [gesture.localPosition],
       );
     } else {
-      spec as IntervalSelect;
+      spec as IntervalSelection;
       List<Offset> eventPoints;
 
       if (value == null) {
         if (gesture.type == GestureType.scaleUpdate) {
-          final detail = gesture.detail as ScaleUpdateDetails;
+          final detail = gesture.details as ScaleUpdateDetails;
 
           if (detail.pointerCount == 1) {
             eventPoints = [gesture.localMoveStart!, gesture.localPosition];
@@ -127,7 +170,7 @@ class SelectorOp extends Operator<Selector?> {
         final prePoints = value!.eventPoints;
 
         if (gesture.type == GestureType.scaleUpdate) {
-          final detail = gesture.detail as ScaleUpdateDetails;
+          final detail = gesture.details as ScaleUpdateDetails;
 
           if (detail.pointerCount == 1) {
             if (gesture.localMoveStart == prePoints.first) {
@@ -146,7 +189,7 @@ class SelectorOp extends Operator<Selector?> {
           }
         } else {  // scroll
           final step = 0.1;
-          final scrollDelta = gesture.detail as Offset;
+          final scrollDelta = gesture.details as Offset;
           final deltaRatio = scrollDelta.dy == 0
             ? 0.0
             : scrollDelta.dy > 0 ? (step / 2) : (-step / 2);
@@ -187,7 +230,7 @@ class SelectorRenderOp extends Render<SelectorScene> {
     if (selector is IntervalSelector) {
       scene
         ..zIndex = selector.zIndex
-        ..figures = drawIntervalSelector(
+        ..figures = renderIntervalSelector(
             selector.eventPoints.first,
             selector.eventPoints.last,
             selector.color,
@@ -211,7 +254,7 @@ class SelectOp extends Operator<Set<int>?> {
   Set<int>? evaluate() {
     final selector = params['selector'] as Selector?;
     final groups = params['groups'] as AesGroups;
-    final originals = params['originals'] as List<Original>;
+    final tuples = params['tuples'] as List<Tuple>;
     final coord = params['coord'] as CoordConv;
 
     if (selector == null) {
@@ -219,7 +262,7 @@ class SelectOp extends Operator<Set<int>?> {
     } else {
       return selector.select(
         groups,
-        originals,
+        tuples,
         value,
         coord,
       );
@@ -232,7 +275,7 @@ class SelectOp extends Operator<Set<int>?> {
 V? _update<V>(
   V? value,
   bool select,
-  Map<bool, SelectUpdate<V>>? updator,
+  Map<bool, SelectionUpdate<V>>? updator,
 ) {
   if (value != null && updator != null) {
     final update = updator[select];
@@ -244,8 +287,8 @@ V? _update<V>(
 }
 
 /// It is still in the aes scope so share the same aeses instance.
-class SelectUpdateOp extends Operator<AesGroups> {
-  SelectUpdateOp(Map<String, dynamic> params) : super(params);
+class SelectionUpdateOp extends Operator<AesGroups> {
+  SelectionUpdateOp(Map<String, dynamic> params) : super(params);
 
   @override
   AesGroups evaluate() {
@@ -253,12 +296,12 @@ class SelectUpdateOp extends Operator<AesGroups> {
     final selector = params['selector'] as Selector?;
     final initialSelector = params['initialSelector'] as String?;
     final selects = params['selects'] as Set<int>?;
-    final shapeUpdaters = params['shapeUpdaters'] as Map<String, Map<bool, SelectUpdate<Shape>>>?;
-    final colorUpdaters = params['colorUpdaters'] as Map<String, Map<bool, SelectUpdate<Color>>>?;
-    final gradientUpdaters = params['gradientUpdaters'] as Map<String, Map<bool, SelectUpdate<Gradient>>>?;
-    final elevationUpdaters = params['elevationUpdaters'] as Map<String, Map<bool, SelectUpdate<double>>>?;
-    final labelUpdaters = params['labelUpdaters'] as Map<String, Map<bool, SelectUpdate<Label>>>?;
-    final sizeUpdaters = params['sizeUpdaters'] as Map<String, Map<bool, SelectUpdate<double>>>?;
+    final shapeUpdaters = params['shapeUpdaters'] as Map<String, Map<bool, SelectionUpdate<Shape>>>?;
+    final colorUpdaters = params['colorUpdaters'] as Map<String, Map<bool, SelectionUpdate<Color>>>?;
+    final gradientUpdaters = params['gradientUpdaters'] as Map<String, Map<bool, SelectionUpdate<Gradient>>>?;
+    final elevationUpdaters = params['elevationUpdaters'] as Map<String, Map<bool, SelectionUpdate<double>>>?;
+    final labelUpdaters = params['labelUpdaters'] as Map<String, Map<bool, SelectionUpdate<Label>>>?;
+    final sizeUpdaters = params['sizeUpdaters'] as Map<String, Map<bool, SelectionUpdate<double>>>?;
 
     // For initial selected, use the indecated selecor name.
     final selectorName = selector?.name ?? initialSelector;
@@ -317,17 +360,17 @@ void parseSelect(
   View view,
   Scope scope,
 ) {
-  if (spec.selects != null) {
-    final selectSpecs = spec.selects!;
+  if (spec.selections != null) {
+    final selectSpecs = spec.selections!;
     final onTypes = <GestureType, String>{};
     final clearTypes = <GestureType>{};
     for (var name in selectSpecs.keys) {
       final selectSpec = selectSpecs[name]!;
 
-      assert(!(selectSpec is IntervalSelect && spec.coord is PolarCoord));
+      assert(!(selectSpec is IntervalSelection && spec.coord is PolarCoord));
 
       final on = selectSpec.on ?? (
-        selectSpec is PointSelect
+        selectSpec is PointSelection
           ? {GestureType.tap}
           : {GestureType.scaleUpdate, GestureType.scroll}
       );
@@ -368,22 +411,22 @@ void parseSelect(
       final selects = view.add(SelectOp({
         'selector': selector,
         'groups': geom,
-        'originals': scope.originals,
+        'tuples': scope.tuples,
         'coord': scope.coord,
       }, initialSelected));
       scope.selectsList.add(selects);
 
-      final update = view.add(SelectUpdateOp({
+      final update = view.add(SelectionUpdateOp({
         'groups': geom,
         'selector': selector,
         'initialSelector': initialSelector,
         'selects': selects,
-        'shapeUpdaters': elementSpec.shape?.onSelect,
-        'colorUpdaters': elementSpec.color?.onSelect,
-        'gradientUpdaters': elementSpec.gradient?.onSelect,
-        'elevationUpdaters': elementSpec.elevation?.onSelect,
-        'labelUpdaters': elementSpec.label?.onSelect,
-        'sizeUpdaters': elementSpec.size?.onSelect,
+        'shapeUpdaters': elementSpec.shape?.onSelection,
+        'colorUpdaters': elementSpec.color?.onSelection,
+        'gradientUpdaters': elementSpec.gradient?.onSelection,
+        'elevationUpdaters': elementSpec.elevation?.onSelection,
+        'labelUpdaters': elementSpec.label?.onSelection,
+        'sizeUpdaters': elementSpec.size?.onSelection,
       }));
       scope.groupsList[i] = update;
     }

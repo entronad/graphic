@@ -11,27 +11,42 @@ import 'package:graphic/src/guide/axis/radial.dart';
 import 'package:graphic/src/util/math.dart';
 import 'package:graphic/src/util/path.dart';
 
-import 'util/draw_basic_item.dart';
+import 'util/render_basic_item.dart';
 import 'function.dart';
 
+/// The shape for the interval element.
+/// 
+/// See also:
+/// 
+/// - [IntervalElement], which this shape is for.
 abstract class IntervalShape extends FunctionShape {
   @override
   double get defaultSize => 15;
 }
 
+/// A rectangle or sector shape.
+/// 
+/// The shape is a rectangle in a rectangle coordinate or a sector in a polar coordinate.
 class RectShape extends IntervalShape {
+  /// Creates a rectangle shape.
   RectShape({
     this.histogram = false,
     this.labelPosition = 1,
     this.borderRadius,
   });
 
+  /// Whether the shape is a histogram.
+  /// 
+  /// For a histogram, the bar width fills all the band.
   final bool histogram;
 
-  /// Relative label position of [0, 1] in the interval.
+  /// The position ratio of the label in the interval.
   final double labelPosition;
 
-  /// X is circular and y is radial.
+  /// The border radius of the rectangle or sector.
+  /// 
+  /// For a sector, [Radius.x] is circular, [Radius.y] is radial, top is outer side,
+  /// bottom is inner side, left is anticlockwise, right is clockwise.
   final BorderRadius? borderRadius;
 
   @override
@@ -42,7 +57,7 @@ class RectShape extends IntervalShape {
     borderRadius == other.borderRadius;
 
   @override
-  List<Figure> drawGroup(
+  List<Figure> renderGroup(
     List<Aes> group,
     CoordConv coord,
     Offset origin,
@@ -60,7 +75,7 @@ class RectShape extends IntervalShape {
         List<Offset> position = item.position;
         double bandStart = 0;
         double bandEnd = (group[1].position.first.dx + position.first.dx) / 2;
-        rst.addAll(_drawRect(
+        rst.addAll(_renderRect(
           item,
           Rect.fromPoints(
             coord.convert(Offset(bandStart, position[1].dy)),
@@ -75,7 +90,7 @@ class RectShape extends IntervalShape {
           position = item.position;
           bandStart = (group[i].position.first.dx + group[i - 1].position.first.dx) / 2;
           bandEnd = (group[i + 1].position.first.dx + group[i].position.first.dx) / 2;
-          rst.addAll(_drawRect(
+          rst.addAll(_renderRect(
             item,
             Rect.fromPoints(
               coord.convert(Offset(bandStart, position[1].dy)),
@@ -90,7 +105,7 @@ class RectShape extends IntervalShape {
         position = item.position;
         bandStart = (position.first.dx + group[group.length - 2].position.first.dx) / 2;
         bandEnd = 1;
-        rst.addAll(_drawRect(
+        rst.addAll(_renderRect(
           item,
           Rect.fromPoints(
             coord.convert(Offset(bandStart, position[1].dy)),
@@ -128,7 +143,7 @@ class RectShape extends IntervalShape {
               start.dy,
             );
           }
-          rst.addAll(_drawRect(
+          rst.addAll(_renderRect(
             item,
             rect,
             start +  (end - start) * labelPosition,
@@ -140,12 +155,12 @@ class RectShape extends IntervalShape {
       // All sector interval shapes dosen't allow NaN measure value.
 
       if (coord.transposed) {
-        if (coord.dim == 1) {
+        if (coord.dimCount == 1) {
           // pie
 
           for (var item in group) {
             final position = item.position;
-            rst.addAll(_drawSector(
+            rst.addAll(_renderSector(
               item,
               coord.radiuses.last,
               coord.radiuses.first,
@@ -166,7 +181,7 @@ class RectShape extends IntervalShape {
             final position = item.position;
             final r = coord.convertRadius(position[0].dx);
             final halfSize = (item.size ?? defaultSize) / 2;
-            rst.addAll(_drawSector(
+            rst.addAll(_renderSector(
               item,
               r - halfSize,
               r + halfSize,
@@ -182,7 +197,7 @@ class RectShape extends IntervalShape {
             if (item.label != null) {
               final labelAnchor = coord.convert(position[0] + (position[1] - position[0]) * labelPosition);
               final anchorOffset = labelAnchor - coord.center;
-              rst.add(drawLabel(
+              rst.add(renderLabel(
                 item.label!,
                 labelAnchor,
                 radialLabelAlign(anchorOffset) * -1,
@@ -191,11 +206,11 @@ class RectShape extends IntervalShape {
           }
         }
       } else {
-        if (coord.dim == 1) {
+        if (coord.dimCount == 1) {
           // bull eye
 
           for (var item in group) {
-            rst.addAll(_drawSector(
+            rst.addAll(_renderSector(
               item,
               coord.convertRadius(item.position[1].dy),
               coord.convertRadius(item.position[0].dy),
@@ -216,7 +231,7 @@ class RectShape extends IntervalShape {
           List<Offset> position = group.first.position;
           double bandStart = 0;
           double bandEnd = (group[1].position.first.dx + position.first.dx) / 2;
-          rst.addAll(_drawSector(
+          rst.addAll(_renderSector(
             item,
             coord.convertRadius(position[1].dy),
             coord.convertRadius(position[0].dy),
@@ -232,7 +247,7 @@ class RectShape extends IntervalShape {
             position = item.position;
             bandStart = (group[i].position.first.dx + group[i - 1].position.first.dx) / 2;
             bandEnd = (group[i + 1].position.first.dx + group[i].position.first.dx) / 2;
-            rst.addAll(_drawSector(
+            rst.addAll(_renderSector(
               item,
               coord.convertRadius(position[1].dy),
               coord.convertRadius(position[0].dy),
@@ -248,7 +263,7 @@ class RectShape extends IntervalShape {
           position = item.position;
           bandStart = (position.first.dx + group[group.length - 2].position.first.dx) / 2;
           bandEnd = 1;
-          rst.addAll(_drawSector(
+          rst.addAll(_renderSector(
             item,
             coord.convertRadius(position[1].dy),
             coord.convertRadius(position[0].dy),
@@ -265,7 +280,7 @@ class RectShape extends IntervalShape {
     return rst;
   }
 
-  List<Figure> _drawRect(
+  List<Figure> _renderRect(
     Aes item,
     Rect rect,
     Offset labelAnchor,
@@ -288,7 +303,7 @@ class RectShape extends IntervalShape {
 
     final rst = <Figure>[];
 
-    rst.addAll(drawBasicItem(
+    rst.addAll(renderBasicItem(
       path,
       item,
       false,
@@ -296,7 +311,7 @@ class RectShape extends IntervalShape {
     ));
 
     if (item.label != null) {
-      rst.add(drawLabel(
+      rst.add(renderLabel(
         item.label!,
         labelAnchor,
         labelPosition.equalTo(1)
@@ -308,7 +323,7 @@ class RectShape extends IntervalShape {
     return rst;
   }
 
-  List<Figure> _drawSector(
+  List<Figure> _renderSector(
     Aes item,
     double r,
     double r0,
@@ -347,7 +362,7 @@ class RectShape extends IntervalShape {
 
     final rst = <Figure>[];
 
-    rst.addAll(drawBasicItem(
+    rst.addAll(renderBasicItem(
       path,
       item,
       false,
@@ -370,7 +385,7 @@ class RectShape extends IntervalShape {
       } else {
         defaultAlign = Alignment.center;
       }
-      rst.add(drawLabel(
+      rst.add(renderLabel(
         item.label!,
         labelAnchor,
         defaultAlign,
@@ -381,24 +396,31 @@ class RectShape extends IntervalShape {
   }
 
   @override
-  List<Figure> drawItem(
+  List<Figure> renderItem(
     Aes item,
     CoordConv coord,
     Offset origin,
-  ) => throw UnimplementedError('Use _drawRect or _drawSector instead.');
+  ) => throw UnimplementedError('Use _renderRect or _renderSector instead.');
 }
 
+/// A funnel or pyramid shape.
+/// 
+/// Note that the shape will not sort the element items. Sort the input data if
+/// you want the intervals monotone.
 class FunnelShape extends IntervalShape {
+  /// Creates a funnel shape.
   FunnelShape({
     this.labelPosition = 0.5,
     this.pyramid = false,
   });
 
-  /// Relative label position of [0, 1] in the interval.
+  /// The position ratio of the label in the interval.
   final double labelPosition;
 
-  /// Funnel means the width is decreasing and the last bar close to zero.
-  /// Pyramid is reversed.
+  /// Whether this shape is a pyramid.
+  /// 
+  /// A pyramid will decrease the value of last item to zero, while a funnel keeps
+  /// unchanged.
   final bool pyramid;
 
   @override
@@ -408,7 +430,7 @@ class FunnelShape extends IntervalShape {
     pyramid == other.pyramid;
 
   @override
-  List<Figure> drawGroup(
+  List<Figure> renderGroup(
     List<Aes> group,
     CoordConv coord,
     Offset origin,
@@ -429,7 +451,7 @@ class FunnelShape extends IntervalShape {
       coord.convert(Offset(bandEnd, group[1].position[0].dy)),
       coord.convert(Offset(bandStart, position[0].dy)),
     ];
-    rst.addAll(_drawSlope(
+    rst.addAll(_renderSlope(
       item,
       corners,
       coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
@@ -447,7 +469,7 @@ class FunnelShape extends IntervalShape {
         coord.convert(Offset(bandEnd, group[i + 1].position[0].dy)),
         coord.convert(Offset(bandStart, position[0].dy)),
       ];
-      rst.addAll(_drawSlope(
+      rst.addAll(_renderSlope(
         item,
         corners,
         coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
@@ -467,7 +489,7 @@ class FunnelShape extends IntervalShape {
       coord.convert(Offset(bandEnd, closeStart)),
       coord.convert(Offset(bandStart, position[0].dy)),
     ];
-    rst.addAll(_drawSlope(
+    rst.addAll(_renderSlope(
       item,
       corners,
       coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
@@ -477,7 +499,7 @@ class FunnelShape extends IntervalShape {
     return rst;
   }
 
-  List<Figure> _drawSlope(
+  List<Figure> _renderSlope(
     Aes item,
     List<Offset> corners,
     Offset labelAnchor,
@@ -490,7 +512,7 @@ class FunnelShape extends IntervalShape {
 
     final rst = <Figure>[];
 
-    rst.addAll(drawBasicItem(
+    rst.addAll(renderBasicItem(
       path,
       item,
       false,
@@ -498,7 +520,7 @@ class FunnelShape extends IntervalShape {
     ));
 
     if (item.label != null) {
-      rst.add(drawLabel(
+      rst.add(renderLabel(
         item.label!,
         labelAnchor,
         labelPosition.equalTo(1)
@@ -513,9 +535,9 @@ class FunnelShape extends IntervalShape {
   }
 
   @override
-  List<Figure> drawItem(
+  List<Figure> renderItem(
     Aes item,
     CoordConv coord,
     Offset origin,
-  ) => throw UnimplementedError('Use _drawSlope instead.');
+  ) => throw UnimplementedError('Use _renderSlope instead.');
 }

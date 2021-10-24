@@ -4,7 +4,11 @@ import 'package:graphic/src/scale/auto_ticks/cat.dart';
 
 import 'scale.dart';
 
+/// The specification of a discrete scale.
+/// 
+/// A discrete scale converts original tuple values to [int]s of natural number.
 abstract class DiscreteScale<V> extends Scale<V, int> {
+  /// Creates a discrete scale.
   DiscreteScale({
     this.values,
     this.align,
@@ -22,11 +26,15 @@ abstract class DiscreteScale<V> extends Scale<V, int> {
     maxTickCount: maxTickCount,
   );
 
-  /// List is to emphasize the order. It's better to be distinct.
+  /// Candidate values.
+  /// 
+  /// It is a [List] not a [Set] because the values must has an order for position.
+  /// But it's better that each value occurs only once.
   List<V>? values;
 
-  /// How the position will align in the band.
-  /// Default is 0.5 in [0, 1].
+  /// The align ratio of the exact position in the value position band.
+  /// 
+  /// If null, a default 0.5 is set, which means in the middle of the band.
   double? align;
 
   @override
@@ -40,7 +48,7 @@ abstract class DiscreteScale<V> extends Scale<V, int> {
 abstract class DiscreteScaleConv<V, SP extends DiscreteScale<V>> extends ScaleConv<V, int> {
   DiscreteScaleConv(
     SP spec,
-    List<Original> tuples,
+    List<Tuple> tuples,
     String variable,
   ) {
     // values

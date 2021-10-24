@@ -1,6 +1,8 @@
 import 'package:flutter/painting.dart';
-import 'package:graphic/graphic.dart';
 import 'package:graphic/src/chart/view.dart';
+import 'package:graphic/src/common/styles.dart';
+import 'package:graphic/src/guide/annotation/custom.dart';
+import 'package:graphic/src/interaction/selection/point.dart';
 import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/parse/spec.dart';
 
@@ -111,11 +113,16 @@ void parseGuide(
             'style': annotSpec.style,
             'elevation': annotSpec.elevation,
           }));
-        } else {
-          annotSpec as TagAnnotation;
+        } else if (annotSpec is TagAnnotation) {
           annot = view.add(TagAnnotOp({
             'anchor': anchor,
             'label': annotSpec.label,
+          }));
+        } else {
+          annotSpec as CustomAnnotation;
+          annot = view.add(TagAnnotOp({
+            'anchor': anchor,
+            'render': annotSpec.render,
           }));
         }
 
@@ -138,7 +145,7 @@ void parseGuide(
 
     final crosshairScene = view.graffiti.add(CrosshairScene());
     view.add(CrosshairRenderOp({
-      'selectorName': crosshairSpec.select ?? spec.selects!.keys.first,
+      'selectorName': crosshairSpec.selection ?? spec.selections!.keys.first,
       'selector': scope.selector,
       'selects': scope.selectsList[elementIndex],
       'zIndex': crosshairSpec.zIndex ?? 0,
@@ -157,8 +164,8 @@ void parseGuide(
     final elementIndex = tooltipSpec.element ?? 0;
 
     final tooltipScene = view.graffiti.add(TooltipScene());
-    final selectorName = tooltipSpec.select ?? spec.selects!.keys.first;
-    final multiTuples = tooltipSpec.multiTuples ?? ((spec.selects![selectorName] is PointSelect) ? false : true);
+    final selectorName = tooltipSpec.selection ?? spec.selections!.keys.first;
+    final multiTuples = tooltipSpec.multiTuples ?? ((spec.selections![selectorName] is PointSelection) ? false : true);
     view.add(TooltipRenderOp({
       'selectorName': selectorName,
       'selector': scope.selector,
@@ -166,7 +173,7 @@ void parseGuide(
       'zIndex': tooltipSpec.zIndex ?? 0,
       'coord': scope.coord,
       'groups': scope.groupsList[elementIndex],
-      'originals': scope.originals,
+      'tuples': scope.tuples,
       'align': tooltipSpec.align ?? Alignment.center,
       'offset': tooltipSpec.offset,
       'padding': tooltipSpec.padding ?? EdgeInsets.all(5),
@@ -181,6 +188,7 @@ void parseGuide(
       'render': tooltipSpec.render,
       'followPointer': tooltipSpec.followPointer ?? [false, false],
       'anchor': tooltipSpec.anchor,
+      'size': scope.size,
       'variables': tooltipSpec.variables,
       'scales': scope.scales,
     }, tooltipScene, view));

@@ -15,14 +15,18 @@ import 'package:graphic/src/guide/axis/vertical.dart';
 import 'package:graphic/src/scale/scale.dart';
 import 'package:graphic/src/util/assert.dart';
 
+/// The specification of a single axis tick line.
 class TickLine {
+  /// Creates a tick line.
   TickLine({
     StrokeStyle? style,
     this.length = 2,
   }) : style = style ?? StrokeStyle();
 
+  /// The stroke style of this tick line.
   StrokeStyle style;
 
+  /// The length of this tick line.
   double length;
 
   @override
@@ -32,13 +36,26 @@ class TickLine {
     length == other.length;
 }
 
+/// Gets an axis tick line form an axis value text.
+/// 
+/// [index] and [total] is current and total count of all ticks respectively.
 typedef TickLineMapper = TickLine? Function(String text, int index, int total);
 
+/// Gets an axis label form an axis value text.
+/// 
+/// [index] and [total] is current and total count of all ticks respectively.
 typedef LabelMapper = LabelSyle? Function(String text, int index, int total);
 
+/// Gets an axis grid stroke style form an axis value text.
+/// 
+/// [index] and [total] is current and total count of all ticks respectively.
 typedef GridMapper = StrokeStyle? Function(String text, int index, int total);
 
+/// The specification of an axis.
+/// 
+/// There can be mutiple axes in one dimension.
 class AxisGuide<V> {
+  /// Creates an axis.
   AxisGuide({
     this.dim,
     this.variable,
@@ -58,32 +75,80 @@ class AxisGuide<V> {
       assert(isSingle([label, labelMapper], allowNone: true)),
       assert(isSingle([grid, gridMapper], allowNone: true));
 
-  /// By default, axes specification list implies [dim1, dim2].
+  /// The dimension where this axis lies.
+  /// 
+  /// If null, the index of this axis in the [Spec.axes] list plus 1 is set by
+  /// default.
   int? dim;
 
-  /// The first variable in this dim by default.
+  /// The variable this axis is binded to.
+  /// 
+  /// If null, the first variable assigned to [dim] is set by default.
   String? variable;
 
+  /// The position ratio in the crossing dimension where this axis line stands.
+  /// 
+  /// This ratio is to region boundaries for [RectCoord] and to angle or radius
+  /// boundaries for [PolarCoord].
+  /// 
+  /// If null, a default 0 is set.
   double? position;
 
-  bool? flip;  // Flip tick and label to other side of the axis.
+  /// Whether to flip tick lines and labels to the other side of the axis line.
+  /// 
+  /// The default side is left for vertical axes, bottom for horizontal axes, outer
+  /// for circular axes, and behind the anticlockwise for radial axes.
+  bool? flip;
 
+  /// The stroke style for the axis line.
+  /// 
+  /// If null, there will be no axis line.
   StrokeStyle? line;
 
+  /// The tick line settings for all ticks.
+  /// 
+  /// Only one in [tickLine] and [tickLineMapper] can be set.
+  /// 
+  /// If null and [tickLineMapper] is also null, there will be no tick lines.
   TickLine? tickLine;
 
+  /// Indicates how to get the tick line setting for each tick.
+  /// 
+  /// Only one in [tickLine] and [tickLineMapper] can be set.
   TickLineMapper? tickLineMapper;
 
+  /// The label style for all ticks.
+  /// 
+  /// Only one in [label] and [labelMapper] can be set.
+  /// 
+  /// If null and [labelMapper] is also null, there will be no labels.
   LabelSyle? label;
 
+  /// Indicates how to get the label style for each tick.
+  /// 
+  /// Only one in [label] and [labelMapper] can be set.
   LabelMapper? labelMapper;
 
+  /// The grid stroke style for all ticks.
+  /// 
+  /// Only one in [grid] and [gridMapper] can be set.
+  /// 
+  /// If null and [gridMapper] is also null, there will be no grids.
   StrokeStyle? grid;
 
+  /// Indicates how to get the grid stroke style for each tick.
+  /// 
+  /// Only one in [grid] and [gridMapper] can be set.
   GridMapper? gridMapper;
 
+  /// The z index of this axis.
+  /// 
+  /// If null, a default 0 is set.
   int? zIndex;
 
+  /// The z index of the grids.
+  /// 
+  /// If null, a default 0 is set.
   int? gridZIndex;
 
   @override
@@ -200,7 +265,7 @@ class AxisRenderOp extends Render<AxisScene> {
     final canvasDim = coord.getCanvasDim(dim);
     if (coord is RectCoordConv) {
       if (canvasDim == 1) {
-        scene.figures = drawHorizontalAxis(
+        scene.figures = renderHorizontalAxis(
           ticks,
           position,
           flip,
@@ -208,7 +273,7 @@ class AxisRenderOp extends Render<AxisScene> {
           coord,
         );
       } else {
-        scene.figures = drawVerticalAxis(
+        scene.figures = renderVerticalAxis(
           ticks,
           position,
           flip,
@@ -219,7 +284,7 @@ class AxisRenderOp extends Render<AxisScene> {
     } else {
       coord as PolarCoordConv;
       if (canvasDim == 1) {
-        scene.figures = drawCircularAxis(
+        scene.figures = renderCircularAxis(
           ticks,
           position,
           flip,
@@ -227,7 +292,7 @@ class AxisRenderOp extends Render<AxisScene> {
           coord,
         );
       } else {
-        scene.figures = drawRadialAxis(
+        scene.figures = renderRadialAxis(
           ticks,
           position,
           flip,
@@ -265,12 +330,12 @@ class GridRenderOp extends Render<GridScene> {
     final canvasDim = coord.getCanvasDim(dim);
     if (coord is RectCoordConv) {
       if (canvasDim == 1) {
-        scene.figures = drawHorizontalGrid(
+        scene.figures = renderHorizontalGrid(
           ticks,
           coord,
         );
       } else {
-        scene.figures = drawVerticalGrid(
+        scene.figures = renderVerticalGrid(
           ticks,
           coord,
         );
@@ -278,12 +343,12 @@ class GridRenderOp extends Render<GridScene> {
     } else {
       coord as PolarCoordConv;
       if (canvasDim == 1) {
-        scene.figures = drawCircularGrid(
+        scene.figures = renderCircularGrid(
           ticks,
           coord,
         );
       } else {
-        scene.figures = drawRadialGrid(
+        scene.figures = renderRadialGrid(
           ticks,
           coord,
         );

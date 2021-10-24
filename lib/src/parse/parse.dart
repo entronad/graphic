@@ -9,7 +9,7 @@ import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/geom/element.dart';
 import 'package:graphic/src/guide/guide.dart';
 import 'package:graphic/src/interaction/gesture.dart';
-import 'package:graphic/src/interaction/select/select.dart';
+import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/scale/scale.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
@@ -30,7 +30,7 @@ class Scope<D> {
 
   late SignalOp signal;
 
-  late Operator<List<Original>> originals;
+  late Operator<List<Tuple>> tuples;
 
   late ScaleConvOp scales;
 

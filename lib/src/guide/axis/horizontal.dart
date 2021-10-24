@@ -9,7 +9,7 @@ import 'package:graphic/src/util/path.dart';
 
 import 'axis.dart';
 
-List<Figure>? drawHorizontalAxis(
+List<Figure>? renderHorizontalAxis(
   List<TickInfo> ticks,
   double position,
   bool flip,
@@ -47,7 +47,7 @@ List<Figure>? drawHorizontalAxis(
         ));
       }
       if (tick.label != null) {
-        rst.add(drawLabel(
+        rst.add(renderLabel(
           Label(tick.text, tick.label!),
           Offset(x, y),
           flip ? Alignment.topCenter : Alignment.bottomCenter,
@@ -59,7 +59,7 @@ List<Figure>? drawHorizontalAxis(
   return rst.isEmpty ? null : rst;
 }
 
-List<Figure>? drawHorizontalGrid(
+List<Figure>? renderHorizontalGrid(
   List<TickInfo> ticks,
   RectCoordConv coord,
 ) {

@@ -11,41 +11,57 @@ import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/graffiti/scene.dart';
-import 'package:graphic/src/interaction/select/point.dart';
-import 'package:graphic/src/interaction/select/select.dart';
+import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/util/path.dart';
 
+/// The specification of a crosshair
+/// 
+/// A corsshair indicates the position of the pointer or the selected point.
 class CrosshairGuide {
+  /// Creates a crosshair.
   CrosshairGuide({
-    this.select,
+    this.selection,
     this.styles,
     this.followPointer,
     this.zIndex,
     this.element,
   });
 
-  /// The selection must:
-  ///     Be a PointSelection.
-  ///     Toggle is false.
-  ///     No variable.
-  String? select;
+  /// The selection this crosshair reacts to.
+  /// 
+  /// If null, the first selection is set by default.
+  String? selection;
 
-  /// [dim1, dim2]
+  /// The stroke styles of crosshair lines for each dimension.
+  /// 
+  /// If null a default `[StrokeStyle(color: Color(0xffbfbfbf)), StrokeStyle(color: Color(0xffbfbfbf))]`
+  /// is set.
   List<StrokeStyle?>? styles;
 
-  /// [dim1, dim2]
+  /// Whether the position for each dimension follows the pointer or stick to selected
+  /// points.
+  /// 
+  /// If null, a default `[false, false]` is set.
   List<bool>? followPointer;
 
+  /// The z index of this crosshair.
+  /// 
+  /// If null, a default 0 is set.
   int? zIndex;
 
-  /// The tooltip can only refer to one element.
-  /// This is the index in elements.
+  /// Which element series this crosshair reacts to.
+  /// 
+  /// This is an index in [Spec.elements].
+  /// 
+  /// The crosshair can only reacts to one element series.
+  /// 
+  /// If null, the first element series is set by default.
   int? element;
 
   @override
   bool operator ==(Object other) =>
     other is CrosshairGuide &&
-    select == other.select &&
+    selection == other.selection &&
     DeepCollectionEquality().equals(styles, other.styles) &&
     DeepCollectionEquality().equals(followPointer, other.followPointer) &&
     zIndex == other.zIndex &&
@@ -142,8 +158,8 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
         );
         figures.add(PathFigure(
           Paths.line(
-            from: polarCoord.polarToOffset(angle, coord.innerRadius),
-            to: polarCoord.polarToOffset(angle, coord.radius),
+            from: polarCoord.polarToOffset(angle, coord.startRadius),
+            to: polarCoord.polarToOffset(angle, coord.endRadius),
           ),
           canvasStyleX.toPaint(),
         ));

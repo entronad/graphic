@@ -5,35 +5,53 @@ import 'package:graphic/src/graffiti/figure.dart';
 import 'package:flutter/foundation.dart';
 import 'package:graphic/src/coord/coord.dart';
 
+/// The Base class of a shape.
+/// 
+/// A shape renders figures of tuples from their aesthetic attribute values. It is
+/// the key of painting geometory elements. Besides, the shape it self is an aesthetic
+/// attribute in Grammar of Graphics.
+/// 
+/// Customizing subclasses of shape makes [graphic] extensive.
 abstract class Shape {
-  /// To paint the whole group.
-  /// The element scene will take the first item shape as represent,
-  ///     and it's paintGroup method decides the basic way to paint the wholw group.
-  /// It may call each item shape's paintItem to paint different item shapes seperately.
-  List<Figure> drawGroup(
+  /// Renders the whole group of tuples.
+  /// 
+  /// The tuples are rendered in groups. the [Aes.shape] of the first tuple of a
+  /// group will be taken as a represent, and it's [renderGroup] method decides
+  /// the basic way to render the whole group. The [renderGroup] method then may
+  /// call [renderItem]s of each tuple of the group respectively or render in it's
+  /// own way accrording to the implementation.
+  List<Figure> renderGroup(
     List<Aes> group,
     CoordConv coord,
     Offset origin,
   );
 
-  /// How each item is painted exactly.
+  /// Renders a single tuple if called by [renderGroup].
   @protected
-  List<Figure> drawItem(
+  List<Figure> renderItem(
     Aes item,
     CoordConv coord,
     Offset origin,
   );
 
+  /// The default size of the shape if [Aes.size] is null.
   @protected
   double get defaultSize;
 
-  /// Usually the last point represent the statistic value.
+  /// Gets the represent point of [Aes.position] points.
+  /// 
+  /// It is callen by [Aes.representPoint].
+  /// 
+  /// Usually the represent point is the last one.
   Offset representPoint(List<Offset> position) =>
     position.last;
 
-  /// Force subclasses to implement equality.
-  /// It will be used in operator ==.
-  /// Usually they must be the same subtype and have equal fields.
+  /// Checks the equlity of two shapes.
+  /// 
+  /// Because the shape is a functional class in design, they should be equal if
+  /// they are of the same type and has same properties.
+  /// 
+  /// It is used by [==]. This method forces a equlity definition in customizing.
   @protected
   bool equalTo(Object other);
 

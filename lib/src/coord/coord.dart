@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/converter.dart';
@@ -14,52 +13,86 @@ import 'package:graphic/src/parse/spec.dart';
 import 'rect.dart';
 import 'polar.dart';
 
+/// Specification of the coordinate.
+/// 
+/// As in a plane, The count of coordinate dimensions can be 1 or 2 (Which is set
+/// by [dimCount]).
+/// 
+/// For a 2 dimensions coordinate, the coordinate will have both **domain dimension**
+/// (usually denoted as "x") and **measure dimension** (usually denoted as "y").
+/// 
+/// For a 1 dimension coordinate, the coordinate will only have measure dimension,
+/// and all points' domain dimensions will be set to [dimFill] for rendering position.
+/// 
+/// The **coordinate region** is the visual boundary rectangle of the coordinate
+/// on the chart widget. It is determined by chart size and padding. the coordinate
+/// range may be smaller or larger than the region. The range properties of [RectCoord]
+/// and [PolarCoord] is are define in ratio to coordinate region.
 abstract class Coord {
+  /// Creates a coordinate.
   Coord({
-    this.dim,
+    this.dimCount,
     this.dimFill,
     this.transposed,
-  }) : assert(dim == null || (dim >= 1 && dim <=2));
+  }) : assert(dimCount == null || (dimCount >= 1 && dimCount <=2));
 
-  /// 1: Only has measure dim, the domain dim is dimFill.
-  /// 2: Has both domain and measure dim.
-  int? dim;
+  /// The count of coordinate dimensions.
+  /// 
+  /// If null, a default 2 is set.
+  int? dimCount;
 
-  /// The normal value in [0, 1] to fill the domain dim.
+  /// The position value to fill the domain dimension when [dimCount] is 1.
+  /// 
+  /// It is a normalized value of `[0, 1]`.
+  /// 
+  /// If null, a default 0.5 is set, which means in the middle of the dimension.
   double? dimFill;
 
+  /// Weither to transpose domain dimension and measure dimension.
   bool? transposed;
 
   @override
   bool operator ==(Object other) =>
     other is Coord &&
-    dim == other.dim &&
+    dimCount == other.dimCount &&
     dimFill == other.dimFill &&
     transposed == other.transposed;
 }
 
-/// Convert abstract point to canvas point
+/// The converter of a coordinate.
+/// 
+/// The inputs are abstract position points from [Aes.position] and outputs are
+/// canvas points.
 abstract class CoordConv extends Converter<Offset, Offset> {
+  /// Creates a coordinate converter.
   CoordConv(
-    this.dim,
+    this.dimCount,
     this.dimFill,
     this.transposed,
     this.region,
   );
 
-  final int dim;
+  /// The [Coord.dimCount].
+  final int dimCount;
 
+  /// The [Coord.dimFill].
   final double dimFill;
 
+  /// The [Coord.transposed].
   final bool transposed;
 
+  /// The coordinate region.
   final Rect region;
 
+  /// Transforms an abstract dimension to canvas dimension according to whether
+  /// [transposed].
   int getCanvasDim(int abstractDim) =>
-    dim == 1
-      ? (transposed ? 1 : 2) // The last one is the value dim.
+    dimCount == 1
+      // The last dimension is the mearure dimension.
+      ? (transposed ? 1 : 2)
       : (transposed ? (3 - abstractDim) : abstractDim);
   
+  /// Inverts a distance in canvas to abstract distance.
   double invertDistance(double canvasDistance, [int? dim]);
 }
 
@@ -106,9 +139,9 @@ void parseCoord(
     Operator<List<double>> horizontalRange = view.add(Value<List<double>>(
       coordSpec.horizontalRange ?? [0, 1],
     ));
-    if (coordSpec.horizontalRangeSignal != null) {
+    if (coordSpec.onHorizontalRangeSignal != null) {
       horizontalRange = view.add(SignalUpdateOp({
-        'spec': coordSpec.horizontalRangeSignal,
+        'update': coordSpec.onHorizontalRangeSignal,
         'initialValue': horizontalRange,
         'signal': scope.signal,
       }));
@@ -116,9 +149,9 @@ void parseCoord(
     Operator<List<double>> verticalRange = view.add(Value<List<double>>(
       coordSpec.verticalRange ?? [0, 1],
     ));
-    if (coordSpec.verticalRangeSignal != null) {
+    if (coordSpec.onVerticalRangeSignal != null) {
       verticalRange = view.add(SignalUpdateOp({
-        'spec': coordSpec.verticalRangeSignal,
+        'update': coordSpec.onVerticalRangeSignal,
         'initialValue': verticalRange,
         'signal': scope.signal,
       }));
@@ -126,7 +159,7 @@ void parseCoord(
 
     scope.coord = view.add(RectCoordConvOp({
       'region': region,
-      'dim': coordSpec.dim ?? 2,
+      'dimCount': coordSpec.dimCount ?? 2,
       'dimFill': coordSpec.dimFill ?? 0.5,
       'transposed': coordSpec.transposed ?? false,
       'renderRangeX': horizontalRange,
@@ -137,9 +170,9 @@ void parseCoord(
     Operator<List<double>> angleRange = view.add(Value<List<double>>(
       coordSpec.angleRange ?? [0, 1],
     ));
-    if (coordSpec.angleRangeSignal != null) {
+    if (coordSpec.onAngleRangeSignal != null) {
       angleRange = view.add(SignalUpdateOp({
-        'spec': coordSpec.angleRangeSignal,
+        'update': coordSpec.onAngleRangeSignal,
         'initialValue': angleRange,
         'signal': scope.signal,
       }));
@@ -147,9 +180,9 @@ void parseCoord(
     Operator<List<double>> radiusRange = view.add(Value<List<double>>(
       coordSpec.radiusRange ?? [0, 1],
     ));
-    if (coordSpec.radiusRangeSignal != null) {
+    if (coordSpec.onRadiusRangeSignal != null) {
       radiusRange = view.add(SignalUpdateOp({
-        'spec': coordSpec.radiusRangeSignal,
+        'update': coordSpec.onRadiusRangeSignal,
         'initialValue': radiusRange,
         'signal': scope.signal,
       }));
@@ -157,15 +190,15 @@ void parseCoord(
 
     scope.coord = view.add(PolarCoordConvOp({
       'region': region,
-      'dim': coordSpec.dim ?? 2,
+      'dimCount': coordSpec.dimCount ?? 2,
       'dimFill': coordSpec.dimFill ?? 0.5,
       'transposed': coordSpec.transposed ?? false,
       'renderRangeX': angleRange,
       'renderRangeY': radiusRange,
       'startAngle': coordSpec.startAngle ?? (-pi / 2),
       'endAngle': coordSpec.endAngle ?? (3 * pi / 2),
-      'innerRadius': coordSpec.innerRadius ?? 0.0,
-      'radius': coordSpec.radius ?? 1.0,
+      'startRadius': coordSpec.startRadius ?? 0.0,
+      'endRadius': coordSpec.endRadius ?? 1.0,
     }));
   }
 }

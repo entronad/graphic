@@ -10,7 +10,11 @@ import 'package:graphic/src/shape/partition.dart';
 import 'element.dart';
 import 'modifier/modifier.dart';
 
+/// The specification of a partition element.
+/// 
+/// Partitions separete a set of points into two or more subsets.
 abstract class PartitionElement<S extends PartitionShape> extends GeomElement<S> {
+  /// Creates a partition element.
   PartitionElement({
     ColorAttr? color,
     ElevationAttr? elevation,

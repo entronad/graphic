@@ -4,7 +4,7 @@ import 'package:graphic/src/chart/size.dart';
 import 'package:graphic/src/data/data_set.dart';
 import 'package:graphic/src/dataflow/dataflow.dart';
 import 'package:graphic/src/graffiti/graffiti.dart';
-import 'package:graphic/src/interaction/event.dart';
+import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/parse/spec.dart';
@@ -30,24 +30,24 @@ class View<D> extends Dataflow {
 
   final graffiti;
 
-  final gestureSource = EventSource<GestureEvent>();
+  final gestureSource = SignalSource<GestureSignal>();
 
-  final sizeSouce = EventSource<ResizeEvent>();
+  final sizeSouce = SignalSource<ResizeSignal>();
 
-  final dataSouce = EventSource<ChangeDataEvent<D>>();
+  final dataSouce = SignalSource<ChangeDataSignal<D>>();
 
   bool dirty = false;
 
   Future<void> gesture(Gesture gesture) async {
-    await gestureSource.emit(GestureEvent(gesture));
+    await gestureSource.emit(GestureSignal(gesture));
   }
 
   Future<void> resize(Size size) async {
-    await sizeSouce.emit(ResizeEvent(size));
+    await sizeSouce.emit(ResizeSignal(size));
   }
 
   Future<void> changeData(List<D> data) async {
-    await dataSouce.emit(ChangeDataEvent(data));
+    await dataSouce.emit(ChangeDataSignal(data));
   }
 
   @override

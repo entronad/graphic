@@ -6,10 +6,14 @@ import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/util/math.dart';
 
-import 'select.dart';
+import 'selection.dart';
 
-class IntervalSelect extends Select {
-  IntervalSelect({
+/// The selection to select a continuous range of data values
+/// 
+/// A rectangle mark is shown to depict the extents of the interval.
+class IntervalSelection extends Selection {
+  /// Creates an interval selection.
+  IntervalSelection({
     this.color,
     this.zIndex,
 
@@ -22,13 +26,19 @@ class IntervalSelect extends Select {
     clear: clear,
   );
 
+  /// Color of the interval mark.
+  /// 
+  /// If null, a default `Color(0x10101010)` is set.
   Color? color;
 
+  /// The z index of the interval mark.
+  /// 
+  /// If null, a default 0 is set.
   int? zIndex;
 
   @override
   bool operator ==(Object other) =>
-    other is IntervalSelect &&
+    other is IntervalSelection &&
     super == other &&
     color == other.color &&
     zIndex == other.zIndex;
@@ -57,7 +67,7 @@ class IntervalSelector extends Selector {
   @override
   Set<int>? select(
     AesGroups groups,
-    List<Original> originals,
+    List<Tuple> tuples,
     Set<int>? preSelects,
     CoordConv coord,
   ) {
@@ -101,10 +111,10 @@ class IntervalSelector extends Selector {
     if (variable != null) {
       final values = Set();
       for (var index in rst) {
-        values.add(originals[index][variable]);
+        values.add(tuples[index][variable]);
       }
-      for (var i = 0; i < originals.length; i++) {
-        if (values.contains(originals[i][variable])) {
+      for (var i = 0; i < tuples.length; i++) {
+        if (values.contains(tuples[i][variable])) {
           rst.add(i);
         }
       }
@@ -114,7 +124,7 @@ class IntervalSelector extends Selector {
   }
 }
 
-List<Figure>? drawIntervalSelector(
+List<Figure>? renderIntervalSelector(
   Offset start,
   Offset end,
   Color color,

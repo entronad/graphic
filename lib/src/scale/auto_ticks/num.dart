@@ -53,7 +53,7 @@ List<num> numAutoTicks({
   if (minTickInterval != null && interval < minTickInterval) {
     interval = minTickInterval;
   }
-  if (interval != null || maxCount != minCount) {
+  if (interval.isFinite || maxCount != minCount) {
     maxValue = snapMultiple(maxValue, interval, SnapType.ceil);
     minValue = snapMultiple(minValue, interval, SnapType.floor);
 

@@ -6,7 +6,9 @@ import 'package:vector_math/vector_math_64.dart';
 
 import 'figure.dart';
 
+/// The specification of a mark annotation.
 class MarkAnnotation extends FigureAnnotation {
+  /// Creates a mark annotation.
   MarkAnnotation({
     required this.relativePath,
     required this.style,
@@ -23,11 +25,16 @@ class MarkAnnotation extends FigureAnnotation {
     zIndex: zIndex,
   );
 
-  // Relative, will move to anchor.
+  /// The relative path definition of the mark.
+  /// 
+  /// Use [Offset]s relative to [Offset.zero] in this definition. The path will
+  /// be translated to the anchor position in rendering.
   Path relativePath;
 
+  /// The style of this mark.
   Paint style;
 
+  /// The shadow elevation of this mark.
   double? elevation;
 
   @override

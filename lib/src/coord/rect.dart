@@ -7,51 +7,78 @@ import 'package:graphic/src/util/map.dart';
 
 import 'coord.dart';
 
+/// The specification of a rectangle coordinate.
+/// 
+/// In a rectangle coordinate, dimensions are assigned to horizontal and vertical
+/// directions.
+/// 
+/// Unlike the canvas coordinate, the vertical dimension direction is from bottom
+/// to top.
 class RectCoord extends Coord {
+  /// Creates a rectangle coordinate.
   RectCoord({
     this.horizontalRange,
-    this.horizontalRangeSignal,
+    this.onHorizontalRangeSignal,
     this.verticalRange,
-    this.verticalRangeSignal,
+    this.onVerticalRangeSignal,
 
-    int? dim,
+    int? dimCount,
     double? dimFill,
     bool? transposed,
   })
     : assert(horizontalRange == null || horizontalRange.length == 2),
       assert(verticalRange == null || verticalRange.length == 2),
       super(
-        dim: dim,
+        dimCount: dimCount,
         dimFill: dimFill,
         transposed: transposed,
       );
 
+  /// Range ratio of coordinate width to coordinate region width.
+  /// 
+  /// The list should have 2 items of start and end.
+  /// 
+  /// Coordinate region see details in [Coord].
+  /// 
+  /// If null, a default `[0, 1]` is set, meaning the same with coordinate region width.
   List<double>? horizontalRange;
 
-  Signal<List<double>>? horizontalRangeSignal;
-
-  /// Rect coord is from bottom to top.
+  /// Signal update of [horizontalRange].
+  SignalUpdate<List<double>>? onHorizontalRangeSignal;
+  
+  /// Range ratio of coordinate height to coordinate region height.
+  /// 
+  /// The list should have 2 items of start and end.
+  /// 
+  /// Coordinate region see details in [Coord].
+  /// 
+  /// If null, a default `[0, 1]` is set, meaning the same with coordinate region height.
   List<double>? verticalRange;
 
-  Signal<List<double>>? verticalRangeSignal;
+  /// Signal update of [verticalRange].
+  SignalUpdate<List<double>>? onVerticalRangeSignal;
 
   @override
   bool operator ==(Object other) =>
     other is RectCoord &&
     super == other &&
     DeepCollectionEquality().equals(horizontalRange, other.horizontalRange) &&
-    DeepCollectionEquality(MapKeyEquality()).equals(horizontalRangeSignal, other.horizontalRangeSignal) &&  // SignalUpdata: Function
+    DeepCollectionEquality(MapKeyEquality()).equals(onHorizontalRangeSignal, other.onHorizontalRangeSignal) &&  // SignalUpdata: Function
     DeepCollectionEquality().equals(verticalRange, other.verticalRange) &&
-    DeepCollectionEquality(MapKeyEquality()).equals(verticalRangeSignal, verticalRangeSignal);  // SignalUpdata: Function
+    DeepCollectionEquality(MapKeyEquality()).equals(onVerticalRangeSignal, onVerticalRangeSignal);  // SignalUpdata: Function
 }
 
+/// The converter of a rectangle coordinate.
 class RectCoordConv extends CoordConv {
+  /// Creates a rectangle coordinate converter.
+  /// 
+  /// The render range parameters are of abstract dimensions, without transposint.
   RectCoordConv(
     Rect region,
-    int dim,
+    int dimCount,
     double dimFill,
     bool transposed,
-    List<double> renderRangeX,  // Render range is bind to render dim, ignoring tansposing.
+    List<double> renderRangeX,
     List<double> renderRangeY,
   )
     : horizontals = [
@@ -59,19 +86,22 @@ class RectCoordConv extends CoordConv {
         region.left + region.width * renderRangeX.last,
       ],
       verticals = [
-        region.bottom - region.height * renderRangeY.first,  // Rect coord is form bottom to top.
+        region.bottom - region.height * renderRangeY.first,
         region.bottom - region.height * renderRangeY.last,
       ],
-      super(dim, dimFill, transposed, region);
-    
+      super(dimCount, dimFill, transposed, region);
+  
+  /// Horizontal boundaries of the coordinate.
   final List<double> horizontals;
 
+  /// Vertical boundaries of the coordinate.
   final List<double> verticals;
 
   @override
   Offset convert(Offset input) {
-    if (dim == 1) {
-      input = Offset(dimFill, input.dy);  // [arbitry domain, single measure]
+    if (dimCount == 1) {
+      // The input domain value is arbitrary.
+      input = Offset(dimFill, input.dy);
     }
 
     final getHorizontalInput = transposed ? (Offset p) => p.dy : (Offset p) => p.dx;
@@ -114,14 +144,14 @@ class RectCoordConvOp extends CoordConvOp<RectCoordConv> {
   @override
   RectCoordConv evaluate() {
     final region = params['region'] as Rect;
-    final dim = params['dim'] as int;
+    final dimCount = params['dimCount'] as int;
     final dimFill = params['dimFill'] as double;
     final transposed = params['transposed'] as bool;
     final renderRangeX = params['renderRangeX'] as List<double>;
     final renderRangeY = params['renderRangeY'] as List<double>;
     return RectCoordConv(
       region,
-      dim,
+      dimCount,
       dimFill,
       transposed,
       renderRangeX,

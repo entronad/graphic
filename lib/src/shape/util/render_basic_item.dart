@@ -4,10 +4,16 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/shape/util/gradient.dart';
 
-/// Aesthetic the basic item with path provided.
-/// Size is considered in path.
-/// It dosen't include label.
-List<Figure> drawBasicItem(
+/// Renders a basic element item.
+/// 
+/// This is a util function for implementing [Shape.renderGroup] and [Shape.renderItem].
+/// The [path] should be calculated before it and label is not rendered in it.
+/// 
+/// See also
+/// 
+/// - [Shape.renderGroup] and [Shape.renderItem], where this function is usually used.
+/// - [renderLabel], which renders an item label.
+List<Figure> renderBasicItem(
   Path path,
   Aes aes,
   bool hollow,

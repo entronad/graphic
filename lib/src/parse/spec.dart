@@ -1,5 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/painting.dart';
+import 'package:graphic/src/chart/chart.dart';
+import 'package:graphic/src/coord/polar.dart';
+import 'package:graphic/src/coord/rect.dart';
+import 'package:graphic/src/data/data_set.dart';
 import 'package:graphic/src/guide/interaction/crosshair.dart';
 import 'package:graphic/src/guide/interaction/tooltip.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
@@ -81,16 +85,16 @@ class Spec<D> {
   /// in [Coord]), and in the [padding] space.
   /// 
   /// If null, a default `EdgeInsets.fromLTRB(40, 5, 10, 20)` for [RectCoord] and
-  /// `EdgeInsets.all(40)` for [PolarCoord] is set.
+  /// `EdgeInsets.all(10)` for [PolarCoord] is set.
   final EdgeInsets? padding;
 
   /// Specifications of axes.
   final List<AxisGuide>? axes;
 
-  /// Specification of tooltip on [selects].
+  /// Specification of tooltip on [selections].
   final TooltipGuide? tooltip;
 
-  /// Specification of pointer crosshair on [selects].
+  /// Specification of pointer crosshair on [selections].
   final CrosshairGuide? crosshair;
 
   /// Specifications of annotations.

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/painting.dart';
+import 'package:graphic/src/aes/aes.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/layers.dart';
@@ -55,7 +56,7 @@ abstract class Selection {
   /// Note that if multiple selections is declared, they can not have conflicting
   /// [on] gesture types.
   /// 
-  /// If null, a default `{GestureType.tap}` is set for [PointSelecion].
+  /// If null, a default `{GestureType.tap}` is set for [PointSelection].
   /// 
   /// [IntervalSelection]'s [on] is fixed to `{GestureType.scaleUpdate, GestureType.scroll}`.
   Set<GestureType>? on;

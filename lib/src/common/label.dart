@@ -1,7 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
+import 'package:graphic/src/aes/label.dart';
 import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/guide/annotation/tag.dart';
 
 import 'defaults.dart';
 
@@ -13,14 +15,14 @@ import 'defaults.dart';
 /// See also:
 /// 
 /// - [renderLabel], renders a label with an anchor point.
-class LabelSyle {
+class LabelStyle {
   /// Creates a label style.
-  LabelSyle({
-    TextStyle? style,
-    this.offset,
+  LabelStyle(
+    this.style,
+    {this.offset,
     this.rotation,
-    this.align,
-  }) : this.style = style ?? Defaults.textStyle;
+    this.align,}
+  );
 
   /// The text style of the label.
   /// 
@@ -40,7 +42,7 @@ class LabelSyle {
 
   @override
   bool operator ==(Object other) =>
-    other is LabelSyle &&
+    other is LabelStyle &&
     style == other.style &&
     offset == other.offset &&
     rotation == other.rotation &&
@@ -55,14 +57,14 @@ class Label {
   /// Creates a label.
   Label(
     this.text,
-    [LabelSyle? style,]
-  ) : this.style = style ?? LabelSyle();
+    [LabelStyle? style,]
+  ) : this.style = style ?? LabelStyle(Defaults.textStyle);
 
   /// The label text.
   String text;
 
   /// The label style.
-  LabelSyle style;
+  LabelStyle style;
 
   @override
   bool operator ==(Object other) =>

@@ -12,6 +12,7 @@ import 'package:graphic/src/guide/axis/circular.dart';
 import 'package:graphic/src/guide/axis/horizontal.dart';
 import 'package:graphic/src/guide/axis/radial.dart';
 import 'package:graphic/src/guide/axis/vertical.dart';
+import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/scale/scale.dart';
 import 'package:graphic/src/util/assert.dart';
 
@@ -44,7 +45,7 @@ typedef TickLineMapper = TickLine? Function(String text, int index, int total);
 /// Gets an axis label form an axis value text.
 /// 
 /// [index] and [total] is current and total count of all ticks respectively.
-typedef LabelMapper = LabelSyle? Function(String text, int index, int total);
+typedef LabelMapper = LabelStyle? Function(String text, int index, int total);
 
 /// Gets an axis grid stroke style form an axis value text.
 /// 
@@ -122,7 +123,7 @@ class AxisGuide<V> {
   /// Only one in [label] and [labelMapper] can be set.
   /// 
   /// If null and [labelMapper] is also null, there will be no labels.
-  LabelSyle? label;
+  LabelStyle? label;
 
   /// Indicates how to get the label style for each tick.
   /// 
@@ -183,7 +184,7 @@ class TickInfo {
 
   TickLine? tickLine;
 
-  LabelSyle? label;
+  LabelStyle? label;
 
   StrokeStyle? grid;
 }
@@ -200,7 +201,7 @@ class TickInfoOp extends Operator<List<TickInfo>> {
     final scales = params['scales'] as Map<String, ScaleConv>;
     final tickLine = params['tickLine'] as TickLine?;
     final tickLineMapper = params['tickLineMapper'] as TickLineMapper?;
-    final label = params['label'] as LabelSyle?;
+    final label = params['label'] as LabelStyle?;
     final labelMapper = params['labelMapper'] as LabelMapper?;
     final grid = params['grid'] as StrokeStyle?;
     final gridMapper = params['gridMapper'] as GridMapper?;

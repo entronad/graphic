@@ -6,6 +6,7 @@ import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/converter.dart';
 import 'package:graphic/src/common/operators/value.dart';
 import 'package:graphic/src/dataflow/operator.dart';
+import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/parse/spec.dart';
@@ -128,7 +129,7 @@ void parseCoord(
     'size': scope.size,
     'padding': spec.padding ?? (
       spec.coord is PolarCoord
-        ? EdgeInsets.all(40)
+        ? EdgeInsets.all(10)
         : EdgeInsets.fromLTRB(40, 5, 10, 20)
     ),
   }));

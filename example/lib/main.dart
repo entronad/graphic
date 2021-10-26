@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 
 import 'home.dart';
-import 'pages/debug_page.dart';
-import 'pages/debug_bigdata_point_page.dart';
-import 'pages/debug_bigdata_line_page.dart';
+import 'pages/rectangle_interval.dart';
+import 'pages/polar_interval.dart';
+import 'pages/line_area.dart';
+import 'pages/point.dart';
+import 'pages/polygon.dart';
+import 'pages/custom.dart';
+import 'pages/bigdata.dart';
 
 final routes = {
-  '/': (context) => HomePage(),
-  '/demos/Debug': (context) => DebugPage(),
-  '/demos/DebugBigPointdata': (context) => DebugBigdataPointPage(),
-  '/demos/DebugBigLinedata': (context) => DebugBigdataLinePage(),
+  '/': (context) => const HomePage(),
+  '/examples/Rectangle Interval Element': (context) => RectangleIntervalPage(),
+  '/examples/Polar Interval Element': (context) => PolarIntervalPage(),
+  '/examples/Line and Area Element': (context) => LineAreaPage(),
+  '/examples/Point Element': (context) => PointPage(),
+  '/examples/Polygon Element': (context) => PolygonPage(),
+  '/examples/Custom': (context) => CustomPage(),
+  '/examples/Bigdata': (context) => BigdataPage(),
 };
 
 class MyApp extends StatelessWidget {
@@ -18,7 +26,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

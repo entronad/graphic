@@ -23,9 +23,9 @@ import 'view.dart';
 /// 
 /// Usually, if any specification or data is changed, the chart will rebuild or
 /// reevaluate automatically. Some subtle setting is controlled by [rebuild] and
-/// [changeData] (See [Spec.changeData]).
+/// [Spec.changeData].
 /// 
-/// The generic [D] is the type of datum in [data] list.
+/// The generic [D] is the type of datum in [Spec.data] list.
 /// 
 /// See also:
 /// 

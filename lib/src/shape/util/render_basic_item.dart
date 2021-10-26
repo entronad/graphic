@@ -1,8 +1,11 @@
 import 'dart:ui';
 
+import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/shape/util/gradient.dart';
+
+import '../shape.dart';
 
 /// Renders a basic element item.
 /// 

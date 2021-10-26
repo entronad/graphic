@@ -1,3 +1,13 @@
+## 0.4.0
+
+**2021-10-26**
+
+- A complete refactoring.
+- Better declaration grammer.
+- Dataflow.
+- Interactive.
+- Documentation.
+
 ## 0.3.0
 
 **2020-12-04**

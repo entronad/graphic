@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/geom/partition.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 
 import 'shape.dart';

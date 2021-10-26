@@ -2,8 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/label.dart';
+import 'package:graphic/src/coord/coord.dart';
+import 'package:graphic/src/scale/scale.dart';
 import 'package:graphic/src/shape/shape.dart';
 import 'package:graphic/src/util/assert.dart';
+import 'package:graphic/src/variable/variable.dart';
 
 /// The tuple to store the original values of a datum.
 /// 

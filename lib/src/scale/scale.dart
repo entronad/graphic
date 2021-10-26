@@ -1,13 +1,18 @@
 import 'package:collection/collection.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/dataflow/operator.dart';
+import 'package:graphic/src/guide/axis/axis.dart';
+import 'package:graphic/src/guide/interaction/tooltip.dart';
 import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/util/assert.dart';
 import 'package:flutter/foundation.dart';
 import 'package:graphic/src/common/converter.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/variable/variable.dart';
 
+import 'discrete.dart';
+import 'continuous.dart';
 import 'ordinal.dart';
 import 'linear.dart';
 import 'time.dart';

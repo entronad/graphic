@@ -42,7 +42,7 @@ abstract class FigureAnnotation extends Annotation {
   /// the position.
   /// 
   /// If set, this annotation's position will no longer determined by [variables]
-  /// and [values].
+  /// and [values], and can be out of the coordinate region.
   Offset Function(Size)? anchor;
 
   @override

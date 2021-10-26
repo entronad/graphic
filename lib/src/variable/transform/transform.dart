@@ -1,6 +1,8 @@
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 
+import '../variable.dart';
+
 /// The specification of a variable transform.
 /// 
 /// A transform applies a statistical transformation on the original value tuples

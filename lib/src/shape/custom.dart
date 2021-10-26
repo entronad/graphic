@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/geom/custom.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 
 import 'util/render_basic_item.dart';
@@ -23,7 +24,7 @@ abstract class CustomShape extends Shape {
 /// 
 /// ** We insist that the price of a subject matter of investment is determined
 /// by its intrinsic value. Too much attention to the short-term fluctuations in
-/// prices is harmful. Thus a candle stick chart may misslead your investment decision.**
+/// prices is harmful. Thus a candlestick chart may misslead your investment decision.**
 class CandlestickShape extends CustomShape {
   /// Creates a candle stick shape.
   CandlestickShape({

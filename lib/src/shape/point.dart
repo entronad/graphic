@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/geom/point.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 
 import 'util/render_basic_item.dart';

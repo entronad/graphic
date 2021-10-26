@@ -1,16 +1,19 @@
-# graphic_example
+# Graphic Example
 
-A new Flutter project.
+An example app of [Graphic](https://github.com/entronad/graphic).
 
-## Getting Started
+The example charts are categorized into:
 
-This project is a starting point for a Flutter application.
+[Rectangle Interval Element](lib\pages\rectangle_interval.dart), charts with interval elements in rectangle coordinates.
 
-A few resources to get you started if this is your first Flutter project:
+[Polar Interval Element](lib\pages\polar_interval.dart), charts with interval elements in polar coordinates.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+[Line and Area Element](lib\pages\line_area.dart), charts with line or area elements.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+[Point Element](lib\pages\point.dart), charts with point elements.
+
+[Polygon Element](lib\pages\polygon.dart), charts with polygon elements.
+
+[Custom](lib\pages\custom.dart), charts with custom shapes or custom tooltips.
+
+[Bigdata](lib\pages\bigdata.dart), a chart to show the performance on bigdata.

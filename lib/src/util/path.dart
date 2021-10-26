@@ -6,8 +6,11 @@ import 'package:graphic/src/util/math.dart';
 
 import 'transform.dart';
 
+/// Some useful path functions for rendering.
 abstract class Paths {
-  // Path has no addLine method.
+  /// A line path function.
+  /// 
+  /// This functions can either return a new path or add to existing [path].
   static Path line({
     required Offset from,
     required Offset to,
@@ -38,6 +41,9 @@ abstract class Paths {
     return path;
   }
 
+  /// A sector path function.
+  /// 
+  /// This functions can either return a new path or add to existing [path].
   static Path sector({
     required Offset center,
     required double r,
@@ -94,6 +100,12 @@ abstract class Paths {
     return path;
   }
 
+  /// A sector with corner radiuses.
+  /// 
+  /// This functions can either return a new path or add to existing [path].
+  /// 
+  /// For a sector, [Radius.x] is circular, [Radius.y] is radial, top is outer side,
+  /// bottom is inner side, left is anticlockwise, right is clockwise.
   static Path rsector({
     required Offset center,
     required double r,

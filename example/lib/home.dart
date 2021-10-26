@@ -36,6 +36,7 @@ class PageCard extends StatelessWidget {
         },
         child: Card(
           child: DefaultTextStyle(
+            maxLines: 3,
             softWrap: false,
             overflow: TextOverflow.ellipsis,
             style: descriptionStyle,
@@ -74,7 +75,7 @@ class HomePage extends StatelessWidget {
             key: Key(package.name),
             package: package,
             onPressed: (String endPoint) {
-              Navigator.pushNamed(context, '/demos/$endPoint');
+              Navigator.pushNamed(context, '/examples/$endPoint');
             },
           )
         )).toList(),

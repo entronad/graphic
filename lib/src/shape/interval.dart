@@ -6,6 +6,7 @@ import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/geom/interval.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/guide/axis/radial.dart';
 import 'package:graphic/src/util/math.dart';
@@ -118,10 +119,15 @@ class RectShape extends IntervalShape {
         // bar
 
         for (var item in group) {
+          bool nan = false;
           for (var point in item.position) {
             if (!point.dy.isFinite) {
-              continue;
+              nan = true;
+              break;
             }
+          }
+          if (nan) {
+            continue;
           }
           
           final start = coord.convert(item.position[0]);

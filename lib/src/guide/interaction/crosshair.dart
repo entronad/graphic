@@ -12,6 +12,7 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
+import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/util/path.dart';
 
 /// The specification of a crosshair

@@ -3670,6 +3670,84 @@ tooltip render 中引进 selector 和 scaleconv的目的是要variable和 title�
 
 
 
+interval in rect coord
+
+bar with tooltip
+
+transposed
+
+dodge
+
+stack
+
+有标签的漏斗
+
+
+
+interval in polar
+
+donat
+
+radius rose
+
+stack rose
+
+race
+
+
+
+line and area
+
+smooth line and area with nan
+
+river
+
+spider net
+
+
+
+point
+
+various shape point，coord can move, region annot, trigger tooltip
+
+axis in center
+
+polar coord, with a danger tag
+
+1d coordinate value.
+
+
+
+polygon
+
+heatmap
+
+corner radius heatmap
+
+polar heatmap
+
+sector polygon
+
+
+
+custom
+
+candle stick
+
+custom triangle
+
+custom tooltip
+
+
+
+bigdata
+
+
+
+避免label-text的设置过长，将核心参数设为位置参数，将lebel syle设为可选位置参数
+
+
+
 ## TODO
 
 group selection

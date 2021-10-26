@@ -1,51 +1,40 @@
-**Graphic is now under a total refactoring. The prior available version code is here: [v0.3.0](https://github.com/entronad/graphic/tree/v0.3.0) .**
+![examples](https://github.com/entronad/graphic/raw/main/devdoc/examples.jpg)
 
-![examples](./devdoc/examples.jpg)
+# [Graphic](https://pub.dev/packages/graphic)
 
+Graphic is a declarative, interactive grammar of data visualization. It provides a Flutter charting library.
 
+- **A Grammar of Graphics**: Graphic derives from Leland Wilkinson's book *The Grammar of Graphics*, and tries to balance between theoretical beauty and practicability. It inherits most concepts, like the graphic algebra.
+- **Declarative and Reactive**: As is encouraged in Flutter, the chart widget of Graphic is declarative and reactive. The grammar of data visualization is implemented by a declarative specification and the chart will reevaluate automatically on widget update.
+- **Interactive**: With the *signal* and *selection* mechanism, the chart is highly interactive. It is easy to pop a tooltip or scale the coordinate.
+- **Customizable**: With the *shape* and *figure* classes, it's easy to custom your own element, tooltip, annotation, etc.
+- **Dataflow Graph and Operators**: Graphic has a internal structure of a dataflow graph and operators. That is how the reactive reevaluation and interaction is implemented.
 
-*A Flutter data visualization library based on Grammar of Graphics.*
+## Installation
 
+Install from the [pub.dev](https://pub.dev/packages/graphic/install).
 
+## Documentation
 
-# Usage
+See in the [documentation](https://pub.dev/documentation/graphic/latest/graphic/graphic-library.html) written in dart-doc.
 
-**Installing**
+## Examples
 
-[pub.dev](https://pub.dev/packages/graphic/install) 
+Example of charts can be seen in the [Example App](https://github.com/entronad/graphic/tree/main/example).
 
-**Basic example**
+## Reference
 
-```dart
-graphic.Chart(
-  data: [
-    { 'genre': 'Sports', 'sold': 275 },
-    { 'genre': 'Strategy', 'sold': 115 },
-    { 'genre': 'Action', 'sold': 120 },
-    { 'genre': 'Shooter', 'sold': 350 },
-    { 'genre': 'Other', 'sold': 150 },
-  ],
-  scales: {
-    'genre': graphic.CatScale(
-      accessor: (map) => map['genre'] as String,
-    ),
-    'sold': graphic.LinearScale(
-      accessor: (map) => map['sold'] as num,
-      nice: true,
-    )
-  },
-  geoms: [graphic.IntervalGeom(
-    position: graphic.PositionAttr(field: 'genre*sold'),
-  )],
-  axes: {
-    'genre': graphic.Defaults.horizontalAxis,
-    'sold': graphic.Defaults.verticalAxis,
-  },
-)
-```
+Besides *The Grammar of Graphics*, the API terminology also referes to [AntV](https://antv.vision/en) and [Vega](https://vega.github.io/). The dataflow structure is inspired by [Vega](https://vega.github.io/).
 
-**Document**
+## License
 
-If you have ever used data visualization libs based on Grammar of Graphics, such as [AntV](https://antv.vision/en) , [ggplot2](https://ggplot2.tidyverse.org/), you can be quite familiar with these concepts.
+Graphic is [MIT License](https://github.com/entronad/graphic/blob/main/LICENSE).
 
-The document has not been written yet, but by referring to the [Example App](https://github.com/entronad/graphic/tree/master/example) , I believe you can be smart enough to build your charts :)
+## Keep Informed
+
+[Twitter](https://twitter.com/entronad_viz)
+
+[Medium](https://medium.com/@entronad)
+
+[Zhihu](https://www.zhihu.com/people/entronad)
+

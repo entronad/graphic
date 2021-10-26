@@ -11,7 +11,7 @@ import 'package:graphic/src/coord/coord.dart';
 /// the key of painting geometory elements. Besides, the shape it self is an aesthetic
 /// attribute in Grammar of Graphics.
 /// 
-/// Customizing subclasses of shape makes [graphic] extensive.
+/// Customizing subclasses of shape extenses chart types.
 abstract class Shape {
   /// Renders the whole group of tuples.
   /// 

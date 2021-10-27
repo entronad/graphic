@@ -1,10 +1,10 @@
 import 'package:collection/collection.dart';
+import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/guide/axis/axis.dart';
 import 'package:graphic/src/guide/interaction/tooltip.dart';
 import 'package:graphic/src/parse/parse.dart';
-import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/util/assert.dart';
 import 'package:flutter/foundation.dart';
 import 'package:graphic/src/common/converter.dart';
@@ -176,7 +176,7 @@ class ScaleOp extends Operator<List<Scaled>> {
 }
 
 void parseScale(
-  Spec spec,
+  Chart spec,
   View view,
   Scope scope,
 ) {

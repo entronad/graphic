@@ -1,17 +1,18 @@
 import 'dart:ui';
 
-import 'package:graphic/src/chart/size.dart';
 import 'package:graphic/src/data/data_set.dart';
 import 'package:graphic/src/dataflow/dataflow.dart';
 import 'package:graphic/src/graffiti/graffiti.dart';
 import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/parse/parse.dart';
-import 'package:graphic/src/parse/spec.dart';
+
+import 'chart.dart';
+import 'size.dart';
 
 class View<D> extends Dataflow {
   View(
-    Spec<D> spec,
+    Chart<D> spec,
     this.size,
     this.repaint,
   )

@@ -1,9 +1,9 @@
+import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/reserveds.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/parse/parse.dart';
-import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/scale/linear.dart';
 import 'package:graphic/src/scale/ordinal.dart';
 import 'package:graphic/src/scale/scale.dart';
@@ -23,12 +23,12 @@ typedef Accessor<D, V> = V Function(D);
 
 /// The specification of a variable.
 /// 
-/// Instead of raw [Spec.data], the chart reorgnize datum to "original value tuple"
+/// Instead of raw [Chart.data], the chart reorgnize datum to "original value tuple"
 /// (See details in [Tuple]) for internal usage. The variable defines how to create
 /// a field in original value tuple form input datum, and the scale specification
 /// of the field.
 /// 
-/// The generic [D] is the type of datum in [Spec.data] list, and [V] is the type
+/// The generic [D] is the type of datum in [Chart.data] list, and [V] is the type
 /// of field value. [V] can only be [String], [num] or [DateTime].
 /// 
 /// See also:
@@ -89,7 +89,7 @@ class VariableOp<D> extends Operator<List<Tuple>> {
 }
 
 void parseVariable<D>(
-  Spec<D> spec,
+  Chart<D> spec,
   View<D> view,
   Scope<D> scope,
 ) {

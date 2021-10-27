@@ -9,7 +9,6 @@ import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/geom/element.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/parse/parse.dart';
-import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/shape/shape.dart';
 import 'package:graphic/src/util/assert.dart';
 import 'package:graphic/src/common/converter.dart';
@@ -141,7 +140,7 @@ class AesOp extends Operator<List<Aes>> {
 }
 
 void parseAes(
-  Spec spec,
+  Chart spec,
   View view,
   Scope scope,
 ) {

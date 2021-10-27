@@ -1,7 +1,11 @@
 import 'dart:ui';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
+import 'package:graphic/src/coord/polar.dart';
+import 'package:graphic/src/coord/rect.dart';
+import 'package:graphic/src/data/data_set.dart';
 import 'package:graphic/src/guide/interaction/crosshair.dart';
 import 'package:graphic/src/guide/interaction/tooltip.dart';
 import 'package:graphic/src/interaction/gesture.dart';
@@ -10,7 +14,6 @@ import 'package:graphic/src/guide/annotation/annotation.dart';
 import 'package:graphic/src/guide/axis/axis.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/geom/element.dart';
-import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/variable/transform/transform.dart';
 import 'package:graphic/src/variable/variable.dart';
 
@@ -18,63 +21,116 @@ import 'view.dart';
 
 /// A widget to display the chart.
 /// 
-/// All specification properties are declared in the constructor and then collected
-/// by a [spec] property to build the chart. See details in [Spec] class.
+/// Specifications details of data visualization are seen in this class properties.
+/// The are set in the constructor[new Chart].
 /// 
 /// Usually, if any specification or data is changed, the chart will rebuild or
 /// reevaluate automatically. Some subtle setting is controlled by [rebuild] and
-/// [Spec.changeData].
+/// [changeData].
 /// 
-/// The generic [D] is the type of datum in [Spec.data] list.
-/// 
-/// See also:
-/// 
-/// - [Spec], to see the specification property details.
+/// The generic [D] is the type of datum in [data] list.
 class Chart<D> extends StatefulWidget {
   /// Creates a chart widget.
   Chart({
-    required List<D> data,
-    bool? changeData,
-    required Map<String, Variable<D, dynamic>> variables,
-    List<VariableTransform>? transforms,
-    required List<GeomElement> elements,
-    Coord? coord,
-    EdgeInsets? padding,
-    List<AxisGuide>? axes,
-    TooltipGuide? tooltip,
-    CrosshairGuide? crosshair,
-    List<Annotation>? annotations,
-    Map<String, Selection>? selections,
+    required this.data,
+    this.changeData,
+    required this.variables,
+    this.transforms,
+    required this.elements,
+    this.coord,
+    this.padding,
+    this.axes,
+    this.tooltip,
+    this.crosshair,
+    this.annotations,
+    this.selections,
     this.rebuild,
-  }) : spec = Spec<D>(
-    data: data,
-    changeData: changeData,
-    variables: variables,
-    transforms: transforms,
-    elements: elements,
-    coord: coord,
-    padding: padding,
-    axes: axes,
-    tooltip: tooltip,
-    crosshair: crosshair,
-    annotations: annotations,
-    selections: selections,
-  );
+  });
 
-  /// Specification of the chart.
+  /// The data list to visualize.
+  final List<D> data;
+
+  /// The behavior of data reevaluation when widget is updated.
   /// 
-  /// Properties are collected from the [Chart] constructor.
-  final Spec<D> spec;
+  /// If null, new [data] will be compared with the old one, a [ChangeDataSignal]
+  /// will be emitted and the chart will be reevaluated only when they are not the
+  /// same instance.
+  /// 
+  /// If true, a [ChangeDataSignal] will always be emitted and the chart will always
+  /// be reevaluated.
+  /// 
+  /// If false, a [ChangeDataSignal] will never be emitted and the chart will never
+  /// be reevaluated.
+  final bool? changeData;
+
+  /// Name identifiers and specifications of variables.
+  /// 
+  /// The name identifier string will represent the variable in other specifications.
+  final Map<String, Variable<D, dynamic>> variables;
+
+  /// Specifications of transforms applied to variable data.
+  final List<VariableTransform>? transforms;
+
+  /// Specifications of geometory elements.
+  final List<GeomElement> elements;
+
+  /// Specification of the coordinate.
+  /// 
+  /// If null, a default [RectCoord] is set.
+  final Coord? coord;
+
+  /// The padding from coordinate region to the widget border.
+  /// 
+  /// Usually, the [axes] is attached to the border of coordinate region (See details
+  /// in [Coord]), and in the [padding] space.
+  /// 
+  /// If null, a default `EdgeInsets.fromLTRB(40, 5, 10, 20)` for [RectCoord] and
+  /// `EdgeInsets.all(10)` for [PolarCoord] is set.
+  final EdgeInsets? padding;
+
+  /// Specifications of axes.
+  final List<AxisGuide>? axes;
+
+  /// Specification of tooltip on [selections].
+  final TooltipGuide? tooltip;
+
+  /// Specification of pointer crosshair on [selections].
+  final CrosshairGuide? crosshair;
+
+  /// Specifications of annotations.
+  final List<Annotation>? annotations;
+
+  /// Name identifiers and specifications of selection definitions.
+  /// 
+  /// The name identifier string will represent the selection in other specifications.
+  final Map<String, Selection>? selections;
 
   /// The behavior when widget is updated.
   /// 
-  /// If null, new [spec] will be compared with the old one, and chart will rebuild
-  /// only when [spec] is changed.
+  /// If null, new [Chart] will be compared with the old one, and chart will rebuild
+  /// only when specifications are changed.
   /// 
   /// If true, chart will always rebuild.
   /// 
   /// If false, chart will never rebuild.
   final bool? rebuild;
+
+  /// Checks the equlity of two chart specifications.
+  bool equalSpecTo(Object other) =>
+    other is Chart<D> &&
+    // data are checked by changeData.
+    changeData == other.changeData &&
+    DeepCollectionEquality().equals(variables, other.variables) &&
+    DeepCollectionEquality().equals(transforms, other.transforms) &&
+    DeepCollectionEquality().equals(elements, other.elements) &&
+    coord == other.coord &&
+    padding == other.padding &&
+    DeepCollectionEquality().equals(axes, other.axes) &&
+    tooltip == other.tooltip &&
+    crosshair == other.crosshair &&
+    DeepCollectionEquality().equals(annotations, other.annotations) &&
+    DeepCollectionEquality().equals(selections, other.selections) &&
+    rebuild == other.rebuild;
 
   @override
   _ChartState<D> createState() => _ChartState<D>();
@@ -102,13 +158,13 @@ class _ChartState<D> extends State<Chart<D>> {
   void didUpdateWidget(covariant Chart<D> oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (widget.rebuild ?? widget.spec != oldWidget.spec) {
+    if (widget.rebuild ?? !widget.equalSpecTo(oldWidget)) {
       view = null;
     } else if (
-      widget.spec.changeData == true ||
-      (widget.spec.changeData == null && widget.spec.data != oldWidget.spec.data)
+      widget.changeData == true ||
+      (widget.changeData == null && widget.data != oldWidget.data)
     ) {
-      view!.changeData(widget.spec.data);
+      view!.changeData(widget.data);
     }
   }
 
@@ -589,7 +645,7 @@ class _ChartLayoutDelegate<D> extends SingleChildLayoutDelegate {
 
     if (state.view == null) {
       state.view = View<D>(
-        state.widget.spec,
+        state.widget,
         size,
         state.repaint,
       );

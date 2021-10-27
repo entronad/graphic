@@ -1,16 +1,16 @@
+import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/operators/value.dart';
 import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/parse/parse.dart';
-import 'package:graphic/src/parse/spec.dart';
 
 /// The signal that may be emitted when data changes.
 /// 
-/// Whether to emit a change data signal is also affected by [Spec.changeData].
+/// Whether to emit a change data signal is also affected by [Chart.changeData].
 /// 
 /// See also:
 /// 
-/// - [Spec.changeData], The behavior of whether to emit this signal when data changes.
+/// - [Chart.changeData], The behavior of whether to emit this signal when data changes.
 class ChangeDataSignal<D> extends Signal {
   /// Creates a change data signal.
   ChangeDataSignal(this.data);
@@ -27,7 +27,7 @@ class DataOp<D> extends Value<List<D>> {
 }
 
 void parseData<D>(
-  Spec<D> spec,
+  Chart<D> spec,
   View<D> view,
   Scope<D> scope,
 ) {

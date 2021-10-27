@@ -3746,7 +3746,15 @@ bigdata
 
 避免label-text的设置过长，将核心参数设为位置参数，将lebel syle设为可选位置参数
 
+```
+   variable    scale           aesthetic                  shape
+      |          |                 |                        |
+data --> tuples --> scaled tuples --> aesthetic attributes --> figures
+```
 
+
+
+将所有的spec都放到chart中，移除spec类，这样做文档最简洁。
 
 ## TODO
 

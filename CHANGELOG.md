@@ -1,3 +1,10 @@
+## 0.4.1
+
+**2021-10-27**
+
+- Optimize the documentation.
+- Move specifications to Chart class.
+
 ## 0.4.0
 
 **2021-10-26**

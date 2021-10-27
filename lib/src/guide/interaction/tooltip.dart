@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/painting.dart';
+import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/layers.dart';
@@ -13,7 +14,6 @@ import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/selection/interval.dart';
 import 'package:graphic/src/interaction/selection/point.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
-import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/scale/scale.dart';
 import 'package:graphic/src/util/assert.dart';
 
@@ -84,7 +84,7 @@ class TooltipGuide {
 
   /// Which element series this tooltip reacts to.
   /// 
-  /// This is an index in [Spec.elements].
+  /// This is an index in [Chart.elements].
   /// 
   /// The crosshair can only reacts to one element series.
   /// 

@@ -1,10 +1,10 @@
 import 'package:flutter/painting.dart';
+import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/guide/annotation/custom.dart';
 import 'package:graphic/src/interaction/selection/point.dart';
 import 'package:graphic/src/parse/parse.dart';
-import 'package:graphic/src/parse/spec.dart';
 
 import 'axis/axis.dart';
 import 'annotation/line.dart';
@@ -16,7 +16,7 @@ import 'interaction/crosshair.dart';
 import 'interaction/tooltip.dart';
 
 void parseGuide(
-  Spec spec,
+  Chart spec,
   View view,
   Scope scope,
 ) {

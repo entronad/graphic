@@ -1,11 +1,11 @@
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
+import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/operators/value.dart';
 import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/parse/parse.dart';
-import 'package:graphic/src/parse/spec.dart';
 
 /// The signal emitted when chart size changes.
 class ResizeSignal extends Signal {
@@ -24,7 +24,7 @@ class SizeOp extends Value<Size> {
 }
 
 void parseSize(
-  Spec spec,
+  Chart spec,
   View view,
   Scope scope,
 ) {

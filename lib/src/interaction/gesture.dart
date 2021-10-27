@@ -2,10 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
+import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/operators/value.dart';
 import 'package:graphic/src/parse/parse.dart';
-import 'package:graphic/src/parse/spec.dart';
 
 import 'signal.dart';
 
@@ -534,7 +534,7 @@ class GestureOp extends Value<Gesture?> {
 }
 
 void parseGesture(
-  Spec spec,
+  Chart spec,
   View view,
   Scope scope,
 ) {

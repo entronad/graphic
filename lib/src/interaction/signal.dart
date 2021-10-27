@@ -1,3 +1,4 @@
+import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/size.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/operators/value.dart';
@@ -6,7 +7,6 @@ import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/parse/parse.dart';
-import 'package:graphic/src/parse/spec.dart';
 
 /// Types of [Signal]s.
 enum SignalType {
@@ -93,7 +93,7 @@ class SignalUpdateOp<V> extends Operator<V> {
 }
 
 void parseSignal<D>(
-  Spec<D> spec,
+  Chart<D> spec,
   View<D> view,
   Scope<D> scope,
 ) {

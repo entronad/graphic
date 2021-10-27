@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:collection/collection.dart';
+import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
@@ -12,7 +13,6 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
-import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/util/path.dart';
 
 /// The specification of a crosshair
@@ -52,7 +52,7 @@ class CrosshairGuide {
 
   /// Which element series this crosshair reacts to.
   /// 
-  /// This is an index in [Spec.elements].
+  /// This is an index in [Chart.elements].
   /// 
   /// The crosshair can only reacts to one element series.
   /// 

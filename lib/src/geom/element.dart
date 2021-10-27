@@ -9,6 +9,7 @@ import 'package:graphic/src/aes/label.dart';
 import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
+import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
@@ -18,7 +19,6 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/parse/parse.dart';
-import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/scale/discrete.dart';
 import 'package:graphic/src/scale/scale.dart';
 import 'package:graphic/src/shape/area.dart';
@@ -240,7 +240,7 @@ Shape getDefaultShape(GeomElement spec) =>
   throw UnimplementedError('No such geom $spec.');
 
 void parseGeom(
-  Spec spec,
+  Chart spec,
   View view,
   Scope scope,
 ) {

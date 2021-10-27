@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/aes/aes.dart';
+import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/layers.dart';
@@ -15,7 +16,6 @@ import 'package:graphic/src/geom/element.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/parse/parse.dart';
-import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/shape/shape.dart';
 import 'package:collection/collection.dart';
 
@@ -357,7 +357,7 @@ class SelectionUpdateOp extends Operator<AesGroups> {
 }
 
 void parseSelect(
-  Spec spec,
+  Chart spec,
   View view,
   Scope scope,
 ) {

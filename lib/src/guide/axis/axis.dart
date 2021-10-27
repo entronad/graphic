@@ -1,3 +1,4 @@
+import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/layers.dart';
@@ -12,7 +13,6 @@ import 'package:graphic/src/guide/axis/circular.dart';
 import 'package:graphic/src/guide/axis/horizontal.dart';
 import 'package:graphic/src/guide/axis/radial.dart';
 import 'package:graphic/src/guide/axis/vertical.dart';
-import 'package:graphic/src/parse/spec.dart';
 import 'package:graphic/src/scale/scale.dart';
 import 'package:graphic/src/util/assert.dart';
 
@@ -78,7 +78,7 @@ class AxisGuide<V> {
 
   /// The dimension where this axis lies.
   /// 
-  /// If null, the index of this axis in the [Spec.axes] list plus 1 is set by
+  /// If null, the index of this axis in the [Chart.axes] list plus 1 is set by
   /// default.
   int? dim;
 

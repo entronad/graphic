@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'dart:math';
 
 import 'package:flutter/painting.dart';
+import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/converter.dart';
 import 'package:graphic/src/common/operators/value.dart';
@@ -9,7 +10,6 @@ import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/parse/parse.dart';
-import 'package:graphic/src/parse/spec.dart';
 
 import 'rect.dart';
 import 'polar.dart';
@@ -121,7 +121,7 @@ class RegionOp extends Operator<Rect> {
 }
 
 void parseCoord(
-  Spec spec,
+  Chart spec,
   View view,
   Scope scope,
 ) {

@@ -1,6 +1,7 @@
 import 'package:graphic/src/aes/aes.dart';
 import 'package:graphic/src/aes/position.dart';
 import 'package:graphic/src/algebra/varset.dart';
+import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/size.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/coord/coord.dart';
@@ -14,8 +15,6 @@ import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/scale/scale.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/variable/variable.dart';
-
-import 'spec.dart';
 
 class Scope<D> {
   Map<String, Scale> scaleSpecs = {};
@@ -49,7 +48,7 @@ class Scope<D> {
   List<SelectOp> selectsList = [];
 }
 
-void parse<D>(Spec<D> spec, View<D> view) {
+void parse<D>(Chart<D> spec, View<D> view) {
   final scope = Scope<D>();
   parseSize(spec, view, scope);
   parseGesture(spec, view, scope);

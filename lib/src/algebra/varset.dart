@@ -18,13 +18,25 @@ Varset _normalize(Varset varset) {
   return varset;
 }
 
-/// To store the tags.
-/// The term is directly composed of tags, whitch are numerators of factors.
-/// Nesting denominators is not supported now.
+/// The term composing algebracal forms.
+/// 
+/// The list items are tags representing the factor variables.
+/// 
+/// See also:
+/// 
+/// - [AlgForm], composed of terms.
 typedef AlgTerm = List<String>;
 
-/// Expressions(monomial or polynomial) will be automatically convert to forms when calculated.
-/// tag -> term -> form
+/// The algebracal form storing the expression of a varset.
+/// 
+/// A form is an algebra expression whose all items have same orders. Operators
+/// of [Varset] guarantee the results are forms.
+/// 
+/// List wrapping is `form[term[tag]]]`.
+/// 
+/// See also:
+/// 
+/// - [Varset], which uses a form to store its expression.
 typedef AlgForm = List<AlgTerm>;
 
 extension AlgFormExt on AlgForm {

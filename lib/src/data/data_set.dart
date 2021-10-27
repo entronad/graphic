@@ -5,11 +5,11 @@ import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/parse/parse.dart';
 
 /// The signal that may be emitted when data changes.
-/// 
+///
 /// Whether to emit a change data signal is also affected by [Chart.changeData].
-/// 
+///
 /// See also:
-/// 
+///
 /// - [Chart.changeData], The behavior of whether to emit this signal when data changes.
 class ChangeDataSignal<D> extends Signal {
   /// Creates a change data signal.

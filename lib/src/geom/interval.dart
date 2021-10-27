@@ -13,14 +13,14 @@ import 'function.dart';
 import 'modifier/modifier.dart';
 
 /// The specification of an interval element.
-/// 
+///
 /// An interval graphing produces a set of closed intervals with two ends.
-/// 
+///
 /// It covers a lot types of triditional chart typologies, such as bar, histogram,
 /// pie, rose, etc.
-/// 
+///
 /// It will check and complete position points by the rule of:
-/// 
+///
 /// ```
 /// [start, end] | [end] => [start, end]
 /// ```
@@ -39,18 +39,18 @@ class IntervalElement extends FunctionElement<IntervalShape> {
     String? groupBy,
     Map<String, Set<int>>? selected,
   }) : super(
-    color: color,
-    elevation: elevation,
-    gradient: gradient,
-    label: label,
-    position: position,
-    shape: shape,
-    size: size,
-    modifiers: modifiers,
-    zIndex: zIndex,
-    groupBy: groupBy,
-    selected: selected,
-  );
+          color: color,
+          elevation: elevation,
+          gradient: gradient,
+          label: label,
+          position: position,
+          shape: shape,
+          size: size,
+          modifiers: modifiers,
+          zIndex: zIndex,
+          groupBy: groupBy,
+          selected: selected,
+        );
 }
 
 /// [start, end] | [end] => [start, end]

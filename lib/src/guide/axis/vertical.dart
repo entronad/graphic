@@ -21,7 +21,7 @@ List<Figure>? renderVerticalAxis(
   final region = coord.region;
   final flipSign = flip ? -1.0 : 1.0;
   final x = region.left + region.width * position;
-  
+
   if (line != null) {
     rst.add(PathFigure(
       Paths.line(

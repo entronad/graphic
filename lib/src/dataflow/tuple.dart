@@ -9,19 +9,19 @@ import 'package:graphic/src/util/assert.dart';
 import 'package:graphic/src/variable/variable.dart';
 
 /// The tuple to store the original values of a datum.
-/// 
+///
 /// The key strings are variable names. The value types can only be [num], [String],
 /// or [DateTime].
-/// 
+///
 /// See also:
-/// 
+///
 /// - [Variable], which creates original value tuple fields from input datum.
 typedef Tuple = Map<String, dynamic>;
 
 /// The tuple to store the scaled values of a datum.
-/// 
+///
 /// The key strings are variable names.
-/// 
+///
 /// See also:
 /// - [Scale], which converts original value tuples to scaled value tuples.
 /// - [Tuple], original value tuple.
@@ -45,7 +45,7 @@ class Aes {
   final int index;
 
   /// Position points of the tuple.
-  /// 
+  ///
   /// The count of points is determined by the geometory element type. The values
   /// of each point dimension is scaled and normalized value of `[0, 1]`. the position
   /// points can be converted to canvas points by [CoordConv].
@@ -70,8 +70,7 @@ class Aes {
   final double? size;
 
   /// The represent point of [position] points.
-  Offset get representPoint =>
-    shape.representPoint(position);
+  Offset get representPoint => shape.representPoint(position);
 }
 
 typedef AesGroups = List<List<Aes>>;

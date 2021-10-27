@@ -2,7 +2,23 @@ import 'util.dart';
 
 const _defaultMinCount = 5;
 const _defaultMaxCount = 7;
-const _defaultSnapCountList = [1, 1.2, 1.5, 1.6, 2, 2.2, 2.4, 2.5, 3, 4, 5, 6, 7.5, 8, 10];
+const _defaultSnapCountList = [
+  1,
+  1.2,
+  1.5,
+  1.6,
+  2,
+  2.2,
+  2.4,
+  2.5,
+  3,
+  4,
+  5,
+  6,
+  7.5,
+  8,
+  10
+];
 const _defaultSnapList = [1, 2, 4, 5, 10];
 
 const eps = 1e-12;
@@ -35,13 +51,15 @@ List<num> numAutoTicks({
         maxValue = 0;
       }
     }
-    if (maxValue - minValue < 5 && interval == null && maxValue - minValue >= 1) {
+    if (maxValue - minValue < 5 &&
+        interval == null &&
+        maxValue - minValue >= 1) {
       interval = 1;
     }
   }
 
   if (interval == null) {
-    final temp = (maxValue - minValue) / (avgCount -1);
+    final temp = (maxValue - minValue) / (avgCount - 1);
     interval = snapFactorTo(temp, snapList, SnapType.ceil);
     if (maxCount != minCount) {
       count = (maxValue - minValue) ~/ interval;
@@ -74,13 +92,15 @@ List<num> numAutoTicks({
     }
 
     num? prevMaxTick;
-    while (maxTick < maxValue && (prevMaxTick == null || maxTick > prevMaxTick)) {
+    while (
+        maxTick < maxValue && (prevMaxTick == null || maxTick > prevMaxTick)) {
       prevMaxTick = maxTick;
       maxTick = fixedBase(maxTick + interval, interval);
     }
 
     num? prevMinTick;
-    while (minTick > minValue && (prevMinTick == null || minTick < prevMinTick)) {
+    while (
+        minTick > minValue && (prevMinTick == null || minTick < prevMinTick)) {
       prevMinTick = minTick;
       minTick = fixedBase(minTick - interval, interval);
     }

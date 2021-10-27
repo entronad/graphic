@@ -13,42 +13,41 @@ class PointSelection extends Selection {
     this.toggle,
     this.nearest,
     this.testRadius,
-
     int? dim,
     String? variable,
     Set<GestureType>? on,
     Set<GestureType>? clear,
   }) : super(
-    dim: dim,
-    variable: variable,
-    on: on,
-    clear: clear,
-  );
+          dim: dim,
+          variable: variable,
+          on: on,
+          clear: clear,
+        );
 
   /// Whether triggered tuples should be toggled (inserted or removed from) or replace
   /// existing selected tuples.
-  /// 
+  ///
   /// If null, a default false is set.
   bool? toggle;
 
   /// To select the tuple nearest to the pointer in the coordinate, Even if it's
   /// out of [testRadius].
-  /// 
+  ///
   /// If null, a default true is set.
   bool? nearest;
 
   /// Radius of the pointer test.
-  /// 
+  ///
   /// If null, a default 10 is set.
   double? testRadius;
 
   @override
   bool operator ==(Object other) =>
-    other is PointSelection &&
-    super == other &&
-    toggle == other.toggle &&
-    nearest == other.nearest &&
-    testRadius == other.testRadius;
+      other is PointSelection &&
+      super == other &&
+      toggle == other.toggle &&
+      nearest == other.nearest &&
+      testRadius == other.testRadius;
 }
 
 class PointSelector extends Selector {
@@ -56,19 +55,17 @@ class PointSelector extends Selector {
     this.toggle,
     this.nearest,
     this.testRadius,
-
     String name,
     int? dim,
     String? variable,
-    List<Offset> eventPoints,  // [point]
-  )
-    : assert(toggle != true || variable == null),
-      super(
-        name,
-        dim,
-        variable,
-        eventPoints,
-      );
+    List<Offset> eventPoints, // [point]
+  )   : assert(toggle != true || variable == null),
+        super(
+          name,
+          dim,
+          variable,
+          eventPoints,
+        );
 
   final bool toggle;
 
@@ -91,22 +88,23 @@ class PointSelector extends Selector {
     if (dim == null) {
       updateNearest = (aes) {
         final offset = aes.representPoint - point;
-        final distance = (offset.dx.abs() + offset.dy.abs()) / 2; // rect neighborhood for effecicy
+        final distance = (offset.dx.abs() + offset.dy.abs()) /
+            2; // rect neighborhood for effecicy
         if (distance < nearestDistance) {
           nearestIndex = aes.index;
-          nearestDistance = distance;  // canvas
+          nearestDistance = distance; // canvas
         }
       };
     } else {
       final getProjection = dim == 1
-        ? (Offset offset) => offset.dx
-        : (Offset offset) => offset.dy;
+          ? (Offset offset) => offset.dx
+          : (Offset offset) => offset.dy;
       updateNearest = (aes) {
         final p = aes.representPoint;
         final distance = (getProjection(point) - getProjection(p)).abs();
         if (distance < nearestDistance) {
           nearestIndex = aes.index;
-          nearestDistance = distance;  // canvas
+          nearestDistance = distance; // canvas
         }
       };
     }
@@ -123,7 +121,8 @@ class PointSelector extends Selector {
       }
     }
 
-    if (variable != null) {  // Not toggle.
+    if (variable != null) {
+      // Not toggle.
       final rst = <int>{};
       final value = tuples[nearestIndex][variable];
       for (var i = 0; i < tuples.length; i++) {

@@ -24,11 +24,11 @@ import 'size.dart';
 // Attr
 
 /// The specification of an aesthetic attribute.
-/// 
+///
 /// Aesthetic attributes determin how an element item is perceived. An attribute
 /// value usually represent an variable value of a tuple. the encoding rules form
 /// data to attribute value can be defined in various ways (See details in the properties).
-/// 
+///
 /// The generic [AV] is the type of attribute value.
 abstract class Attr<AV> {
   /// Creates an aesthetic attribute.
@@ -45,24 +45,22 @@ abstract class Attr<AV> {
   AV Function(Tuple)? encode;
 
   /// Attribute updates when a selection occurs.
-  /// 
+  ///
   /// The keys of outer map are names of selections defined, and Corresponding definitions
   /// will only react to their on selections.
-  /// 
+  ///
   /// The keys of inner map are selection states. True means selected and false
   /// means unselected. The corresponding updates will react when the tuple is in
   /// That state.
-  /// 
+  ///
   /// Not that this definition is only meaningfull when a selection orrurs. If there
   /// is no current selection, tuples are neither selected or unselected.
   Map<String, Map<bool, SelectionUpdate<AV>>>? onSelection;
 
   @override
-  bool operator ==(Object other) =>
-    other is Attr<AV> &&
-    value == other.value;
-    // encode: Function
-    // onSelect: Function
+  bool operator ==(Object other) => other is Attr<AV> && value == other.value;
+  // encode: Function
+  // onSelect: Function
 }
 
 // attr conv
@@ -77,7 +75,7 @@ abstract class AttrConv<SV extends num, AV> extends Converter<SV, AV> {
 // encoder
 
 abstract class Encoder<AV> {
-  AV encode(Scaled scaled, Tuple tuple);  // Tuple is for custom encode function.
+  AV encode(Scaled scaled, Tuple tuple); // Tuple is for custom encode function.
 }
 
 /// For specs that value is set.
@@ -97,8 +95,7 @@ class CustomEncoder<AV> extends Encoder<AV> {
   final AV Function(Tuple) customEncode;
 
   @override
-  AV encode(Scaled scaled, Tuple tuple)
-    => customEncode(tuple);
+  AV encode(Scaled scaled, Tuple tuple) => customEncode(tuple);
 }
 
 // op
@@ -108,9 +105,12 @@ class AesOp extends Operator<List<Aes>> {
 
   @override
   List<Aes> evaluate() {
-    final scaleds = params['scaleds'] as List<Scaled>; // From scaled collector operator.
-    final tuples = params['tuples'] as List<Tuple>;  // From tuple collect operator.
-    final positionEncoder = params['positionEncoder'] as PositionEncoder; // From PostionOp.
+    final scaleds =
+        params['scaleds'] as List<Scaled>; // From scaled collector operator.
+    final tuples =
+        params['tuples'] as List<Tuple>; // From tuple collect operator.
+    final positionEncoder =
+        params['positionEncoder'] as PositionEncoder; // From PostionOp.
     final shapeEncoder = params['shapeEncoder'] as Encoder<Shape>;
     final colorEncoder = params['colorEncoder'] as Encoder<Color>?;
     final gradientEncoder = params['gradientEncoder'] as Encoder<Gradient>?;
@@ -176,37 +176,42 @@ void parseAes(
         scope.scaleSpecs,
         null,
       ),
-      'colorEncoder': elementSpec.gradient == null  // If gradient is null color will have defult value.
-        ? getChannelEncoder<Color>(
-            elementSpec.color ?? ColorAttr(value: Defaults.primaryColor),
-            scope.scaleSpecs,
-            (List<Color> values, List<double> stops) => ContinuousColorConv(values, stops),
-          )
-        : null,
+      'colorEncoder': elementSpec.gradient ==
+              null // If gradient is null color will have defult value.
+          ? getChannelEncoder<Color>(
+              elementSpec.color ?? ColorAttr(value: Defaults.primaryColor),
+              scope.scaleSpecs,
+              (List<Color> values, List<double> stops) =>
+                  ContinuousColorConv(values, stops),
+            )
+          : null,
       'gradientEncoder': elementSpec.gradient == null
-        ? null
-        : getChannelEncoder<Gradient>(
-            elementSpec.gradient!,
-            scope.scaleSpecs,
-            (List<Gradient> values, List<double> stops) => ContinuousGradientConv(values, stops),
-          ),
+          ? null
+          : getChannelEncoder<Gradient>(
+              elementSpec.gradient!,
+              scope.scaleSpecs,
+              (List<Gradient> values, List<double> stops) =>
+                  ContinuousGradientConv(values, stops),
+            ),
       'elevationEncoder': elementSpec.elevation == null
-        ? null
-        : getChannelEncoder<double>(
-            elementSpec.elevation!,
-            scope.scaleSpecs,
-            (List<double> values, List<double> stops) => ContinuousElevationConv(values, stops),
-          ),
+          ? null
+          : getChannelEncoder<double>(
+              elementSpec.elevation!,
+              scope.scaleSpecs,
+              (List<double> values, List<double> stops) =>
+                  ContinuousElevationConv(values, stops),
+            ),
       'labelEncoder': elementSpec.label == null
-        ? null
-        : CustomEncoder<Label>(elementSpec.label!.encode!),
+          ? null
+          : CustomEncoder<Label>(elementSpec.label!.encode!),
       'sizeEncoder': elementSpec.size == null
-        ? null
-        : getChannelEncoder<double>(
-            elementSpec.size!,
-            scope.scaleSpecs,
-            (List<double> values, List<double> stops) => ContinuousSizeConv(values, stops),
-          ),
+          ? null
+          : getChannelEncoder<double>(
+              elementSpec.size!,
+              scope.scaleSpecs,
+              (List<double> values, List<double> stops) =>
+                  ContinuousSizeConv(values, stops),
+            ),
     })));
   }
 }

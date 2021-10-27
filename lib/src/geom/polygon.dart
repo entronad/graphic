@@ -13,12 +13,12 @@ import 'partition.dart';
 import 'modifier/modifier.dart';
 
 /// The specification of a polygon element.
-/// 
+///
 /// A polygon graphing can tile a surface or space, filling the space with mutually
 /// exclusive polygons.
-/// 
+///
 /// It will check and complete position points by the rule of:
-/// 
+///
 /// ```
 /// [point] => [point]
 /// ```
@@ -37,18 +37,18 @@ class PolygonElement extends PartitionElement<PolygonShape> {
     String? groupBy,
     Map<String, Set<int>>? selected,
   }) : super(
-    color: color,
-    elevation: elevation,
-    gradient: gradient,
-    label: label,
-    position: position,
-    shape: shape,
-    size: size,
-    modifiers: modifiers,
-    zIndex: zIndex,
-    groupBy: groupBy,
-    selected: selected,
-  );
+          color: color,
+          elevation: elevation,
+          gradient: gradient,
+          label: label,
+          position: position,
+          shape: shape,
+          size: size,
+          modifiers: modifiers,
+          zIndex: zIndex,
+          groupBy: groupBy,
+          selected: selected,
+        );
 }
 
 /// [point] => [point]

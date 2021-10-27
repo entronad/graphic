@@ -9,15 +9,16 @@ import 'transform.dart';
 /// Some useful path functions for rendering.
 abstract class Paths {
   /// A line path function.
-  /// 
+  ///
   /// This functions can either return a new path or add to existing [path].
   static Path line({
     required Offset from,
     required Offset to,
     Path? path,
-  }) => (path ?? Path())
-    ..moveTo(from.dx, from.dy)
-    ..lineTo(to.dx, to.dy);
+  }) =>
+      (path ?? Path())
+        ..moveTo(from.dx, from.dy)
+        ..lineTo(to.dx, to.dy);
 
   static Path polyline({
     required List<Offset> points,
@@ -42,7 +43,7 @@ abstract class Paths {
   }
 
   /// A sector path function.
-  /// 
+  ///
   /// This functions can either return a new path or add to existing [path].
   static Path sector({
     required Offset center,
@@ -55,7 +56,8 @@ abstract class Paths {
   }) {
     path = path ?? Path();
 
-    final sweepAngle = clockwise ? endAngle - startAngle : startAngle - endAngle;
+    final sweepAngle =
+        clockwise ? endAngle - startAngle : startAngle - endAngle;
 
     if (sweepAngle.abs().equalTo(pi * 2)) {
       sector(
@@ -79,7 +81,8 @@ abstract class Paths {
       return path;
     }
 
-    path.moveTo(cos(startAngle) * r + center.dx, sin(startAngle) * r + center.dy);
+    path.moveTo(
+        cos(startAngle) * r + center.dx, sin(startAngle) * r + center.dy);
     path.arcTo(
       Rect.fromCircle(center: center, radius: r),
       startAngle,
@@ -101,9 +104,9 @@ abstract class Paths {
   }
 
   /// A sector with corner radiuses.
-  /// 
+  ///
   /// This functions can either return a new path or add to existing [path].
-  /// 
+  ///
   /// For a sector, [Radius.x] is circular, [Radius.y] is radial, top is outer side,
   /// bottom is inner side, left is anticlockwise, right is clockwise.
   static Path rsector({
@@ -146,14 +149,16 @@ abstract class Paths {
     double arcStart;
     double arcEnd;
     double arcSweep;
-    
+
     // top
     path.moveTo(
       cos(startAngle) * (r - topLeft.y) + center.dx,
       sin(startAngle) * (r - topLeft.y) + center.dy,
     );
-    arcStart = clockwise ? startAngle + (topLeft.x / r) : startAngle - (topLeft.x / r);
-    arcEnd = clockwise ? endAngle - (topRight.x / r) : endAngle + (topRight.x / r);
+    arcStart =
+        clockwise ? startAngle + (topLeft.x / r) : startAngle - (topLeft.x / r);
+    arcEnd =
+        clockwise ? endAngle - (topRight.x / r) : endAngle + (topRight.x / r);
     arcSweep = clockwise ? arcEnd - arcStart : arcStart - arcEnd;
     // top left
     path.quadraticBezierTo(
@@ -182,8 +187,12 @@ abstract class Paths {
       sin(endAngle) * (r0 + bottomRight.y) + center.dy,
     );
     if (r0 != 0) {
-      arcStart = clockwise ? startAngle + (bottomLeft.x / r) : startAngle - (bottomLeft.x / r);
-      arcEnd = clockwise ? endAngle - (bottomRight.x / r) : endAngle + (bottomRight.x / r);
+      arcStart = clockwise
+          ? startAngle + (bottomLeft.x / r)
+          : startAngle - (bottomLeft.x / r);
+      arcEnd = clockwise
+          ? endAngle - (bottomRight.x / r)
+          : endAngle + (bottomRight.x / r);
       arcSweep = clockwise ? arcEnd - arcStart : arcStart - arcEnd;
       // bottom right
       path.quadraticBezierTo(
@@ -220,17 +229,17 @@ class BezierSegment {
 
   final Offset cp1;
   final Offset cp2;
-  final Offset p;    // to point
+  final Offset p; // to point
 }
 
 List<Offset> _getControlPoints(
   List<Offset> points,
   double ratio,
   bool isLoop,
-  bool hasConstraint,
-  [Rect? constraint,]
-) {
-  final vectors = points.map((point) =>pointToVector(point)).toList();
+  bool hasConstraint, [
+  Rect? constraint,
+]) {
+  final vectors = points.map((point) => pointToVector(point)).toList();
 
   final cps = <Offset>[];
   Vector3 prevVector;
@@ -250,8 +259,8 @@ List<Offset> _getControlPoints(
       Vector3.max(max, vector, max);
     }
     if (constraint != null) {
-      Vector3.min(min,pointToVector(constraint.topLeft), min);
-      Vector3.max(max,pointToVector(constraint.bottomRight), max);
+      Vector3.min(min, pointToVector(constraint.topLeft), min);
+      Vector3.max(max, pointToVector(constraint.bottomRight), max);
     }
   }
 
@@ -262,7 +271,7 @@ List<Offset> _getControlPoints(
       prevVector = vectors[i >= 1 ? i - 1 : len - 1];
       nextVector = vectors[(i + 1) % len];
     } else {
-      if (i == 0 || i == len -1) {
+      if (i == 0 || i == len - 1) {
         cps.add(points[i]);
         continue;
       } else {
@@ -307,12 +316,13 @@ List<Offset> _getControlPoints(
 List<BezierSegment> getBezierSegments(
   List<Offset> points,
   bool isLoop,
-  bool hasConstraint,
-  [Rect? constraint,]
-) {
+  bool hasConstraint, [
+  Rect? constraint,
+]) {
   // Alpha is 0.5, as proposed by Yuksel et al.
   // Thus is called a centripetal spline: https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline
-  final controlPointList = _getControlPoints(points, 0.5, isLoop, hasConstraint, constraint);
+  final controlPointList =
+      _getControlPoints(points, 0.5, isLoop, hasConstraint, constraint);
   final len = points.length;
   final rst = <BezierSegment>[];
 

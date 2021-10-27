@@ -10,14 +10,13 @@ abstract class Annotation {
   });
 
   /// The z index of this annotation.
-  /// 
+  ///
   /// If null, a default 0 is set.
   int? zIndex;
 
   @override
   bool operator ==(Object other) =>
-    other is Annotation &&
-    zIndex == other.zIndex;
+      other is Annotation && zIndex == other.zIndex;
 }
 
 abstract class AnnotScene extends Scene {}

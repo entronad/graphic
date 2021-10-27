@@ -41,24 +41,29 @@ class PolarIntervalPage extends StatelessWidget {
                       accessor: (Map map) => map['sold'] as num,
                     ),
                   },
-                  transforms: [Proportion(
-                    variable: 'sold',
-                    as: 'percent',
-                  )],
-                  elements: [IntervalElement(
-                    position: Varset('percent'),
-                    label: LabelAttr(encode: (tuple) => Label(
-                      tuple['sold'].toString(),
-                      LabelStyle(Defaults.runeStyle),
-                    )),
-                    color: ColorAttr(variable: 'genre', values: Defaults.colors10),
-                    groupBy: 'genre',
-                    modifiers: [StackModifier()],
-                  )],
+                  transforms: [
+                    Proportion(
+                      variable: 'sold',
+                      as: 'percent',
+                    )
+                  ],
+                  elements: [
+                    IntervalElement(
+                      position: Varset('percent'),
+                      label: LabelAttr(
+                          encode: (tuple) => Label(
+                                tuple['sold'].toString(),
+                                LabelStyle(Defaults.runeStyle),
+                              )),
+                      color: ColorAttr(
+                          variable: 'genre', values: Defaults.colors10),
+                      groupBy: 'genre',
+                      modifiers: [StackModifier()],
+                    )
+                  ],
                   coord: PolarCoord(transposed: true, dimCount: 1),
                 ),
               ),
-
               Container(
                 child: const Text(
                   'Rose Chart',
@@ -88,18 +93,23 @@ class PolarIntervalPage extends StatelessWidget {
                       scale: LinearScale(min: 0, marginMax: 0.1),
                     ),
                   },
-                  elements: [IntervalElement(
-                    label: LabelAttr(encode: (tuple) => Label(tuple['name'].toString())),
-                    shape: ShapeAttr(value: RectShape(
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    )),
-                    color: ColorAttr(variable: 'name', values: Defaults.colors10),
-                    elevation: ElevationAttr(value: 5),
-                  )],
+                  elements: [
+                    IntervalElement(
+                      label: LabelAttr(
+                          encode: (tuple) => Label(tuple['name'].toString())),
+                      shape: ShapeAttr(
+                          value: RectShape(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                      )),
+                      color: ColorAttr(
+                          variable: 'name', values: Defaults.colors10),
+                      elevation: ElevationAttr(value: 5),
+                    )
+                  ],
                   coord: PolarCoord(startRadius: 0.15),
                 ),
               ),
-
               Container(
                 child: const Text(
                   'Stacked Rose Chart',
@@ -132,20 +142,25 @@ class PolarIntervalPage extends StatelessWidget {
                       scale: LinearScale(min: 0, max: 1800),
                     ),
                   },
-                  elements: [IntervalElement(
-                    position: Varset('index') * Varset('value'),
-                    groupBy: 'type',
-                    color: ColorAttr(variable: 'type', values: Defaults.colors10),
-                    modifiers: [StackModifier()],
-                  )],
+                  elements: [
+                    IntervalElement(
+                      position: Varset('index') * Varset('value'),
+                      groupBy: 'type',
+                      color: ColorAttr(
+                          variable: 'type', values: Defaults.colors10),
+                      modifiers: [StackModifier()],
+                    )
+                  ],
                   coord: PolarCoord(),
                   axes: [
                     Defaults.circularAxis,
                     Defaults.radialAxis..label = null,
                   ],
-                  selections: {'tap': PointSelection(
-                    variable: 'index',
-                  )},
+                  selections: {
+                    'tap': PointSelection(
+                      variable: 'index',
+                    )
+                  },
                   tooltip: TooltipGuide(
                     multiTuples: true,
                     anchor: (_) => Offset.zero,
@@ -153,7 +168,6 @@ class PolarIntervalPage extends StatelessWidget {
                   ),
                 ),
               ),
-
               Container(
                 child: const Text(
                   'Race Chart',
@@ -176,13 +190,16 @@ class PolarIntervalPage extends StatelessWidget {
                       scale: LinearScale(min: 0),
                     ),
                   },
-                  elements: [IntervalElement(
-                    label: LabelAttr(encode: (tuple) => Label(tuple['sold'].toString())),
-                    color: ColorAttr(
-                      variable: 'genre',
-                      values: Defaults.colors10,
-                    ),
-                  )],
+                  elements: [
+                    IntervalElement(
+                      label: LabelAttr(
+                          encode: (tuple) => Label(tuple['sold'].toString())),
+                      color: ColorAttr(
+                        variable: 'genre',
+                        values: Defaults.colors10,
+                      ),
+                    )
+                  ],
                   coord: PolarCoord(transposed: true),
                   axes: [
                     Defaults.radialAxis..label = null,

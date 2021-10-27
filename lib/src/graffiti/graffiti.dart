@@ -5,12 +5,13 @@ import 'package:flutter/painting.dart';
 import 'scene.dart';
 
 class Graffiti {
-  Graffiti(Size size) : _clip = Rect.fromLTWH(
-    0,
-    0,
-    size.width,
-    size.height,
-  );
+  Graffiti(Size size)
+      : _clip = Rect.fromLTWH(
+          0,
+          0,
+          size.width,
+          size.height,
+        );
 
   final _scenes = <Scene>[];
 

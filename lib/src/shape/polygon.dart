@@ -15,9 +15,9 @@ import 'util/render_basic_item.dart';
 import 'partition.dart';
 
 /// The shape for the polygon element.
-/// 
+///
 /// See also:
-/// 
+///
 /// - [PolygonElement], which this shape is for.
 abstract class PolygonShape extends PartitionShape {}
 
@@ -30,10 +30,10 @@ class HeatmapShape extends PolygonShape {
   });
 
   /// The border radius of the rectangle or sector.
-  /// 
+  ///
   /// For a sector, [Radius.x] is circular, [Radius.y] is radial, top is outer side,
   /// bottom is inner side, left is anticlockwise, right is clockwise.
-  /// 
+  ///
   /// This will not work for polygon tiles in a polar coordinate.
   final BorderRadius? borderRadius;
 
@@ -42,9 +42,9 @@ class HeatmapShape extends PolygonShape {
 
   @override
   bool equalTo(Object other) =>
-    other is HeatmapShape &&
-    sector == other.sector &&
-    borderRadius == other.borderRadius;
+      other is HeatmapShape &&
+      sector == other.sector &&
+      borderRadius == other.borderRadius;
 
   @override
   List<Figure> renderGroup(
@@ -81,7 +81,8 @@ class HeatmapShape extends PolygonShape {
 
         final rect = Rect.fromPoints(
           coord.convert(Offset(point.dx - biasX, point.dy + biasY)), // topLeft
-          coord.convert(Offset(point.dx + biasX, point.dy - biasY)), // bottomRight
+          coord.convert(
+              Offset(point.dx + biasX, point.dy - biasY)), // bottomRight
         );
         if (borderRadius != null) {
           path.addRRect(RRect.fromRectAndCorners(
@@ -97,8 +98,10 @@ class HeatmapShape extends PolygonShape {
       } else {
         if (sector) {
           coord as PolarCoordConv;
-          final startAngle = coord.transposed ? point.dy - biasY : point.dx - biasX;
-          final endAngle = coord.transposed? point.dy + biasY : point.dx + biasX;
+          final startAngle =
+              coord.transposed ? point.dy - biasY : point.dx - biasX;
+          final endAngle =
+              coord.transposed ? point.dy + biasY : point.dx + biasX;
           final r = coord.transposed ? point.dx + biasX : point.dy + biasY;
           final r0 = coord.transposed ? point.dx - biasX : point.dy - biasY;
           if (borderRadius != null) {
@@ -130,10 +133,10 @@ class HeatmapShape extends PolygonShape {
           assert(borderRadius == null);
 
           final vertices = [
-            Offset(point.dx - biasX, point.dy + biasY),  // topLeft
-            Offset(point.dx + biasX, point.dy + biasY),  // topRight
-            Offset(point.dx + biasX, point.dy - biasY),  // bottomRight
-            Offset(point.dx - biasX, point.dy - biasY),  // bottomLeft
+            Offset(point.dx - biasX, point.dy + biasY), // topLeft
+            Offset(point.dx + biasX, point.dy + biasY), // topRight
+            Offset(point.dx + biasX, point.dy - biasY), // bottomRight
+            Offset(point.dx - biasX, point.dy - biasY), // bottomLeft
           ];
           path.addPolygon(
             vertices.map(coord.convert).toList(),

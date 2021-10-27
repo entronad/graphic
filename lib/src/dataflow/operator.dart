@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 
 abstract class Operator<V> {
-  Operator(
-    [Map<String, dynamic>? params,
-    this.value,]
-  ) {
+  Operator([
+    Map<String, dynamic>? params,
+    this.value,
+  ]) {
     if (params != null) {
       for (var name in params.keys) {
         final source = params[name];

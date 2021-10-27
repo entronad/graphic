@@ -3,7 +3,7 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'continuous.dart';
 
 /// The specification of a time scale.
-/// 
+///
 /// It converts [DateTime] to [double]s normalized to `[0, 1]` linearly.
 class TimeScale extends ContinuousScale<DateTime> {
   TimeScale({
@@ -11,30 +11,27 @@ class TimeScale extends ContinuousScale<DateTime> {
     DateTime? max,
     double? marginMin,
     double? marginMax,
-
     String? title,
     String Function(DateTime)? formatter,
     List<DateTime>? ticks,
     int? tickCount,
     int? maxTickCount,
   }) : super(
-    min: min,
-    max: max,
-    marginMin: marginMin,
-    marginMax: marginMax,
-    title: title,
-    formatter: formatter,
-    ticks: ticks,
-    tickCount: tickCount,
-    maxTickCount: maxTickCount,
-  );
+          min: min,
+          max: max,
+          marginMin: marginMin,
+          marginMax: marginMax,
+          title: title,
+          formatter: formatter,
+          ticks: ticks,
+          tickCount: tickCount,
+          maxTickCount: maxTickCount,
+        );
 }
 
-DateTime _later(DateTime a, DateTime b) =>
-  a.isAfter(b) ? a : b;
+DateTime _later(DateTime a, DateTime b) => a.isAfter(b) ? a : b;
 
-DateTime _earlier(DateTime a, DateTime b) =>
-  a.isBefore(b) ? a : b;
+DateTime _earlier(DateTime a, DateTime b) => a.isBefore(b) ? a : b;
 
 class TimeScaleConv extends ContinuousScaleConv<DateTime> {
   TimeScaleConv(
@@ -56,8 +53,8 @@ class TimeScaleConv extends ContinuousScaleConv<DateTime> {
       }
 
       final range = maxTmp.difference(minTmp);
-      final marginMin = range * (spec.marginMin ?? 0.1);  // TODO: default
-      final marginMax = range * (spec.marginMax ?? 0.1);  // TODO: default
+      final marginMin = range * (spec.marginMin ?? 0.1); // TODO: default
+      final marginMax = range * (spec.marginMax ?? 0.1); // TODO: default
       min = min ?? minTmp.subtract(marginMin);
       max = max ?? maxTmp.add(marginMax);
     }
@@ -85,15 +82,14 @@ class TimeScaleConv extends ContinuousScaleConv<DateTime> {
 
   @override
   double convert(DateTime input) =>
-    (input.microsecondsSinceEpoch - min!.microsecondsSinceEpoch) /
-    (max!.microsecondsSinceEpoch - min!.microsecondsSinceEpoch);
+      (input.microsecondsSinceEpoch - min!.microsecondsSinceEpoch) /
+      (max!.microsecondsSinceEpoch - min!.microsecondsSinceEpoch);
 
   @override
-  DateTime invert(double output) =>
-    DateTime.fromMicrosecondsSinceEpoch((
-      min!.microsecondsSinceEpoch +
-      output * (max!.microsecondsSinceEpoch - min!.microsecondsSinceEpoch)
-    ).round());
+  DateTime invert(double output) => DateTime.fromMicrosecondsSinceEpoch((min!
+              .microsecondsSinceEpoch +
+          output * (max!.microsecondsSinceEpoch - min!.microsecondsSinceEpoch))
+      .round());
 
   @override
   DateTime get zero => min!;
@@ -102,7 +98,5 @@ class TimeScaleConv extends ContinuousScaleConv<DateTime> {
   String defaultFormatter(DateTime value) => value.toString();
 
   @override
-  bool operator ==(Object other) =>
-    other is TimeScaleConv &&
-    super == other;
+  bool operator ==(Object other) => other is TimeScaleConv && super == other;
 }

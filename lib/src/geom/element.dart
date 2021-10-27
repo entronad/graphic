@@ -42,7 +42,7 @@ import 'point.dart';
 import 'polygon.dart';
 
 /// The specification of a geometory element.
-/// 
+///
 /// A geometory element applies a certain graphing rule to get a graph from the
 /// tuples.
 abstract class GeomElement<S extends Shape> {
@@ -59,14 +59,13 @@ abstract class GeomElement<S extends Shape> {
     this.zIndex,
     this.groupBy,
     this.selected,
-  })
-    : assert(isSingle([color, gradient], allowNone: true)),
-      assert(selected == null || selected.keys.length == 1);
+  })  : assert(isSingle([color, gradient], allowNone: true)),
+        assert(selected == null || selected.keys.length == 1);
 
   /// The color attribute of this element.
-  /// 
+  ///
   /// Only one in [color] and [gradient] can be set.
-  /// 
+  ///
   /// If null and [gradient] is also null, a default `ColorAttr(value: Defaults.primaryColor)`
   /// is set.
   ColorAttr? color;
@@ -75,7 +74,7 @@ abstract class GeomElement<S extends Shape> {
   ElevationAttr? elevation;
 
   /// The gradient attribute of this element.
-  /// 
+  ///
   /// Only one in [color] and [gradient] can be set.
   GradientAttr? gradient;
 
@@ -83,69 +82,69 @@ abstract class GeomElement<S extends Shape> {
   LabelAttr? label;
 
   /// Algebra expression of the element position.
-  /// 
+  ///
   /// See details about graphic algebra in [Varset].
-  /// 
+  ///
   /// A certain type of graphing requires a certain count of variables in each
   /// dimension. If not satisfied, The geometory types have their own rules tring
   /// to complete the points. See details in subclasses.
-  /// 
+  ///
   /// If null, a crossing of first 2 variables is set by default.
   Varset? position;
 
   /// The shape attribute of this element.
-  /// 
+  ///
   /// If null, a default shape is set according to the geometory type. See details
   /// in subclasses.
   ShapeAttr<S>? shape;
 
   /// The size attribute of this element.
-  /// 
+  ///
   /// If null, a default size is set according to the shape definition (See details
   /// in [Shape.defaultSize]).
-  /// 
+  ///
   /// See also:
-  /// 
+  ///
   /// - [Shape.defaultSize], the default size setting of each shape.
   SizeAttr? size;
 
   /// The collision modifiers applied to this element.
-  /// 
+  ///
   /// They are applied in order of the list index.
-  /// 
+  ///
   /// If set, a [groupBy] is required.
   List<Modifier>? modifiers;
 
   /// The z index of this element.
-  /// 
+  ///
   /// If null, a default 0 is set.
   int? zIndex;
 
   /// The variable by which the tuples are grouped.
-  /// 
+  ///
   /// The grouping is usfull to seperate line and area shapes, and is requred for
   /// [modifiers].
   String? groupBy;
 
   /// The selection name and selected tuple indexes triggered initially.
-  /// 
+  ///
   /// The map must be single entried.
   Map<String, Set<int>>? selected;
 
   @override
   bool operator ==(Object other) =>
-    other is GeomElement &&
-    color == other.color &&
-    elevation == other.elevation &&
-    gradient == other.gradient &&
-    label == other.label &&
-    position == other.position &&
-    shape == other.shape &&
-    size == other.size &&
-    DeepCollectionEquality().equals(modifiers, other.modifiers) &&
-    zIndex == other.zIndex &&
-    groupBy == other.groupBy &&
-    selected == other.selected;
+      other is GeomElement &&
+      color == other.color &&
+      elevation == other.elevation &&
+      gradient == other.gradient &&
+      label == other.label &&
+      position == other.position &&
+      shape == other.shape &&
+      size == other.size &&
+      DeepCollectionEquality().equals(modifiers, other.modifiers) &&
+      zIndex == other.zIndex &&
+      groupBy == other.groupBy &&
+      selected == other.selected;
 }
 
 /// Group aes value tuples by element's groupBy field.
@@ -219,25 +218,36 @@ class ElementRenderOp extends Render<ElementScene> {
 
 // Defaults for each geom.
 
-typedef PositionCompleter = List<Offset> Function(List<Offset> position, Offset origin);
+typedef PositionCompleter = List<Offset> Function(
+    List<Offset> position, Offset origin);
 
-PositionCompleter getPositionCompleter(GeomElement spec) =>
-  spec is AreaElement ? areaCompleter :
-  spec is CustomElement ? customCompleter :
-  spec is IntervalElement ? intervalCompleter :
-  spec is LineElement ? lineCompleter :
-  spec is PointElement ? pointCompleter :
-  spec is PolygonElement ? polygonCompleter :
-  throw UnimplementedError('No such geom $spec.');
+PositionCompleter getPositionCompleter(GeomElement spec) => spec is AreaElement
+    ? areaCompleter
+    : spec is CustomElement
+        ? customCompleter
+        : spec is IntervalElement
+            ? intervalCompleter
+            : spec is LineElement
+                ? lineCompleter
+                : spec is PointElement
+                    ? pointCompleter
+                    : spec is PolygonElement
+                        ? polygonCompleter
+                        : throw UnimplementedError('No such geom $spec.');
 
-Shape getDefaultShape(GeomElement spec) =>
-  spec is AreaElement ? BasicAreaShape() :
-  spec is CustomElement ? throw ArgumentError('Custom geom must designate shape.') :
-  spec is IntervalElement ? RectShape() :
-  spec is LineElement ? BasicLineShape() :
-  spec is PointElement ? CircleShape() :
-  spec is PolygonElement ? HeatmapShape() :
-  throw UnimplementedError('No such geom $spec.');
+Shape getDefaultShape(GeomElement spec) => spec is AreaElement
+    ? BasicAreaShape()
+    : spec is CustomElement
+        ? throw ArgumentError('Custom geom must designate shape.')
+        : spec is IntervalElement
+            ? RectShape()
+            : spec is LineElement
+                ? BasicLineShape()
+                : spec is PointElement
+                    ? CircleShape()
+                    : spec is PolygonElement
+                        ? HeatmapShape()
+                        : throw UnimplementedError('No such geom $spec.');
 
 void parseGeom(
   Chart spec,

@@ -11,26 +11,23 @@ class TagAnnotation extends FigureAnnotation {
   /// Creates a tag annotation.
   TagAnnotation({
     required this.label,
-
     List<String>? variables,
     List? values,
     Offset Function(Size)? anchor,
     int? zIndex,
   }) : super(
-    variables: variables,
-    values: values,
-    anchor: anchor,
-    zIndex: zIndex,
-  );
+          variables: variables,
+          values: values,
+          anchor: anchor,
+          zIndex: zIndex,
+        );
 
   /// The label definition of this tag.
   Label label;
 
   @override
   bool operator ==(Object other) =>
-    other is TagAnnotation &&
-    super == other &&
-    label == other.label;
+      other is TagAnnotation && super == other && label == other.label;
 }
 
 class TagAnnotOp extends FigureAnnotOp {
@@ -40,11 +37,13 @@ class TagAnnotOp extends FigureAnnotOp {
   List<Figure>? evaluate() {
     final anchor = params['anchor'] as Offset;
     final label = params['label'] as Label;
-    
-    return [renderLabel(
-      label,
-      anchor,
-      Alignment.center,
-    )];
+
+    return [
+      renderLabel(
+        label,
+        anchor,
+        Alignment.center,
+      )
+    ];
   }
 }

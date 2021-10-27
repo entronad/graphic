@@ -5,47 +5,47 @@ import 'package:graphic/src/scale/auto_ticks/cat.dart';
 import 'scale.dart';
 
 /// The specification of a discrete scale.
-/// 
+///
 /// A discrete scale converts original tuple values to [int]s of natural number.
 abstract class DiscreteScale<V> extends Scale<V, int> {
   /// Creates a discrete scale.
   DiscreteScale({
     this.values,
     this.align,
-
     String? title,
     String Function(V)? formatter,
     List<V>? ticks,
     int? tickCount,
     int? maxTickCount,
   }) : super(
-    title: title,
-    formatter: formatter,
-    ticks: ticks,
-    tickCount: tickCount,
-    maxTickCount: maxTickCount,
-  );
+          title: title,
+          formatter: formatter,
+          ticks: ticks,
+          tickCount: tickCount,
+          maxTickCount: maxTickCount,
+        );
 
   /// Candidate values.
-  /// 
+  ///
   /// It is a [List] not a [Set] because the values must has an order for position.
   /// But it's better that each value occurs only once.
   List<V>? values;
 
   /// The align ratio of the exact position in the value position band.
-  /// 
+  ///
   /// If null, a default 0.5 is set, which means in the middle of the band.
   double? align;
 
   @override
   bool operator ==(Object other) =>
-    other is DiscreteScale<V> &&
-    super == other &&
-    DeepCollectionEquality().equals(values, other.values) &&
-    align == other.align;
+      other is DiscreteScale<V> &&
+      super == other &&
+      DeepCollectionEquality().equals(values, other.values) &&
+      align == other.align;
 }
 
-abstract class DiscreteScaleConv<V, SP extends DiscreteScale<V>> extends ScaleConv<V, int> {
+abstract class DiscreteScaleConv<V, SP extends DiscreteScale<V>>
+    extends ScaleConv<V, int> {
   DiscreteScaleConv(
     SP spec,
     List<Tuple> tuples,
@@ -98,21 +98,19 @@ abstract class DiscreteScaleConv<V, SP extends DiscreteScale<V>> extends ScaleCo
   }
 
   @override
-  double normalize(int scaledValue) =>
-    (scaledValue + align) * band;
+  double normalize(int scaledValue) => (scaledValue + align) * band;
 
   @override
-  int denormalize(double normalValue) =>
-    (normalValue / band - align).round();
-  
+  int denormalize(double normalValue) => (normalValue / band - align).round();
+
   @override
   V get zero => values.first;
 
   @override
   bool operator ==(Object other) =>
-    other is DiscreteScaleConv<V, SP> &&
-    super == other &&
-    DeepCollectionEquality().equals(values, other.values) &&
-    align == other.align &&
-    band == other.band;
+      other is DiscreteScaleConv<V, SP> &&
+      super == other &&
+      DeepCollectionEquality().equals(values, other.values) &&
+      align == other.align &&
+      band == other.band;
 }

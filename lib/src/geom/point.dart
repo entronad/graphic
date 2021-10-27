@@ -13,11 +13,11 @@ import 'function.dart';
 import 'modifier/modifier.dart';
 
 /// The specification of a point element.
-/// 
+///
 /// A point graphing produces a set of geometric points.
-/// 
+///
 /// It will check and complete position points by the rule of:
-/// 
+///
 /// ```
 /// [point] => [point]
 /// ```
@@ -36,18 +36,18 @@ class PointElement extends FunctionElement<PointShape> {
     String? groupBy,
     Map<String, Set<int>>? selected,
   }) : super(
-    color: color,
-    elevation: elevation,
-    gradient: gradient,
-    label: label,
-    position: position,
-    shape: shape,
-    size: size,
-    modifiers: modifiers,
-    zIndex: zIndex,
-    groupBy: groupBy,
-    selected: selected,
-  );
+          color: color,
+          elevation: elevation,
+          gradient: gradient,
+          label: label,
+          position: position,
+          shape: shape,
+          size: size,
+          modifiers: modifiers,
+          zIndex: zIndex,
+          groupBy: groupBy,
+          selected: selected,
+        );
 }
 
 /// [point] => [point]

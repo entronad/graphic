@@ -13,12 +13,12 @@ import 'function.dart';
 import 'modifier/modifier.dart';
 
 /// The specification of an area element.
-/// 
+///
 /// An area graphing produces a graph containing all points within the region between
 /// two lines.
-/// 
+///
 /// It will check and complete position points by the rule of:
-/// 
+///
 /// ```
 /// [start, end] | [end] => [start, end]
 /// ```
@@ -37,18 +37,18 @@ class AreaElement extends FunctionElement<AreaShape> {
     String? groupBy,
     Map<String, Set<int>>? selected,
   }) : super(
-    color: color,
-    elevation: elevation,
-    gradient: gradient,
-    label: label,
-    position: position,
-    shape: shape,
-    size: size,
-    modifiers: modifiers,
-    zIndex: zIndex,
-    groupBy: groupBy,
-    selected: selected,
-  );
+          color: color,
+          elevation: elevation,
+          gradient: gradient,
+          label: label,
+          position: position,
+          shape: shape,
+          size: size,
+          modifiers: modifiers,
+          zIndex: zIndex,
+          groupBy: groupBy,
+          selected: selected,
+        );
 }
 
 /// [start, end] | [end] => [start, end]

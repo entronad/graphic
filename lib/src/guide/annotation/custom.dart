@@ -10,26 +10,23 @@ class CustomAnnotation extends FigureAnnotation {
   /// Creates a custom annotation.
   CustomAnnotation({
     required this.render,
-
     List<String>? variables,
     List? values,
     Offset Function(Size)? anchor,
     int? zIndex,
   }) : super(
-    variables: variables,
-    values: values,
-    anchor: anchor,
-    zIndex: zIndex,
-  );
+          variables: variables,
+          values: values,
+          anchor: anchor,
+          zIndex: zIndex,
+        );
 
   /// Indicates the custom render funcion of this annotation.
   List<Figure> Function(Offset) render;
 
   @override
-  bool operator ==(Object other) =>
-    other is CustomAnnotation &&
-    super == other;
-    // render is Function
+  bool operator ==(Object other) => other is CustomAnnotation && super == other;
+  // render is Function
 }
 
 class CustomAnnotOp extends FigureAnnotOp {

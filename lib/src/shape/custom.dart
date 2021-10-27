@@ -10,18 +10,18 @@ import 'util/render_basic_item.dart';
 import 'shape.dart';
 
 /// The shape for the custom element.
-/// 
+///
 /// See also:
-/// 
+///
 /// - [CustomElement], which this shape is for.
 abstract class CustomShape extends Shape {
   @override
-  double get defaultSize =>
-    throw UnimplementedError('Designate default size in your own custom shape');
+  double get defaultSize => throw UnimplementedError(
+      'Designate default size in your own custom shape');
 }
 
 /// A candle stick shape.
-/// 
+///
 /// ** We insist that the price of a subject matter of investment is determined
 /// by its intrinsic value. Too much attention to the short-term fluctuations in
 /// prices is harmful. Thus a candlestick chart may misslead your investment decision.**
@@ -40,10 +40,10 @@ class CandlestickShape extends CustomShape {
 
   @override
   bool equalTo(Object other) =>
-    other is CandlestickShape &&
-    hollow == other.hollow &&
-    strokeWidth == other.strokeWidth;
-  
+      other is CandlestickShape &&
+      hollow == other.hollow &&
+      strokeWidth == other.strokeWidth;
+
   @override
   double get defaultSize => 10;
 
@@ -73,10 +73,8 @@ class CandlestickShape extends CustomShape {
     // candle stick shape dosen't allow NaN measure value.
 
     final path = Path();
-    
-    final points = item.position.map(
-      (p) => coord.convert(p)
-    ).toList();
+
+    final points = item.position.map((p) => coord.convert(p)).toList();
     final x = points.first.dx;
     final ys = points.map((p) => p.dy).toList()..sort();
     final bias = (item.size ?? defaultSize) / 2;
@@ -120,6 +118,5 @@ class CandlestickShape extends CustomShape {
   }
 
   @override
-  Offset representPoint(List<Offset> position) =>
-    position[1];  // end
+  Offset representPoint(List<Offset> position) => position[1]; // end
 }

@@ -20,24 +20,23 @@ class RegionAnnotation extends Annotation {
     this.variable,
     required this.values,
     this.color,
-
     int? zIndex,
   }) : super(
-    zIndex: zIndex,
-  );
+          zIndex: zIndex,
+        );
 
   /// The dimension where this region stands.
-  /// 
+  ///
   /// If null, a default 1 is set.
   int? dim;
 
   /// The variable refered to for position.
-  /// 
+  ///
   /// If null, the first variable assigned to [dim] is set by default.
   String? variable;
 
   /// The values of [variable] for position.
-  /// 
+  ///
   /// It is of 2 values for start and end respectively.
   List values;
 
@@ -46,12 +45,12 @@ class RegionAnnotation extends Annotation {
 
   @override
   bool operator ==(Object other) =>
-    other is RegionAnnotation &&
-    super == other &&
-    dim == other.dim &&
-    variable == other.variable &&
-    DeepCollectionEquality().equals(values, other.values) &&
-    color == color;
+      other is RegionAnnotation &&
+      super == other &&
+      dim == other.dim &&
+      variable == other.variable &&
+      DeepCollectionEquality().equals(values, other.values) &&
+      color == color;
 }
 
 class RegionAnnotScene extends AnnotScene {
@@ -79,53 +78,56 @@ class RegionAnnotRenderOp extends AnnotRenderOp<RegionAnnotScene> {
     scene
       ..zIndex = zIndex
       ..setRegionClip(coord.region);
-    
+
     final scale = scales[variable]!;
     final start = scale.normalize(scale.convert(values.first));
     final end = scale.normalize(scale.convert(values.last));
 
     if (coord is RectCoordConv) {
-      scene.figures = [PathFigure(
-        Path()..addRect(Rect.fromPoints(
-          coord.convert(
-          dim == 1
-            ? Offset(start, 0)
-            : Offset(0, start),
-          ),
-          coord.convert(
-            dim == 1 
-              ? Offset(end, 1)
-              : Offset(1, end),
-          ),
-        )),
-        Paint()..color = color,
-      )];
+      scene.figures = [
+        PathFigure(
+          Path()
+            ..addRect(Rect.fromPoints(
+              coord.convert(
+                dim == 1 ? Offset(start, 0) : Offset(0, start),
+              ),
+              coord.convert(
+                dim == 1 ? Offset(end, 1) : Offset(1, end),
+              ),
+            )),
+          Paint()..color = color,
+        )
+      ];
     } else {
       coord as PolarCoordConv;
       if (coord.getCanvasDim(dim) == 1) {
-        scene.figures = [PathFigure(
-          Paths.sector(
-            center: coord.center,
-            r: coord.radiuses.last,
-            r0: coord.radiuses.first,
-            startAngle: coord.convertAngle(start),
-            endAngle: coord.convertAngle(end),
-            clockwise: true,
-          ),
-          Paint()..color = color,
-        )];
+        scene.figures = [
+          PathFigure(
+            Paths.sector(
+              center: coord.center,
+              r: coord.radiuses.last,
+              r0: coord.radiuses.first,
+              startAngle: coord.convertAngle(start),
+              endAngle: coord.convertAngle(end),
+              clockwise: true,
+            ),
+            Paint()..color = color,
+          )
+        ];
       } else {
-        scene.figures = [PathFigure(
-          Paths.sector(
-            center: coord.center,
-            r: coord.convertRadius(end),
-            r0: coord.convertRadius(start),
-            startAngle: coord.angles.first,
-            endAngle: coord.angles.last,
-            clockwise: true,
-          ),
-          Paint()..color = color,
-        )];
+        scene.figures = [
+          PathFigure(
+            Paths.sector(
+              center: coord.center,
+              r: coord.convertRadius(end),
+              r0: coord.convertRadius(start),
+              startAngle: coord.angles.first,
+              endAngle: coord.angles.last,
+              clockwise: true,
+            ),
+            Paint()..color = color,
+          )
+        ];
       }
     }
   }

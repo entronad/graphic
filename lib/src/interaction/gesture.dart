@@ -10,15 +10,15 @@ import 'package:graphic/src/parse/parse.dart';
 import 'signal.dart';
 
 /// Types of [Gesture]s.
-/// 
+///
 /// A chart can responses to gesture types the same as [GestureDetector], except
 /// that pan series, horizontal drag series and vertical drag series are uniformed
 /// into scale series.
-/// 
+///
 /// Besides, a [hover] type and a [scroll] type is defined for mouse interactions.
-/// 
+///
 /// See also:
-/// 
+///
 /// - [GestureDetector], which detects gestures.
 /// - [Listener], which responses to common pointer events that compose [hover]
 /// and [scroll] gestures.
@@ -27,7 +27,7 @@ enum GestureType {
   ///
   /// This triggers when the tap gesture wins. If the tap gesture did not win,
   /// [tapCancel] is emitted instead.
-  /// 
+  ///
   /// A gesture of this type has no detail.
   tap,
 
@@ -36,7 +36,7 @@ enum GestureType {
   ///
   /// This is emitted after [tapDown], and instead of [tapUp] and [tap], if
   /// the tap gesture did not win.
-  /// 
+  ///
   /// A gesture of this type has no detail.
   tapCancel,
 
@@ -46,7 +46,7 @@ enum GestureType {
   /// This is emitted after a short timeout, even if the winning gesture has not
   /// yet been selected. If the tap gesture wins, [tapUp] will be emitted,
   /// otherwise [tapCancel] will be emitted.
-  /// 
+  ///
   /// A gesture of this type has details of [TapDownDetails].
   tapDown,
 
@@ -55,19 +55,19 @@ enum GestureType {
   ///
   /// This triggers immediately before [tap] in the case of the tap gesture
   /// winning. If the tap gesture did not win, [tapCancel] is emitted instead.
-  /// 
+  ///
   /// A gesture of this type has details of [TapUpDetails].
   tapUp,
 
   /// The user has tapped the screen with a primary button at the same location
   /// twice in quick succession.
-  /// 
+  ///
   /// A gesture of this type has no detail.
   doubleTap,
 
   /// The pointer that previously triggered [doubleTapDown] will not end up
   /// causing a double tap.
-  /// 
+  ///
   /// A gesture of this type has no detail.
   doubleTapCancel,
 
@@ -79,24 +79,24 @@ enum GestureType {
   /// If the user completes the double tap and the gesture wins, [doubleTap]
   /// will be emitted after this gesture. Otherwise, [doubleTapCancel] will
   /// be emitted after this gesture.
-  /// 
+  ///
   /// A gesture of this type has details of [TapDownDetails].
   doubleTapDown,
 
   /// The pointers are no longer in contact with the screen.
-  /// 
+  ///
   /// A gesture of this type has details of [ScaleEndDetails].
   scaleEnd,
 
   /// The pointers in contact with the screen have established a focal point and
   /// initial scale of 1.0.
-  /// 
+  ///
   /// A gesture of this type has details of [ScaleStartDetails].
   scaleStart,
 
   /// The pointers in contact with the screen have indicated a new focal point
   /// and/or scale.
-  /// 
+  ///
   /// A gesture of this type has details of [ScaleUpdateDetails].
   scaleUpdate,
 
@@ -109,7 +109,7 @@ enum GestureType {
   /// The only difference between the two is that this gesture does not
   /// contain details of the position at which the pointer initially contacted
   /// the screen.
-  /// 
+  ///
   /// A gesture of this type has no details.
   longPress,
 
@@ -121,7 +121,7 @@ enum GestureType {
   ///
   /// If the user completed the long-press, and the gesture won, then
   /// [longPressStart] and [longPress] are emitted instead.
-  /// 
+  ///
   /// A gesture of this type has no details.
   longPressCancel,
 
@@ -133,7 +133,7 @@ enum GestureType {
   /// If the user completes the long-press, and this gesture wins,
   /// [longPressStart] will be emitted after this gesture. Otherwise,
   /// [longPressCancel] will be emitted after this gesture.
-  /// 
+  ///
   /// A gesture of this type has details of [LongPressDownDetails].
   longPressDown,
 
@@ -144,12 +144,12 @@ enum GestureType {
   /// The only difference between the two is that this gesture contains
   /// details of the state of the pointer when it stopped contacting the
   /// screen, whereas [longPressUp] does not.
-  /// 
+  ///
   /// A gesture of this type has details of [LongPressEndDetails].
   longPressEnd,
 
   /// A pointer has been drag-moved after a long-press with a primary button.
-  /// 
+  ///
   /// A gesture of this type has details of [LongPressMoveUpdateDetails].
   longPressMoveUpdate,
 
@@ -162,7 +162,7 @@ enum GestureType {
   /// The only difference between the two is that this gesture contains
   /// details of the position at which the pointer initially contacted the
   /// screen, whereas [longPress] does not.
-  /// 
+  ///
   /// A gesture of this type has details of [LongPressStartDetails].
   longPressStart,
 
@@ -173,7 +173,7 @@ enum GestureType {
   /// The only difference between the two is that this gesture does not
   /// contain details of the state of the pointer when it stopped contacting
   /// the screen.
-  /// 
+  ///
   /// A gesture of this type has no details.
   longPressUp,
 
@@ -181,7 +181,7 @@ enum GestureType {
   ///
   /// Note that this gesture will only be fired on devices with pressure
   /// detecting screens.
-  /// 
+  ///
   /// A gesture of this type has details of [ForcePressDetails].
   forcePressEnd,
 
@@ -191,7 +191,7 @@ enum GestureType {
   ///
   /// Note that this gesture will only be fired on devices with pressure
   /// detecting screens.
-  /// 
+  ///
   /// A gesture of this type has details of [ForcePressDetails].
   forcePressPeak,
 
@@ -201,7 +201,7 @@ enum GestureType {
   ///
   /// Note that this gesture will only be fired on devices with pressure
   /// detecting screens.
-  /// 
+  ///
   /// A gesture of this type has details of [ForcePressDetails].
   forcePressStart,
 
@@ -212,7 +212,7 @@ enum GestureType {
   ///
   /// Note that this gesture will only be fired on devices with pressure
   /// detecting screens.
-  /// 
+  ///
   /// A gesture of this type has details of [ForcePressDetails].
   forcePressUpdate,
 
@@ -226,7 +226,7 @@ enum GestureType {
   /// [secondaryLongPressStart]. The only difference between the two is that
   /// this gesture does not contain details of the position at which the
   /// pointer initially contacted the screen.
-  /// 
+  ///
   /// A gesture of this type has no details.
   secondaryLongPress,
 
@@ -238,7 +238,7 @@ enum GestureType {
   ///
   /// If the user completed the long-press, and the gesture won, then
   /// [secondaryLongPressStart] and [secondaryLongPress] are emitted instead.
-  /// 
+  ///
   /// A gesture of this type has no details.
   secondaryLongPressCancel,
 
@@ -250,7 +250,7 @@ enum GestureType {
   /// If the user completes the long-press, and this gesture wins,
   /// [secondaryLongPressStart] will be emitted after this gesture. Otherwise,
   /// [secondaryLongPressCancel] will be emitted after this gesture.
-  /// 
+  ///
   /// A gesture of this type has details of [LongPressDownDetails].
   secondaryLongPressDown,
 
@@ -261,12 +261,12 @@ enum GestureType {
   /// The only difference between the two is that this gesture contains
   /// details of the state of the pointer when it stopped contacting the
   /// screen, whereas [longPressUp] does not.
-  /// 
+  ///
   /// A gesture of this type has details of [LongPressEndDetails].
   secondaryLongPressEnd,
 
   /// A pointer has been drag-moved after a long press with a secondary button.
-  /// 
+  ///
   /// A gesture of this type has details of [LongPressMoveUpdateDetails].
   secondaryLongPressMoveUpdate,
 
@@ -280,7 +280,7 @@ enum GestureType {
   /// [secondaryLongPress]. The only difference between the two is that this
   /// gesture contains details of the position at which the pointer initially
   /// contacted the screen, whereas [secondaryLongPress] does not.
-  /// 
+  ///
   /// A gesture of this type has details of [LongPressStartDetails].
   secondaryLongPressStart,
 
@@ -291,7 +291,7 @@ enum GestureType {
   /// [secondaryLongPressEnd]. The only difference between the two is that
   /// this gesture does not contain details of the state of the pointer when
   /// it stopped contacting the screen.
-  /// 
+  ///
   /// A gesture of this type has no details.
   secondaryLongPressUp,
 
@@ -299,7 +299,7 @@ enum GestureType {
   ///
   /// This triggers when the tap gesture wins. If the tap gesture did not win,
   /// [secondaryTapCancel] is emitted instead.
-  /// 
+  ///
   /// A gesture of this type has no details.
   secondaryTap,
 
@@ -308,7 +308,7 @@ enum GestureType {
   ///
   /// This is emitted after [secondaryTapDown], and instead of
   /// [secondaryTapUp], if the tap gesture did not win.
-  /// 
+  ///
   /// A gesture of this type has no details.
   secondaryTapCancel,
 
@@ -318,7 +318,7 @@ enum GestureType {
   /// This is emitted after a short timeout, even if the winning gesture has not
   /// yet been selected. If the tap gesture wins, [secondaryTapUp] will be
   /// emitted, otherwise [secondaryTapCancel] will be emitted.
-  /// 
+  ///
   /// A gesture of this type has details of [TapDownDetails].
   secondaryTapDown,
 
@@ -327,7 +327,7 @@ enum GestureType {
   ///
   /// This triggers in the case of the tap gesture winning. If the tap gesture
   /// did not win, [secondaryTapCancel] is emitted instead.
-  /// 
+  ///
   /// A gesture of this type has no details.
   secondaryTapUp,
 
@@ -341,7 +341,7 @@ enum GestureType {
   /// [tertiaryLongPressStart]. The only difference between the two is that
   /// this gesture does not contain details of the position at which the
   /// pointer initially contacted the screen.
-  /// 
+  ///
   /// A gesture of this type has no details.
   tertiaryLongPress,
 
@@ -353,7 +353,7 @@ enum GestureType {
   ///
   /// If the user completed the long-press, and the gesture won, then
   /// [tertiaryLongPressStart] and [tertiaryLongPress] are emitted instead.
-  /// 
+  ///
   /// A gesture of this type has no details.
   tertiaryLongPressCancel,
 
@@ -365,7 +365,7 @@ enum GestureType {
   /// If the user completes the long-press, and this gesture wins,
   /// [tertiaryLongPressStart] will be emitted after this gesture. Otherwise,
   /// [tertiaryLongPressCancel] will be emitted after this gesture.
-  /// 
+  ///
   /// A gesture of this type has details of [LongPressDownDetails].
   tertiaryLongPressDown,
 
@@ -376,12 +376,12 @@ enum GestureType {
   /// [secondaryLongPressUp]. The only difference between the two is that
   /// this gesture contains details of the state of the pointer when it
   /// stopped contacting the screen, whereas [secondaryLongPressUp] does not.
-  /// 
+  ///
   /// A gesture of this type has details of [LongPressDownDetails].
   tertiaryLongPressEnd,
 
   /// A pointer has been drag-moved after a long press with a secondary button.
-  /// 
+  ///
   /// A gesture of this type has details of [LongPressMoveUpdateDetails].
   tertiaryLongPressMoveUpdate,
 
@@ -395,7 +395,7 @@ enum GestureType {
   /// [secondaryLongPress]. The only difference between the two is that this
   /// gesture contains details of the position at which the pointer initially
   /// contacted the screen, whereas [secondaryLongPress] does not.
-  /// 
+  ///
   /// A gesture of this type has details of [LongPressStartDetails].
   tertiaryLongPressStart,
 
@@ -406,7 +406,7 @@ enum GestureType {
   /// [secondaryLongPressEnd]. The only difference between the two is that
   /// this gesture does not contain details of the state of the pointer when
   /// it stopped contacting the screen.
-  /// 
+  ///
   /// A gesture of this type has no details.
   tertiaryLongPressUp,
 
@@ -415,7 +415,7 @@ enum GestureType {
   ///
   /// This is emitted after [secondaryTapDown], and instead of
   /// [secondaryTapUp], if the tap gesture did not win.
-  /// 
+  ///
   /// A gesture of this type has no details.
   tertiaryTapCancel,
 
@@ -425,7 +425,7 @@ enum GestureType {
   /// This is emitted after a short timeout, even if the winning gesture has not
   /// yet been selected. If the tap gesture wins, [tertiaryTapUp] will be
   /// emitted, otherwise [tertiaryTapCancel] will be emitted.
-  /// 
+  ///
   /// A gesture of this type has details of [TapDownDetails].
   tertiaryTapDown,
 
@@ -434,7 +434,7 @@ enum GestureType {
   ///
   /// This triggers in the case of the tap gesture winning. If the tap gesture
   /// did not win, [tertiaryTapCancel] is emitted instead.
-  /// 
+  ///
   /// A gesture of this type has no details.
   tertiaryTapUp,
 
@@ -442,7 +442,7 @@ enum GestureType {
   ///
   /// This is only fired for pointers which report their location when not down
   /// (e.g. mouse pointers, but not most touch pointers).
-  /// 
+  ///
   /// A gesture of this type has no details.
   hover,
 
@@ -450,20 +450,20 @@ enum GestureType {
   ///
   /// Scrolling the scroll wheel on a mouse is an example that would emit a scroll
   /// gesture.
-  /// 
+  ///
   /// A gesture of this type has details of [Offset], which is [PointerScrollEvent.scrollDelta].
   scroll,
 }
 
 /// Information about a gesture.
-/// 
+///
 /// A gesture is triggered by pointer events, including touch, stylus, or mouse.
 /// Gesture types are refering to [GestureDetector] (See details in [GestureType]).
-/// 
+///
 /// This is carried as payload by [GestureSignal].
-/// 
+///
 /// See also:
-/// 
+///
 /// - [GestureSignal], which signal carries gesture as payload.
 class Gesture {
   /// Creates a gesture.
@@ -472,10 +472,10 @@ class Gesture {
     this.kind,
     this.localPosition,
     this.chartSize,
-    this.details,
-    {this.localMoveStart,
-    this.preScaleDetail,}
-  );
+    this.details, {
+    this.localMoveStart,
+    this.preScaleDetail,
+  });
 
   /// The gesture type.
   final GestureType type;
@@ -487,18 +487,18 @@ class Gesture {
   final Offset localPosition;
 
   /// The current size of the chart.
-  /// 
+  ///
   /// This is usefull when calculating movement length ratios.
   final Size chartSize;
 
   /// Details about this gesture.
-  /// 
+  ///
   /// They may be different class types or null according to [type] (See corresponding
   /// relations in [GestureType]).
   final dynamic details;
 
   /// The local position of pointer when a scale or long press starts.
-  /// 
+  ///
   /// This is usefull when calculating movement spans in [GestureType.scaleUpdate],
   /// [GestureType.longPressMoveUpdate], [GestureType.secondaryLongPressMoveUpdate],
   /// and [GestureType.tertiaryLongPressMoveUpdate].
@@ -507,10 +507,10 @@ class Gesture {
   // By hacking the scale start, Scale update always has it.
 
   /// Details of previous scale update.
-  /// 
+  ///
   /// This is usefull to calculate delta position between scale updates, because
   /// [ScaleUpdateDetails.delta] is form the start instead of the previous one.
-  /// 
+  ///
   /// Scale update gesture will always has this property, even the first update
   /// (It regards the scale start as the previous update.).
   final ScaleUpdateDetails? preScaleDetail;

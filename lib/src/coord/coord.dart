@@ -15,16 +15,16 @@ import 'rect.dart';
 import 'polar.dart';
 
 /// Specification of the coordinate.
-/// 
+///
 /// As in a plane, The count of coordinate dimensions can be 1 or 2 (Which is set
 /// by [dimCount]).
-/// 
+///
 /// For a 2 dimensions coordinate, the coordinate will have both **domain dimension**
 /// (usually denoted as "x") and **measure dimension** (usually denoted as "y").
-/// 
+///
 /// For a 1 dimension coordinate, the coordinate will only have measure dimension,
 /// and all points' domain dimensions will be set to [dimFill] for rendering position.
-/// 
+///
 /// The **coordinate region** is the visual boundary rectangle of the coordinate
 /// on the chart widget. It is determined by chart size and padding. the coordinate
 /// range may be smaller or larger than the region. The range properties of [RectCoord]
@@ -35,17 +35,17 @@ abstract class Coord {
     this.dimCount,
     this.dimFill,
     this.transposed,
-  }) : assert(dimCount == null || (dimCount >= 1 && dimCount <=2));
+  }) : assert(dimCount == null || (dimCount >= 1 && dimCount <= 2));
 
   /// The count of coordinate dimensions.
-  /// 
+  ///
   /// If null, a default 2 is set.
   int? dimCount;
 
   /// The position value to fill the domain dimension when [dimCount] is 1.
-  /// 
+  ///
   /// It is a normalized value of `[0, 1]`.
-  /// 
+  ///
   /// If null, a default 0.5 is set, which means in the middle of the dimension.
   double? dimFill;
 
@@ -54,14 +54,14 @@ abstract class Coord {
 
   @override
   bool operator ==(Object other) =>
-    other is Coord &&
-    dimCount == other.dimCount &&
-    dimFill == other.dimFill &&
-    transposed == other.transposed;
+      other is Coord &&
+      dimCount == other.dimCount &&
+      dimFill == other.dimFill &&
+      transposed == other.transposed;
 }
 
 /// The converter of a coordinate.
-/// 
+///
 /// The inputs are abstract position points from [Aes.position] and outputs are
 /// canvas points.
 abstract class CoordConv extends Converter<Offset, Offset> {
@@ -87,12 +87,11 @@ abstract class CoordConv extends Converter<Offset, Offset> {
 
   /// Transforms an abstract dimension to canvas dimension according to whether
   /// [transposed].
-  int getCanvasDim(int abstractDim) =>
-    dimCount == 1
+  int getCanvasDim(int abstractDim) => dimCount == 1
       // The last dimension is the mearure dimension.
       ? (transposed ? 1 : 2)
       : (transposed ? (3 - abstractDim) : abstractDim);
-  
+
   /// Inverts a distance in canvas to abstract distance.
   double invertDistance(double canvasDistance, [int? dim]);
 }
@@ -102,7 +101,7 @@ abstract class CoordConv extends Converter<Offset, Offset> {
 abstract class CoordConvOp<C extends CoordConv> extends Operator<C> {
   CoordConvOp(
     Map<String, dynamic> params,
-  ) : super(params);  // The first value should be created in the first run.
+  ) : super(params); // The first value should be created in the first run.
 }
 
 class RegionOp extends Operator<Rect> {
@@ -127,11 +126,10 @@ void parseCoord(
 ) {
   final region = view.add(RegionOp({
     'size': scope.size,
-    'padding': spec.padding ?? (
-      spec.coord is PolarCoord
-        ? EdgeInsets.all(10)
-        : EdgeInsets.fromLTRB(40, 5, 10, 20)
-    ),
+    'padding': spec.padding ??
+        (spec.coord is PolarCoord
+            ? EdgeInsets.all(10)
+            : EdgeInsets.fromLTRB(40, 5, 10, 20)),
   }));
 
   final coordSpec = spec.coord ?? RectCoord();

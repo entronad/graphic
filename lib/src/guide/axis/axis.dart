@@ -32,28 +32,26 @@ class TickLine {
 
   @override
   bool operator ==(Object other) =>
-    other is TickLine &&
-    style == other.style &&
-    length == other.length;
+      other is TickLine && style == other.style && length == other.length;
 }
 
 /// Gets an axis tick line form an axis value text.
-/// 
+///
 /// [index] and [total] is current and total count of all ticks respectively.
 typedef TickLineMapper = TickLine? Function(String text, int index, int total);
 
 /// Gets an axis label form an axis value text.
-/// 
+///
 /// [index] and [total] is current and total count of all ticks respectively.
 typedef LabelMapper = LabelStyle? Function(String text, int index, int total);
 
 /// Gets an axis grid stroke style form an axis value text.
-/// 
+///
 /// [index] and [total] is current and total count of all ticks respectively.
 typedef GridMapper = StrokeStyle? Function(String text, int index, int total);
 
 /// The specification of an axis.
-/// 
+///
 /// There can be mutiple axes in one dimension.
 class AxisGuide<V> {
   /// Creates an axis.
@@ -71,103 +69,102 @@ class AxisGuide<V> {
     this.gridMapper,
     this.zIndex,
     this.gridZIndex,
-  })
-    : assert(isSingle([tickLine, tickLineMapper], allowNone: true)),
-      assert(isSingle([label, labelMapper], allowNone: true)),
-      assert(isSingle([grid, gridMapper], allowNone: true));
+  })  : assert(isSingle([tickLine, tickLineMapper], allowNone: true)),
+        assert(isSingle([label, labelMapper], allowNone: true)),
+        assert(isSingle([grid, gridMapper], allowNone: true));
 
   /// The dimension where this axis lies.
-  /// 
+  ///
   /// If null, the index of this axis in the [Chart.axes] list plus 1 is set by
   /// default.
   int? dim;
 
   /// The variable this axis is binded to.
-  /// 
+  ///
   /// If null, the first variable assigned to [dim] is set by default.
   String? variable;
 
   /// The position ratio in the crossing dimension where this axis line stands.
-  /// 
+  ///
   /// This ratio is to region boundaries for [RectCoord] and to angle or radius
   /// boundaries for [PolarCoord].
-  /// 
+  ///
   /// If null, a default 0 is set.
   double? position;
 
   /// Whether to flip tick lines and labels to the other side of the axis line.
-  /// 
+  ///
   /// The default side is left for vertical axes, bottom for horizontal axes, outer
   /// for circular axes, and behind the anticlockwise for radial axes.
   bool? flip;
 
   /// The stroke style for the axis line.
-  /// 
+  ///
   /// If null, there will be no axis line.
   StrokeStyle? line;
 
   /// The tick line settings for all ticks.
-  /// 
+  ///
   /// Only one in [tickLine] and [tickLineMapper] can be set.
-  /// 
+  ///
   /// If null and [tickLineMapper] is also null, there will be no tick lines.
   TickLine? tickLine;
 
   /// Indicates how to get the tick line setting for each tick.
-  /// 
+  ///
   /// Only one in [tickLine] and [tickLineMapper] can be set.
   TickLineMapper? tickLineMapper;
 
   /// The label style for all ticks.
-  /// 
+  ///
   /// Only one in [label] and [labelMapper] can be set.
-  /// 
+  ///
   /// If null and [labelMapper] is also null, there will be no labels.
   LabelStyle? label;
 
   /// Indicates how to get the label style for each tick.
-  /// 
+  ///
   /// Only one in [label] and [labelMapper] can be set.
   LabelMapper? labelMapper;
 
   /// The grid stroke style for all ticks.
-  /// 
+  ///
   /// Only one in [grid] and [gridMapper] can be set.
-  /// 
+  ///
   /// If null and [gridMapper] is also null, there will be no grids.
   StrokeStyle? grid;
 
   /// Indicates how to get the grid stroke style for each tick.
-  /// 
+  ///
   /// Only one in [grid] and [gridMapper] can be set.
   GridMapper? gridMapper;
 
   /// The z index of this axis.
-  /// 
+  ///
   /// If null, a default 0 is set.
   int? zIndex;
 
   /// The z index of the grids.
-  /// 
+  ///
   /// If null, a default 0 is set.
   int? gridZIndex;
 
   @override
   bool operator ==(Object other) =>
-    other is AxisGuide &&
-    dim == other.dim &&
-    variable == other.variable &&
-    position == other.position &&
-    flip == other.flip &&
-    line == other.line &&
-    tickLine == other.tickLine &&
-    // tickLineMapper: Function
-    label == other.label &&
-    // labelMapper: Function
-    grid == other.grid &&
-    // gridMapper: Function
-    zIndex == other.zIndex &&
-    gridZIndex == other.gridZIndex;
+      other is AxisGuide &&
+      dim == other.dim &&
+      variable == other.variable &&
+      position == other.position &&
+      flip == other.flip &&
+      line == other.line &&
+      tickLine == other.tickLine &&
+      // tickLineMapper: Function
+      label == other.label &&
+      // labelMapper: Function
+      grid == other.grid &&
+      // gridMapper: Function
+      zIndex == other.zIndex &&
+      gridZIndex == other.gridZIndex;
 }
 
 // tickInfo
@@ -208,10 +205,12 @@ class TickInfoOp extends Operator<List<TickInfo>> {
 
     final scale = scales[variable]!;
 
-    final ticks = scale.ticks.map((value) => TickInfo(
-      scale.normalize(scale.convert(value)),
-      scale.formatter(value),
-    )).toList();
+    final ticks = scale.ticks
+        .map((value) => TickInfo(
+              scale.normalize(scale.convert(value)),
+              scale.formatter(value),
+            ))
+        .toList();
 
     final total = ticks.length;
     for (var i = 0; i < total; i++) {
@@ -260,7 +259,7 @@ class AxisRenderOp extends Render<AxisScene> {
     final flip = params['flip'] as bool;
     final line = params['line'] as StrokeStyle?;
     final ticks = params['ticks'] as List<TickInfo>;
-    
+
     scene.zIndex = zIndex;
 
     final canvasDim = coord.getCanvasDim(dim);
@@ -313,11 +312,8 @@ class GridScene extends Scene {
 }
 
 class GridRenderOp extends Render<GridScene> {
-  GridRenderOp(
-    Map<String, dynamic> params,
-    GridScene scene,
-    View view
-  ) : super(params, scene, view);
+  GridRenderOp(Map<String, dynamic> params, GridScene scene, View view)
+      : super(params, scene, view);
 
   @override
   void render() {
@@ -325,7 +321,7 @@ class GridRenderOp extends Render<GridScene> {
     final coord = params['coord'] as CoordConv;
     final dim = params['dim'] as int;
     final ticks = params['ticks'] as List<TickInfo>;
-    
+
     scene.zIndex = gridZIndex;
 
     final canvasDim = coord.getCanvasDim(dim);

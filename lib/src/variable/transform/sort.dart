@@ -3,7 +3,7 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'transform.dart';
 
 /// The transform to sort the tuple list.
-/// 
+///
 /// See also:
 /// - [Tuple], the original value tuple.
 class Sort extends VariableTransform {
@@ -16,10 +16,8 @@ class Sort extends VariableTransform {
   Comparator<Tuple> compare;
 
   @override
-  bool operator ==(Object other) =>
-    other is Sort &&
-    super == other;
-    // compare is Function.
+  bool operator ==(Object other) => other is Sort && super == other;
+  // compare is Function.
 }
 
 class SortOp extends TransformOp {

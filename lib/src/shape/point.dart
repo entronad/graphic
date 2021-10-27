@@ -11,9 +11,9 @@ import 'util/render_basic_item.dart';
 import 'function.dart';
 
 /// The shape for the point element.
-/// 
+///
 /// See also:
-/// 
+///
 /// - [PointElement], which this shape is for.
 abstract class PointShape extends FunctionShape {
   @override
@@ -50,9 +50,9 @@ abstract class PointShapeBase extends PointShape {
 
   @override
   bool equalTo(Object other) =>
-    other is PointShapeBase &&
-    hollow == other.hollow &&
-    strokeWidth == other.strokeWidth;
+      other is PointShapeBase &&
+      hollow == other.hollow &&
+      strokeWidth == other.strokeWidth;
 
   @override
   List<Figure> renderItem(
@@ -104,19 +104,18 @@ class CircleShape extends PointShapeBase {
   }) : super(hollow, strokeWidth);
 
   @override
-  bool equalTo(Object other) =>
-    super.equalTo(other) &&
-    other is CircleShape;
+  bool equalTo(Object other) => super.equalTo(other) && other is CircleShape;
 
   @override
   Path path(Aes item, CoordConv coord) {
     final point = coord.convert(item.position.last);
     final size = item.size ?? defaultSize;
-    return Path()..addOval(Rect.fromCenter(
-      center: point,
-      width: size,
-      height: size,
-    ));
+    return Path()
+      ..addOval(Rect.fromCenter(
+        center: point,
+        width: size,
+        height: size,
+      ));
   }
 }
 
@@ -129,18 +128,17 @@ class SquareShape extends PointShapeBase {
   }) : super(hollow, strokeWidth);
 
   @override
-  bool equalTo(Object other) =>
-    super.equalTo(other) &&
-    other is SquareShape;
+  bool equalTo(Object other) => super.equalTo(other) && other is SquareShape;
 
   @override
   Path path(Aes item, CoordConv coord) {
     final point = coord.convert(item.position.last);
     final size = item.size ?? defaultSize;
-    return Path()..addRect(Rect.fromCenter(
-      center: point,
-      width: size,
-      height: size,
-    ));
+    return Path()
+      ..addRect(Rect.fromCenter(
+        center: point,
+        width: size,
+        height: size,
+      ));
   }
 }

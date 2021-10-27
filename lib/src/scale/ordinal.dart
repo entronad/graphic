@@ -3,27 +3,26 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'discrete.dart';
 
 /// The specification of a ordinal scale.
-/// 
+///
 /// It converts [String] to [int]s of natural number in order.
 class OrdinalScale extends DiscreteScale<String> {
   OrdinalScale({
     List<String>? values,
     double? align,
-
     String? title,
     String Function(String)? formatter,
     List<String>? ticks,
     int? tickCount,
     int? maxTickCount,
   }) : super(
-    values: values,
-    align: align,
-    title: title,
-    formatter: formatter,
-    ticks: ticks,
-    tickCount: tickCount,
-    maxTickCount: maxTickCount,
-  );
+          values: values,
+          align: align,
+          title: title,
+          formatter: formatter,
+          ticks: ticks,
+          tickCount: tickCount,
+          maxTickCount: maxTickCount,
+        );
 }
 
 class OrdinalScaleConv extends DiscreteScaleConv<String, OrdinalScale> {
@@ -37,7 +36,5 @@ class OrdinalScaleConv extends DiscreteScaleConv<String, OrdinalScale> {
   String defaultFormatter(String value) => value;
 
   @override
-  bool operator ==(Object other) =>
-    other is OrdinalScaleConv &&
-    super == other;
+  bool operator ==(Object other) => other is OrdinalScaleConv && super == other;
 }

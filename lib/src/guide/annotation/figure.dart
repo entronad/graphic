@@ -19,17 +19,15 @@ abstract class FigureAnnotation extends Annotation {
     this.variables,
     this.values,
     this.anchor,
-
     int? zIndex,
-  }) 
-    : assert(isSingle([variables, anchor], allowNone: true)),
-      assert(isSingle([values, anchor])),
-      super(
-        zIndex: zIndex,
-      );
+  })  : assert(isSingle([variables, anchor], allowNone: true)),
+        assert(isSingle([values, anchor])),
+        super(
+          zIndex: zIndex,
+        );
 
   /// The variables in each dimension refered to for position.
-  /// 
+  ///
   /// If null, the first variables assigned to each dimension are set by default.
   List<String>? variables;
 
@@ -37,21 +35,21 @@ abstract class FigureAnnotation extends Annotation {
   List? values;
 
   /// Indicates the anchor position of this annotation directly.
-  /// 
+  ///
   /// This is a function with chart size as input that you may need to calculate
   /// the position.
-  /// 
+  ///
   /// If set, this annotation's position will no longer determined by [variables]
   /// and [values], and can be out of the coordinate region.
   Offset Function(Size)? anchor;
 
   @override
   bool operator ==(Object other) =>
-    other is FigureAnnotation &&
-    super == other &&
-    DeepCollectionEquality().equals(variables, other.variables) &&
-    DeepCollectionEquality().equals(values, values);
-    // anchor is Function
+      other is FigureAnnotation &&
+      super == other &&
+      DeepCollectionEquality().equals(variables, other.variables) &&
+      DeepCollectionEquality().equals(values, values);
+  // anchor is Function
 }
 
 abstract class FigureAnnotOp extends Operator<List<Figure>?> {
@@ -107,7 +105,7 @@ class FigureAnnotRenderOp extends AnnotRenderOp<FigureAnnotScene> {
     final inRegion = params['inRegion'] as bool;
     final zIndex = params['zIndex'] as int;
     final coord = params['coord'] as CoordConv;
-    
+
     scene
       ..zIndex = zIndex
       ..figures = figures;

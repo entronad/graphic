@@ -101,11 +101,9 @@ num snapTo(List<num> values, num value) {
   return ceilingVal;
 }
 
-num snapFloor(List<num> values, num value) =>
-  _listFloor(values, value);
+num snapFloor(List<num> values, num value) => _listFloor(values, value);
 
-num snapCeiling(List<num> values, num value) =>
-  _listCeiling(values, value);
+num snapCeiling(List<num> values, num value) => _listCeiling(values, value);
 
 num snapFactorTo(num v, List<num> arr, [SnapType? snapType]) {
   if (v.isNaN) {
@@ -159,8 +157,8 @@ num fixedBase(num v, num base) {
   final index = str.indexOf('.');
   final indexOfExp = str.indexOf('e-');
   var length = indexOfExp >= 0
-    ? int.parse(str.substring(indexOfExp + 2), radix: 10)
-    : str.substring(index + 1).length;
+      ? int.parse(str.substring(indexOfExp + 2), radix: 10)
+      : str.substring(index + 1).length;
   if (length > 20) {
     length = 20;
   }

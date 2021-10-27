@@ -44,16 +44,18 @@ class PolygonPage extends StatelessWidget {
                       accessor: (List datum) => datum[2] as num,
                     ),
                   },
-                  elements: [PolygonElement(
-                    color: ColorAttr(
-                      variable: 'sales',
-                      values: [
-                        const Color(0xffbae7ff),
-                        const Color(0xff1890ff),
-                        const Color(0xff0050b3)
-                      ],
-                    ),
-                  )],
+                  elements: [
+                    PolygonElement(
+                      color: ColorAttr(
+                        variable: 'sales',
+                        values: [
+                          const Color(0xffbae7ff),
+                          const Color(0xff1890ff),
+                          const Color(0xff0050b3)
+                        ],
+                      ),
+                    )
+                  ],
                   axes: [
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
@@ -62,7 +64,6 @@ class PolygonPage extends StatelessWidget {
                   tooltip: TooltipGuide(),
                 ),
               ),
-
               Container(
                 child: const Text(
                   'Heatmap fade',
@@ -101,18 +102,24 @@ class PolygonPage extends StatelessWidget {
                       accessor: (List datum) => datum[2] as num,
                     ),
                   },
-                  elements: [PolygonElement(
-                    shape: ShapeAttr(value: HeatmapShape(borderRadius: BorderRadius.circular(4))),
-                    color: ColorAttr(
-                      variable: 'sales',
-                      values: [
-                        const Color(0xffbae7ff),
-                        const Color(0xff1890ff),
-                        const Color(0xff0050b3)
-                      ],
-                      onSelection: {'tap': {false: (color) => color.withAlpha(70)}},
-                    ),
-                  )],
+                  elements: [
+                    PolygonElement(
+                      shape: ShapeAttr(
+                          value: HeatmapShape(
+                              borderRadius: BorderRadius.circular(4))),
+                      color: ColorAttr(
+                        variable: 'sales',
+                        values: [
+                          const Color(0xffbae7ff),
+                          const Color(0xff1890ff),
+                          const Color(0xff0050b3)
+                        ],
+                        onSelection: {
+                          'tap': {false: (color) => color.withAlpha(70)}
+                        },
+                      ),
+                    )
+                  ],
                   axes: [
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
@@ -151,17 +158,21 @@ class PolygonPage extends StatelessWidget {
                       accessor: (List datum) => datum[2] as num,
                     ),
                   },
-                  elements: [PolygonElement(
-                    color: ColorAttr(
-                      variable: 'sales',
-                      values: [
-                        const Color(0xffbae7ff),
-                        const Color(0xff1890ff),
-                        const Color(0xff0050b3)
-                      ],
-                      onSelection: {'tap': {false: (color) => color.withAlpha(70)}},
-                    ),
-                  )],
+                  elements: [
+                    PolygonElement(
+                      color: ColorAttr(
+                        variable: 'sales',
+                        values: [
+                          const Color(0xffbae7ff),
+                          const Color(0xff1890ff),
+                          const Color(0xff0050b3)
+                        ],
+                        onSelection: {
+                          'tap': {false: (color) => color.withAlpha(70)}
+                        },
+                      ),
+                    )
+                  ],
                   coord: PolarCoord(),
                   selections: {'tap': PointSelection()},
                   tooltip: TooltipGuide(
@@ -170,7 +181,6 @@ class PolygonPage extends StatelessWidget {
                   ),
                 ),
               ),
-
               Container(
                 child: const Text(
                   'Polar Heatmap of Sector',
@@ -202,18 +212,22 @@ class PolygonPage extends StatelessWidget {
                       accessor: (List datum) => datum[2] as num,
                     ),
                   },
-                  elements: [PolygonElement(
-                    shape: ShapeAttr(value: HeatmapShape(sector: true)),
-                    color: ColorAttr(
-                      variable: 'sales',
-                      values: [
-                        const Color(0xffbae7ff),
-                        const Color(0xff1890ff),
-                        const Color(0xff0050b3)
-                      ],
-                      onSelection: {'tap': {false: (color) => color.withAlpha(70)}},
-                    ),
-                  )],
+                  elements: [
+                    PolygonElement(
+                      shape: ShapeAttr(value: HeatmapShape(sector: true)),
+                      color: ColorAttr(
+                        variable: 'sales',
+                        values: [
+                          const Color(0xffbae7ff),
+                          const Color(0xff1890ff),
+                          const Color(0xff0050b3)
+                        ],
+                        onSelection: {
+                          'tap': {false: (color) => color.withAlpha(70)}
+                        },
+                      ),
+                    )
+                  ],
                   coord: PolarCoord(),
                   selections: {'tap': PointSelection()},
                   tooltip: TooltipGuide(

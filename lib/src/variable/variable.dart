@@ -15,56 +15,54 @@ import 'transform/proportion.dart';
 import 'transform/sort.dart';
 
 /// Signature for [Variable.accessor].
-/// 
+///
 /// See also:
-/// 
+///
 /// - [Variable], which uses the signature to define an accessor.
 typedef Accessor<D, V> = V Function(D);
 
 /// The specification of a variable.
-/// 
+///
 /// Instead of raw [Chart.data], the chart reorgnize datum to "original value tuple"
 /// (See details in [Tuple]) for internal usage. The variable defines how to create
 /// a field in original value tuple form input datum, and the scale specification
 /// of the field.
-/// 
+///
 /// The generic [D] is the type of datum in [Chart.data] list, and [V] is the type
 /// of field value. [V] can only be [String], [num] or [DateTime].
-/// 
+///
 /// See also:
-/// 
+///
 /// - [Tuple], the original value tuple.
 class Variable<D, V> {
   /// Creates a variable specification.
   Variable({
     required this.accessor,
     this.scale,
-  }) : assert(
-    accessor is Accessor<D, String> ||
-    accessor is Accessor<D, num> ||
-    accessor is Accessor<D, DateTime>
-  );
+  }) : assert(accessor is Accessor<D, String> ||
+            accessor is Accessor<D, num> ||
+            accessor is Accessor<D, DateTime>);
 
   /// Indicates how to get the variable value from a datum.
   Accessor<D, V> accessor;
 
   /// Scale specification of this variable.
-  /// 
+  ///
   /// If null, a default scale is inferred from type [V], [OrdinalScale] for [String],
   /// [LinearScale] for [num], and [TimeScale] for [DateTime]
   Scale<V, num>? scale;
 
   @override
   bool operator ==(Object other) =>
-    other is Variable<D, V> &&
-    // accessor: Function
-    scale == other.scale;
+      other is Variable<D, V> &&
+      // accessor: Function
+      scale == other.scale;
 }
 
 /// params:
 /// - accessors: Map<String, accessor>
 /// - data: List<D>
-/// 
+///
 /// value: List<Tuple>
 /// Tuple tuples
 class VariableOp<D> extends Operator<List<Tuple>> {
@@ -131,7 +129,8 @@ void parseVariable<D>(
       } else if (transformSpec is Proportion) {
         final as = transformSpec.as;
         assert(scope.scaleSpecs[as] == null);
-        scope.scaleSpecs[as] = transformSpec.scale ?? LinearScale(min: 0, max: 1);
+        scope.scaleSpecs[as] =
+            transformSpec.scale ?? LinearScale(min: 0, max: 1);
 
         tuples = view.add(ProportionOp({
           'tuples': tuples,

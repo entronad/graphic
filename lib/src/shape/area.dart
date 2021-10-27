@@ -13,21 +13,21 @@ import 'util/render_basic_item.dart';
 import 'function.dart';
 
 /// The shape for the area element.
-/// 
+///
 /// See also:
-/// 
+///
 /// - [AreaElement], which this shape is for.
 abstract class AreaShape extends FunctionShape {
   @override
-  double get defaultSize =>
-    throw UnimplementedError('Area needs no size.');
+  double get defaultSize => throw UnimplementedError('Area needs no size.');
 
   @override
   List<Figure> renderItem(
     Aes item,
     CoordConv coord,
     Offset origin,
-  ) => throw UnimplementedError('Area only paints group.');
+  ) =>
+      throw UnimplementedError('Area only paints group.');
 }
 
 /// A basic area shape.
@@ -42,15 +42,13 @@ class BasicAreaShape extends AreaShape {
   final bool smooth;
 
   /// Whether to connect the last point to the first point.
-  /// 
+  ///
   /// This is usefull in the polar coordinate.
   final bool loop;
 
   @override
   bool equalTo(Object other) =>
-    other is BasicAreaShape &&
-    smooth == other.smooth &&
-    loop == other.loop;
+      other is BasicAreaShape && smooth == other.smooth && loop == other.loop;
 
   @override
   List<Figure> renderGroup(
@@ -59,7 +57,7 @@ class BasicAreaShape extends AreaShape {
     Offset origin,
   ) {
     assert(!(coord is PolarCoordConv && coord.transposed));
-    
+
     final segments = <List<List<Offset>>>[];
     final labels = <Aes, Offset>{};
 
@@ -81,14 +79,12 @@ class BasicAreaShape extends AreaShape {
     if (currentSegment.isNotEmpty) {
       segments.add(currentSegment);
     }
-    
-    if (
-      loop &&
-      group.first.position[0].dy.isFinite &&
-      group.first.position[1].dy.isFinite &&
-      group.last.position[0].dy.isFinite &&
-      group.last.position[1].dy.isFinite
-    ) {
+
+    if (loop &&
+        group.first.position[0].dy.isFinite &&
+        group.first.position[1].dy.isFinite &&
+        group.last.position[0].dy.isFinite &&
+        group.last.position[1].dy.isFinite) {
       // Because line can be broken by NaN, loop cannot use close.
       segments.last.add(segments.first.first);
     }
@@ -111,14 +107,7 @@ class BasicAreaShape extends AreaShape {
           true,
         );
         for (var s in segments) {
-          path.cubicTo(
-            s.cp1.dx,
-            s.cp1.dy,
-            s.cp2.dx,
-            s.cp2.dy,
-            s.p.dx,
-            s.p.dy
-          );
+          path.cubicTo(s.cp1.dx, s.cp1.dy, s.cp2.dx, s.cp2.dy, s.p.dx, s.p.dy);
         }
       } else {
         for (var point in ends) {
@@ -134,14 +123,7 @@ class BasicAreaShape extends AreaShape {
           true,
         );
         for (var s in segments) {
-          path.cubicTo(
-            s.cp1.dx,
-            s.cp1.dy,
-            s.cp2.dx,
-            s.cp2.dy,
-            s.p.dx,
-            s.p.dy
-          );
+          path.cubicTo(s.cp1.dx, s.cp1.dy, s.cp2.dx, s.cp2.dy, s.p.dx, s.p.dy);
         }
       } else {
         for (var point in reversedStarts) {

@@ -15,9 +15,7 @@ class View<D> extends Dataflow {
     Chart<D> spec,
     this.size,
     this.repaint,
-  )
-    : graffiti = Graffiti(size)
-  {
+  ) : graffiti = Graffiti(size) {
     parse<D>(spec, this);
 
     graffiti.sort();

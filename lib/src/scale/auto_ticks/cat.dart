@@ -12,7 +12,7 @@ int _getGreatestFactor(int count, int number) {
     }
   }
   if (i == 1) {
-    for (i = number; i > 0; i --) {
+    for (i = number; i > 0; i--) {
       if ((count - 1) % i == 0) {
         break;
       }
@@ -58,11 +58,10 @@ List<V> catAutoTicks<V>({
       return e != null;
     }).toList();
 
-    for (
-      var i = 1, groupLen = groups.length;
-      (i < groupLen) && (isRounding ? i * step < length - step : i < tickCount -1);
-      i++
-    ) {
+    for (var i = 1, groupLen = groups.length;
+        (i < groupLen) &&
+            (isRounding ? i * step < length - step : i < tickCount - 1);
+        i++) {
       ticks.add(groups[i]![0]);
     }
     if (categories.isNotEmpty) {

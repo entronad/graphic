@@ -27,14 +27,13 @@ class Dataflow {
     if (!op.isSouce) {
       _touch(op);
     }
-    
+
     if (op.consume) {
       _consumes.add(op);
     }
 
-    assert(op.rank > op.sources.values.fold<int>(
-      -1,
-      (rank, p) => max(rank, p.rank)),
+    assert(
+      op.rank > op.sources.values.fold<int>(-1, (rank, p) => max(rank, p.rank)),
     );
 
     return op;
@@ -105,8 +104,14 @@ class Dataflow {
     }
 
     _running = evaluate().then(
-      (_) {_running = null; return this;},
-      onError:  (error) {_running = null; throw error;},
+      (_) {
+        _running = null;
+        return this;
+      },
+      onError: (error) {
+        _running = null;
+        throw error;
+      },
     );
   }
 

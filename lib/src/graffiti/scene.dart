@@ -18,8 +18,7 @@ abstract class Scene {
   Path? clip;
 
   /// Set a region as clip.
-  void setRegionClip(Rect region) =>
-    clip = Path()..addRect(region);
+  void setRegionClip(Rect region) => clip = Path()..addRect(region);
 
   void paint(Canvas canvas) {
     if (figures != null) {

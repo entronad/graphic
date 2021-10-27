@@ -5,7 +5,5 @@ abstract class Reserveds {
   static const unitTag = '_:1';
 
   static bool legalIdentifiers(Iterable<String> identifiers) =>
-    identifiers.every((identifier) =>
-      identifier != unitTag
-    );
+      identifiers.every((identifier) => identifier != unitTag);
 }

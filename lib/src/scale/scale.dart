@@ -18,19 +18,19 @@ import 'linear.dart';
 import 'time.dart';
 
 /// The specification of a scale.
-/// 
+///
 /// A scale converts original tuple values to scaled values. For [DiscreteScale],
 /// the scaled value is an [int] of natural number, and for [ContinuousScale] is
 /// a [double] normalized to `[0, 1]`.
-/// 
+///
 /// Besides, variable meta data and axis tick settings are also specified in it's
 /// scale.
-/// 
+///
 /// The generic [V] is the type of original value, and [SV] is the type of scaled
 /// value.
-/// 
+///
 /// See also:
-/// 
+///
 /// - [Variable], a scale corresponds to a variable.
 /// - [AxisGuide], axis tick settings are specified the scale.
 abstract class Scale<V, SV extends num> {
@@ -44,14 +44,14 @@ abstract class Scale<V, SV extends num> {
   }) : assert(isSingle([ticks, tickCount, maxTickCount], allowNone: true));
 
   /// Title of the variable this scale corresponds to.
-  /// 
+  ///
   /// It represents the variable in [TooltipGuide], etc.
-  /// 
+  ///
   /// If null, it will be the same as variable name identifier.
   String? title;
 
   /// Convert the value to a [String] on the chart.
-  /// 
+  ///
   /// If null, a default [Object.toString] is used.
   String Function(V)? formatter;
 
@@ -62,18 +62,18 @@ abstract class Scale<V, SV extends num> {
   int? tickCount;
 
   /// The maximum count of axis ticks.
-  /// 
+  ///
   /// If set, the exact count will be calculated automaticly.
   int? maxTickCount;
 
   @override
   bool operator ==(Object other) =>
-    other is Scale<V, SV> &&
-    title == other.title &&
-    // formatter: Function
-    DeepCollectionEquality().equals(ticks, other.ticks) &&
-    tickCount == other.tickCount &&
-    maxTickCount == other.maxTickCount;
+      other is Scale<V, SV> &&
+      title == other.title &&
+      // formatter: Function
+      DeepCollectionEquality().equals(ticks, other.ticks) &&
+      tickCount == other.tickCount &&
+      maxTickCount == other.maxTickCount;
 }
 
 /// Also act like avatar of a variable, keeps it's meta information.
@@ -82,7 +82,7 @@ abstract class Scale<V, SV extends num> {
 ///     and filled in complete().
 abstract class ScaleConv<V, SV extends num> extends Converter<V, SV> {
   // Fields must be completed in the constructor to make sure it's non-null in run.
-  
+
   late String title;
 
   late String Function(V) formatter;
@@ -97,8 +97,7 @@ abstract class ScaleConv<V, SV extends num> extends Converter<V, SV> {
 
   /// Normalized value of zero, used to compose the normal
   ///     origin point of coord, and complete geom points.
-  double get normalZero =>
-    normalize(convert(zero));
+  double get normalZero => normalize(convert(zero));
 
   @protected
   V get zero;
@@ -108,19 +107,19 @@ abstract class ScaleConv<V, SV extends num> extends Converter<V, SV> {
 
   @override
   bool operator ==(Object other) =>
-    other is ScaleConv<V, SV> &&
-    // title don't need to be equal.
-    // formatter: Function
-    DeepCollectionEquality().equals(ticks, other.ticks);
+      other is ScaleConv<V, SV> &&
+      // title don't need to be equal.
+      // formatter: Function
+      DeepCollectionEquality().equals(ticks, other.ticks);
 }
 
 /// params:
 /// - specs: Map<String, Scale>, Scale specs of all variables.
-/// 
+///
 /// pulse:
 /// Tuple value pulse before scale,
 /// Only has rem to clear pre tuples and add to add new tuples.
-/// 
+///
 /// value: Map<String, ScaleConv>
 /// Scale converter of all variables.
 class ScaleConvOp extends Operator<Map<String, ScaleConv>> {
@@ -153,7 +152,7 @@ class ScaleConvOp extends Operator<Map<String, ScaleConv>> {
 /// params:
 /// convs: Map<String, ScaleConv>, Scale convertors.
 /// relay: Map<Tuple, Tuple>, Relation from tuple value tuple to scaled value tuple.
-/// 
+///
 /// pulse:
 /// Newly created scaled value pulse form a relay.
 /// Tuples are empty but change info is from the orininal value pulse.
@@ -162,7 +161,8 @@ class ScaleOp extends Operator<List<Scaled>> {
 
   @override
   List<Scaled> evaluate() {
-    final tuples = params['tuples'] as List<Tuple>;  // From tuple collect operator.
+    final tuples =
+        params['tuples'] as List<Tuple>; // From tuple collect operator.
     final convs = params['convs'] as Map<String, ScaleConv>;
 
     return tuples.map((tuple) {

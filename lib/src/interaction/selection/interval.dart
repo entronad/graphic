@@ -9,56 +9,54 @@ import 'package:graphic/src/util/math.dart';
 import 'selection.dart';
 
 /// The selection to select a continuous range of data values
-/// 
+///
 /// A rectangle mark is shown to depict the extents of the interval.
 class IntervalSelection extends Selection {
   /// Creates an interval selection.
   IntervalSelection({
     this.color,
     this.zIndex,
-
     int? dim,
     String? variable,
     Set<GestureType>? clear,
   }) : super(
-    dim: dim,
-    variable: variable,
-    clear: clear,
-  );
+          dim: dim,
+          variable: variable,
+          clear: clear,
+        );
 
   /// Color of the interval mark.
-  /// 
+  ///
   /// If null, a default `Color(0x10101010)` is set.
   Color? color;
 
   /// The z index of the interval mark.
-  /// 
+  ///
   /// If null, a default 0 is set.
   int? zIndex;
 
   @override
   bool operator ==(Object other) =>
-    other is IntervalSelection &&
-    super == other &&
-    color == other.color &&
-    zIndex == other.zIndex;
+      other is IntervalSelection &&
+      super == other &&
+      color == other.color &&
+      zIndex == other.zIndex;
 }
 
 class IntervalSelector extends Selector {
   IntervalSelector(
     this.color,
     this.zIndex,
-
     String name,
     int? dim,
     String? variable,
-    List<Offset> eventPoints,  // [start, end]
+    List<Offset> eventPoints, // [start, end]
   ) : super(
-    name,
-    dim,
-    variable,
-    eventPoints,
-  );
+          name,
+          dim,
+          variable,
+          eventPoints,
+        );
 
   final Color color;
 
@@ -128,7 +126,10 @@ List<Figure>? renderIntervalSelector(
   Offset start,
   Offset end,
   Color color,
-) => [PathFigure(
-  Path()..addRect(Rect.fromPoints(start, end)),
-  Paint()..color = color,
-)];
+) =>
+    [
+      PathFigure(
+        Path()..addRect(Rect.fromPoints(start, end)),
+        Paint()..color = color,
+      )
+    ];

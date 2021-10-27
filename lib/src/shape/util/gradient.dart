@@ -3,7 +3,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/painting.dart';
 
 Offset _toPoint(AlignmentGeometry align, Rect region) {
-  final al = align as Alignment;  // Only Alignment is allowed for graphic gradient properties.
+  final al = align
+      as Alignment; // Only Alignment is allowed for graphic gradient properties.
 
   return Offset(
     (region.width / (1 - (-1))) * (al.x - (-1)) + region.left,

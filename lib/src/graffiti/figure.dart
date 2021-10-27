@@ -3,15 +3,15 @@ import 'dart:ui';
 import 'package:flutter/painting.dart';
 
 /// The base class of figures.
-/// 
+///
 /// A figure keeps information to paint a shape or text. The chart generates figures
 /// from rendering methods in evaluation, they are the material for rendering engine
 /// to paint the chart.
-/// 
+///
 /// In custom rendering methods, user's task is to return figures needed.
 abstract class Figure {
   /// Paints this figure.
-  /// 
+  ///
   /// This method should only be override by subclass.
   void paint(Canvas canvas);
 }
@@ -20,7 +20,7 @@ abstract class Figure {
 class PathFigure extends Figure {
   /// Creates a path figure.
   PathFigure(this.path, this.style);
-  
+
   /// The path to paint.
   final Path path;
 
@@ -28,8 +28,7 @@ class PathFigure extends Figure {
   final Paint style;
 
   @override
-  void paint(Canvas canvas) =>
-    canvas.drawPath(path, style);
+  void paint(Canvas canvas) => canvas.drawPath(path, style);
 }
 
 /// The figure to paint the shadow of a path.
@@ -52,17 +51,17 @@ class ShadowFigure extends Figure {
 
   @override
   void paint(Canvas canvas) => canvas.drawShadow(
-    path,
-    color,
-    elevation,
-    true,
-  );
+        path,
+        color,
+        elevation,
+        true,
+      );
 }
 
 /// The figure to paint text.
-/// 
+///
 /// See also:
-/// 
+///
 /// - [RotatedTextFigure], to paint a rotated text.
 class TextFigure extends Figure {
   /// Creates a text figure.
@@ -75,8 +74,7 @@ class TextFigure extends Figure {
   final Offset offset;
 
   @override
-  void paint(Canvas canvas) =>
-    painter.paint(canvas, offset);
+  void paint(Canvas canvas) => painter.paint(canvas, offset);
 }
 
 /// The figure to paint a rotated text.

@@ -16,23 +16,21 @@ class ColorAttr extends ChannelAttr<Color> {
     List<double>? stops,
     Color Function(Tuple)? encode,
     Map<String, Map<bool, SelectionUpdate<Color>>>? onSelection,
-  })
-    : assert(isSingle([value, variable, encode])),
-      super(
-        value: value,
-        variable: variable,
-        values: values,
-        stops: stops,
-        encode: encode,
-        onSelection: onSelection,
-      );
+  })  : assert(isSingle([value, variable, encode])),
+        super(
+          value: value,
+          variable: variable,
+          values: values,
+          stops: stops,
+          encode: encode,
+          onSelection: onSelection,
+        );
 }
 
 class ContinuousColorConv extends ContinuousChannelConv<Color> {
   ContinuousColorConv(List<Color> values, List<double> stops)
-    : super(values, stops);
+      : super(values, stops);
 
   @override
-  Color lerp(Color a, Color b, double t) =>
-    Color.lerp(a, b, t)!;
+  Color lerp(Color a, Color b, double t) => Color.lerp(a, b, t)!;
 }

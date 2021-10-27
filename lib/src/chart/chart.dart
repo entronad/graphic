@@ -20,14 +20,14 @@ import 'package:graphic/src/variable/variable.dart';
 import 'view.dart';
 
 /// A widget to display the chart.
-/// 
+///
 /// Specifications details of data visualization are seen in this class properties.
 /// The are set in the constructor[new Chart].
-/// 
+///
 /// Usually, if any specification or data is changed, the chart will rebuild or
 /// reevaluate automatically. Some subtle setting is controlled by [rebuild] and
 /// [changeData].
-/// 
+///
 /// The generic [D] is the type of datum in [data] list.
 class Chart<D> extends StatefulWidget {
   /// Creates a chart widget.
@@ -51,20 +51,20 @@ class Chart<D> extends StatefulWidget {
   final List<D> data;
 
   /// The behavior of data reevaluation when widget is updated.
-  /// 
+  ///
   /// If null, new [data] will be compared with the old one, a [ChangeDataSignal]
   /// will be emitted and the chart will be reevaluated only when they are not the
   /// same instance.
-  /// 
+  ///
   /// If true, a [ChangeDataSignal] will always be emitted and the chart will always
   /// be reevaluated.
-  /// 
+  ///
   /// If false, a [ChangeDataSignal] will never be emitted and the chart will never
   /// be reevaluated.
   final bool? changeData;
 
   /// Name identifiers and specifications of variables.
-  /// 
+  ///
   /// The name identifier string will represent the variable in other specifications.
   final Map<String, Variable<D, dynamic>> variables;
 
@@ -75,15 +75,15 @@ class Chart<D> extends StatefulWidget {
   final List<GeomElement> elements;
 
   /// Specification of the coordinate.
-  /// 
+  ///
   /// If null, a default [RectCoord] is set.
   final Coord? coord;
 
   /// The padding from coordinate region to the widget border.
-  /// 
+  ///
   /// Usually, the [axes] is attached to the border of coordinate region (See details
   /// in [Coord]), and in the [padding] space.
-  /// 
+  ///
   /// If null, a default `EdgeInsets.fromLTRB(40, 5, 10, 20)` for [RectCoord] and
   /// `EdgeInsets.all(10)` for [PolarCoord] is set.
   final EdgeInsets? padding;
@@ -101,36 +101,36 @@ class Chart<D> extends StatefulWidget {
   final List<Annotation>? annotations;
 
   /// Name identifiers and specifications of selection definitions.
-  /// 
+  ///
   /// The name identifier string will represent the selection in other specifications.
   final Map<String, Selection>? selections;
 
   /// The behavior when widget is updated.
-  /// 
+  ///
   /// If null, new [Chart] will be compared with the old one, and chart will rebuild
   /// only when specifications are changed.
-  /// 
+  ///
   /// If true, chart will always rebuild.
-  /// 
+  ///
   /// If false, chart will never rebuild.
   final bool? rebuild;
 
   /// Checks the equlity of two chart specifications.
   bool equalSpecTo(Object other) =>
-    other is Chart<D> &&
-    // data are checked by changeData.
-    changeData == other.changeData &&
-    DeepCollectionEquality().equals(variables, other.variables) &&
-    DeepCollectionEquality().equals(transforms, other.transforms) &&
-    DeepCollectionEquality().equals(elements, other.elements) &&
-    coord == other.coord &&
-    padding == other.padding &&
-    DeepCollectionEquality().equals(axes, other.axes) &&
-    tooltip == other.tooltip &&
-    crosshair == other.crosshair &&
-    DeepCollectionEquality().equals(annotations, other.annotations) &&
-    DeepCollectionEquality().equals(selections, other.selections) &&
-    rebuild == other.rebuild;
+      other is Chart<D> &&
+      // data are checked by changeData.
+      changeData == other.changeData &&
+      DeepCollectionEquality().equals(variables, other.variables) &&
+      DeepCollectionEquality().equals(transforms, other.transforms) &&
+      DeepCollectionEquality().equals(elements, other.elements) &&
+      coord == other.coord &&
+      padding == other.padding &&
+      DeepCollectionEquality().equals(axes, other.axes) &&
+      tooltip == other.tooltip &&
+      crosshair == other.crosshair &&
+      DeepCollectionEquality().equals(annotations, other.annotations) &&
+      DeepCollectionEquality().equals(selections, other.selections) &&
+      rebuild == other.rebuild;
 
   @override
   _ChartState<D> createState() => _ChartState<D>();
@@ -160,10 +160,8 @@ class _ChartState<D> extends State<Chart<D>> {
 
     if (widget.rebuild ?? !widget.equalSpecTo(oldWidget)) {
       view = null;
-    } else if (
-      widget.changeData == true ||
-      (widget.changeData == null && widget.data != oldWidget.data)
-    ) {
+    } else if (widget.changeData == true ||
+        (widget.changeData == null && widget.data != oldWidget.data)) {
       view!.changeData(widget.data);
     }
   }
@@ -652,7 +650,7 @@ class _ChartLayoutDelegate<D> extends SingleChildLayoutDelegate {
     } else if (size != state.view!.size) {
       state.view!.resize(size);
     }
-    
+
     return super.getPositionForChild(size, childSize);
   }
 }
@@ -671,5 +669,5 @@ class _ChartPainter<D> extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) =>
-    this != oldDelegate;
+      this != oldDelegate;
 }

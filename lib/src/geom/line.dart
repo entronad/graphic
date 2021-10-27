@@ -13,12 +13,12 @@ import 'function.dart';
 import 'modifier/modifier.dart';
 
 /// The specification of a line element.
-/// 
+///
 /// A line graphing visits all points and connets all points with a line. Note this
 /// definition is more like the *path* in the Grammer of Graphics.
-/// 
+///
 /// It will check and complete position points by the rule of:
-/// 
+///
 /// ```
 /// [point] => [point]
 /// ```
@@ -37,18 +37,18 @@ class LineElement extends FunctionElement<LineShape> {
     String? groupBy,
     Map<String, Set<int>>? selected,
   }) : super(
-    color: color,
-    elevation: elevation,
-    gradient: gradient,
-    label: label,
-    position: position,
-    shape: shape,
-    size: size,
-    modifiers: modifiers,
-    zIndex: zIndex,
-    groupBy: groupBy,
-    selected: selected,
-  );
+          color: color,
+          elevation: elevation,
+          gradient: gradient,
+          label: label,
+          position: position,
+          shape: shape,
+          size: size,
+          modifiers: modifiers,
+          zIndex: zIndex,
+          groupBy: groupBy,
+          selected: selected,
+        );
 }
 
 /// [point] => [point]

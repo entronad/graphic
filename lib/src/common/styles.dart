@@ -15,17 +15,14 @@ class StrokeStyle {
   double width;
 
   bool operator ==(Object other) =>
-    other is StrokeStyle &&
-    color == other.color &&
-    width == other.width;
-  
+      other is StrokeStyle && color == other.color && width == other.width;
+
   /// Gets [Paint] object from this stroke style.
-  /// 
+  ///
   /// If [paint] set, the result will be applied to it.
-  Paint toPaint([Paint? paint]) =>
-    (paint ?? Paint())
-      // This setting is a must, or the Canvas.drawPath will not render the stoke.
-      ..style = PaintingStyle.stroke
-      ..color = color
-      ..strokeWidth = width;
+  Paint toPaint([Paint? paint]) => (paint ?? Paint())
+    // This setting is a must, or the Canvas.drawPath will not render the stoke.
+    ..style = PaintingStyle.stroke
+    ..color = color
+    ..strokeWidth = width;
 }

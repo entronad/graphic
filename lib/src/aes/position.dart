@@ -24,7 +24,7 @@ class PositionEncoder extends Encoder<List<Offset>> {
 
   final Map<String, ScaleConv> scales;
 
-  final PositionCompleter completer;  // Defined by each geom.
+  final PositionCompleter completer; // Defined by each geom.
 
   final Offset origin;
 
@@ -32,11 +32,13 @@ class PositionEncoder extends Encoder<List<Offset>> {
   List<Offset> encode(Scaled scaled, Tuple tuple) {
     final position = <Offset>[];
     for (var term in form) {
-      if (term.length == 1) {  // For dim 1 coord.
+      if (term.length == 1) {
+        // For dim 1 coord.
         position.add(Offset(
-          0,  // Fill the domain dim.
-              // This is an arbitry value, and will be replaced by dimFill in coord converter.
-          scales[term[0]]!.normalize(scaled[term[0]]!),  // The only factor is regarded as measure dim.
+          0, // Fill the domain dim.
+          // This is an arbitry value, and will be replaced by dimFill in coord converter.
+          scales[term[0]]!.normalize(
+              scaled[term[0]]!), // The only factor is regarded as measure dim.
         ));
       } else {
         position.add(Offset(
@@ -82,7 +84,7 @@ class PositionOp extends Operator<PositionEncoder> {
 /// params:
 /// - form: AlgForm
 /// - scales: Map<String, ScaleConv>, Scale convertors.
-/// 
+///
 /// value: Offset
 /// The abstract origin point
 class OriginOp extends Operator<Offset> {

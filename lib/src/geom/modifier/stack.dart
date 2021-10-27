@@ -5,19 +5,17 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'modifier.dart';
 
 /// The specification of a stack modifier.
-/// 
+///
 /// The stack method cummulates elements in order of the values on a splitter.
 /// It makes every point in a position adds the top point y of corresponding position
 /// of the previous group.
-/// 
+///
 /// To be meaningfull:
 /// - For all groups, x must be of same ordered discrete values.
 /// - Y values must be all positive or all negtive.
 class StackModifier extends Modifier {
   @override
-  bool operator ==(Object other) =>
-    other is StackModifier &&
-    super == other;
+  bool operator ==(Object other) => other is StackModifier && super == other;
 }
 
 class StackGeomModifier extends GeomModifier {
@@ -27,7 +25,7 @@ class StackGeomModifier extends GeomModifier {
 
   /// Stack means every point in a position adds the top
   ///     point y of corresponding position of privior group.
-  /// 
+  ///
   /// To be meaningfull:
   ///     - For all groups, x must be same ordered discrete values.
   ///     - Y must be all positive or all negtive.
@@ -44,7 +42,9 @@ class StackGeomModifier extends GeomModifier {
         for (var point in prePosition) {
           final y = point.dy;
           if (y.isFinite) {
-            preTop = (preTop - normalZero).abs() >= (y - normalZero).abs() ? preTop : y;
+            preTop = (preTop - normalZero).abs() >= (y - normalZero).abs()
+                ? preTop
+                : y;
           }
         }
 

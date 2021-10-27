@@ -8,12 +8,12 @@ import 'package:graphic/src/shape/util/gradient.dart';
 import '../shape.dart';
 
 /// Renders a basic element item.
-/// 
+///
 /// This is a util function for implementing [Shape.renderGroup] and [Shape.renderItem].
 /// The [path] should be calculated before it and label is not rendered in it.
-/// 
+///
 /// See also
-/// 
+///
 /// - [Shape.renderGroup] and [Shape.renderItem], where this function is usually used.
 /// - [renderLabel], which renders an item label.
 List<Figure> renderBasicItem(
@@ -33,11 +33,9 @@ List<Figure> renderBasicItem(
   } else {
     style.color = aes.color!;
   }
-  style.style = hollow
-    ? PaintingStyle.stroke
-    : PaintingStyle.fill;
+  style.style = hollow ? PaintingStyle.stroke : PaintingStyle.fill;
   style.strokeWidth = strokeWidth;
-  
+
   if (aes.elevation != null && aes.elevation != 0) {
     Color? shadowColor;
     if (aes.gradient != null) {

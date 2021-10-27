@@ -16,7 +16,7 @@ import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/util/path.dart';
 
 /// The specification of a crosshair
-/// 
+///
 /// A corsshair indicates the position of the pointer or the selected point.
 class CrosshairGuide {
   /// Creates a crosshair.
@@ -29,44 +29,44 @@ class CrosshairGuide {
   });
 
   /// The selection this crosshair reacts to.
-  /// 
+  ///
   /// If null, the first selection is set by default.
   String? selection;
 
   /// The stroke styles of crosshair lines for each dimension.
-  /// 
+  ///
   /// If null a default `[StrokeStyle(color: Color(0xffbfbfbf)), StrokeStyle(color: Color(0xffbfbfbf))]`
   /// is set.
   List<StrokeStyle?>? styles;
 
   /// Whether the position for each dimension follows the pointer or stick to selected
   /// points.
-  /// 
+  ///
   /// If null, a default `[false, false]` is set.
   List<bool>? followPointer;
 
   /// The z index of this crosshair.
-  /// 
+  ///
   /// If null, a default 0 is set.
   int? zIndex;
 
   /// Which element series this crosshair reacts to.
-  /// 
+  ///
   /// This is an index in [Chart.elements].
-  /// 
+  ///
   /// The crosshair can only reacts to one element series.
-  /// 
+  ///
   /// If null, the first element series is set by default.
   int? element;
 
   @override
   bool operator ==(Object other) =>
-    other is CrosshairGuide &&
-    selection == other.selection &&
-    DeepCollectionEquality().equals(styles, other.styles) &&
-    DeepCollectionEquality().equals(followPointer, other.followPointer) &&
-    zIndex == other.zIndex &&
-    element == other.element;
+      other is CrosshairGuide &&
+      selection == other.selection &&
+      DeepCollectionEquality().equals(styles, other.styles) &&
+      DeepCollectionEquality().equals(followPointer, other.followPointer) &&
+      zIndex == other.zIndex &&
+      element == other.element;
 }
 
 class CrosshairScene extends Scene {
@@ -92,11 +92,7 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
     final styles = params['styles'] as List<StrokeStyle?>;
     final followPointer = params['followPointer'] as List<bool>;
 
-    if (
-      selector == null ||
-      selects == null ||
-      selector.name != selectorName
-    ) {
+    if (selector == null || selects == null || selector.name != selectorName) {
       scene.figures = null;
       return;
     }
@@ -154,9 +150,8 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
     } else {
       final polarCoord = coord as PolarCoordConv;
       if (canvasStyleX != null) {
-        final angle = polarCoord.convertAngle(
-          polarCoord.transposed ? cross.dy : cross.dx
-        );
+        final angle = polarCoord
+            .convertAngle(polarCoord.transposed ? cross.dy : cross.dx);
         figures.add(PathFigure(
           Paths.line(
             from: polarCoord.polarToOffset(angle, coord.startRadius),
@@ -166,17 +161,16 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
         ));
       }
       if (canvasStyleY != null) {
-        final r = polarCoord.convertRadius(
-          polarCoord.transposed ? cross.dx : cross.dy
-        );
+        final r = polarCoord
+            .convertRadius(polarCoord.transposed ? cross.dx : cross.dy);
         figures.add(PathFigure(
-          Path()..addArc(
-            Rect.fromCircle(center: coord.center, radius: r),
-            coord.startAngle,
-            coord.endAngle - coord.startAngle,
-          ),
-          canvasStyleY.toPaint()
-            ..style = PaintingStyle.stroke,
+          Path()
+            ..addArc(
+              Rect.fromCircle(center: coord.center, radius: r),
+              coord.startAngle,
+              coord.endAngle - coord.startAngle,
+            ),
+          canvasStyleY.toPaint()..style = PaintingStyle.stroke,
         ));
       }
     }

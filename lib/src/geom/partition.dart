@@ -11,9 +11,10 @@ import 'element.dart';
 import 'modifier/modifier.dart';
 
 /// The specification of a partition element.
-/// 
+///
 /// Partitions separete a set of points into two or more subsets.
-abstract class PartitionElement<S extends PartitionShape> extends GeomElement<S> {
+abstract class PartitionElement<S extends PartitionShape>
+    extends GeomElement<S> {
   /// Creates a partition element.
   PartitionElement({
     ColorAttr? color,
@@ -28,16 +29,16 @@ abstract class PartitionElement<S extends PartitionShape> extends GeomElement<S>
     String? groupBy,
     Map<String, Set<int>>? selected,
   }) : super(
-    color: color,
-    elevation: elevation,
-    gradient: gradient,
-    label: label,
-    position: position,
-    shape: shape,
-    size: size,
-    modifiers: modifiers,
-    zIndex: zIndex,
-    groupBy: groupBy,
-    selected: selected,
-  );
+          color: color,
+          elevation: elevation,
+          gradient: gradient,
+          label: label,
+          position: position,
+          shape: shape,
+          size: size,
+          modifiers: modifiers,
+          zIndex: zIndex,
+          groupBy: groupBy,
+          selected: selected,
+        );
 }

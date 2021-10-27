@@ -13,10 +13,10 @@ import 'element.dart';
 import 'modifier/modifier.dart';
 
 /// The specification of a custom element.
-/// 
+///
 /// A custom element has no special graphing rule, its graph is determined by the
 /// [CustomShape].
-/// 
+///
 /// it will not check or complete the position points.
 class CustomElement extends GeomElement<CustomShape> {
   /// Creates a custom element.
@@ -33,18 +33,18 @@ class CustomElement extends GeomElement<CustomShape> {
     String? groupBy,
     Map<String, Set<int>>? selected,
   }) : super(
-    color: color,
-    elevation: elevation,
-    gradient: gradient,
-    label: label,
-    position: position,
-    shape: shape,
-    size: size,
-    modifiers: modifiers,
-    zIndex: zIndex,
-    groupBy: groupBy,
-    selected: selected,
-  );
+          color: color,
+          elevation: elevation,
+          gradient: gradient,
+          label: label,
+          position: position,
+          shape: shape,
+          size: size,
+          modifiers: modifiers,
+          zIndex: zIndex,
+          groupBy: groupBy,
+          selected: selected,
+        );
 }
 
 /// any => any

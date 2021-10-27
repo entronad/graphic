@@ -68,18 +68,22 @@ class PointPage extends StatelessWidget {
                       accessor: (List datum) => datum[4].toString(),
                     ),
                   },
-                  elements: [PointElement(
-                    size: SizeAttr(variable: '2', values: [5, 20]),
-                    color: ColorAttr(
-                      variable: '4',
-                      values: Defaults.colors10,
-                      onSelection: {'choose': {true: (_) => Colors.red}},
-                    ),
-                    shape: ShapeAttr(variable: '4', values: [
-                      CircleShape(hollow: true),
-                      SquareShape(hollow: true),
-                    ]),
-                  )],
+                  elements: [
+                    PointElement(
+                      size: SizeAttr(variable: '2', values: [5, 20]),
+                      color: ColorAttr(
+                        variable: '4',
+                        values: Defaults.colors10,
+                        onSelection: {
+                          'choose': {true: (_) => Colors.red}
+                        },
+                      ),
+                      shape: ShapeAttr(variable: '4', values: [
+                        CircleShape(hollow: true),
+                        SquareShape(hollow: true),
+                      ]),
+                    )
+                  ],
                   axes: [
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
@@ -98,7 +102,6 @@ class PointPage extends StatelessWidget {
                   ),
                 ),
               ),
-
               Container(
                 child: const Text(
                   'Interval selection',
@@ -147,18 +150,22 @@ class PointPage extends StatelessWidget {
                       accessor: (List datum) => datum[4].toString(),
                     ),
                   },
-                  elements: [PointElement(
-                    size: SizeAttr(variable: '2', values: [5, 20]),
-                    color: ColorAttr(
-                      variable: '4',
-                      values: Defaults.colors10,
-                      onSelection: {'choose': {true: (_) => Colors.red}},
-                    ),
-                    shape: ShapeAttr(variable: '4', values: [
-                      CircleShape(hollow: true),
-                      SquareShape(hollow: true),
-                    ]),
-                  )],
+                  elements: [
+                    PointElement(
+                      size: SizeAttr(variable: '2', values: [5, 20]),
+                      color: ColorAttr(
+                        variable: '4',
+                        values: Defaults.colors10,
+                        onSelection: {
+                          'choose': {true: (_) => Colors.red}
+                        },
+                      ),
+                      shape: ShapeAttr(variable: '4', values: [
+                        CircleShape(hollow: true),
+                        SquareShape(hollow: true),
+                      ]),
+                    )
+                  ],
                   axes: [
                     Defaults.horizontalAxis
                       ..position = 0.5
@@ -181,7 +188,6 @@ class PointPage extends StatelessWidget {
                   ),
                 ),
               ),
-
               Container(
                 child: const Text(
                   'Polar Scatter Chart',
@@ -216,18 +222,22 @@ class PointPage extends StatelessWidget {
                       accessor: (List datum) => datum[4].toString(),
                     ),
                   },
-                  elements: [PointElement(
-                    size: SizeAttr(variable: '2', values: [5, 20]),
-                    color: ColorAttr(
-                      variable: '4',
-                      values: Defaults.colors10,
-                      onSelection: {'choose': {true: (_) => Colors.red}},
-                    ),
-                    shape: ShapeAttr(variable: '4', values: [
-                      CircleShape(hollow: true),
-                      SquareShape(hollow: true),
-                    ]),
-                  )],
+                  elements: [
+                    PointElement(
+                      size: SizeAttr(variable: '2', values: [5, 20]),
+                      color: ColorAttr(
+                        variable: '4',
+                        values: Defaults.colors10,
+                        onSelection: {
+                          'choose': {true: (_) => Colors.red}
+                        },
+                      ),
+                      shape: ShapeAttr(variable: '4', values: [
+                        CircleShape(hollow: true),
+                        SquareShape(hollow: true),
+                      ]),
+                    )
+                  ],
                   axes: [
                     Defaults.circularAxis,
                     Defaults.radialAxis,
@@ -239,16 +249,19 @@ class PointPage extends StatelessWidget {
                     align: Alignment.bottomRight,
                     multiTuples: true,
                   ),
-                  annotations: [TagAnnotation(
-                    label: Label('DANGER', LabelStyle(const TextStyle(
-                      color: Colors.red,
-                      fontSize: 12,
-                    ))),
-                    values: [45000, 65],
-                  )],
+                  annotations: [
+                    TagAnnotation(
+                      label: Label(
+                          'DANGER',
+                          LabelStyle(const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                          ))),
+                      values: [45000, 65],
+                    )
+                  ],
                 ),
               ),
-
               Container(
                 child: const Text(
                   '1D Scatter Chart',
@@ -268,9 +281,11 @@ class PointPage extends StatelessWidget {
                       scale: LinearScale(min: 0),
                     ),
                   },
-                  elements: [PointElement(
-                    position: Varset('value'),
-                  )],
+                  elements: [
+                    PointElement(
+                      position: Varset('value'),
+                    )
+                  ],
                   axes: [
                     Defaults.verticalAxis,
                   ],

@@ -3,9 +3,9 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'transform.dart';
 
 /// The transform to get tuples that satisfy a certain predicate.
-/// 
+///
 /// This may reduce the length of original value tuples.
-/// 
+///
 /// See also:
 /// - [Tuple], the original value tuple.
 class Filter extends VariableTransform {
@@ -18,10 +18,8 @@ class Filter extends VariableTransform {
   bool Function(Tuple) test;
 
   @override
-  bool operator ==(Object other) =>
-    other is Filter &&
-    super == other;
-    // filter is Function.
+  bool operator ==(Object other) => other is Filter && super == other;
+  // filter is Function.
 }
 
 class FilterOp extends TransformOp {

@@ -53,13 +53,15 @@ class LineAreaPage extends StatelessWidget {
                       scale: OrdinalScale(tickCount: 5),
                     ),
                     'Close': Variable(
-                      accessor: (Map map) => (map['Close'] ?? double.nan) as num,
+                      accessor: (Map map) =>
+                          (map['Close'] ?? double.nan) as num,
                     ),
                   },
                   elements: [
                     AreaElement(
                       shape: ShapeAttr(value: BasicAreaShape(smooth: true)),
-                      color: ColorAttr(value: Defaults.colors10.first.withAlpha(80)),
+                      color: ColorAttr(
+                          value: Defaults.colors10.first.withAlpha(80)),
                     ),
                     LineElement(
                       shape: ShapeAttr(value: BasicLineShape(smooth: true)),
@@ -70,10 +72,16 @@ class LineAreaPage extends StatelessWidget {
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
                   ],
-                  selections: {'touchMove': PointSelection(
-                    on: {GestureType.scaleUpdate, GestureType.tapDown, GestureType.longPressMoveUpdate},
-                    dim: 1,
-                  )},
+                  selections: {
+                    'touchMove': PointSelection(
+                      on: {
+                        GestureType.scaleUpdate,
+                        GestureType.tapDown,
+                        GestureType.longPressMoveUpdate
+                      },
+                      dim: 1,
+                    )
+                  },
                   tooltip: TooltipGuide(
                     followPointer: [false, true],
                     align: Alignment.topLeft,
@@ -82,7 +90,6 @@ class LineAreaPage extends StatelessWidget {
                   crosshair: CrosshairGuide(followPointer: [false, true]),
                 ),
               ),
-
               Container(
                 child: const Text(
                   'River chart',
@@ -124,11 +131,17 @@ class LineAreaPage extends StatelessWidget {
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
                   ],
-                  selections: {'touchMove': PointSelection(
-                    on: {GestureType.scaleUpdate, GestureType.tapDown, GestureType.longPressMoveUpdate},
-                    dim: 1,
-                    variable: 'date',
-                  )},
+                  selections: {
+                    'touchMove': PointSelection(
+                      on: {
+                        GestureType.scaleUpdate,
+                        GestureType.tapDown,
+                        GestureType.longPressMoveUpdate
+                      },
+                      dim: 1,
+                      variable: 'date',
+                    )
+                  },
                   tooltip: TooltipGuide(
                     followPointer: [false, true],
                     align: Alignment.topLeft,
@@ -139,7 +152,6 @@ class LineAreaPage extends StatelessWidget {
                   crosshair: CrosshairGuide(followPointer: [false, true]),
                 ),
               ),
-
               Container(
                 child: const Text(
                   'Spider Net Chart',
@@ -171,22 +183,31 @@ class LineAreaPage extends StatelessWidget {
                       accessor: (Map map) => map['value'] as num,
                     ),
                   },
-                  elements: [LineElement(
-                    shape: ShapeAttr(value: BasicLineShape(loop: true)),
-                    position: Varset('index') * Varset('value'),
-                    groupBy: 'type',
-                    color: ColorAttr(variable: 'type', values: Defaults.colors10),
-                  )],
+                  elements: [
+                    LineElement(
+                      shape: ShapeAttr(value: BasicLineShape(loop: true)),
+                      position: Varset('index') * Varset('value'),
+                      groupBy: 'type',
+                      color: ColorAttr(
+                          variable: 'type', values: Defaults.colors10),
+                    )
+                  ],
                   coord: PolarCoord(),
                   axes: [
                     Defaults.circularAxis,
                     Defaults.radialAxis,
                   ],
-                  selections: {'touchMove': PointSelection(
-                    on: {GestureType.scaleUpdate, GestureType.tapDown, GestureType.longPressMoveUpdate},
-                    dim: 1,
-                    variable: 'index',
-                  )},
+                  selections: {
+                    'touchMove': PointSelection(
+                      on: {
+                        GestureType.scaleUpdate,
+                        GestureType.tapDown,
+                        GestureType.longPressMoveUpdate
+                      },
+                      dim: 1,
+                      variable: 'index',
+                    )
+                  },
                   tooltip: TooltipGuide(
                     anchor: (_) => Offset.zero,
                     align: Alignment.bottomRight,

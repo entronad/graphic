@@ -81,13 +81,14 @@ class BigdataPage extends StatelessWidget {
                       accessor: (List<num> datumn) => datumn[3],
                     ),
                   },
-                  elements: [PointElement(
-                    size: SizeAttr(variable: 'size', values: [1, 4]),
-                    color: ColorAttr(variable: 'color', values: [
-                      const Color(0xffbae7ff),
-                      const Color(0xff0050b3),
-                    ])
-                  )],
+                  elements: [
+                    PointElement(
+                        size: SizeAttr(variable: 'size', values: [1, 4]),
+                        color: ColorAttr(variable: 'color', values: [
+                          const Color(0xffbae7ff),
+                          const Color(0xff0050b3),
+                        ]))
+                  ],
                   axes: [
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,

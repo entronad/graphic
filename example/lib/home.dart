@@ -18,7 +18,7 @@ class PageCard extends StatelessWidget {
     required Key key,
     required this.package,
     required this.onPressed,
-  }):super(key: key);
+  }) : super(key: key);
 
   final Page package;
   final Function onPressed;
@@ -29,13 +29,13 @@ class PageCard extends StatelessWidget {
     final TextStyle descriptionStyle = theme.textTheme.bodyText2!;
 
     return Container(
-      padding: const EdgeInsets.all(4.0),
-      child: GestureDetector(
-        onTap: () {
-          onPressed(package.endPoint);
-        },
-        child: Card(
-          child: DefaultTextStyle(
+        padding: const EdgeInsets.all(4.0),
+        child: GestureDetector(
+          onTap: () {
+            onPressed(package.endPoint);
+          },
+          child: Card(
+              child: DefaultTextStyle(
             maxLines: 3,
             softWrap: false,
             overflow: TextOverflow.ellipsis,
@@ -47,15 +47,16 @@ class PageCard extends StatelessWidget {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
-                    child: Text(package.name, style: titleStyle,),
+                    child: Text(
+                      package.name,
+                      style: titleStyle,
+                    ),
                   ),
                 ],
               ),
             ),
-          )
-        ),
-      )
-    );
+          )),
+        ));
   }
 }
 
@@ -66,20 +67,19 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final pages = routes.keys.toList().sublist(1).map((route) => Page(route));
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Graphic Examples'),
-      ),
-      body: ListView(
-        children: pages.map((package) => (
-          PageCard(
-            key: Key(package.name),
-            package: package,
-            onPressed: (String endPoint) {
-              Navigator.pushNamed(context, '/examples/$endPoint');
-            },
-          )
-        )).toList(),
-      )
-    );
+        appBar: AppBar(
+          title: const Text('Graphic Examples'),
+        ),
+        body: ListView(
+          children: pages
+              .map((package) => (PageCard(
+                    key: Key(package.name),
+                    package: package,
+                    onPressed: (String endPoint) {
+                      Navigator.pushNamed(context, '/examples/$endPoint');
+                    },
+                  )))
+              .toList(),
+        ));
   }
 }

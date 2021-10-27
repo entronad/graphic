@@ -17,7 +17,8 @@ Alignment radialLabelAlign(Offset offset) {
       return Alignment.center;
     } else if (offset.dy > 0) {
       return Alignment.centerRight;
-    } else {  // offset.dy < 0
+    } else {
+      // offset.dy < 0
       return Alignment.centerLeft;
     }
   } else if (offset.dx > 0) {
@@ -25,15 +26,18 @@ Alignment radialLabelAlign(Offset offset) {
       return Alignment.topCenter;
     } else if (offset.dy > 0) {
       return Alignment.topRight;
-    } else {  // offset.dy < 0
+    } else {
+      // offset.dy < 0
       return Alignment.topLeft;
     }
-  } else {  // offset.dx < 0
+  } else {
+    // offset.dx < 0
     if (offset.dy.equalTo(0)) {
       return Alignment.bottomCenter;
     } else if (offset.dy > 0) {
       return Alignment.bottomRight;
-    } else {  // offset.dy < 0
+    } else {
+      // offset.dy < 0
       return Alignment.bottomLeft;
     }
   }
@@ -49,7 +53,8 @@ List<Figure>? renderRadialAxis(
   final rst = <Figure>[];
 
   final flipSign = flip ? -1.0 : 1.0;
-  final angle = coord.startAngle + (coord.endAngle - coord.startAngle) * position;
+  final angle =
+      coord.startAngle + (coord.endAngle - coord.startAngle) * position;
 
   if (line != null) {
     rst.add(PathFigure(
@@ -93,13 +98,13 @@ List<Figure>? renderRadialGrid(
       final r = coord.convertRadius(tick.position);
       if (r >= coord.startRadius && r <= coord.endRadius) {
         rst.add(PathFigure(
-          Path()..addArc(
-            Rect.fromCircle(center: coord.center, radius: r),
-            coord.startAngle,
-            coord.endAngle - coord.startAngle,
-          ),
-          tick.grid!.toPaint()
-            ..style = PaintingStyle.stroke,
+          Path()
+            ..addArc(
+              Rect.fromCircle(center: coord.center, radius: r),
+              coord.startAngle,
+              coord.endAngle - coord.startAngle,
+            ),
+          tick.grid!.toPaint()..style = PaintingStyle.stroke,
         ));
       }
     }

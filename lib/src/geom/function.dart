@@ -11,7 +11,7 @@ import 'element.dart';
 import 'modifier/modifier.dart';
 
 /// The specification of a function element.
-/// 
+///
 /// Functions map values in a domain to values in the range for any selected value
 /// in the domain.
 abstract class FunctionElement<S extends FunctionShape> extends GeomElement<S> {
@@ -29,16 +29,16 @@ abstract class FunctionElement<S extends FunctionShape> extends GeomElement<S> {
     String? groupBy,
     Map<String, Set<int>>? selected,
   }) : super(
-    color: color,
-    elevation: elevation,
-    gradient: gradient,
-    label: label,
-    position: position,
-    shape: shape,
-    size: size,
-    modifiers: modifiers,
-    zIndex: zIndex,
-    groupBy: groupBy,
-    selected: selected,
-  );
+          color: color,
+          elevation: elevation,
+          gradient: gradient,
+          label: label,
+          position: position,
+          shape: shape,
+          size: size,
+          modifiers: modifiers,
+          zIndex: zIndex,
+          groupBy: groupBy,
+          selected: selected,
+        );
 }

@@ -62,17 +62,19 @@ class RectangleIntervalPage extends StatelessWidget {
                       accessor: (Map map) => map['sold'] as num,
                     ),
                   },
-                  elements: [IntervalElement(
-                    label: LabelAttr(encode: (tuple) => Label(tuple['sold'].toString())),
-                    elevation: ElevationAttr(
-                      value: 0,
-                      onSelection: {'tap': {true: (_) => 5}}
-                    ),
-                    color: ColorAttr(
-                      value: Defaults.primaryColor,
-                      onSelection: {'tap': {false: (color) => color.withAlpha(100)}}
-                    ),
-                  )],
+                  elements: [
+                    IntervalElement(
+                      label: LabelAttr(
+                          encode: (tuple) => Label(tuple['sold'].toString())),
+                      elevation: ElevationAttr(value: 0, onSelection: {
+                        'tap': {true: (_) => 5}
+                      }),
+                      color:
+                          ColorAttr(value: Defaults.primaryColor, onSelection: {
+                        'tap': {false: (color) => color.withAlpha(100)}
+                      }),
+                    )
+                  ],
                   axes: [
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
@@ -82,7 +84,6 @@ class RectangleIntervalPage extends StatelessWidget {
                   crosshair: CrosshairGuide(),
                 ),
               ),
-
               Container(
                 child: const Text(
                   'Transposed Bar Chart',
@@ -112,21 +113,35 @@ class RectangleIntervalPage extends StatelessWidget {
                       scale: LinearScale(min: 0),
                     ),
                   },
-                  elements: [IntervalElement(
-                    label: LabelAttr(encode: (tuple) => Label(tuple['sold'].toString())),
-                    gradient: GradientAttr(
-                      value: const LinearGradient(colors: [
-                        Color(0x8883bff6),
-                        Color(0x88188df0),
-                        Color(0xcc188df0),
-                      ], stops: [0, 0.5, 1]),
-                      onSelection: {'tap': {true: (_) => const LinearGradient(colors: [
-                        Color(0xee83bff6),
-                        Color(0xee3f78f7),
-                        Color(0xff3f78f7),
-                      ], stops: [0, 0.7, 1])}}
-                    ),
-                  )],
+                  elements: [
+                    IntervalElement(
+                      label: LabelAttr(
+                          encode: (tuple) => Label(tuple['sold'].toString())),
+                      gradient: GradientAttr(
+                          value: const LinearGradient(colors: [
+                            Color(0x8883bff6),
+                            Color(0x88188df0),
+                            Color(0xcc188df0),
+                          ], stops: [
+                            0,
+                            0.5,
+                            1
+                          ]),
+                          onSelection: {
+                            'tap': {
+                              true: (_) => const LinearGradient(colors: [
+                                    Color(0xee83bff6),
+                                    Color(0xee3f78f7),
+                                    Color(0xff3f78f7),
+                                  ], stops: [
+                                    0,
+                                    0.7,
+                                    1
+                                  ])
+                            }
+                          }),
+                    )
+                  ],
                   coord: RectCoord(transposed: true),
                   axes: [
                     Defaults.verticalAxis
@@ -139,7 +154,6 @@ class RectangleIntervalPage extends StatelessWidget {
                   selections: {'tap': PointSelection(dim: 1)},
                 ),
               ),
-
               Container(
                 child: const Text(
                   'Interval Bar Chart',
@@ -180,17 +194,20 @@ class RectangleIntervalPage extends StatelessWidget {
                       scale: LinearScale(min: 0, max: 160),
                     ),
                   },
-                  elements: [IntervalElement(
-                    position: Varset('id') * (Varset('min') + Varset('max')),
-                    shape: ShapeAttr(value: RectShape(borderRadius: BorderRadius.circular(2))),
-                  )],
+                  elements: [
+                    IntervalElement(
+                      position: Varset('id') * (Varset('min') + Varset('max')),
+                      shape: ShapeAttr(
+                          value: RectShape(
+                              borderRadius: BorderRadius.circular(2))),
+                    )
+                  ],
                   axes: [
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
                   ],
                 ),
               ),
-
               Container(
                 child: const Text(
                   'Stacked Bar Chart',
@@ -237,24 +254,28 @@ class RectangleIntervalPage extends StatelessWidget {
                       scale: LinearScale(min: 0, max: 1800),
                     ),
                   },
-                  elements: [IntervalElement(
-                    position: Varset('index') * Varset('value'),
-                    groupBy: 'type',
-                    color: ColorAttr(variable: 'type', values: Defaults.colors10),
-                    modifiers: [StackModifier()],
-                  )],
+                  elements: [
+                    IntervalElement(
+                      position: Varset('index') * Varset('value'),
+                      groupBy: 'type',
+                      color: ColorAttr(
+                          variable: 'type', values: Defaults.colors10),
+                      modifiers: [StackModifier()],
+                    )
+                  ],
                   axes: [
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
                   ],
-                  selections: {'tap': PointSelection(
-                    variable: 'index',
-                  )},
+                  selections: {
+                    'tap': PointSelection(
+                      variable: 'index',
+                    )
+                  },
                   tooltip: TooltipGuide(multiTuples: true),
                   crosshair: CrosshairGuide(),
                 ),
               ),
-
               Container(
                 child: const Text(
                   'Dodged Bar Chart',
@@ -279,25 +300,29 @@ class RectangleIntervalPage extends StatelessWidget {
                       accessor: (Map map) => map['value'] as num,
                     ),
                   },
-                  elements: [IntervalElement(
-                    position: Varset('index') * Varset('value'),
-                    groupBy: 'type',
-                    color: ColorAttr(variable: 'type', values: Defaults.colors10),
-                    size: SizeAttr(value: 2),
-                    modifiers: [DodgeModifier(ratio: 0.1)],
-                  )],
+                  elements: [
+                    IntervalElement(
+                      position: Varset('index') * Varset('value'),
+                      groupBy: 'type',
+                      color: ColorAttr(
+                          variable: 'type', values: Defaults.colors10),
+                      size: SizeAttr(value: 2),
+                      modifiers: [DodgeModifier(ratio: 0.1)],
+                    )
+                  ],
                   axes: [
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
                   ],
-                  selections: {'tap': PointSelection(
-                    variable: 'index',
-                  )},
+                  selections: {
+                    'tap': PointSelection(
+                      variable: 'index',
+                    )
+                  },
                   tooltip: TooltipGuide(multiTuples: true),
                   crosshair: CrosshairGuide(),
                 ),
               ),
-
               Container(
                 child: const Text(
                   'Funnel Chart',
@@ -321,18 +346,25 @@ class RectangleIntervalPage extends StatelessWidget {
                       scale: LinearScale(min: -200, max: 200),
                     ),
                   },
-                  transforms: [Sort(
-                    compare: (a, b) => ((b['sold'] as num) - (a['sold'] as num)).toInt(),
-                  )],
-                  elements: [IntervalElement(
-                    label: LabelAttr(encode: (tuple) => Label(
-                      tuple['sold'].toString(),
-                      LabelStyle(Defaults.runeStyle),
-                    )),
-                    shape: ShapeAttr(value: FunnelShape()),
-                    color: ColorAttr(variable: 'genre', values: Defaults.colors10),
-                    modifiers: [SymmetricModifier()],
-                  )],
+                  transforms: [
+                    Sort(
+                      compare: (a, b) =>
+                          ((b['sold'] as num) - (a['sold'] as num)).toInt(),
+                    )
+                  ],
+                  elements: [
+                    IntervalElement(
+                      label: LabelAttr(
+                          encode: (tuple) => Label(
+                                tuple['sold'].toString(),
+                                LabelStyle(Defaults.runeStyle),
+                              )),
+                      shape: ShapeAttr(value: FunnelShape()),
+                      color: ColorAttr(
+                          variable: 'genre', values: Defaults.colors10),
+                      modifiers: [SymmetricModifier()],
+                    )
+                  ],
                   coord: RectCoord(transposed: true, verticalRange: [1, 0]),
                 ),
               ),

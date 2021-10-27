@@ -5,4 +5,4 @@ List<T> sublist<T>(
   int start,
   int end,
 ) =>
-  list.sublist(start, min(end, list.length));
+    list.sublist(start, min(end, list.length));

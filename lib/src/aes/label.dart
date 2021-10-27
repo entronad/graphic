@@ -5,7 +5,7 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'aes.dart';
 
 /// The specification of a label attribute.
-/// 
+///
 /// How to get label contents form tuples must be indicated by [encode].
 class LabelAttr extends Attr<Label> {
   /// Creates a label attribute.
@@ -13,7 +13,7 @@ class LabelAttr extends Attr<Label> {
     required Label Function(Tuple) encode,
     Map<String, Map<bool, SelectionUpdate<Label>>>? onSelection,
   }) : super(
-    encode: encode,
-    onSelection: onSelection,
-  );
+          encode: encode,
+          onSelection: onSelection,
+        );
 }

@@ -20,17 +20,18 @@ List<Figure>? renderCircularAxis(
   final rst = <Figure>[];
 
   final flipSign = flip ? -1.0 : 1.0;
-  final r = coord.startRadius + (coord.endRadius - coord.startRadius) * position;
+  final r =
+      coord.startRadius + (coord.endRadius - coord.startRadius) * position;
 
   if (line != null) {
     rst.add(PathFigure(
-      Path()..addArc(
-        Rect.fromCircle(center: coord.center, radius: r),
-        coord.startAngle,
-        coord.endAngle - coord.startAngle,
-      ),
-      line.toPaint()
-        ..style = PaintingStyle.stroke,
+      Path()
+        ..addArc(
+          Rect.fromCircle(center: coord.center, radius: r),
+          coord.startAngle,
+          coord.endAngle - coord.startAngle,
+        ),
+      line.toPaint()..style = PaintingStyle.stroke,
     ));
   }
 
@@ -46,13 +47,14 @@ List<Figure>? renderCircularAxis(
         // According to anchor's quadrant.
         final anchorOffset = labelAnchor - coord.center;
         defaultAlign = Alignment(
-          anchorOffset.dx.equalTo(0)
-            ? 0
-            : anchorOffset.dx / anchorOffset.dx.abs(),
-          anchorOffset.dy.equalTo(0)
-            ? 0
-            : anchorOffset.dy / anchorOffset.dy.abs(),
-        ) * flipSign;
+              anchorOffset.dx.equalTo(0)
+                  ? 0
+                  : anchorOffset.dx / anchorOffset.dx.abs(),
+              anchorOffset.dy.equalTo(0)
+                  ? 0
+                  : anchorOffset.dy / anchorOffset.dy.abs(),
+            ) *
+            flipSign;
         rst.add(renderLabel(
           Label(tick.text, tick.label!),
           labelAnchor,

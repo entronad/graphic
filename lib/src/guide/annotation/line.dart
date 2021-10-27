@@ -19,19 +19,18 @@ class LineAnnotation extends Annotation {
     this.variable,
     required this.value,
     this.style,
-
     int? zIndex,
   }) : super(
-    zIndex: zIndex,
-  );
+          zIndex: zIndex,
+        );
 
   /// The dimension where the line stands.
-  /// 
+  ///
   /// If null, a default 1 is set.
   int? dim;
 
   /// The variable refered to for position.
-  /// 
+  ///
   /// If null, the first variable assigned to [dim] is set by default.
   String? variable;
 
@@ -43,12 +42,12 @@ class LineAnnotation extends Annotation {
 
   @override
   bool operator ==(Object other) =>
-    other is LineAnnotation &&
-    super == other &&
-    dim == other.dim &&
-    variable == other.variable &&
-    value == other.value &&
-    style == other.style;
+      other is LineAnnotation &&
+      super == other &&
+      dim == other.dim &&
+      variable == other.variable &&
+      value == other.value &&
+      style == other.style;
 }
 
 class LineAnnotScene extends AnnotScene {
@@ -76,38 +75,39 @@ class LineAnnotRenderOp extends AnnotRenderOp<LineAnnotScene> {
     scene
       ..zIndex = zIndex
       ..setRegionClip(coord.region);
-    
+
     final scale = scales[variable]!;
     final position = scale.normalize(scale.convert(value));
 
     if (coord is PolarCoordConv && coord.getCanvasDim(dim) == 2) {
-      scene.figures = [PathFigure(
-        Path()..addArc(
-          Rect.fromCircle(
-            center: coord.center,
-            radius: coord.convertRadius(position),
-          ),
-          coord.angles.first,
-          coord.angles.last - coord.angles.first,
-        ),
-        style.toPaint(),
-      )];
+      scene.figures = [
+        PathFigure(
+          Path()
+            ..addArc(
+              Rect.fromCircle(
+                center: coord.center,
+                radius: coord.convertRadius(position),
+              ),
+              coord.angles.first,
+              coord.angles.last - coord.angles.first,
+            ),
+          style.toPaint(),
+        )
+      ];
     } else {
-      scene.figures = [PathFigure(
-        Paths.line(
-          from: coord.convert(
-            dim == 1
-              ? Offset(position, 0)
-              : Offset(0, position),
+      scene.figures = [
+        PathFigure(
+          Paths.line(
+            from: coord.convert(
+              dim == 1 ? Offset(position, 0) : Offset(0, position),
+            ),
+            to: coord.convert(
+              dim == 1 ? Offset(position, 1) : Offset(1, position),
+            ),
           ),
-          to: coord.convert(
-            dim == 1 
-              ? Offset(position, 1)
-              : Offset(1, position),
-          ),
-        ),
-        style.toPaint(),
-      )];
+          style.toPaint(),
+        )
+      ];
     }
   }
 }

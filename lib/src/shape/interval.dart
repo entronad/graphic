@@ -16,9 +16,9 @@ import 'util/render_basic_item.dart';
 import 'function.dart';
 
 /// The shape for the interval element.
-/// 
+///
 /// See also:
-/// 
+///
 /// - [IntervalElement], which this shape is for.
 abstract class IntervalShape extends FunctionShape {
   @override
@@ -26,7 +26,7 @@ abstract class IntervalShape extends FunctionShape {
 }
 
 /// A rectangle or sector shape.
-/// 
+///
 /// The shape is a rectangle in a rectangle coordinate or a sector in a polar coordinate.
 class RectShape extends IntervalShape {
   /// Creates a rectangle shape.
@@ -37,7 +37,7 @@ class RectShape extends IntervalShape {
   });
 
   /// Whether the shape is a histogram.
-  /// 
+  ///
   /// For a histogram, the bar width fills all the band.
   final bool histogram;
 
@@ -45,17 +45,17 @@ class RectShape extends IntervalShape {
   final double labelPosition;
 
   /// The border radius of the rectangle or sector.
-  /// 
+  ///
   /// For a sector, [Radius.x] is circular, [Radius.y] is radial, top is outer side,
   /// bottom is inner side, left is anticlockwise, right is clockwise.
   final BorderRadius? borderRadius;
 
   @override
   bool equalTo(Object other) =>
-    other is RectShape &&
-    histogram == other.histogram &&
-    labelPosition == other.labelPosition &&
-    borderRadius == other.borderRadius;
+      other is RectShape &&
+      histogram == other.histogram &&
+      labelPosition == other.labelPosition &&
+      borderRadius == other.borderRadius;
 
   @override
   List<Figure> renderGroup(
@@ -82,29 +82,34 @@ class RectShape extends IntervalShape {
             coord.convert(Offset(bandStart, position[1].dy)),
             coord.convert(Offset(bandEnd, position[0].dy)),
           ),
-          coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
+          coord.convert(
+              position[0] + (position[1] - position[0]) * labelPosition),
           coord,
         ));
         // Middle items.
         for (var i = 1; i < group.length - 1; i++) {
           item = group[i];
           position = item.position;
-          bandStart = (group[i].position.first.dx + group[i - 1].position.first.dx) / 2;
-          bandEnd = (group[i + 1].position.first.dx + group[i].position.first.dx) / 2;
+          bandStart =
+              (group[i].position.first.dx + group[i - 1].position.first.dx) / 2;
+          bandEnd =
+              (group[i + 1].position.first.dx + group[i].position.first.dx) / 2;
           rst.addAll(_renderRect(
             item,
             Rect.fromPoints(
               coord.convert(Offset(bandStart, position[1].dy)),
               coord.convert(Offset(bandEnd, position[0].dy)),
             ),
-            coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
+            coord.convert(
+                position[0] + (position[1] - position[0]) * labelPosition),
             coord,
           ));
         }
         // Last item.
         item = group.last;
         position = item.position;
-        bandStart = (position.first.dx + group[group.length - 2].position.first.dx) / 2;
+        bandStart =
+            (position.first.dx + group[group.length - 2].position.first.dx) / 2;
         bandEnd = 1;
         rst.addAll(_renderRect(
           item,
@@ -112,7 +117,8 @@ class RectShape extends IntervalShape {
             coord.convert(Offset(bandStart, position[1].dy)),
             coord.convert(Offset(bandEnd, position[0].dy)),
           ),
-          coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
+          coord.convert(
+              position[0] + (position[1] - position[0]) * labelPosition),
           coord,
         ));
       } else {
@@ -129,7 +135,7 @@ class RectShape extends IntervalShape {
           if (nan) {
             continue;
           }
-          
+
           final start = coord.convert(item.position[0]);
           final end = coord.convert(item.position[1]);
           final size = item.size ?? defaultSize;
@@ -152,7 +158,7 @@ class RectShape extends IntervalShape {
           rst.addAll(_renderRect(
             item,
             rect,
-            start +  (end - start) * labelPosition,
+            start + (end - start) * labelPosition,
             coord,
           ));
         }
@@ -201,7 +207,8 @@ class RectShape extends IntervalShape {
               coord,
             ));
             if (item.label != null) {
-              final labelAnchor = coord.convert(position[0] + (position[1] - position[0]) * labelPosition);
+              final labelAnchor = coord.convert(
+                  position[0] + (position[1] - position[0]) * labelPosition);
               final anchorOffset = labelAnchor - coord.center;
               rst.add(renderLabel(
                 item.label!,
@@ -223,9 +230,8 @@ class RectShape extends IntervalShape {
               coord.angles.first,
               coord.angles.last,
               true,
-              coord.convert(
-                item.position[0] + (item.position[1] - item.position[0]) * labelPosition
-              ),
+              coord.convert(item.position[0] +
+                  (item.position[1] - item.position[0]) * labelPosition),
               coord,
             ));
           }
@@ -244,15 +250,20 @@ class RectShape extends IntervalShape {
             coord.convertAngle(bandStart),
             coord.convertAngle(bandEnd),
             true,
-            coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
+            coord.convert(
+                position[0] + (position[1] - position[0]) * labelPosition),
             coord,
           ));
           // Middle items.
           for (var i = 1; i < group.length - 1; i++) {
             item = group[i];
             position = item.position;
-            bandStart = (group[i].position.first.dx + group[i - 1].position.first.dx) / 2;
-            bandEnd = (group[i + 1].position.first.dx + group[i].position.first.dx) / 2;
+            bandStart =
+                (group[i].position.first.dx + group[i - 1].position.first.dx) /
+                    2;
+            bandEnd =
+                (group[i + 1].position.first.dx + group[i].position.first.dx) /
+                    2;
             rst.addAll(_renderSector(
               item,
               coord.convertRadius(position[1].dy),
@@ -260,14 +271,17 @@ class RectShape extends IntervalShape {
               coord.convertAngle(bandStart),
               coord.convertAngle(bandEnd),
               true,
-              coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
+              coord.convert(
+                  position[0] + (position[1] - position[0]) * labelPosition),
               coord,
             ));
           }
           // Last item.
           item = group.last;
           position = item.position;
-          bandStart = (position.first.dx + group[group.length - 2].position.first.dx) / 2;
+          bandStart =
+              (position.first.dx + group[group.length - 2].position.first.dx) /
+                  2;
           bandEnd = 1;
           rst.addAll(_renderSector(
             item,
@@ -276,7 +290,8 @@ class RectShape extends IntervalShape {
             coord.convertAngle(bandStart),
             coord.convertAngle(bandEnd),
             true,
-            coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
+            coord.convert(
+                position[0] + (position[1] - position[0]) * labelPosition),
             coord,
           ));
         }
@@ -321,8 +336,8 @@ class RectShape extends IntervalShape {
         item.label!,
         labelAnchor,
         labelPosition.equalTo(1)
-          ? (coord.transposed ? Alignment.centerRight : Alignment.topCenter)
-          : Alignment.center,
+            ? (coord.transposed ? Alignment.centerRight : Alignment.topCenter)
+            : Alignment.center,
       ));
     }
 
@@ -382,11 +397,11 @@ class RectShape extends IntervalShape {
         final anchorOffset = labelAnchor - coord.center;
         defaultAlign = Alignment(
           anchorOffset.dx.equalTo(0)
-            ? 0
-            : anchorOffset.dx / anchorOffset.dx.abs(),
+              ? 0
+              : anchorOffset.dx / anchorOffset.dx.abs(),
           anchorOffset.dy.equalTo(0)
-            ? 0
-            : anchorOffset.dy / anchorOffset.dy.abs(),
+              ? 0
+              : anchorOffset.dy / anchorOffset.dy.abs(),
         );
       } else {
         defaultAlign = Alignment.center;
@@ -406,11 +421,12 @@ class RectShape extends IntervalShape {
     Aes item,
     CoordConv coord,
     Offset origin,
-  ) => throw UnimplementedError('Use _renderRect or _renderSector instead.');
+  ) =>
+      throw UnimplementedError('Use _renderRect or _renderSector instead.');
 }
 
 /// A funnel or pyramid shape.
-/// 
+///
 /// Note that the shape will not sort the element items. Sort the input data if
 /// you want the intervals monotone.
 class FunnelShape extends IntervalShape {
@@ -424,16 +440,16 @@ class FunnelShape extends IntervalShape {
   final double labelPosition;
 
   /// Whether this shape is a pyramid.
-  /// 
+  ///
   /// A pyramid will decrease the value of last item to zero, while a funnel keeps
   /// unchanged.
   final bool pyramid;
 
   @override
   bool equalTo(Object other) =>
-    other is FunnelShape &&
-    labelPosition == other.labelPosition &&
-    pyramid == other.pyramid;
+      other is FunnelShape &&
+      labelPosition == other.labelPosition &&
+      pyramid == other.pyramid;
 
   @override
   List<Figure> renderGroup(
@@ -467,8 +483,10 @@ class FunnelShape extends IntervalShape {
     for (var i = 1; i < group.length - 1; i++) {
       item = group[i];
       position = item.position;
-      bandStart = (group[i].position.first.dx + group[i - 1].position.first.dx) / 2;
-      bandEnd = (group[i + 1].position.first.dx + group[i].position.first.dx) / 2;
+      bandStart =
+          (group[i].position.first.dx + group[i - 1].position.first.dx) / 2;
+      bandEnd =
+          (group[i + 1].position.first.dx + group[i].position.first.dx) / 2;
       corners = [
         coord.convert(Offset(bandStart, position[1].dy)),
         coord.convert(Offset(bandEnd, group[i + 1].position[1].dy)),
@@ -478,14 +496,16 @@ class FunnelShape extends IntervalShape {
       rst.addAll(_renderSlope(
         item,
         corners,
-        coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
+        coord
+            .convert(position[0] + (position[1] - position[0]) * labelPosition),
         coord,
       ));
     }
     // Last item.
     item = group.last;
     position = item.position;
-    bandStart = (position.first.dx + group[group.length - 2].position.first.dx) / 2;
+    bandStart =
+        (position.first.dx + group[group.length - 2].position.first.dx) / 2;
     bandEnd = 1;
     final closeStart = pyramid ? origin.dy : position[0].dy;
     final closeEnd = pyramid ? origin.dy : position[1].dy;
@@ -530,10 +550,12 @@ class FunnelShape extends IntervalShape {
         item.label!,
         labelAnchor,
         labelPosition.equalTo(1)
-          ? (coord.transposed ? Alignment.centerRight : Alignment.topCenter)
-          : labelPosition.equalTo(0)
-            ? (coord.transposed ? Alignment.centerLeft : Alignment.bottomCenter)
-            : Alignment.center,
+            ? (coord.transposed ? Alignment.centerRight : Alignment.topCenter)
+            : labelPosition.equalTo(0)
+                ? (coord.transposed
+                    ? Alignment.centerLeft
+                    : Alignment.bottomCenter)
+                : Alignment.center,
       ));
     }
 
@@ -545,5 +567,6 @@ class FunnelShape extends IntervalShape {
     Aes item,
     CoordConv coord,
     Offset origin,
-  ) => throw UnimplementedError('Use _renderSlope instead.');
+  ) =>
+      throw UnimplementedError('Use _renderSlope instead.');
 }

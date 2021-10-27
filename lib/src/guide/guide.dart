@@ -95,10 +95,11 @@ void parseGuide(
           }));
         } else {
           anchor = view.add(FigureAnnotCalcAnchorOp({
-            'variables': annotSpec.variables ?? [
-              scope.forms.first.first[0],
-              scope.forms.first.first[1],
-            ],
+            'variables': annotSpec.variables ??
+                [
+                  scope.forms.first.first[0],
+                  scope.forms.first.first[1],
+                ],
             'values': annotSpec.values,
             'scales': scope.scales,
             'coord': scope.coord,
@@ -151,10 +152,11 @@ void parseGuide(
       'zIndex': crosshairSpec.zIndex ?? 0,
       'coord': scope.coord,
       'groups': scope.groupsList[elementIndex],
-      'styles': crosshairSpec.styles ?? [
-        StrokeStyle(color: Color(0xffbfbfbf)),
-        StrokeStyle(color: Color(0xffbfbfbf)),
-      ],
+      'styles': crosshairSpec.styles ??
+          [
+            StrokeStyle(color: Color(0xffbfbfbf)),
+            StrokeStyle(color: Color(0xffbfbfbf)),
+          ],
       'followPointer': crosshairSpec.followPointer ?? [false, false],
     }, crosshairScene, view));
   }
@@ -165,7 +167,8 @@ void parseGuide(
 
     final tooltipScene = view.graffiti.add(TooltipScene());
     final selectorName = tooltipSpec.selection ?? spec.selections!.keys.first;
-    final multiTuples = tooltipSpec.multiTuples ?? ((spec.selections![selectorName] is PointSelection) ? false : true);
+    final multiTuples = tooltipSpec.multiTuples ??
+        ((spec.selections![selectorName] is PointSelection) ? false : true);
     view.add(TooltipRenderOp({
       'selectorName': selectorName,
       'selector': scope.selector,
@@ -177,13 +180,15 @@ void parseGuide(
       'align': tooltipSpec.align ?? Alignment.center,
       'offset': tooltipSpec.offset,
       'padding': tooltipSpec.padding ?? EdgeInsets.all(5),
-      'backgroundColor': tooltipSpec.backgroundColor ?? Color(0xf0ffffff),  // TODO: defalut
+      'backgroundColor':
+          tooltipSpec.backgroundColor ?? Color(0xf0ffffff), // TODO: defalut
       'radius': tooltipSpec.radius ?? Radius.circular(3),
-      'elevation': tooltipSpec.elevation ?? 3.0,  // TODO: defalut
-      'textStyle': tooltipSpec.textStyle ?? TextStyle(
-        color: Color(0xff595959),
-        fontSize: 12,
-      ),  // TODO: defalut
+      'elevation': tooltipSpec.elevation ?? 3.0, // TODO: defalut
+      'textStyle': tooltipSpec.textStyle ??
+          TextStyle(
+            color: Color(0xff595959),
+            fontSize: 12,
+          ), // TODO: defalut
       'multiTuples': multiTuples,
       'render': tooltipSpec.render,
       'followPointer': tooltipSpec.followPointer ?? [false, false],

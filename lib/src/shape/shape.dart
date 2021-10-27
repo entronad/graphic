@@ -6,15 +6,15 @@ import 'package:flutter/foundation.dart';
 import 'package:graphic/src/coord/coord.dart';
 
 /// The Base class of a shape.
-/// 
+///
 /// A shape renders figures of tuples from their aesthetic attribute values. It is
 /// the key of painting geometory elements. Besides, the shape it self is an aesthetic
 /// attribute in Grammar of Graphics.
-/// 
+///
 /// Customizing subclasses of shape extenses chart types.
 abstract class Shape {
   /// Renders the whole group of tuples.
-  /// 
+  ///
   /// The tuples are rendered in groups. the [Aes.shape] of the first tuple of a
   /// group will be taken as a represent, and it's [renderGroup] method decides
   /// the basic way to render the whole group. The [renderGroup] method then may
@@ -39,23 +39,21 @@ abstract class Shape {
   double get defaultSize;
 
   /// Gets the represent point of [Aes.position] points.
-  /// 
+  ///
   /// It is callen by [Aes.representPoint].
-  /// 
+  ///
   /// Usually the represent point is the last one.
-  Offset representPoint(List<Offset> position) =>
-    position.last;
+  Offset representPoint(List<Offset> position) => position.last;
 
   /// Checks the equlity of two shapes.
-  /// 
+  ///
   /// Because the shape is a functional class in design, they should be equal if
   /// they are of the same type and has same properties.
-  /// 
+  ///
   /// It is used by [==]. This method forces a equlity definition in customizing.
   @protected
   bool equalTo(Object other);
 
   @override
-  bool operator ==(Object other) =>
-    this.equalTo(other);
+  bool operator ==(Object other) => this.equalTo(other);
 }

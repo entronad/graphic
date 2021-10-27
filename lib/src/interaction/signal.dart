@@ -21,14 +21,14 @@ enum SignalType {
 }
 
 /// The base class for signals.
-/// 
+///
 /// An signal is emitted when users or external changes interact with the chart.
 /// They may trigger selections if defined.
-/// 
+///
 /// They usually carry properties of information about the interaction.
-/// 
+///
 /// See also:
-/// 
+///
 /// - [SignalUpdate], updates a value when a signal occurs.
 /// - [Selection], to define a selection.
 abstract class Signal {
@@ -37,10 +37,10 @@ abstract class Signal {
 }
 
 /// Updates a value when a signal occurs.
-/// 
+///
 /// The [initialValue] is the value set in the specification. The [preValue] is
 /// previous value before this update.
-/// 
+///
 /// Make sure the return value is a different instance from initialValue or preValue.
 typedef SignalUpdate<V> = V Function(V initialValue, V preValue, Signal signal);
 
@@ -54,13 +54,11 @@ class SignalSource<S extends Signal> {
     return _listeners.length - 1;
   }
 
-  void off(int id) =>
-    _listeners[id] = null;
+  void off(int id) => _listeners[id] = null;
 
-  void clear() =>
-    _listeners.clear();
+  void clear() => _listeners.clear();
 
-  Future<void> emit (S signal) async {
+  Future<void> emit(S signal) async {
     for (var listener in _listeners) {
       if (listener != null) {
         listener(signal);

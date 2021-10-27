@@ -8,7 +8,7 @@ import 'package:graphic/src/algebra/varset.dart';
 import 'modifier.dart';
 
 /// The specification of a dodge modifier.
-/// 
+///
 /// The dodge method moves objects around locally so they do not collide.
 class DodgeModifier extends Modifier {
   /// Creates a dodge modifier.
@@ -18,22 +18,22 @@ class DodgeModifier extends Modifier {
   });
 
   /// Dodge ratio to the descrete band for each group.
-  /// 
+  ///
   /// If null, a default reciprocal of group counts is set.
   double? ratio;
 
   /// Whether the dodge will go both side around the original x or only positive
   /// side.
-  /// 
+  ///
   /// If null, a default true is set.
   bool? symmetric;
 
   @override
   bool operator ==(Object other) =>
-    other is DodgeModifier &&
-    super == other &&
-    ratio == other.ratio &&
-    symmetric == other.symmetric;
+      other is DodgeModifier &&
+      super == other &&
+      ratio == other.ratio &&
+      symmetric == other.symmetric;
 }
 
 class DodgeGeomModifier extends GeomModifier {
@@ -57,21 +57,25 @@ class DodgeGeomModifier extends GeomModifier {
     for (var group in value) {
       for (var aes in group) {
         final oldPosition = aes.position;
-        aes.position = oldPosition.map(
-          (point) => Offset(point.dx + accumulated + bias, point.dy),
-        ).toList();
+        aes.position = oldPosition
+            .map(
+              (point) => Offset(point.dx + accumulated + bias, point.dy),
+            )
+            .toList();
       }
       accumulated += bias;
     }
 
     if (symmetric) {
-      final symmetricBias = - accumulated / 2;
+      final symmetricBias = -accumulated / 2;
       for (var group in value) {
         for (var aes in group) {
           final oldPosition = aes.position;
-          aes.position = oldPosition.map(
-            (point) => Offset(point.dx + symmetricBias, point.dy),
-          ).toList();
+          aes.position = oldPosition
+              .map(
+                (point) => Offset(point.dx + symmetricBias, point.dy),
+              )
+              .toList();
         }
       }
     }

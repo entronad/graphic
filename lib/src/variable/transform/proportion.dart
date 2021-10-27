@@ -5,9 +5,9 @@ import 'transform.dart';
 
 /// The transform to calculate proportion of a certain field value of a tuple in
 /// all (or in a certain group) tuples.
-/// 
+///
 /// This will create a new variable for results.
-/// 
+///
 /// See also:
 /// - [Tuple], the original value tuple.
 class Proportion extends VariableTransform {
@@ -23,10 +23,10 @@ class Proportion extends VariableTransform {
   String variable;
 
   /// Which variable to group tuples by.
-  /// 
+  ///
   /// If set, the denominator of proportion will be sum of a group, and if null
   /// will be sum of all.
-  /// 
+  ///
   /// The variable should be discrete.
   String? groupBy;
 
@@ -34,18 +34,18 @@ class Proportion extends VariableTransform {
   String as;
 
   /// The scale of result variable.
-  /// 
+  ///
   /// If null, a default `LinearScale(min: 0, max: 1)` is set.
   Scale? scale;
 
   @override
   bool operator ==(Object other) =>
-    other is Proportion &&
-    super == other &&
-    variable == other.variable &&
-    groupBy == other.groupBy &&
-    as == other.as &&
-    scale == other.scale;
+      other is Proportion &&
+      super == other &&
+      variable == other.variable &&
+      groupBy == other.groupBy &&
+      as == other.as &&
+      scale == other.scale;
 }
 
 class ProportionOp extends TransformOp {
@@ -71,9 +71,7 @@ class ProportionOp extends TransformOp {
       for (var tuple in tuples) {
         final cat = tuple[groupBy];
         var sum = sums[cat];
-        sum = sum == null
-          ? tuple[variable]
-          : sum + tuple[variable];
+        sum = sum == null ? tuple[variable] : sum + tuple[variable];
         sums[cat] = sum!;
       }
       for (var tuple in tuples) {

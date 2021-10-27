@@ -33,7 +33,7 @@ class TriangleShape extends IntervalShape {
         return [];
       }
     }
-    
+
     final start = coord.convert(item.position[0]);
     final end = coord.convert(item.position[1]);
     final size = item.size ?? defaultSize;
@@ -43,7 +43,7 @@ class TriangleShape extends IntervalShape {
 
     return renderBasicItem(path, item, false, 0);
   }
-  
+
   @override
   bool equalTo(Object other) => other is TriangleShape;
 }
@@ -103,10 +103,11 @@ List<Figure> simpleTooltip(
     height,
   );
 
-  final widowPath = Path()..addRRect(
-    RRect.fromRectAndRadius(widow, radius),
-  );
-  
+  final widowPath = Path()
+    ..addRRect(
+      RRect.fromRectAndRadius(widow, radius),
+    );
+
   figures = <Figure>[];
 
   figures.add(ShadowFigure(
@@ -249,19 +250,28 @@ class CustomPage extends StatelessWidget {
                       scale: LinearScale(min: 6, max: 9),
                     ),
                   },
-                  elements: [CustomElement(
-                    shape: ShapeAttr(value: CandlestickShape()),
-                    position: Varset('time') * (Varset('start') + Varset('max') + Varset('min') + Varset('end')),
-                    color: ColorAttr(encode: (tuple) => tuple['end'] >= tuple['start'] ? Colors.red : Colors.green),
-                  )],
+                  elements: [
+                    CustomElement(
+                      shape: ShapeAttr(value: CandlestickShape()),
+                      position: Varset('time') *
+                          (Varset('start') +
+                              Varset('max') +
+                              Varset('min') +
+                              Varset('end')),
+                      color: ColorAttr(
+                          encode: (tuple) => tuple['end'] >= tuple['start']
+                              ? Colors.red
+                              : Colors.green),
+                    )
+                  ],
                   axes: [
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
                   ],
-                  coord: RectCoord(onHorizontalRangeSignal: Defaults.horizontalRangeSignal),
+                  coord: RectCoord(
+                      onHorizontalRangeSignal: Defaults.horizontalRangeSignal),
                 ),
               ),
-
               Container(
                 child: const Text(
                   'Custom Shape and Tooltip',
@@ -287,22 +297,23 @@ class CustomPage extends StatelessWidget {
                       accessor: (Map map) => map['genre'] as String,
                     ),
                     'sold': Variable(
-                      accessor: (Map map) => map['sold'] as num,
-                      scale: LinearScale(min: 0)
-                    ),
+                        accessor: (Map map) => map['sold'] as num,
+                        scale: LinearScale(min: 0)),
                   },
-                  elements: [IntervalElement(
-                    shape: ShapeAttr(value: TriangleShape()),
-                    label: LabelAttr(encode: (tuple) => Label(tuple['sold'].toString())),
-                    elevation: ElevationAttr(
-                      value: 0,
-                      onSelection: {'tap': {true: (_) => 5}}
-                    ),
-                    color: ColorAttr(
-                      value: Defaults.primaryColor,
-                      onSelection: {'tap': {false: (color) => color.withAlpha(100)}}
-                    ),
-                  )],
+                  elements: [
+                    IntervalElement(
+                      shape: ShapeAttr(value: TriangleShape()),
+                      label: LabelAttr(
+                          encode: (tuple) => Label(tuple['sold'].toString())),
+                      elevation: ElevationAttr(value: 0, onSelection: {
+                        'tap': {true: (_) => 5}
+                      }),
+                      color:
+                          ColorAttr(value: Defaults.primaryColor, onSelection: {
+                        'tap': {false: (color) => color.withAlpha(100)}
+                      }),
+                    )
+                  ],
                   axes: [
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
@@ -312,7 +323,6 @@ class CustomPage extends StatelessWidget {
                   crosshair: CrosshairGuide(),
                 ),
               ),
-
               Container(
                 child: const Text(
                   'Central Pie Label by Custom Tooltip',
@@ -334,16 +344,21 @@ class CustomPage extends StatelessWidget {
                       accessor: (Map map) => map['sold'] as num,
                     ),
                   },
-                  transforms: [Proportion(
-                    variable: 'sold',
-                    as: 'percent',
-                  )],
-                  elements: [IntervalElement(
-                    position: Varset('percent'),
-                    color: ColorAttr(variable: 'genre', values: Defaults.colors10),
-                    groupBy: 'genre',
-                    modifiers: [StackModifier()],
-                  )],
+                  transforms: [
+                    Proportion(
+                      variable: 'sold',
+                      as: 'percent',
+                    )
+                  ],
+                  elements: [
+                    IntervalElement(
+                      position: Varset('percent'),
+                      color: ColorAttr(
+                          variable: 'genre', values: Defaults.colors10),
+                      groupBy: 'genre',
+                      modifiers: [StackModifier()],
+                    )
+                  ],
                   coord: PolarCoord(
                     transposed: true,
                     dimCount: 1,

@@ -12,9 +12,9 @@ import 'util/render_basic_item.dart';
 import 'function.dart';
 
 /// The shape for the line element.
-/// 
+///
 /// See also:
-/// 
+///
 /// - [LineElement], which this shape is for.
 abstract class LineShape extends FunctionShape {
   @override
@@ -25,7 +25,8 @@ abstract class LineShape extends FunctionShape {
     Aes item,
     CoordConv coord,
     Offset origin,
-  ) => throw UnimplementedError('Line only paints group.');
+  ) =>
+      throw UnimplementedError('Line only paints group.');
 }
 
 /// A basic line shape.
@@ -40,15 +41,13 @@ class BasicLineShape extends LineShape {
   final bool smooth;
 
   /// Whether to connect the last point to the first point.
-  /// 
+  ///
   /// This is usefull in the polar coordinate.
   final bool loop;
 
   @override
   bool equalTo(Object other) =>
-    other is BasicLineShape &&
-    smooth == other.smooth &&
-    loop == other.loop;
+      other is BasicLineShape && smooth == other.smooth && loop == other.loop;
 
   @override
   List<Figure> renderGroup(
@@ -76,11 +75,9 @@ class BasicLineShape extends LineShape {
       segments.add(currentSegment);
     }
 
-    if (
-      loop &&
-      group.first.position.last.dy.isFinite &&
-      group.last.position.last.dy.isFinite
-    ) {
+    if (loop &&
+        group.first.position.last.dy.isFinite &&
+        group.last.position.last.dy.isFinite) {
       // Because line can be broken by NaN, loop cannot use close.
       segments.last.add(segments.first.first);
     }

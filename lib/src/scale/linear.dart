@@ -7,38 +7,36 @@ import 'package:graphic/src/util/assert.dart';
 import 'continuous.dart';
 
 /// The specification of a linear scale.
-/// 
+///
 /// It converts [num] to [double]s normalized to `[0, 1]` linearly.
 class LinearScale extends ContinuousScale<num> {
   /// Creates a linear scale.
   LinearScale({
     this.tickInterval,
     this.nice,
-
     num? min,
     num? max,
     double? marginMin,
     double? marginMax,
-
     String? title,
     String Function(num)? formatter,
     List<num>? ticks,
     int? tickCount,
     int? maxTickCount,
-  })
-    : assert(isSingle([ticks, tickCount, maxTickCount, tickInterval], allowNone: true)),
-      assert(isSingle([ticks, nice], allowNone: true)),
-      super(
-        min: min,
-        max: max,
-        marginMin: marginMin,
-        marginMax: marginMax,
-        title: title,
-        formatter: formatter,
-        ticks: ticks,
-        tickCount: tickCount,
-        maxTickCount: maxTickCount,
-      );
+  })  : assert(isSingle([ticks, tickCount, maxTickCount, tickInterval],
+            allowNone: true)),
+        assert(isSingle([ticks, nice], allowNone: true)),
+        super(
+          min: min,
+          max: max,
+          marginMin: marginMin,
+          marginMax: marginMax,
+          title: title,
+          formatter: formatter,
+          ticks: ticks,
+          tickCount: tickCount,
+          maxTickCount: maxTickCount,
+        );
 
   /// The interval between two ticks.
   num? tickInterval;
@@ -48,10 +46,10 @@ class LinearScale extends ContinuousScale<num> {
 
   @override
   bool operator ==(Object other) =>
-    other is LinearScale &&
-    super == other &&
-    tickInterval == other.tickInterval &&
-    nice == other.nice;
+      other is LinearScale &&
+      super == other &&
+      tickInterval == other.tickInterval &&
+      nice == other.nice;
 }
 
 class LinearScaleConv extends ContinuousScaleConv<num> {
@@ -77,8 +75,8 @@ class LinearScaleConv extends ContinuousScaleConv<num> {
       }
 
       final range = maxTmp - minTmp;
-      final marginMin = range * (spec.marginMin ?? 0.1);  // TODO: default
-      final marginMax = range * (spec.marginMax ?? 0.1);  // TODO: default
+      final marginMin = range * (spec.marginMin ?? 0.1); // TODO: default
+      final marginMax = range * (spec.marginMax ?? 0.1); // TODO: default
       min = spec.min ?? minTmp - marginMin;
       max = spec.max ?? maxTmp + marginMax;
     }
@@ -138,12 +136,10 @@ class LinearScaleConv extends ContinuousScaleConv<num> {
   }
 
   @override
-  double convert(num input) =>
-    (input - min!) / (max! - min!);
+  double convert(num input) => (input - min!) / (max! - min!);
 
   @override
-  num invert(double output) =>
-    min! + output * (max! - min!);
+  num invert(double output) => min! + output * (max! - min!);
 
   @override
   num get zero => 0;
@@ -152,7 +148,5 @@ class LinearScaleConv extends ContinuousScaleConv<num> {
   String defaultFormatter(num value) => value.toString();
 
   @override
-  bool operator ==(Object other) =>
-    other is LinearScaleConv &&
-    super == other;
+  bool operator ==(Object other) => other is LinearScaleConv && super == other;
 }

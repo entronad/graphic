@@ -8,7 +8,7 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'aes.dart';
 
 /// The specification of a channel aesthetic attribute.
-/// 
+///
 /// It encodes a single variable to a value. The encoding will be lerping for continous
 /// [variable] scale, and lookup table for discrete scale.
 abstract class ChannelAttr<AV> extends Attr<AV> {
@@ -17,17 +17,15 @@ abstract class ChannelAttr<AV> extends Attr<AV> {
     this.variable,
     this.values,
     this.stops,
-
     AV? value,
     AV Function(Tuple)? encode,
     Map<String, Map<bool, SelectionUpdate<AV>>>? onSelection,
-  })
-    : assert(values == null || values.length >= 2),
-      super(
-        value: value,
-        encode: encode,
-        onSelection: onSelection,
-      );
+  })  : assert(values == null || values.length >= 2),
+        super(
+          value: value,
+          encode: encode,
+          onSelection: onSelection,
+        );
 
   /// The variable this attribute encodes from.
   String? variable;
@@ -36,17 +34,17 @@ abstract class ChannelAttr<AV> extends Attr<AV> {
   List<AV>? values;
 
   /// Stops corresponding to [values].
-  /// 
+  ///
   /// If null, default average stops will be set.
   List<double>? stops;
 
   @override
   bool operator ==(Object other) =>
-    other is ChannelAttr &&
-    super == other &&
-    variable == other.variable &&
-    DeepCollectionEquality().equals(values, other.values) &&
-    DeepCollectionEquality().equals(stops, other.stops);
+      other is ChannelAttr &&
+      super == other &&
+      variable == other.variable &&
+      DeepCollectionEquality().equals(values, other.values) &&
+      DeepCollectionEquality().equals(stops, other.stops);
 }
 
 /// Wheather continuous or discrete will be decided by the scale of the variable.
@@ -54,7 +52,7 @@ abstract class ChannelConv<SV extends num, AV> extends AttrConv<SV, AV> {}
 
 abstract class ContinuousChannelConv<AV> extends ChannelConv<double, AV> {
   ContinuousChannelConv(this.values, this.stops)
-    : assert(values.length == stops.length);
+      : assert(values.length == stops.length);
 
   final List<AV> values;
 
@@ -115,8 +113,7 @@ class ChannelEncoder<AV> extends Encoder<AV> {
   final ChannelConv<num, AV> conv;
 
   @override
-  AV encode(Scaled scaled, Tuple tuple) =>
-    conv.convert(scaled[field]!);
+  AV encode(Scaled scaled, Tuple tuple) => conv.convert(scaled[field]!);
 }
 
 List<double> _defaultStops(int length) {

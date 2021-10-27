@@ -13,20 +13,19 @@ class MarkAnnotation extends FigureAnnotation {
     required this.relativePath,
     required this.style,
     this.elevation,
-
     List<String>? variables,
     List? values,
     Offset Function(Size)? anchor,
     int? zIndex,
   }) : super(
-    variables: variables,
-    values: values,
-    anchor: anchor,
-    zIndex: zIndex,
-  );
+          variables: variables,
+          values: values,
+          anchor: anchor,
+          zIndex: zIndex,
+        );
 
   /// The relative path definition of the mark.
-  /// 
+  ///
   /// Use [Offset]s relative to [Offset.zero] in this definition. The path will
   /// be translated to the anchor position in rendering.
   Path relativePath;
@@ -39,11 +38,11 @@ class MarkAnnotation extends FigureAnnotation {
 
   @override
   bool operator ==(Object other) =>
-    other is MarkAnnotation &&
-    super == other &&
-    relativePath == other.relativePath &&
-    style == other.style &&
-    elevation == other.elevation;
+      other is MarkAnnotation &&
+      super == other &&
+      relativePath == other.relativePath &&
+      style == other.style &&
+      elevation == other.elevation;
 }
 
 class MarkAnnotOp extends FigureAnnotOp {
@@ -56,8 +55,7 @@ class MarkAnnotOp extends FigureAnnotOp {
     final style = params['style'] as Paint;
     final elevation = params['elevation'] as double?;
 
-    final matrix = Matrix4.identity()
-      ..leftTranslate(anchor.dx, anchor.dy);
+    final matrix = Matrix4.identity()..leftTranslate(anchor.dx, anchor.dy);
     final path = relativePath.transform(matrix.storage);
 
     final rst = <Figure>[];

@@ -3,7 +3,7 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'transform.dart';
 
 /// The transform to map each tuple to a new tuple.
-/// 
+///
 /// See also:
 /// - [Tuple], the original value tuple.
 class MapTrans extends VariableTransform {
@@ -16,10 +16,8 @@ class MapTrans extends VariableTransform {
   Tuple Function(Tuple) mapper;
 
   @override
-  bool operator ==(Object other) =>
-    other is MapTrans &&
-    super == other;
-    // mapper is Function.
+  bool operator ==(Object other) => other is MapTrans && super == other;
+  // mapper is Function.
 }
 
 class MapOp extends TransformOp {

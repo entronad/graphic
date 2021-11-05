@@ -48,6 +48,7 @@ class Proportion extends VariableTransform {
       scale == other.scale;
 }
 
+/// The proportion transform operator.
 class ProportionOp extends TransformOp {
   ProportionOp(Map<String, dynamic> params) : super(params);
 

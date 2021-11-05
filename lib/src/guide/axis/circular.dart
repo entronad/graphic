@@ -10,6 +10,7 @@ import 'package:graphic/src/util/path.dart';
 
 import 'axis.dart';
 
+/// Renders circular axis.
 List<Figure>? renderCircularAxis(
   List<TickInfo> ticks,
   double position,
@@ -36,7 +37,7 @@ List<Figure>? renderCircularAxis(
   }
 
   for (var tick in ticks) {
-    // Polar coord dose not has tickLine.
+    // Polar coord dose not allow tick lines.
     assert(tick.tickLine == null);
 
     final angle = coord.convertAngle(tick.position);
@@ -44,7 +45,7 @@ List<Figure>? renderCircularAxis(
       if (tick.label != null) {
         final labelAnchor = coord.polarToOffset(angle, r);
         Alignment defaultAlign;
-        // According to anchor's quadrant.
+        // Calculate default alignment according to anchor's quadrant.
         final anchorOffset = labelAnchor - coord.center;
         defaultAlign = Alignment(
               anchorOffset.dx.equalTo(0)
@@ -67,6 +68,7 @@ List<Figure>? renderCircularAxis(
   return rst.isEmpty ? null : rst;
 }
 
+/// Renders circular axis grid.
 List<Figure>? renderCircularGrid(
   List<TickInfo> ticks,
   PolarCoordConv coord,

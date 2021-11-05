@@ -11,17 +11,17 @@ abstract class Modifier {
   bool operator ==(Object other) => other is Modifier;
 }
 
+/// The base class of geometory modifiers.
+///
+/// A geometory modifier executes a corresponding [Modifier].
 abstract class GeomModifier extends common.Modifier<AesGroups> {}
 
+/// The operator to create a geometory modifier.
 abstract class GeomModifierOp<M extends GeomModifier> extends Operator<M> {
   GeomModifierOp(Map<String, dynamic> params) : super(params);
 }
 
-/// params:
-/// - groups: AesGroups
-/// - modifier: GeomModifer
-///
-/// value: AesGroups, tuple groups
+/// The operator to modify aeses with a geometory modifier.
 class ModifyOp extends Operator<AesGroups> {
   ModifyOp(Map<String, dynamic> params) : super(params);
 

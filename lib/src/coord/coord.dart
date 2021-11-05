@@ -96,14 +96,14 @@ abstract class CoordConv extends Converter<Offset, Offset> {
   double invertDistance(double canvasDistance, [int? dim]);
 }
 
-/// params:
-/// All params needed to create a coord converter.
+/// The operator to create the coordinate converter.
 abstract class CoordConvOp<C extends CoordConv> extends Operator<C> {
   CoordConvOp(
     Map<String, dynamic> params,
-  ) : super(params); // The first value should be created in the first run.
+  ) : super(params);
 }
 
+/// The operator to create the coordinate region.
 class RegionOp extends Operator<Rect> {
   RegionOp(
     Map<String, dynamic> params,
@@ -119,6 +119,7 @@ class RegionOp extends Operator<Rect> {
   }
 }
 
+/// Parses the coordinate related specifications.
 void parseCoord(
   Chart spec,
   View view,

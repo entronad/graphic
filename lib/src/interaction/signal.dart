@@ -20,7 +20,7 @@ enum SignalType {
   changeData,
 }
 
-/// The base class for signals.
+/// The base class of signals.
 ///
 /// An signal is emitted when users or external changes interact with the chart.
 /// They may trigger selections if defined.
@@ -44,20 +44,24 @@ abstract class Signal {
 /// Make sure the return value is a different instance from initialValue or preValue.
 typedef SignalUpdate<V> = V Function(V initialValue, V preValue, Signal signal);
 
-typedef SignalListener<S extends Signal> = void Function(S);
-
+/// The souce to generate signals.
 class SignalSource<S extends Signal> {
-  final _listeners = <SignalListener<S>?>[];
+  /// The registered listeners.
+  final _listeners = <void Function(S)?>[];
 
-  int on(SignalListener<S> listener) {
+  /// Registers a listener, and returns id of the listener.
+  int on(void Function(S) listener) {
     _listeners.add(listener);
     return _listeners.length - 1;
   }
 
+  /// Releases a listener by id.
   void off(int id) => _listeners[id] = null;
 
+  /// Releases all listeners.
   void clear() => _listeners.clear();
 
+  /// Emit a signal and broadcast it to all listeners.
   Future<void> emit(S signal) async {
     for (var listener in _listeners) {
       if (listener != null) {
@@ -67,11 +71,15 @@ class SignalSource<S extends Signal> {
   }
 }
 
+/// The signal value operator.
 class SignalOp extends Value<Signal?> {
   @override
   bool get consume => true;
 }
 
+/// The operator to update a value by a signal.
+///
+/// The operator value is the updated value.
 class SignalUpdateOp<V> extends Operator<V> {
   SignalUpdateOp(Map<String, dynamic> params) : super(params);
 
@@ -81,8 +89,10 @@ class SignalUpdateOp<V> extends Operator<V> {
     final initialValue = params['initialValue'] as V;
     final signal = params['signal'] as Signal?;
 
-    // Value init or change.
     if (value == null || signal == null) {
+      // When the value has not been initialized or the evaluation is triggered
+      // by initialValue change.
+
       return initialValue;
     }
 
@@ -90,6 +100,7 @@ class SignalUpdateOp<V> extends Operator<V> {
   }
 }
 
+/// Parses signal related specifications.
 void parseSignal<D>(
   Chart<D> spec,
   View<D> view,

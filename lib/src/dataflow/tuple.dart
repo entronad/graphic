@@ -73,9 +73,11 @@ class Aes {
   Offset get representPoint => shape.representPoint(position);
 }
 
+/// Aes lists for groups.
 typedef AesGroups = List<List<Aes>>;
 
 extension AesGroupsExt on AesGroups {
+  /// Gets an aes form aes groups by [Aes.index].
   Aes getAes(int index) {
     for (var group in this) {
       for (var aes in group) {

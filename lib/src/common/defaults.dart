@@ -8,8 +8,7 @@ import 'package:graphic/src/guide/axis/axis.dart';
 import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/interaction/gesture.dart';
 
-/// The scale and rotation is calculated from the initial.
-/// The state-transform scale should be calculated by pointSignal.
+/// Gets signal update for different dimensions.
 SignalUpdate<List<double>> _getRangeUpdate(
         double Function(ScaleUpdateDetails) getDeltaDim,
         double Function(ScaleUpdateDetails) getScaleDim,
@@ -26,13 +25,17 @@ SignalUpdate<List<double>> _getRangeUpdate(
         final detail = gesture.details as ScaleUpdateDetails;
 
         if (detail.pointerCount == 1) {
-          // detail.delta is from moveStart, not from pre.
+          // Panning.
+
+          // ScaleUpdateDetails.delta is from moveStart, not from previous one.
           final prePan = getDeltaDim(gesture.preScaleDetail!);
           final pan = getDeltaDim(detail);
           final deltaRatio = pan - prePan;
           final delta = deltaRatio / getSizeDim(gesture.chartSize);
           return [pre.first + delta, pre.last + delta];
         } else {
+          // Scaling.
+
           final preScale = getScaleDim(gesture.preScaleDetail!);
           final scale = getScaleDim(detail);
           final deltaRatio = (scale - preScale) / preScale / 2;

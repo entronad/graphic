@@ -54,17 +54,10 @@ class Variable<D, V> {
 
   @override
   bool operator ==(Object other) =>
-      other is Variable<D, V> &&
-      // accessor: Function
-      scale == other.scale;
+      other is Variable<D, V> && scale == other.scale;
 }
 
-/// params:
-/// - accessors: Map<String, accessor>
-/// - data: List<D>
-///
-/// value: List<Tuple>
-/// Tuple tuples
+/// The operator to create original value tuples from input data.
 class VariableOp<D> extends Operator<List<Tuple>> {
   VariableOp(Map<String, dynamic> params) : super(params);
 
@@ -86,6 +79,7 @@ class VariableOp<D> extends Operator<List<Tuple>> {
   }
 }
 
+/// Parses variable related specifications.
 void parseVariable<D>(
   Chart<D> spec,
   View<D> view,

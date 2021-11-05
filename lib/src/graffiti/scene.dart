@@ -1,25 +1,48 @@
 import 'dart:ui';
 
+import 'package:graphic/src/common/layers.dart';
+import 'package:graphic/src/common/operators/render.dart';
+
 import 'figure.dart';
+import 'graffiti.dart';
 
-/// Scene and it's subclass has no paramed constructor,
-///     because params are unknow when they are set to render operator in parsing.
+/// The base class of scenes.
+///
+/// A scene holds a group of [Figure]s for the [Graffiti] to paint. They are held
+/// by [Graffiti] and [Render] operators simutaniously, so they connect the dataflow
+/// and rendering engine. Once the chart is built, the scene instances will not
+/// change, but the figures they hold may vary on reevaluation.
 abstract class Scene {
-  int zIndex = 0;
+  Scene(this.zIndex);
 
+  /// The z index of this scene.
+  int zIndex;
+
+  /// The default layer of this scene.
+  ///
+  /// It determins the stacking order when [zIndex]s are the same. It is picked
+  /// from [Layers] by subclass implementation.
   int get layer;
 
-  // Help to order stablely.
+  /// The previous stakcking order.
+  ///
+  /// It helps the [Graffiti] to sort scenes stably.
   late int preOrder;
 
-  // Make sure to set this before _paint, or _paint will do nothing.
+  /// Figures to paint.
+  ///
+  /// If null, the scene will do nothing in painting.
   List<Figure>? figures;
 
+  /// The painting clip of the figures of this scene.
   Path? clip;
 
-  /// Set a region as clip.
+  /// Sets a Rectangle [clip].
   void setRegionClip(Rect region) => clip = Path()..addRect(region);
 
+  /// Paints the figures
+  ///
+  /// It is called by [Graffiti.paint].
   void paint(Canvas canvas) {
     if (figures != null) {
       canvas.save();

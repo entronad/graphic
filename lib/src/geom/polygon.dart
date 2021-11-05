@@ -51,7 +51,13 @@ class PolygonElement extends PartitionElement<PolygonShape> {
         );
 }
 
+/// The position completer of the polygon element.
+///
+/// It will check and complete position points by the rule of:
+///
+/// ```
 /// [point] => [point]
+/// ```
 List<Offset> polygonCompleter(List<Offset> position, Offset origin) {
   assert(position.length == 1);
   return position;

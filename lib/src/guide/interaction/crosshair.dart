@@ -69,11 +69,15 @@ class CrosshairGuide {
       element == other.element;
 }
 
+/// The crosshair scene.
 class CrosshairScene extends Scene {
+  CrosshairScene(int zIndex) : super(zIndex);
+
   @override
   int get layer => Layers.crosshair;
 }
 
+/// The crosshair render operator.
 class CrosshairRenderOp extends Render<CrosshairScene> {
   CrosshairRenderOp(
     Map<String, dynamic> params,
@@ -86,7 +90,6 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
     final selectorName = params['selectorName'] as String;
     final selector = params['selector'] as Selector?;
     final selects = params['selects'] as Set<int>?;
-    final zIndex = params['zIndex'] as int;
     final coord = params['coord'] as CoordConv;
     final groups = params['groups'] as AesGroups;
     final styles = params['styles'] as List<StrokeStyle?>;
@@ -97,7 +100,7 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
       return;
     }
 
-    final pointer = coord.invert(selector.eventPoints.last);
+    final pointer = coord.invert(selector.points.last);
 
     Offset selectedPoint = Offset.zero;
     int count = 0;
@@ -176,7 +179,6 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
     }
 
     scene
-      ..zIndex = zIndex
       ..setRegionClip(coord.region)
       ..figures = figures.isEmpty ? null : figures;
   }

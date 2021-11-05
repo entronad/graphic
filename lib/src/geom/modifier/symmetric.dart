@@ -9,19 +9,21 @@ import 'modifier.dart';
 ///
 /// The symmetric method redistributes all position points symmetricly around the
 /// zero, keeping their relative position unchanged.
+///
+/// It is mostly used in river chart, and funnel chart.
 class SymmetricModifier extends Modifier {
   @override
   bool operator ==(Object other) =>
       other is SymmetricModifier && super == other;
 }
 
+/// The symmetric geometory modifier.
 class SymmetricGeomModifier extends GeomModifier {
   SymmetricGeomModifier(this.normalZero);
 
+  /// The normal value of the stacked variable's zero.
   final double normalZero;
 
-  /// The points will be re-distributed symmetric to zero x line, keeping the relative distance.
-  /// Symmetric is mostly used in river chart, funnel chart.
   @override
   void modify(AesGroups value) {
     for (var i = 0; i < value.first.length; i++) {
@@ -52,6 +54,7 @@ class SymmetricGeomModifier extends GeomModifier {
   }
 }
 
+/// The symmetric geometory modifier operator.
 class SymmetricGeomModifierOp extends GeomModifierOp<SymmetricGeomModifier> {
   SymmetricGeomModifierOp(Map<String, dynamic> params) : super(params);
 

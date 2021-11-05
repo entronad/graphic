@@ -50,7 +50,13 @@ class PointElement extends FunctionElement<PointShape> {
         );
 }
 
+/// The position completer of the point element.
+///
+/// It will check and complete position points by the rule of:
+///
+/// ```
 /// [point] => [point]
+/// ```
 List<Offset> pointCompleter(List<Offset> position, Offset origin) {
   assert(position.length == 1);
   return position;

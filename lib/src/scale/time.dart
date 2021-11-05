@@ -29,17 +29,19 @@ class TimeScale extends ContinuousScale<DateTime> {
         );
 }
 
+/// Picks the later one of two [DateTime]s.
 DateTime _later(DateTime a, DateTime b) => a.isAfter(b) ? a : b;
 
+/// Picks the earlier one of two [DateTime]s.
 DateTime _earlier(DateTime a, DateTime b) => a.isBefore(b) ? a : b;
 
+/// The time scale converter.
 class TimeScaleConv extends ContinuousScaleConv<DateTime> {
   TimeScaleConv(
     TimeScale spec,
     List<Tuple> tuples,
     String variable,
   ) {
-    // min, max
     if (spec.min != null && spec.max != null) {
       min = spec.min;
       max = spec.max;
@@ -53,13 +55,12 @@ class TimeScaleConv extends ContinuousScaleConv<DateTime> {
       }
 
       final range = maxTmp.difference(minTmp);
-      final marginMin = range * (spec.marginMin ?? 0.1); // TODO: default
-      final marginMax = range * (spec.marginMax ?? 0.1); // TODO: default
+      final marginMin = range * (spec.marginMin ?? 0.1);
+      final marginMax = range * (spec.marginMax ?? 0.1);
       min = min ?? minTmp.subtract(marginMin);
       max = max ?? maxTmp.add(marginMax);
     }
 
-    // ticks
     if (spec.ticks != null) {
       ticks = spec.ticks!;
     } else {

@@ -51,7 +51,13 @@ class LineElement extends FunctionElement<LineShape> {
         );
 }
 
+/// The position completer of the line element.
+///
+/// It will check and complete position points by the rule of:
+///
+/// ```
 /// [point] => [point]
+/// ```
 List<Offset> lineCompleter(List<Offset> position, Offset origin) {
   assert(position.length == 1);
   return position;

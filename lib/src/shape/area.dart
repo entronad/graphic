@@ -43,7 +43,7 @@ class BasicAreaShape extends AreaShape {
 
   /// Whether to connect the last point to the first point.
   ///
-  /// This is usefull in the polar coordinate.
+  /// It is usefull in the polar coordinate.
   final bool loop;
 
   @override
@@ -85,7 +85,7 @@ class BasicAreaShape extends AreaShape {
         group.first.position[1].dy.isFinite &&
         group.last.position[0].dy.isFinite &&
         group.last.position[1].dy.isFinite) {
-      // Because line can be broken by NaN, loop cannot use close.
+      // Because lines may be broken by NaN, don't loop by Path.close.
       segments.last.add(segments.first.first);
     }
 
@@ -98,7 +98,8 @@ class BasicAreaShape extends AreaShape {
         ends.add(points[1]);
       }
 
-      // Because area is a single closed subpath, cannot use polyline.
+      // Because area is a whole closed subpath, don't use Paths.polyline, which
+      // contains Path.moveTo.
       path.moveTo(ends.first.dx, ends.first.dy);
       if (smooth) {
         final segments = getBezierSegments(

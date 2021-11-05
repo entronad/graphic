@@ -67,9 +67,7 @@ class RectShape extends IntervalShape {
 
     if (coord is RectCoordConv) {
       if (histogram) {
-        // histogram
-
-        // Histogram dosen't allow NaN measure value.
+        // Histogram shape dosen't allow NaN value.
 
         // First item.
         Aes item = group.first;
@@ -122,7 +120,7 @@ class RectShape extends IntervalShape {
           coord,
         ));
       } else {
-        // bar
+        // Bar.
 
         for (var item in group) {
           bool nan = false;
@@ -164,11 +162,11 @@ class RectShape extends IntervalShape {
         }
       }
     } else if (coord is PolarCoordConv) {
-      // All sector interval shapes dosen't allow NaN measure value.
+      // All sector interval shapes dosen't allow NaN value.
 
       if (coord.transposed) {
         if (coord.dimCount == 1) {
-          // pie
+          // Pie.
 
           for (var item in group) {
             final position = item.position;
@@ -187,7 +185,7 @@ class RectShape extends IntervalShape {
             ));
           }
         } else {
-          // race track
+          // Race track.
 
           for (var item in group) {
             final position = item.position;
@@ -220,7 +218,7 @@ class RectShape extends IntervalShape {
         }
       } else {
         if (coord.dimCount == 1) {
-          // bull eye
+          // Bull eye.
 
           for (var item in group) {
             rst.addAll(_renderSector(
@@ -236,7 +234,7 @@ class RectShape extends IntervalShape {
             ));
           }
         } else {
-          // rose
+          // Rose.
 
           // First item.
           Aes item = group.first;
@@ -301,6 +299,9 @@ class RectShape extends IntervalShape {
     return rst;
   }
 
+  /// Renders a rectangle interval item.
+  ///
+  /// It relaced [renderItem].
   List<Figure> _renderRect(
     Aes item,
     Rect rect,
@@ -344,6 +345,9 @@ class RectShape extends IntervalShape {
     return rst;
   }
 
+  /// Renders a sector interval item.
+  ///
+  /// It relaced [renderItem].
   List<Figure> _renderSector(
     Aes item,
     double r,
@@ -393,7 +397,7 @@ class RectShape extends IntervalShape {
     if (hasLabel && item.label != null) {
       Alignment defaultAlign;
       if (labelPosition == 1) {
-        // According to anchor's quadrant.
+        // Calculate default alignment according to anchor's quadrant.
         final anchorOffset = labelAnchor - coord.center;
         defaultAlign = Alignment(
           anchorOffset.dx.equalTo(0)
@@ -525,6 +529,9 @@ class FunnelShape extends IntervalShape {
     return rst;
   }
 
+  /// Renders a slope-toped interval item.
+  ///
+  /// It relaced [renderItem].
   List<Figure> _renderSlope(
     Aes item,
     List<Offset> corners,

@@ -25,6 +25,7 @@ class SizeAttr extends ChannelAttr<double> {
         );
 }
 
+/// The continuous size attribute converter.
 class ContinuousSizeConv extends ContinuousChannelConv<double> {
   ContinuousSizeConv(List<double> values, List<double> stops)
       : super(values, stops);

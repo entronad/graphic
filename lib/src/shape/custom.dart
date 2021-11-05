@@ -22,6 +22,14 @@ abstract class CustomShape extends Shape {
 
 /// A candle stick shape.
 ///
+/// The points order of measure dimension is appointed as:
+///
+/// ```
+/// [star, end, max, min]
+/// ```
+///
+/// And the end point is regarded as represent point.
+///
 /// ** We insist that the price of a subject matter of investment is determined
 /// by its intrinsic value. Too much attention to the short-term fluctuations in
 /// prices is harmful. Thus a candlestick chart may misslead your investment decision.**
@@ -70,10 +78,10 @@ class CandlestickShape extends CustomShape {
     Offset origin,
   ) {
     assert(item.shape is CandlestickShape);
-    // candle stick shape dosen't allow NaN measure value.
 
     final path = Path();
 
+    // Candle stick shape dosen't allow NaN value.
     final points = item.position.map((p) => coord.convert(p)).toList();
     final x = points.first.dx;
     final ys = points.map((p) => p.dy).toList()..sort();
@@ -89,7 +97,8 @@ class CandlestickShape extends CustomShape {
       path.moveTo(x, bottomEdge);
       path.lineTo(x, bottom);
     } else {
-      // Fill will not render path.lineTo.
+      // If the stoke style is fill, the lines created by Path.lineTo will not
+      // be rendered.
       final strokeBias = strokeWidth / 2;
       path.addRect(Rect.fromPoints(
         Offset(x - strokeBias, top),
@@ -106,7 +115,7 @@ class CandlestickShape extends CustomShape {
       Offset(x + bias, bottomEdge),
     ));
 
-    // Color should be set by color attr encode.
+    // Color variation should be controled by color attribute.
     return renderBasicItem(
       path,
       item,
@@ -114,9 +123,9 @@ class CandlestickShape extends CustomShape {
       strokeWidth,
     );
 
-    // No label.
+    // No labels.
   }
 
   @override
-  Offset representPoint(List<Offset> position) => position[1]; // end
+  Offset representPoint(List<Offset> position) => position[1];
 }

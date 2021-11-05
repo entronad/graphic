@@ -12,6 +12,13 @@ import 'package:graphic/src/scale/scale.dart';
 /// Firstly compose points by algebra form.
 /// Secondly convert values of points from scaled value to normal value.
 /// Thirdly complete abstract position points by geom.
+///
+/// The position attribute encoder.
+///
+/// The process of encoding for each tuple is:
+/// 1. Composes points by the algebracal form.
+/// 2. Converts values of points from scaled value to normal value.
+/// 3. Completes position points by geom.
 class PositionEncoder extends Encoder<List<Offset>> {
   PositionEncoder(
     this.form,
@@ -20,12 +27,18 @@ class PositionEncoder extends Encoder<List<Offset>> {
     this.origin,
   );
 
+  /// The algebracal form.
   final AlgForm form;
 
+  /// The scale converters.
   final Map<String, ScaleConv> scales;
 
-  final PositionCompleter completer; // Defined by each geom.
+  /// The position points completer.
+  ///
+  /// It is determined by the geometory element type.
+  final PositionCompleter completer;
 
+  /// The origin point's position.
   final Offset origin;
 
   @override
@@ -33,12 +46,13 @@ class PositionEncoder extends Encoder<List<Offset>> {
     final position = <Offset>[];
     for (var term in form) {
       if (term.length == 1) {
-        // For dim 1 coord.
+        // For 1D coordinate, the point domain dimension is filled with an arbitry
+        // 0, which will be replaced by dimFill in the coordinate converter and
+        // the single term factor is for measure dimension.
+
         position.add(Offset(
-          0, // Fill the domain dim.
-          // This is an arbitry value, and will be replaced by dimFill in coord converter.
-          scales[term[0]]!.normalize(
-              scaled[term[0]]!), // The only factor is regarded as measure dim.
+          0,
+          scales[term[0]]!.normalize(scaled[term[0]]!),
         ));
       } else {
         position.add(Offset(
@@ -51,7 +65,7 @@ class PositionEncoder extends Encoder<List<Offset>> {
   }
 }
 
-/// Position Encode needs a operator to create because it needs dynamic params form other operators.
+/// The operator to create the position encoder.
 class PositionOp extends Operator<PositionEncoder> {
   PositionOp(Map<String, dynamic> params) : super(params);
 
@@ -81,12 +95,7 @@ class PositionOp extends Operator<PositionEncoder> {
   }
 }
 
-/// params:
-/// - form: AlgForm
-/// - scales: Map<String, ScaleConv>, Scale convertors.
-///
-/// value: Offset
-/// The abstract origin point
+/// The operator to get the origin point's position.
 class OriginOp extends Operator<Offset> {
   OriginOp(Map<String, dynamic> params) : super(params);
 

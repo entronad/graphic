@@ -22,10 +22,12 @@ class ChangeDataSignal<D> extends Signal {
   final List<D> data;
 }
 
+/// The input data value operator.
 class DataOp<D> extends Value<List<D>> {
   DataOp(List<D> value) : super(value);
 }
 
+/// Parses the input data related specifications.
 void parseData<D>(
   Chart<D> spec,
   View<D> view,

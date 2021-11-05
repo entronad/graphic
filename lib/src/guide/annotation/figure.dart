@@ -52,10 +52,12 @@ abstract class FigureAnnotation extends Annotation {
   // anchor is Function
 }
 
+/// The operator to create figures of a figure annotation.
 abstract class FigureAnnotOp extends Operator<List<Figure>?> {
   FigureAnnotOp(Map<String, dynamic> params) : super(params);
 }
 
+/// The operator to get figure annotation's anchor if it is set directly.
 class FigureAnnotSetAnchorOp extends Operator<Offset> {
   FigureAnnotSetAnchorOp(Map<String, dynamic> params) : super(params);
 
@@ -68,6 +70,7 @@ class FigureAnnotSetAnchorOp extends Operator<Offset> {
   }
 }
 
+/// The operator to get figure annotation's anchor if it is calculated.
 class FigureAnnotCalcAnchorOp extends Operator<Offset> {
   FigureAnnotCalcAnchorOp(Map<String, dynamic> params) : super(params);
 
@@ -87,11 +90,15 @@ class FigureAnnotCalcAnchorOp extends Operator<Offset> {
   }
 }
 
+/// The figure annotation scene.
 class FigureAnnotScene extends AnnotScene {
+  FigureAnnotScene(int zIndex) : super(zIndex);
+
   @override
   int get layer => Layers.figureAnnot;
 }
 
+/// The figure annotation render operator.
 class FigureAnnotRenderOp extends AnnotRenderOp<FigureAnnotScene> {
   FigureAnnotRenderOp(
     Map<String, dynamic> params,
@@ -103,12 +110,9 @@ class FigureAnnotRenderOp extends AnnotRenderOp<FigureAnnotScene> {
   void render() {
     final figures = params['figures'] as List<Figure>?;
     final inRegion = params['inRegion'] as bool;
-    final zIndex = params['zIndex'] as int;
     final coord = params['coord'] as CoordConv;
 
-    scene
-      ..zIndex = zIndex
-      ..figures = figures;
+    scene..figures = figures;
 
     if (inRegion) {
       scene.setRegionClip(coord.region);

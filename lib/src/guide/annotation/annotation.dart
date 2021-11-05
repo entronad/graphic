@@ -19,8 +19,12 @@ abstract class Annotation {
       other is Annotation && zIndex == other.zIndex;
 }
 
-abstract class AnnotScene extends Scene {}
+/// The annotation scene.
+abstract class AnnotScene extends Scene {
+  AnnotScene(int zIndex) : super(zIndex);
+}
 
+/// The annotation render operator.
 abstract class AnnotRenderOp<S extends AnnotScene> extends Render<S> {
   AnnotRenderOp(
     Map<String, dynamic> params,

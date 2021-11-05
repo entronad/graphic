@@ -53,11 +53,15 @@ class RegionAnnotation extends Annotation {
       color == color;
 }
 
+/// The region annotation scene.
 class RegionAnnotScene extends AnnotScene {
+  RegionAnnotScene(int zIndex) : super(zIndex);
+
   @override
   int get layer => Layers.regionAnnot;
 }
 
+/// The region annotation render operator.
 class RegionAnnotRenderOp extends AnnotRenderOp<RegionAnnotScene> {
   RegionAnnotRenderOp(
     Map<String, dynamic> params,
@@ -71,13 +75,10 @@ class RegionAnnotRenderOp extends AnnotRenderOp<RegionAnnotScene> {
     final variable = params['variable'] as String;
     final values = params['values'] as List;
     final color = params['color'] as Color;
-    final zIndex = params['zIndex'] as int;
     final scales = params['scales'] as Map<String, ScaleConv>;
     final coord = params['coord'] as CoordConv;
 
-    scene
-      ..zIndex = zIndex
-      ..setRegionClip(coord.region);
+    scene..setRegionClip(coord.region);
 
     final scale = scales[variable]!;
     final start = scale.normalize(scale.convert(values.first));

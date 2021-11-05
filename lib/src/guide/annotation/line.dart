@@ -50,11 +50,15 @@ class LineAnnotation extends Annotation {
       style == other.style;
 }
 
+/// The line annotation scene.
 class LineAnnotScene extends AnnotScene {
+  LineAnnotScene(int zIndex) : super(zIndex);
+
   @override
   int get layer => Layers.lineAnnot;
 }
 
+/// The line annotation render operator.
 class LineAnnotRenderOp extends AnnotRenderOp<LineAnnotScene> {
   LineAnnotRenderOp(
     Map<String, dynamic> params,
@@ -68,13 +72,10 @@ class LineAnnotRenderOp extends AnnotRenderOp<LineAnnotScene> {
     final variable = params['variable'] as String;
     final value = params['value'];
     final style = params['style'] as StrokeStyle;
-    final zIndex = params['zIndex'] as int;
     final scales = params['scales'] as Map<String, ScaleConv>;
     final coord = params['coord'] as CoordConv;
 
-    scene
-      ..zIndex = zIndex
-      ..setRegionClip(coord.region);
+    scene..setRegionClip(coord.region);
 
     final scale = scales[variable]!;
     final position = scale.normalize(scale.convert(value));

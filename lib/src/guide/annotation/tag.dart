@@ -30,6 +30,7 @@ class TagAnnotation extends FigureAnnotation {
       other is TagAnnotation && super == other && label == other.label;
 }
 
+/// The tag figure annotation operator.
 class TagAnnotOp extends FigureAnnotOp {
   TagAnnotOp(Map<String, dynamic> params) : super(params);
 

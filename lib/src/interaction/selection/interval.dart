@@ -25,7 +25,7 @@ class IntervalSelection extends Selection {
           clear: clear,
         );
 
-  /// Color of the interval mark.
+  /// The color of the interval mark.
   ///
   /// If null, a default `Color(0x10101010)` is set.
   Color? color;
@@ -43,6 +43,9 @@ class IntervalSelection extends Selection {
       zIndex == other.zIndex;
 }
 
+/// The interval selector.
+///
+/// The [points] are `[start, end]`.
 class IntervalSelector extends Selector {
   IntervalSelector(
     this.color,
@@ -50,16 +53,18 @@ class IntervalSelector extends Selector {
     String name,
     int? dim,
     String? variable,
-    List<Offset> eventPoints, // [start, end]
+    List<Offset> points,
   ) : super(
           name,
           dim,
           variable,
-          eventPoints,
+          points,
         );
 
+  /// The color of the interval mark.
   final Color color;
 
+  /// The z index of the interval mark.
   final int zIndex;
 
   @override
@@ -69,8 +74,8 @@ class IntervalSelector extends Selector {
     Set<int>? preSelects,
     CoordConv coord,
   ) {
-    final start = coord.invert(eventPoints.first);
-    final end = coord.invert(eventPoints.last);
+    final start = coord.invert(points.first);
+    final end = coord.invert(points.last);
 
     bool Function(Aes) test;
     if (dim == null) {
@@ -122,6 +127,7 @@ class IntervalSelector extends Selector {
   }
 }
 
+/// Renders interval selector.
 List<Figure>? renderIntervalSelector(
   Offset start,
   Offset end,

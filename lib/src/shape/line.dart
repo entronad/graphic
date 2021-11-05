@@ -42,7 +42,7 @@ class BasicLineShape extends LineShape {
 
   /// Whether to connect the last point to the first point.
   ///
-  /// This is usefull in the polar coordinate.
+  /// It is usefull in the polar coordinate.
   final bool loop;
 
   @override
@@ -78,7 +78,7 @@ class BasicLineShape extends LineShape {
     if (loop &&
         group.first.position.last.dy.isFinite &&
         group.last.position.last.dy.isFinite) {
-      // Because line can be broken by NaN, loop cannot use close.
+      // Because lines may be broken by NaN, don't loop by Path.close.
       segments.last.add(segments.first.first);
     }
 

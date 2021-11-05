@@ -9,6 +9,7 @@ import 'package:graphic/src/util/path.dart';
 
 import 'axis.dart';
 
+/// Renders horizontal axis.
 List<Figure>? renderHorizontalAxis(
   List<TickInfo> ticks,
   double position,
@@ -59,6 +60,7 @@ List<Figure>? renderHorizontalAxis(
   return rst.isEmpty ? null : rst;
 }
 
+/// Renders horizontal axis grid.
 List<Figure>? renderHorizontalGrid(
   List<TickInfo> ticks,
   RectCoordConv coord,

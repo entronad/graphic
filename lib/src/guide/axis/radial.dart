@@ -10,7 +10,9 @@ import 'package:graphic/src/util/path.dart';
 
 import 'axis.dart';
 
-/// Always behind the axis in clockwise forword.
+/// Calculates default radial axis lablel alignment.
+///
+/// They are always behind the axis in clockwise forword.
 Alignment radialLabelAlign(Offset offset) {
   if (offset.dx.equalTo(0)) {
     if (offset.dy.equalTo(0)) {
@@ -43,6 +45,7 @@ Alignment radialLabelAlign(Offset offset) {
   }
 }
 
+/// Renders radial axis.
 List<Figure>? renderRadialAxis(
   List<TickInfo> ticks,
   double position,
@@ -67,7 +70,7 @@ List<Figure>? renderRadialAxis(
   }
 
   for (var tick in ticks) {
-    // Polar coord dose not has tickLine.
+    // Polar coord dose not allow tick lines.
     assert(tick.tickLine == null);
 
     final r = coord.convertRadius(tick.position);
@@ -87,6 +90,7 @@ List<Figure>? renderRadialAxis(
   return rst.isEmpty ? null : rst;
 }
 
+/// Renders radial axis grid.
 List<Figure>? renderRadialGrid(
   List<TickInfo> ticks,
   PolarCoordConv coord,

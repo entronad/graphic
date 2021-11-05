@@ -19,10 +19,12 @@ class ResizeSignal extends Signal {
   final Size size;
 }
 
+/// The chart size value operator.
 class SizeOp extends Value<Size> {
   SizeOp(Size value) : super(value);
 }
 
+/// Parses the chart size related specifications.
 void parseSize(
   Chart spec,
   View view,

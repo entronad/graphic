@@ -25,7 +25,6 @@ double _getFactor(num v) {
   return factor;
 }
 
-// Less then current value.
 num _listFloor(List<num> values, num value) {
   if (values.isEmpty) {
     return double.nan;
@@ -50,7 +49,6 @@ num _listFloor(List<num> values, num value) {
   return pre;
 }
 
-// First greater then current value.
 num _listCeiling(List<num> values, num value) {
   if (values.isEmpty) {
     return double.nan;

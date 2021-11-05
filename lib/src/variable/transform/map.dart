@@ -17,9 +17,9 @@ class MapTrans extends VariableTransform {
 
   @override
   bool operator ==(Object other) => other is MapTrans && super == other;
-  // mapper is Function.
 }
 
+/// The map transform operator.
 class MapOp extends TransformOp {
   MapOp(Map<String, dynamic> params) : super(params);
 

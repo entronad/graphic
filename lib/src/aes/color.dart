@@ -27,6 +27,7 @@ class ColorAttr extends ChannelAttr<Color> {
         );
 }
 
+/// The continuous color attribute converter.
 class ContinuousColorConv extends ContinuousChannelConv<Color> {
   ContinuousColorConv(List<Color> values, List<double> stops)
       : super(values, stops);

@@ -3,6 +3,9 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:graphic/src/common/reserveds.dart';
 
+/// Normalizes a varset's expression to a algebracal form.
+///
+/// The terms will be filled with [Reserveds.unitTag] for missing factors.
 Varset _normalize(Varset varset) {
   var maxOrder = 0;
   for (var term in varset.form) {
@@ -40,6 +43,7 @@ typedef AlgTerm = List<String>;
 typedef AlgForm = List<AlgTerm>;
 
 extension AlgFormExt on AlgForm {
+  /// Gets variables in list of dimensions.
   List<List<String>> get variablesByDim {
     final rst = <List<String>>[];
     for (var term in this) {

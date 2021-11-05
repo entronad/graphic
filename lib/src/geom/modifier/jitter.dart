@@ -28,14 +28,17 @@ class JitterModifier extends Modifier {
       other is JitterModifier && super == other && ratio == other.ratio;
 }
 
+/// The jitter geometory modifier.
 class JitterGeomModifier extends GeomModifier {
   JitterGeomModifier(
     this.ratio,
     this.band,
   );
 
+  /// Ratio of the local neighborhood to the descrete band for each group.
   final double ratio;
 
+  /// The band ratio of each value.
   final double band;
 
   @override
@@ -56,6 +59,7 @@ class JitterGeomModifier extends GeomModifier {
   }
 }
 
+/// The jitter geometory modifier operator.
 class JitterGeomModifierOp extends GeomModifierOp<JitterGeomModifier> {
   JitterGeomModifierOp(Map<String, dynamic> params) : super(params);
 

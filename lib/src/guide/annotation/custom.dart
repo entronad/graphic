@@ -29,6 +29,7 @@ class CustomAnnotation extends FigureAnnotation {
   // render is Function
 }
 
+/// The custom figure annotation operator.
 class CustomAnnotOp extends FigureAnnotOp {
   CustomAnnotOp(Map<String, dynamic> params) : super(params);
 

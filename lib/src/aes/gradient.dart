@@ -29,6 +29,7 @@ class GradientAttr extends ChannelAttr<Gradient> {
         );
 }
 
+/// The continuous gradient attribute converter.
 class ContinuousGradientConv extends ContinuousChannelConv<Gradient> {
   ContinuousGradientConv(List<Gradient> values, List<double> stops)
       : super(values, stops);

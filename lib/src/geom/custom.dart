@@ -17,7 +17,7 @@ import 'modifier/modifier.dart';
 /// A custom element has no special graphing rule, its graph is determined by the
 /// [CustomShape].
 ///
-/// it will not check or complete the position points.
+/// It will not check or complete the position points.
 class CustomElement extends GeomElement<CustomShape> {
   /// Creates a custom element.
   CustomElement({
@@ -47,5 +47,7 @@ class CustomElement extends GeomElement<CustomShape> {
         );
 }
 
-/// any => any
+/// The position completer of the custom element.
+///
+/// It will return the [position] directly.
 List<Offset> customCompleter(List<Offset> position, Offset origin) => position;

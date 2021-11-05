@@ -21,6 +21,7 @@ int _getGreatestFactor(int count, int number) {
   return i;
 }
 
+/// Gets category ticks automatically.
 List<V> catAutoTicks<V>({
   required List<V> categories,
   bool? isRounding,

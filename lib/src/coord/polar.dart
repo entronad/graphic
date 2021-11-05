@@ -100,11 +100,11 @@ class PolarCoord extends Coord {
       startRadius == other.startRadius &&
       endRadius == other.endRadius &&
       DeepCollectionEquality().equals(angleRange, other.angleRange) &&
-      DeepCollectionEquality(MapKeyEquality()).equals(onAngleRangeSignal,
-          other.onAngleRangeSignal) && // SignalUpdata: Function
+      DeepCollectionEquality(MapKeyEquality())
+          .equals(onAngleRangeSignal, other.onAngleRangeSignal) &&
       DeepCollectionEquality().equals(radiusRange, other.radiusRange) &&
-      DeepCollectionEquality(MapKeyEquality()).equals(
-          onRadiusRangeSignal, onRadiusRangeSignal); // SignalUpdata: Function
+      DeepCollectionEquality(MapKeyEquality())
+          .equals(onRadiusRangeSignal, onRadiusRangeSignal);
 }
 
 /// The converter of a polar coordinate.
@@ -187,7 +187,8 @@ class PolarCoordConv extends CoordConv {
   @override
   Offset convert(Offset input) {
     if (dimCount == 1) {
-      input = Offset(dimFill, input.dy); // [arbitry domain, single measure]
+      // For 1D coordinate, the domain dimension of input is arbitry.
+      input = Offset(dimFill, input.dy);
     }
 
     final getAbstractAngle =
@@ -229,20 +230,20 @@ class PolarCoordConv extends CoordConv {
   @override
   double invertDistance(double canvasDistance, [int? dim]) {
     assert(dim == null || dim == 1 || dim == 2);
-    final a = canvasDistance /
-        ((startRadius + endRadius) * 2); // arc length in middle radius.
+    // The radius in angle calculation is approximately the middle radius.
+    final a = canvasDistance / ((startRadius + endRadius) * 2);
     final r = canvasDistance / (endRadius - startRadius).abs();
     if (dim == 1) {
       return transposed ? r : a;
     } else if (dim == 2) {
       return transposed ? a : r;
     } else {
-      // null
       return (a + r) / 2;
     }
   }
 }
 
+/// The polar coordinate converter operator.
 class PolarCoordConvOp extends CoordConvOp<PolarCoordConv> {
   PolarCoordConvOp(
     Map<String, dynamic> params,

@@ -9,6 +9,7 @@ import 'package:graphic/src/util/path.dart';
 
 import 'axis.dart';
 
+/// Renders vertical axis.
 List<Figure>? renderVerticalAxis(
   List<TickInfo> ticks,
   double position,
@@ -59,6 +60,7 @@ List<Figure>? renderVerticalAxis(
   return rst.isEmpty ? null : rst;
 }
 
+/// Renders vertical axis grid.
 List<Figure>? renderVerticalGrid(
   List<TickInfo> ticks,
   RectCoordConv coord,

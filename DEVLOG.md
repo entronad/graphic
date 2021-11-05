@@ -3756,6 +3756,26 @@ data --> tuples --> scaled tuples --> aesthetic attributes --> figures
 
 将所有的spec都放到chart中，移除spec类，这样做文档最简洁。
 
+其它注释，类和字段、方法也按文档的方式，因为绝大部分是op，其它类不多。不过语言上可以不要那么严格，以表意为主，可多用引用。op的注释方法再想办法
+
+方法中的注释在独立行，用双斜杠，
+
+非文档的一般构造函数就不加注释了。
+
+if else 等的注释，写到分支代码块里面，用散文的方式
+
+op的依赖关系尽量用 souce 和 target 
+
+在注释中无论 df还是op的run都统一为术语evaluate
+
+根据数据形态的不同，将整个流程分为 variable, scale, aesthetic, group 这几个stage
+
+由于 selector scene 肯能会出现不同 zIndex 的 selector，所以 zIndex 设置是动态的。
+
+zIndex 与 scenes 排序的问题，还是采用基本不用排序，除非被通知了的方式精细控制
+
+注意对于selection和signal update op，当其它变化引起的pulse不会触发它的 evalute，它会保持当前值
+
 ## TODO
 
 group selection

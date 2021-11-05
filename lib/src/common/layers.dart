@@ -1,3 +1,4 @@
+/// Internal layer orders, if the components has same z index.
 abstract class Layers {
   static const grid = 0;
   static const regionAnnot = 1;

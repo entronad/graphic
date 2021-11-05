@@ -7,21 +7,31 @@ import 'package:flutter/foundation.dart';
 
 import 'operator.dart';
 
+/// A dataflow graph for reactive processing of data.
 class Dataflow {
+  /// the current rank record for [_rank].
   int _currentRank = 0;
 
+  /// The touched operators need to evaluate.
   final Set<Operator> _touched = {};
 
+  /// The consume operators.
   final Set<Operator> _consumes = {};
 
+  /// The operators has evaluated in this pulse.
   final Set<Operator> _runed = {};
 
+  /// The evaluation heap.
   final HeapPriorityQueue<Operator> _heap = HeapPriorityQueue(
     (a, b) => a.rank - b.rank,
   );
 
+  /// The [Future] instance when this dataflow is running.
+  ///
+  /// It is usefull to check whether this dataflow is running.
   Future<Dataflow>? _running;
 
+  /// Add an operator to this dataflow.
   O add<O extends Operator>(O op) {
     _rank(op);
     if (!op.isSouce) {
@@ -39,29 +49,35 @@ class Dataflow {
     return op;
   }
 
+  /// Sets the [Operator.rank] by the order added to this dataflow.
   void _rank(Operator op) {
-    // Start form 0, like list index.
     op.rank = _currentRank++;
   }
 
+  /// Adds an operator to [_touched].
   void _touch(Operator op) {
     _touched.add(op);
   }
 
-  /// Operator value cannot update directly outside the dataflow.
-  /// It can only be updatede by event streams.
-  /// Whe updated, rerun starts form it's targets.
+  /// Update an operator's value directly.
+  ///
+  /// Operator values cannot be updated directly outside the dataflow.
   void _update<V>(
     Operator<V> op,
     V value,
   ) {
     if (op.update(value)) {
+      // If operator value is modified, touches its targets.
+
       for (var target in op.targets) {
         _touch(target);
       }
     }
   }
 
+  /// Evaluates the touched operators.
+  ///
+  /// This is used by [run].
   @protected
   Future<Dataflow> evaluate() async {
     if (_touched.isEmpty) {
@@ -98,6 +114,7 @@ class Dataflow {
     return this;
   }
 
+  /// Evaluates this dataflow.
   Future<void> run() async {
     while (_running != null) {
       await _running;
@@ -115,10 +132,12 @@ class Dataflow {
     );
   }
 
+  /// Enqueues an operator to the evaluation heap.
   void _enqueue(Operator op) {
     _heap.add(op);
   }
 
+  /// Registers an [Value] operator to listen to an [SignalSource].
   int listen<S extends Signal, V>(
     SignalSource<S> source,
     Value<V> target,

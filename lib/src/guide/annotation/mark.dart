@@ -45,6 +45,7 @@ class MarkAnnotation extends FigureAnnotation {
       elevation == other.elevation;
 }
 
+/// The mark figure annotation operator.
 class MarkAnnotOp extends FigureAnnotOp {
   MarkAnnotOp(Map<String, dynamic> params) : super(params);
 

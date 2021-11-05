@@ -1,7 +1,10 @@
 import 'package:graphic/src/dataflow/operator.dart';
+import 'package:graphic/src/interaction/signal.dart';
 
-/// Value operator are always source nodes of the dataflow and can never be touched.
-/// It can keep value and be updated by event stream.
+/// The operator to hold a value.
+///
+/// Value operators are source nodes of the dataflow. The cannot be touched and
+/// only be updated by [SignalSource]s.
 class Value<V> extends Operator<V> {
   Value([V? value]) : super(null, value);
 

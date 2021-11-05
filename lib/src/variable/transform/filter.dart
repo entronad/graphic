@@ -19,9 +19,9 @@ class Filter extends VariableTransform {
 
   @override
   bool operator ==(Object other) => other is Filter && super == other;
-  // filter is Function.
 }
 
+/// The filter transform operator.
 class FilterOp extends TransformOp {
   FilterOp(Map<String, dynamic> params) : super(params);
 

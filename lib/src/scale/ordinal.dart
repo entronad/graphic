@@ -25,6 +25,7 @@ class OrdinalScale extends DiscreteScale<String> {
         );
 }
 
+/// The ordinal scale converter.
 class OrdinalScaleConv extends DiscreteScaleConv<String, OrdinalScale> {
   OrdinalScaleConv(
     OrdinalScale spec,

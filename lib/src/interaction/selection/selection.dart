@@ -93,24 +93,32 @@ abstract class Selection {
 /// - [Attr.onSelection], where selection updates are defined.
 typedef SelectionUpdate<V> = V Function(V initialValue);
 
-// selector
-
+/// The base class of selectors.
+///
+/// A selector is defined by a [Selection] and triggerd by [GestureSignal]s. It
+/// selects tuples in the select operator.
 abstract class Selector {
   Selector(
     this.name,
     this.dim,
     this.variable,
-    this.eventPoints,
+    this.points,
   );
 
+  /// The name of the selection
   final String name;
 
+  /// Which diemsion of data values will be tested.
   final int? dim;
 
+  /// If set, all tuples sharing the same this variable value with the selected
+  /// tuple, will also be selected.
   final String? variable;
 
-  final List<Offset> eventPoints;
+  /// The canvas points indicating the position of this selector.
+  final List<Offset> points;
 
+  /// Gets the selected tuple indexes.
   Set<int>? select(
     AesGroups groups,
     List<Tuple> tuples,
@@ -119,6 +127,7 @@ abstract class Selector {
   );
 }
 
+/// The operator to create selectors.
 class SelectorOp extends Operator<Selector?> {
   SelectorOp(Map<String, dynamic> params) : super(params);
 
@@ -143,9 +152,9 @@ class SelectorOp extends Operator<Selector?> {
     final spec = specs[onTypes[type]]!;
     if (spec is PointSelection) {
       return PointSelector(
-        spec.toggle ?? false, // TODO: defalut
-        spec.nearest ?? true, // TODO: defalut
-        spec.testRadius ?? 10.0, // TODO: defalut
+        spec.toggle ?? false,
+        spec.nearest ?? true,
+        spec.testRadius ?? 10.0,
         name,
         spec.dim,
         spec.variable,
@@ -153,46 +162,57 @@ class SelectorOp extends Operator<Selector?> {
       );
     } else {
       spec as IntervalSelection;
-      List<Offset> eventPoints;
+      List<Offset> points;
 
-      if (value == null) {
+      if (value?.name != name) {
+        // If no previous selector or previous selector is not the same selection,
+        // creates one.
+
         if (gesture.type == GestureType.scaleUpdate) {
           final detail = gesture.details as ScaleUpdateDetails;
 
           if (detail.pointerCount == 1) {
-            eventPoints = [gesture.localMoveStart!, gesture.localPosition];
+            // Only creates by panning.
+
+            points = [gesture.localMoveStart!, gesture.localPosition];
           } else {
-            // scale
             return null;
           }
         } else {
-          // scroll
           return null;
         }
       } else {
-        final prePoints = value!.eventPoints;
+        // If previous selector is the same selection.
+
+        final prePoints = value!.points;
 
         if (gesture.type == GestureType.scaleUpdate) {
           final detail = gesture.details as ScaleUpdateDetails;
 
           if (detail.pointerCount == 1) {
             if (gesture.localMoveStart == prePoints.first) {
-              eventPoints = [gesture.localMoveStart!, gesture.localPosition];
+              // Still in the creating panning.
+
+              points = [gesture.localMoveStart!, gesture.localPosition];
             } else {
+              // Pans to move.
+
               final delta = detail.delta - gesture.preScaleDetail!.delta;
-              eventPoints = [prePoints.first + delta, prePoints.last + delta];
+              points = [prePoints.first + delta, prePoints.last + delta];
             }
           } else {
-            // scale
+            // Scales to zoom.
+
             final preScale = gesture.preScaleDetail!.scale;
             final scale = detail.scale;
             final deltaRatio = (scale - preScale) / preScale / 2;
             final preOffset = prePoints.last - prePoints.first;
             final delta = preOffset * deltaRatio;
-            eventPoints = [prePoints.first - delta, prePoints.last + delta];
+            points = [prePoints.first - delta, prePoints.last + delta];
           }
         } else {
-          // scroll
+          // scrolls to zoom.
+
           final step = 0.1;
           final scrollDelta = gesture.details as Offset;
           final deltaRatio = scrollDelta.dy == 0
@@ -202,27 +222,31 @@ class SelectorOp extends Operator<Selector?> {
                   : (-step / 2);
           final preOffset = prePoints.last - prePoints.first;
           final delta = preOffset * deltaRatio;
-          eventPoints = [prePoints.first - delta, prePoints.last + delta];
+          points = [prePoints.first - delta, prePoints.last + delta];
         }
       }
 
       return IntervalSelector(
-        spec.color ?? Color(0x10101010), // TODO: defalut
-        spec.zIndex ?? 0, // TODO: defalut
+        spec.color ?? Color(0x10101010),
+        spec.zIndex ?? 0,
         name,
         spec.dim,
         spec.variable,
-        eventPoints,
+        points,
       );
     }
   }
 }
 
+/// The selector scene.
 class SelectorScene extends Scene {
+  SelectorScene(int zIndex) : super(zIndex);
+
   @override
   int get layer => Layers.selector;
 }
 
+/// The selector render operator.
 class SelectorRenderOp extends Render<SelectorScene> {
   SelectorRenderOp(
     Map<String, dynamic> params,
@@ -236,21 +260,19 @@ class SelectorRenderOp extends Render<SelectorScene> {
 
     if (selector is IntervalSelector) {
       scene
-        ..zIndex = selector.zIndex
         ..figures = renderIntervalSelector(
-          selector.eventPoints.first,
-          selector.eventPoints.last,
+          selector.points.first,
+          selector.points.last,
           selector.color,
         );
+      setZIndex(selector.zIndex);
     } else {
       scene.figures = null;
     }
   }
 }
 
-// select
-
-/// Can be preseted.
+/// The operator to select tuples by selectors.
 class SelectOp extends Operator<Set<int>?> {
   SelectOp(Map<String, dynamic> params, Set<int>? value) : super(params, value);
 
@@ -274,8 +296,7 @@ class SelectOp extends Operator<Set<int>?> {
   }
 }
 
-// update
-
+/// Updates a value.
 V? _update<V>(
   V? value,
   bool select,
@@ -290,7 +311,7 @@ V? _update<V>(
   return value;
 }
 
-/// It is still in the aes scope so share the same aeses instance.
+/// The operator to update aesthetic attributes by selectors.
 class SelectionUpdateOp extends Operator<AesGroups> {
   SelectionUpdateOp(Map<String, dynamic> params) : super(params);
 
@@ -313,7 +334,8 @@ class SelectionUpdateOp extends Operator<AesGroups> {
     final sizeUpdaters = params['sizeUpdaters']
         as Map<String, Map<bool, SelectionUpdate<double>>>?;
 
-    // For initial selected, use the indecated selecor name.
+    // For initially selected tuples of Element.selected, use the indecated selecor
+    // name.
     final selectorName = selector?.name ?? initialSelector;
 
     if (selectorName == null || selects == null) {
@@ -359,7 +381,8 @@ class SelectionUpdateOp extends Operator<AesGroups> {
   }
 }
 
-void parseSelect(
+/// Parses selection related specifications.
+void parseSelection(
   Chart spec,
   View view,
   Scope scope,
@@ -393,7 +416,7 @@ void parseSelect(
     }));
     scope.selector = selector;
 
-    final selectorScene = view.graffiti.add(SelectorScene());
+    final selectorScene = view.graffiti.add(SelectorScene(0));
     view.add(SelectorRenderOp({
       'selector': selector,
     }, selectorScene, view));
@@ -439,9 +462,9 @@ void parseSelect(
     final groups = scope.groupsList[i];
     final origin = scope.origins[i];
 
-    final elementScene = view.graffiti.add(ElementScene());
+    final elementScene =
+        view.graffiti.add(ElementScene(elementSpec.zIndex ?? 0));
     view.add(ElementRenderOp({
-      'zIndex': elementSpec.zIndex ?? 0,
       'groups': groups,
       'coord': scope.coord,
       'origin': origin,

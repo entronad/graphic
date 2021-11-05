@@ -23,6 +23,7 @@ const _defaultSnapList = [1, 2, 4, 5, 10];
 
 const eps = 1e-12;
 
+/// Gets numerical ticks automatically.
 List<num> numAutoTicks({
   required num minValue,
   required num maxValue,

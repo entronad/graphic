@@ -1,4 +1,4 @@
-/// The base class of a converter.
+/// The base class of converters.
 abstract class Converter<I, O> {
   /// Converts an input to output.
   O convert(I input);

@@ -2,9 +2,10 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/painting.dart';
 
+/// Transform alignment definition of painting gradient to specific point.
 Offset _toPoint(AlignmentGeometry align, Rect region) {
-  final al = align
-      as Alignment; // Only Alignment is allowed for graphic gradient properties.
+  // Only Alignment is allowed for graphic gradient properties.
+  final al = align as Alignment;
 
   return Offset(
     (region.width / (1 - (-1))) * (al.x - (-1)) + region.left,
@@ -12,6 +13,10 @@ Offset _toPoint(AlignmentGeometry align, Rect region) {
   );
 }
 
+/// Converts a painting gradient to ui gradient.
+///
+/// Specifications use painting gradient for relative distribution, while canvas
+/// needs ui gradient as shader.
 ui.Gradient toUIGradient(
   Gradient gradient,
   Rect region,
@@ -50,6 +55,7 @@ ui.Gradient toUIGradient(
   throw ArgumentError('Iillegal gradient type.');
 }
 
+/// Calculates shadow color of a graphic with gradient.
 Color getShadowColor(Gradient gradient) {
   if (gradient is LinearGradient) {
     return Color.lerp(

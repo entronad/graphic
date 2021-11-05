@@ -45,6 +45,9 @@ import 'polygon.dart';
 ///
 /// A geometory element applies a certain graphing rule to get a graph from the
 /// tuples.
+///
+/// A *geometory element* corresponds to a set of all tuples, while an *element
+/// item* corresponds to a single tuple.
 abstract class GeomElement<S extends Shape> {
   /// Creates a geometory element.
   GeomElement({
@@ -147,8 +150,10 @@ abstract class GeomElement<S extends Shape> {
       selected == other.selected;
 }
 
-/// Group aes value tuples by element's groupBy field.
-/// If groupBy is null, all tuples will be in the same group.
+/// The operator to group aeses.
+///
+/// The grouping is by [GeomElement.groupBy]. If it is null, all aeses will be in
+/// a same group.
 class GroupOp extends Operator<AesGroups> {
   GroupOp(Map<String, dynamic> params) : super(params);
 
@@ -179,11 +184,17 @@ class GroupOp extends Operator<AesGroups> {
   }
 }
 
+/// The geometory element scene.
+///
+/// All items of a geometory element are in a same scene, and their order is immutable.
 class ElementScene extends Scene {
+  ElementScene(int zIndex) : super(zIndex);
+
   @override
   int get layer => Layers.element;
 }
 
+/// The geometory element render operator.
 class ElementRenderOp extends Render<ElementScene> {
   ElementRenderOp(
     Map<String, dynamic> params,
@@ -193,7 +204,6 @@ class ElementRenderOp extends Render<ElementScene> {
 
   @override
   void render() {
-    final zIndex = params['zIndex'] as int;
     final groups = params['groups'] as AesGroups;
     final coord = params['coord'] as CoordConv;
     final origin = params['origin'] as Offset;
@@ -210,17 +220,16 @@ class ElementRenderOp extends Render<ElementScene> {
     }
 
     scene
-      ..zIndex = zIndex
       ..setRegionClip(coord.region)
       ..figures = figures.isEmpty ? null : figures;
   }
 }
 
-// Defaults for each geom.
-
+/// Checks and completes the position points.
 typedef PositionCompleter = List<Offset> Function(
     List<Offset> position, Offset origin);
 
+/// Gets the position completer of the geometory element type.
 PositionCompleter getPositionCompleter(GeomElement spec) => spec is AreaElement
     ? areaCompleter
     : spec is CustomElement
@@ -235,6 +244,7 @@ PositionCompleter getPositionCompleter(GeomElement spec) => spec is AreaElement
                         ? polygonCompleter
                         : throw UnimplementedError('No such geom $spec.');
 
+/// Gets the default shape of the geometory element type.
 Shape getDefaultShape(GeomElement spec) => spec is AreaElement
     ? BasicAreaShape()
     : spec is CustomElement
@@ -249,6 +259,7 @@ Shape getDefaultShape(GeomElement spec) => spec is AreaElement
                         ? HeatmapShape()
                         : throw UnimplementedError('No such geom $spec.');
 
+/// Parses geometory related specifications.
 void parseGeom(
   Chart spec,
   View view,

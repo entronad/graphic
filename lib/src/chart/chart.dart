@@ -136,20 +136,44 @@ class Chart<D> extends StatefulWidget {
   _ChartState<D> createState() => _ChartState<D>();
 }
 
-// initState -> build -> getPositionForChild -> paint
+/// The state of a [Chart].
+///
+/// The methods calling order is:
+///
+/// [initState] --> [build] --> [_ChartLayoutDelegate.getPositionForChild] --> [_ChartPainter.paint]
 class _ChartState<D> extends State<Chart<D>> {
+  /// The view that controlls the data visualization.
+  ///
+  /// For a chart widget, to "rebuild" means to create a new [view].
   View<D>? view;
 
+  /// Size of the chart widget.
+  ///
+  /// The chart state hold this for the [Listener] and the [GestureDetector] to
+  /// create [Gesture]s.
   Size size = Size.zero;
 
+  /// The local position of the last [Gesture].
+  ///
+  /// It is record by chart state to for [Gesture]s when the [GestureDetector]
+  /// callback dosen't have a current position. It is updated when the callback
+  /// has a current position.
   Offset gestureLocalPosition = Offset.zero;
 
+  /// The device kind of the last [Gesture].
+  ///
+  /// It is record by chart state to for [Gesture]s when the [GestureDetector]
+  /// callback dosen't have a current device kind. It is updated when the callback
+  /// has a current device kind.
   PointerDeviceKind gestureKind = PointerDeviceKind.unknown;
 
+  /// The start postion of a scale or long press gesture.
   Offset? gestureLocalMoveStart;
 
+  /// Details of previous scale update.
   ScaleUpdateDetails? gestureScaleDetail;
 
+  /// Asks the chart state to trigger a repaint.
   void repaint() {
     setState(() {});
   }
@@ -158,6 +182,7 @@ class _ChartState<D> extends State<Chart<D>> {
   void didUpdateWidget(covariant Chart<D> oldWidget) {
     super.didUpdateWidget(oldWidget);
 
+    // Checke whether to rebuild or tirgger changeData.
     if (widget.rebuild ?? !widget.equalSpecTo(oldWidget)) {
       view = null;
     } else if (widget.changeData == true ||
@@ -170,6 +195,7 @@ class _ChartState<D> extends State<Chart<D>> {
   Widget build(BuildContext context) {
     return CustomSingleChildLayout(
       delegate: _ChartLayoutDelegate<D>(this),
+      // Listener for hover and scroll.
       child: Listener(
         child: GestureDetector(
           child: CustomPaint(
@@ -327,6 +353,8 @@ class _ChartState<D> extends State<Chart<D>> {
           onScaleStart: (detail) {
             gestureLocalPosition = detail.localFocalPoint;
             gestureLocalMoveStart = detail.localFocalPoint;
+            // Mock a ScaleUpdateDetails so that the first scale update will have
+            // a preScaleDetail.
             gestureScaleDetail = ScaleUpdateDetails(
               focalPoint: detail.focalPoint,
               localFocalPoint: detail.localFocalPoint,
@@ -627,11 +655,11 @@ class _ChartState<D> extends State<Chart<D>> {
   }
 }
 
-// build -> getPositionForChild -> paint
-
+/// The delegate of [CustomSingleChildLayout] to get the chart widgit size.
 class _ChartLayoutDelegate<D> extends SingleChildLayoutDelegate {
   _ChartLayoutDelegate(this.state);
 
+  /// The chart state for configuration.
   final _ChartState<D> state;
 
   @override
@@ -642,12 +670,18 @@ class _ChartLayoutDelegate<D> extends SingleChildLayoutDelegate {
     state.size = size;
 
     if (state.view == null) {
+      // When rebuild is required, the state.view is set null. To rebuild meanse
+      // to create a new view. A view is and only is created in _ChartLayoutDelegate.getPositionForChild
+      // because it needs the current size.
+
       state.view = View<D>(
         state.widget,
         size,
         state.repaint,
       );
     } else if (size != state.view!.size) {
+      // Only emmit resize when size is realy changed.
+
       state.view!.resize(size);
     }
 
@@ -655,9 +689,11 @@ class _ChartLayoutDelegate<D> extends SingleChildLayoutDelegate {
   }
 }
 
+/// The painter for [_ChartState]'s [CustomPaint].
 class _ChartPainter<D> extends CustomPainter {
   _ChartPainter(this.state);
 
+  /// The chart state for configuration.
   final _ChartState<D> state;
 
   @override

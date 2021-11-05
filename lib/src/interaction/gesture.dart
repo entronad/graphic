@@ -488,7 +488,7 @@ class Gesture {
 
   /// The current size of the chart.
   ///
-  /// This is usefull when calculating movement length ratios.
+  /// It is usefull when calculating movement length ratios.
   final Size chartSize;
 
   /// Details about this gesture.
@@ -499,7 +499,7 @@ class Gesture {
 
   /// The local position of pointer when a scale or long press starts.
   ///
-  /// This is usefull when calculating movement spans in [GestureType.scaleUpdate],
+  /// It is usefull when calculating movement spans in [GestureType.scaleUpdate],
   /// [GestureType.longPressMoveUpdate], [GestureType.secondaryLongPressMoveUpdate],
   /// and [GestureType.tertiaryLongPressMoveUpdate].
   final Offset? localMoveStart;
@@ -508,7 +508,7 @@ class Gesture {
 
   /// Details of previous scale update.
   ///
-  /// This is usefull to calculate delta position between scale updates, because
+  /// It is usefull to calculate delta position between scale updates, because
   /// [ScaleUpdateDetails.delta] is form the start instead of the previous one.
   ///
   /// Scale update gesture will always has this property, even the first update
@@ -528,11 +528,13 @@ class GestureSignal extends Signal {
   final Gesture gesture;
 }
 
+/// The gesture value operator.
 class GestureOp extends Value<Gesture?> {
   @override
   bool get consume => true;
 }
 
+/// Parses the gesture related specifications.
 void parseGesture(
   Chart spec,
   View view,

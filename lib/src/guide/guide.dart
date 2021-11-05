@@ -15,6 +15,7 @@ import 'annotation/tag.dart';
 import 'interaction/crosshair.dart';
 import 'interaction/tooltip.dart';
 
+/// Parses the guide related specifications.
 void parseGuide(
   Chart spec,
   View view,
@@ -37,9 +38,8 @@ void parseGuide(
         'gridMapper': axisSpec.gridMapper,
       }));
 
-      final axisScene = view.graffiti.add(AxisScene());
+      final axisScene = view.graffiti.add(AxisScene(axisSpec.zIndex ?? 0));
       view.add(AxisRenderOp({
-        'zIndex': axisSpec.zIndex ?? 0,
         'coord': scope.coord,
         'dim': dim,
         'position': axisSpec.position ?? 0.0,
@@ -48,9 +48,8 @@ void parseGuide(
         'ticks': ticks,
       }, axisScene, view));
 
-      final gridScene = view.graffiti.add(GridScene());
+      final gridScene = view.graffiti.add(GridScene(axisSpec.gridZIndex ?? 0));
       view.add(GridRenderOp({
-        'gridZIndex': axisSpec.gridZIndex ?? 0,
         'coord': scope.coord,
         'dim': dim,
         'ticks': ticks,
@@ -63,26 +62,26 @@ void parseGuide(
       if (annotSpec is RegionAnnotation) {
         final dim = annotSpec.dim ?? 1;
         final variable = annotSpec.variable ?? scope.forms.first.first[dim - 1];
-        final annotScene = view.graffiti.add(RegionAnnotScene());
+        final annotScene =
+            view.graffiti.add(RegionAnnotScene(annotSpec.zIndex ?? 0));
         view.add(RegionAnnotRenderOp({
           'dim': dim,
           'variable': variable,
           'values': annotSpec.values,
           'color': annotSpec.color,
-          'zIndex': annotSpec.zIndex ?? 0,
           'scales': scope.scales,
           'coord': scope.coord,
         }, annotScene, view));
       } else if (annotSpec is LineAnnotation) {
         final dim = annotSpec.dim ?? 1;
         final variable = annotSpec.variable ?? scope.forms.first.first[dim - 1];
-        final annotScene = view.graffiti.add(LineAnnotScene());
+        final annotScene =
+            view.graffiti.add(LineAnnotScene(annotSpec.zIndex ?? 0));
         view.add(LineAnnotRenderOp({
           'dim': dim,
           'variable': variable,
           'value': annotSpec.value,
           'style': annotSpec.style,
-          'zIndex': annotSpec.zIndex ?? 0,
           'scales': scope.scales,
           'coord': scope.coord,
         }, annotScene, view));
@@ -127,11 +126,11 @@ void parseGuide(
           }));
         }
 
-        final annotScene = view.graffiti.add(FigureAnnotScene());
+        final annotScene =
+            view.graffiti.add(FigureAnnotScene(annotSpec.zIndex ?? 0));
         view.add(FigureAnnotRenderOp({
           'figures': annot,
           'inRegion': annotSpec.anchor == null,
-          'zIndex': annotSpec.zIndex ?? 0,
           'coord': scope.coord,
         }, annotScene, view));
       } else {
@@ -144,12 +143,12 @@ void parseGuide(
     final crosshairSpec = spec.crosshair!;
     final elementIndex = crosshairSpec.element ?? 0;
 
-    final crosshairScene = view.graffiti.add(CrosshairScene());
+    final crosshairScene =
+        view.graffiti.add(CrosshairScene(crosshairSpec.zIndex ?? 0));
     view.add(CrosshairRenderOp({
       'selectorName': crosshairSpec.selection ?? spec.selections!.keys.first,
       'selector': scope.selector,
       'selects': scope.selectsList[elementIndex],
-      'zIndex': crosshairSpec.zIndex ?? 0,
       'coord': scope.coord,
       'groups': scope.groupsList[elementIndex],
       'styles': crosshairSpec.styles ??
@@ -165,7 +164,8 @@ void parseGuide(
     final tooltipSpec = spec.tooltip!;
     final elementIndex = tooltipSpec.element ?? 0;
 
-    final tooltipScene = view.graffiti.add(TooltipScene());
+    final tooltipScene =
+        view.graffiti.add(TooltipScene(tooltipSpec.zIndex ?? 0));
     final selectorName = tooltipSpec.selection ?? spec.selections!.keys.first;
     final multiTuples = tooltipSpec.multiTuples ??
         ((spec.selections![selectorName] is PointSelection) ? false : true);
@@ -173,22 +173,20 @@ void parseGuide(
       'selectorName': selectorName,
       'selector': scope.selector,
       'selects': scope.selectsList[elementIndex],
-      'zIndex': tooltipSpec.zIndex ?? 0,
       'coord': scope.coord,
       'groups': scope.groupsList[elementIndex],
       'tuples': scope.tuples,
       'align': tooltipSpec.align ?? Alignment.center,
       'offset': tooltipSpec.offset,
       'padding': tooltipSpec.padding ?? EdgeInsets.all(5),
-      'backgroundColor':
-          tooltipSpec.backgroundColor ?? Color(0xf0ffffff), // TODO: defalut
+      'backgroundColor': tooltipSpec.backgroundColor ?? Color(0xf0ffffff),
       'radius': tooltipSpec.radius ?? Radius.circular(3),
-      'elevation': tooltipSpec.elevation ?? 3.0, // TODO: defalut
+      'elevation': tooltipSpec.elevation ?? 3.0,
       'textStyle': tooltipSpec.textStyle ??
           TextStyle(
             color: Color(0xff595959),
             fontSize: 12,
-          ), // TODO: defalut
+          ),
       'multiTuples': multiTuples,
       'render': tooltipSpec.render,
       'followPointer': tooltipSpec.followPointer ?? [false, false],

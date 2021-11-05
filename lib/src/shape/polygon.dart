@@ -78,11 +78,9 @@ class HeatmapShape extends PolygonShape {
       final path = Path();
       if (coord is RectCoordConv) {
         assert(!sector);
-
         final rect = Rect.fromPoints(
-          coord.convert(Offset(point.dx - biasX, point.dy + biasY)), // topLeft
-          coord.convert(
-              Offset(point.dx + biasX, point.dy - biasY)), // bottomRight
+          coord.convert(Offset(point.dx - biasX, point.dy + biasY)),
+          coord.convert(Offset(point.dx + biasX, point.dy - biasY)),
         );
         if (borderRadius != null) {
           path.addRRect(RRect.fromRectAndCorners(
@@ -132,11 +130,12 @@ class HeatmapShape extends PolygonShape {
         } else {
           assert(borderRadius == null);
 
+          // [topLeft, topRight, bottomRight, bottomLeft]
           final vertices = [
-            Offset(point.dx - biasX, point.dy + biasY), // topLeft
-            Offset(point.dx + biasX, point.dy + biasY), // topRight
-            Offset(point.dx + biasX, point.dy - biasY), // bottomRight
-            Offset(point.dx - biasX, point.dy - biasY), // bottomLeft
+            Offset(point.dx - biasX, point.dy + biasY),
+            Offset(point.dx + biasX, point.dy + biasY),
+            Offset(point.dx + biasX, point.dy - biasY),
+            Offset(point.dx - biasX, point.dy - biasY),
           ];
           path.addPolygon(
             vertices.map(coord.convert).toList(),

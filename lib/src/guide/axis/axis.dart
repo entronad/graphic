@@ -158,37 +158,38 @@ class AxisGuide<V> {
       flip == other.flip &&
       line == other.line &&
       tickLine == other.tickLine &&
-      // tickLineMapper: Function
       label == other.label &&
-      // labelMapper: Function
       grid == other.grid &&
-      // gridMapper: Function
       zIndex == other.zIndex &&
       gridZIndex == other.gridZIndex;
 }
 
-// tickInfo
-
+/// Information of a single tick.
 class TickInfo {
   TickInfo(
     this.position,
     this.text,
   );
 
+  /// The tick position.
   final double position;
 
+  /// The text of the tick label.
   final String text;
 
+  /// The tick line specification.
   TickLine? tickLine;
 
+  /// The tyle of the tick label.
   LabelStyle? label;
 
+  /// The stroke style of the tick grid line.
   StrokeStyle? grid;
 }
 
-/// -         / AxisRenderOp
-/// TickInfoOp
-/// -         \ GridRenderOp
+/// The operator to create tick informations.
+///
+/// The tick informations are use by both [AxisRenderOp] and [GridRenderOp].
 class TickInfoOp extends Operator<List<TickInfo>> {
   TickInfoOp(Map<String, dynamic> params) : super(params);
 
@@ -236,13 +237,15 @@ class TickInfoOp extends Operator<List<TickInfo>> {
   }
 }
 
-// axis
-
+/// The axis scene.
 class AxisScene extends Scene {
+  AxisScene(int zIndex) : super(zIndex);
+
   @override
   int get layer => Layers.axis;
 }
 
+/// The axis render operator.
 class AxisRenderOp extends Render<AxisScene> {
   AxisRenderOp(
     Map<String, dynamic> params,
@@ -252,15 +255,12 @@ class AxisRenderOp extends Render<AxisScene> {
 
   @override
   void render() {
-    final zIndex = params['zIndex'] as int;
     final coord = params['coord'] as CoordConv;
     final dim = params['dim'] as int;
     final position = params['position'] as double;
     final flip = params['flip'] as bool;
     final line = params['line'] as StrokeStyle?;
     final ticks = params['ticks'] as List<TickInfo>;
-
-    scene.zIndex = zIndex;
 
     final canvasDim = coord.getCanvasDim(dim);
     if (coord is RectCoordConv) {
@@ -304,25 +304,24 @@ class AxisRenderOp extends Render<AxisScene> {
   }
 }
 
-// grid
-
+/// The axis grid scene.
 class GridScene extends Scene {
+  GridScene(int zIndex) : super(zIndex);
+
   @override
   int get layer => Layers.grid;
 }
 
+/// The axis grid render operator.
 class GridRenderOp extends Render<GridScene> {
   GridRenderOp(Map<String, dynamic> params, GridScene scene, View view)
       : super(params, scene, view);
 
   @override
   void render() {
-    final gridZIndex = params['gridZIndex'] as int;
     final coord = params['coord'] as CoordConv;
     final dim = params['dim'] as int;
     final ticks = params['ticks'] as List<TickInfo>;
-
-    scene.zIndex = gridZIndex;
 
     final canvasDim = coord.getCanvasDim(dim);
     if (coord is RectCoordConv) {

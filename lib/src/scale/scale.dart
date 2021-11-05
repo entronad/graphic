@@ -70,58 +70,63 @@ abstract class Scale<V, SV extends num> {
   bool operator ==(Object other) =>
       other is Scale<V, SV> &&
       title == other.title &&
-      // formatter: Function
       DeepCollectionEquality().equals(ticks, other.ticks) &&
       tickCount == other.tickCount &&
       maxTickCount == other.maxTickCount;
 }
 
-/// Also act like avatar of a variable, keeps it's meta information.
-/// Because scale converter default params is decided by values,
-///     it should be completed dynamically. So all params are nullable
-///     and filled in complete().
+/// The scale converter.
+///
+/// It also acts like avatar of a variable, carring the meta information like [title],
+/// [formatter], and [ticks] of the scale.
+///
+/// Because the default values are relatied to tuple values, it is initialized in
+/// the constructor body.
 abstract class ScaleConv<V, SV extends num> extends Converter<V, SV> {
-  // Fields must be completed in the constructor to make sure it's non-null in run.
-
+  /// the scale title.
+  ///
+  /// Two scale converters equlity check does not involve titles.
   late String title;
 
+  /// The scale formatter
   late String Function(V) formatter;
 
+  /// The scale ticks.
   late List<V> ticks;
 
-  /// Normalize scaled value to [0, 1]
+  /// Normalizes a scaled value to [0, 1].
+  ///
+  /// It is usefull for [DiscreteScale], which scale value to natural number while
+  /// position requires a normalized value.
   double normalize(SV scaledValue);
 
-  /// De-normalize normal value to scaled value.
+  /// De-normalizes a [0, 1] value to scaled value.
+  ///
+  /// It is usefull for [DiscreteScale], which scale value to natural number while
+  /// position requires a normalized value.
   SV denormalize(double normalValue);
 
-  /// Normalized value of zero, used to compose the normal
-  ///     origin point of coord, and complete geom points.
+  /// Normalized value of zero.
+  ///
+  /// It is usefull to compose the position of coordinate origin point or geom completing
+  /// points.
   double get normalZero => normalize(convert(zero));
 
+  /// The zero of [V].
   @protected
   V get zero;
 
+  /// The default formatter of [V] for [formatter].
   @protected
   String defaultFormatter(V value);
 
   @override
   bool operator ==(Object other) =>
       other is ScaleConv<V, SV> &&
-      // title don't need to be equal.
-      // formatter: Function
       DeepCollectionEquality().equals(ticks, other.ticks);
 }
 
-/// params:
-/// - specs: Map<String, Scale>, Scale specs of all variables.
-///
-/// pulse:
-/// Tuple value pulse before scale,
-/// Only has rem to clear pre tuples and add to add new tuples.
-///
-/// value: Map<String, ScaleConv>
-/// Scale converter of all variables.
+/// The operator to create scale converters.
 class ScaleConvOp extends Operator<Map<String, ScaleConv>> {
   ScaleConvOp(
     Map<String, dynamic> params,
@@ -149,20 +154,13 @@ class ScaleConvOp extends Operator<Map<String, ScaleConv>> {
   }
 }
 
-/// params:
-/// convs: Map<String, ScaleConv>, Scale convertors.
-/// relay: Map<Tuple, Tuple>, Relation from tuple value tuple to scaled value tuple.
-///
-/// pulse:
-/// Newly created scaled value pulse form a relay.
-/// Tuples are empty but change info is from the orininal value pulse.
+/// The operator to convert original value tuples to scaled valaue tuples by scales.
 class ScaleOp extends Operator<List<Scaled>> {
   ScaleOp(Map<String, dynamic> params) : super(params);
 
   @override
   List<Scaled> evaluate() {
-    final tuples =
-        params['tuples'] as List<Tuple>; // From tuple collect operator.
+    final tuples = params['tuples'] as List<Tuple>;
     final convs = params['convs'] as Map<String, ScaleConv>;
 
     return tuples.map((tuple) {
@@ -175,6 +173,7 @@ class ScaleOp extends Operator<List<Scaled>> {
   }
 }
 
+/// Parses the scale related specifications.
 void parseScale(
   Chart spec,
   View view,

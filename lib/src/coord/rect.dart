@@ -61,11 +61,11 @@ class RectCoord extends Coord {
       other is RectCoord &&
       super == other &&
       DeepCollectionEquality().equals(horizontalRange, other.horizontalRange) &&
-      DeepCollectionEquality(MapKeyEquality()).equals(onHorizontalRangeSignal,
-          other.onHorizontalRangeSignal) && // SignalUpdata: Function
+      DeepCollectionEquality(MapKeyEquality())
+          .equals(onHorizontalRangeSignal, other.onHorizontalRangeSignal) &&
       DeepCollectionEquality().equals(verticalRange, other.verticalRange) &&
-      DeepCollectionEquality(MapKeyEquality()).equals(onVerticalRangeSignal,
-          onVerticalRangeSignal); // SignalUpdata: Function
+      DeepCollectionEquality(MapKeyEquality())
+          .equals(onVerticalRangeSignal, onVerticalRangeSignal);
 }
 
 /// The converter of a rectangle coordinate.
@@ -99,7 +99,7 @@ class RectCoordConv extends CoordConv {
   @override
   Offset convert(Offset input) {
     if (dimCount == 1) {
-      // The input domain value is arbitrary.
+      // For 1D coordinate, the domain dimension of input is arbitry.
       input = Offset(dimFill, input.dy);
     }
 
@@ -136,12 +136,12 @@ class RectCoordConv extends CoordConv {
     } else if (dim == 2) {
       return transposed ? h : v;
     } else {
-      // null
       return (h + v) / 2;
     }
   }
 }
 
+/// The rectangle coordinate converter operator
 class RectCoordConvOp extends CoordConvOp<RectCoordConv> {
   RectCoordConvOp(
     Map<String, dynamic> params,

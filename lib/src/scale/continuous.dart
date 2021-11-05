@@ -27,20 +27,20 @@ abstract class ContinuousScale<V> extends Scale<V, double> {
           maxTickCount: maxTickCount,
         );
 
-  /// Indicates the minimum input value directly.
+  /// Indicates the minimum input boundary directly.
   ///
   /// If null, it will be calculated by minimum input value and [marginMin].
   V? min;
 
-  /// Indecates the maximum input value directly.
+  /// Indecates the maximum input boundary directly.
   ///
   /// If null, it will be calculated by maximum input value and [marginMax].
   V? max;
 
-  /// The margin ratio form minimum input value to calculated [min].
+  /// The margin ratio from minimum input value to calculated [min].
   double? marginMin;
 
-  /// The margin ratio form maxinum input value to calculated [max].
+  /// The margin ratio from maxinum input value to calculated [max].
   double? marginMax;
 
   @override
@@ -53,9 +53,12 @@ abstract class ContinuousScale<V> extends Scale<V, double> {
       marginMax == other.marginMax;
 }
 
+/// The continuous scale converter.
 abstract class ContinuousScaleConv<V> extends ScaleConv<V, double> {
+  /// The minimum input boundary.
   V? min;
 
+  /// The maximum input boundary
   V? max;
 
   @override

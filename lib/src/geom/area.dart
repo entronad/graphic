@@ -51,7 +51,13 @@ class AreaElement extends FunctionElement<AreaShape> {
         );
 }
 
+/// The position completer of the area element.
+///
+/// It will check and complete position points by the rule of:
+///
+/// ```
 /// [start, end] | [end] => [start, end]
+/// ```
 List<Offset> areaCompleter(List<Offset> position, Offset origin) {
   assert(position.length == 1 || position.length == 2);
   if (position.length == 1) {

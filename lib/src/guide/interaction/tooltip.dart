@@ -168,11 +168,15 @@ class TooltipGuide {
   // render is Function.
 }
 
+/// The tooltip scene.
 class TooltipScene extends Scene {
+  TooltipScene(int zIndex) : super(zIndex);
+
   @override
   int get layer => Layers.tooltip;
 }
 
+/// The tooltip render operator.
 class TooltipRenderOp extends Render<TooltipScene> {
   TooltipRenderOp(
     Map<String, dynamic> params,
@@ -185,7 +189,6 @@ class TooltipRenderOp extends Render<TooltipScene> {
     final selectorName = params['selectorName'] as String;
     final selector = params['selector'] as Selector?;
     final selects = params['selects'] as Set<int>?;
-    final zIndex = params['zIndex'] as int;
     final coord = params['coord'] as CoordConv;
     final groups = params['groups'] as AesGroups;
     final tuples = params['tuples'] as List<Tuple>;
@@ -221,7 +224,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
     if (anchor != null) {
       anchorRst = anchor(size);
     } else {
-      final pointer = coord.invert(selector.eventPoints.last);
+      final pointer = coord.invert(selector.points.last);
 
       Offset selectedPoint = Offset.zero;
       int count = 0;
@@ -346,9 +349,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
       ));
     }
 
-    scene
-      ..zIndex = zIndex
-      // Tooltip dosent't need to clip within region.
-      ..figures = figures.isEmpty ? null : figures;
+    // Tooltip dosent't need to be cliped within the coordinate region.
+    scene..figures = figures.isEmpty ? null : figures;
   }
 }

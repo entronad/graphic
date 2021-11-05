@@ -18,6 +18,7 @@ abstract class VariableTransform {
   bool operator ==(Object other) => other is VariableTransform;
 }
 
+/// The operator to transform original value tuples.
 abstract class TransformOp extends Operator<List<Tuple>> {
   TransformOp(Map<String, dynamic> params) : super(params);
 }

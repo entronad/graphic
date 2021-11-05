@@ -52,18 +52,18 @@ class LinearScale extends ContinuousScale<num> {
       nice == other.nice;
 }
 
+/// The linear scale converter.
 class LinearScaleConv extends ContinuousScaleConv<num> {
   LinearScaleConv(
     LinearScale spec,
     List<Tuple> tuples,
     String variable,
   ) {
-    // min, max
     if (spec.min != null && spec.max != null) {
       min = spec.min;
       max = spec.max;
     } else {
-      // Can't use the first one in case it is nan.
+      // Don't use the first one in case it is NaN.
       num minTmp = double.infinity;
       num maxTmp = double.negativeInfinity;
       for (var tuple in tuples) {
@@ -75,13 +75,12 @@ class LinearScaleConv extends ContinuousScaleConv<num> {
       }
 
       final range = maxTmp - minTmp;
-      final marginMin = range * (spec.marginMin ?? 0.1); // TODO: default
-      final marginMax = range * (spec.marginMax ?? 0.1); // TODO: default
+      final marginMin = range * (spec.marginMin ?? 0.1);
+      final marginMax = range * (spec.marginMax ?? 0.1);
       min = spec.min ?? minTmp - marginMin;
       max = spec.max ?? maxTmp + marginMax;
     }
 
-    // ticks
     if (spec.ticks != null) {
       ticks = spec.ticks!;
       final firstTick = ticks.first;

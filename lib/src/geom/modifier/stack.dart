@@ -18,17 +18,13 @@ class StackModifier extends Modifier {
   bool operator ==(Object other) => other is StackModifier && super == other;
 }
 
+/// The stack geometory modifier.
 class StackGeomModifier extends GeomModifier {
   StackGeomModifier(this.normalZero);
 
+  /// The normal value of the stacked variable's zero.
   final double normalZero;
 
-  /// Stack means every point in a position adds the top
-  ///     point y of corresponding position of privior group.
-  ///
-  /// To be meaningfull:
-  ///     - For all groups, x must be same ordered discrete values.
-  ///     - Y must be all positive or all negtive.
   @override
   void modify(AesGroups value) {
     for (var i = 1; i < value.length; i++) {
@@ -59,6 +55,7 @@ class StackGeomModifier extends GeomModifier {
   }
 }
 
+/// The stack geometory modifier operator.
 class StackGeomModifierOp extends GeomModifierOp<StackGeomModifier> {
   StackGeomModifierOp(Map<String, dynamic> params) : super(params);
 

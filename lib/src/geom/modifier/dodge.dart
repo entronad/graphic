@@ -17,7 +17,7 @@ class DodgeModifier extends Modifier {
     this.symmetric,
   });
 
-  /// Dodge ratio to the descrete band for each group.
+  /// The dodge ratio to the descrete band for each group.
   ///
   /// If null, a default reciprocal of group counts is set.
   double? ratio;
@@ -36,6 +36,7 @@ class DodgeModifier extends Modifier {
       symmetric == other.symmetric;
 }
 
+/// The dodge geometory modifier.
 class DodgeGeomModifier extends GeomModifier {
   DodgeGeomModifier(
     this.ratio,
@@ -43,10 +44,14 @@ class DodgeGeomModifier extends GeomModifier {
     this.band,
   );
 
+  /// The dodge ratio to the descrete band for each group.
   final double ratio;
 
+  /// Whether the dodge will go both side around the original x or only positive
+  /// side.
   final bool symmetric;
 
+  /// The band ratio of each value.
   final double band;
 
   @override
@@ -82,6 +87,7 @@ class DodgeGeomModifier extends GeomModifier {
   }
 }
 
+/// The dodge geometory modifier operator.
 class DodgeGeomModifierOp extends GeomModifierOp<DodgeGeomModifier> {
   DodgeGeomModifierOp(Map<String, dynamic> params) : super(params);
 

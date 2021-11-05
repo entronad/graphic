@@ -1,6 +1,6 @@
-/// Variable identifiers should not be reserved Strings.
-/// Reserved strings are started with '_:'.
-/// They are checked in parseVariable.
+/// The reserved variable idendifiers.
+///
+/// They are started with `'_:'`.
 abstract class Reserveds {
   static const unitTag = '_:1';
 

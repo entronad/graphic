@@ -17,9 +17,9 @@ class Sort extends VariableTransform {
 
   @override
   bool operator ==(Object other) => other is Sort && super == other;
-  // compare is Function.
 }
 
+/// The sort transform operator.
 class SortOp extends TransformOp {
   SortOp(Map<String, dynamic> params) : super(params);
 

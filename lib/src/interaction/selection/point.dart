@@ -50,6 +50,9 @@ class PointSelection extends Selection {
       testRadius == other.testRadius;
 }
 
+/// The point selector.
+///
+/// The [points] have only one point.
 class PointSelector extends Selector {
   PointSelector(
     this.toggle,
@@ -58,13 +61,13 @@ class PointSelector extends Selector {
     String name,
     int? dim,
     String? variable,
-    List<Offset> eventPoints, // [point]
+    List<Offset> points,
   )   : assert(toggle != true || variable == null),
         super(
           name,
           dim,
           variable,
-          eventPoints,
+          points,
         );
 
   final bool toggle;
@@ -81,18 +84,19 @@ class PointSelector extends Selector {
     CoordConv coord,
   ) {
     int nearestIndex = -1;
+    // nearestDistance is a canvas distance.
     double nearestDistance = double.infinity;
     void Function(Aes) updateNearest;
 
-    final point = coord.invert(eventPoints.single);
+    final point = coord.invert(points.single);
     if (dim == null) {
       updateNearest = (aes) {
         final offset = aes.representPoint - point;
-        final distance = (offset.dx.abs() + offset.dy.abs()) /
-            2; // rect neighborhood for effecicy
+        // The neighborhood is an approximate square.
+        final distance = (offset.dx.abs() + offset.dy.abs()) / 2;
         if (distance < nearestDistance) {
           nearestIndex = aes.index;
-          nearestDistance = distance; // canvas
+          nearestDistance = distance;
         }
       };
     } else {
@@ -104,7 +108,7 @@ class PointSelector extends Selector {
         final distance = (getProjection(point) - getProjection(p)).abs();
         if (distance < nearestDistance) {
           nearestIndex = aes.index;
-          nearestDistance = distance; // canvas
+          nearestDistance = distance;
         }
       };
     }
@@ -123,6 +127,7 @@ class PointSelector extends Selector {
 
     if (variable != null) {
       // Not toggle.
+
       final rst = <int>{};
       final value = tuples[nearestIndex][variable];
       for (var i = 0; i < tuples.length; i++) {

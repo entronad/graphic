@@ -11,7 +11,6 @@ import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/shape/shape.dart';
 import 'package:graphic/src/util/assert.dart';
-import 'package:graphic/src/common/converter.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 
 import 'channel.dart';
@@ -59,58 +58,51 @@ abstract class Attr<AV> {
 
   @override
   bool operator ==(Object other) => other is Attr<AV> && value == other.value;
-  // encode: Function
-  // onSelect: Function
 }
 
-// attr conv
-
-abstract class AttrConv<SV extends num, AV> extends Converter<SV, AV> {
-  @override
-  SV invert(AV output) {
-    throw UnimplementedError();
-  }
-}
-
-// encoder
-
+/// The base class of attribute encoders.
+///
+/// It gets attribute values in different ways according to [Attr] types and their
+/// indicating properties.
 abstract class Encoder<AV> {
-  AV encode(Scaled scaled, Tuple tuple); // Tuple is for custom encode function.
+  /// Gets an attribute value.
+  ///
+  /// Usually it needs a [scaled] input, while [tuple] is for [CustomEncoder]s and
+  /// [ValueAttrEncoder]s don't need any input.
+  AV encode(Scaled scaled, Tuple tuple);
 }
 
-/// For specs that value is set.
+/// The encoder for which [Attr.value] is set.
 class ValueAttrEncoder<AV> extends Encoder<AV> {
   ValueAttrEncoder(this.value);
 
+  /// The indicated value for all cases.
   final AV value;
 
   @override
   AV encode(Scaled scaled, Tuple tuple) => value;
 }
 
-/// For specs that encode is set.
+/// The encoder for which [Attr.encode] is set.
 class CustomEncoder<AV> extends Encoder<AV> {
   CustomEncoder(this.customEncode);
 
+  /// The costom encoding function.
   final AV Function(Tuple) customEncode;
 
   @override
   AV encode(Scaled scaled, Tuple tuple) => customEncode(tuple);
 }
 
-// op
-
+/// The operator to encode all attributes and create [Aes]s.
 class AesOp extends Operator<List<Aes>> {
   AesOp(Map<String, dynamic> params) : super(params);
 
   @override
   List<Aes> evaluate() {
-    final scaleds =
-        params['scaleds'] as List<Scaled>; // From scaled collector operator.
-    final tuples =
-        params['tuples'] as List<Tuple>; // From tuple collect operator.
-    final positionEncoder =
-        params['positionEncoder'] as PositionEncoder; // From PostionOp.
+    final scaleds = params['scaleds'] as List<Scaled>;
+    final tuples = params['tuples'] as List<Tuple>;
+    final positionEncoder = params['positionEncoder'] as PositionEncoder;
     final shapeEncoder = params['shapeEncoder'] as Encoder<Shape>;
     final colorEncoder = params['colorEncoder'] as Encoder<Color>?;
     final gradientEncoder = params['gradientEncoder'] as Encoder<Gradient>?;
@@ -139,6 +131,7 @@ class AesOp extends Operator<List<Aes>> {
   }
 }
 
+/// Parses the aesthetic related specifications.
 void parseAes(
   Chart spec,
   View view,
@@ -146,12 +139,12 @@ void parseAes(
 ) {
   for (var elementSpec in spec.elements) {
     var form = elementSpec.position?.form;
-    // Default position.
+    // Default algebracal form.
     if (form == null) {
       final variables = scope.scaleSpecs.keys.toList();
       form = (Varset(variables[0]) * Varset(variables[1])).form;
     }
-    scope.forms.add(form); // For geom usage.
+    scope.forms.add(form);
 
     final origin = view.add(OriginOp({
       'form': form,
@@ -176,8 +169,8 @@ void parseAes(
         scope.scaleSpecs,
         null,
       ),
-      'colorEncoder': elementSpec.gradient ==
-              null // If gradient is null color will have defult value.
+      // Uses a default color when both color and gradient attributes are null.
+      'colorEncoder': elementSpec.gradient == null
           ? getChannelEncoder<Color>(
               elementSpec.color ?? ColorAttr(value: Defaults.primaryColor),
               scope.scaleSpecs,

@@ -59,6 +59,7 @@ abstract class Paths {
     final sweepAngle =
         clockwise ? endAngle - startAngle : startAngle - endAngle;
 
+    // The canvas can not fill a ring, so it is devided to two semi rings
     if (sweepAngle.abs().equalTo(pi * 2)) {
       sector(
         center: center,
@@ -124,6 +125,7 @@ abstract class Paths {
   }) {
     path = path ?? Path();
 
+    // The canvas can not fill a ring, so it is devided to two semi rings
     if ((endAngle - startAngle).abs().equalTo(pi * 2)) {
       sector(
         center: center,
@@ -150,43 +152,52 @@ abstract class Paths {
     double arcEnd;
     double arcSweep;
 
-    // top
-    path.moveTo(
-      cos(startAngle) * (r - topLeft.y) + center.dx,
-      sin(startAngle) * (r - topLeft.y) + center.dy,
-    );
+    // Calculates the top angles.
+
     arcStart =
         clockwise ? startAngle + (topLeft.x / r) : startAngle - (topLeft.x / r);
     arcEnd =
         clockwise ? endAngle - (topRight.x / r) : endAngle + (topRight.x / r);
     arcSweep = clockwise ? arcEnd - arcStart : arcStart - arcEnd;
-    // top left
+
+    // The top left corner.
+
+    path.moveTo(
+      cos(startAngle) * (r - topLeft.y) + center.dx,
+      sin(startAngle) * (r - topLeft.y) + center.dy,
+    );
     path.quadraticBezierTo(
       cos(startAngle) * r + center.dx,
       sin(startAngle) * r + center.dy,
       cos(arcStart) * r + center.dx,
       sin(arcStart) * r + center.dy,
     );
-    // top arc
+
+    // The top arc.
+
     path.arcTo(
       Rect.fromCircle(center: center, radius: r),
       arcStart,
       arcSweep,
       false,
     );
-    // top right
+
+    // The top right corner.
+
     path.quadraticBezierTo(
       cos(endAngle) * r + center.dx,
       sin(endAngle) * r + center.dy,
       cos(endAngle) * (r - topRight.y) + center.dx,
       sin(endAngle) * (r - topRight.y) + center.dy,
     );
-    // bottom
     path.lineTo(
       cos(endAngle) * (r0 + bottomRight.y) + center.dx,
       sin(endAngle) * (r0 + bottomRight.y) + center.dy,
     );
+
     if (r0 != 0) {
+      // Calculates the bottom angles.
+
       arcStart = clockwise
           ? startAngle + (bottomLeft.x / r)
           : startAngle - (bottomLeft.x / r);
@@ -194,21 +205,26 @@ abstract class Paths {
           ? endAngle - (bottomRight.x / r)
           : endAngle + (bottomRight.x / r);
       arcSweep = clockwise ? arcEnd - arcStart : arcStart - arcEnd;
-      // bottom right
+
+      // The bottom right corner.
+
       path.quadraticBezierTo(
         cos(endAngle) * r0 + center.dx,
         sin(endAngle) * r0 + center.dy,
         cos(arcEnd) * r0 + center.dx,
         sin(arcEnd) * r0 + center.dy,
       );
-      // bottom arc
+
+      // The bottom arc.
+
       path.arcTo(
         Rect.fromCircle(center: center, radius: r0),
         arcEnd,
         -arcSweep,
         false,
       );
-      // bottom left
+
+      // The bottom left corner.
       path.quadraticBezierTo(
         cos(startAngle) * r0 + center.dx,
         sin(startAngle) * r0 + center.dy,
@@ -216,22 +232,28 @@ abstract class Paths {
         sin(startAngle) * (r0 + bottomLeft.y) + center.dy,
       );
     }
+
     path.close();
 
     return path;
   }
 }
 
-// Produces a cubic Catmull–Rom spline
-
+/// Positions of a cubic bezier segment.
 class BezierSegment {
   BezierSegment(this.cp1, this.cp2, this.p);
 
+  /// The first control point.
   final Offset cp1;
+
+  /// The second contorl point.
   final Offset cp2;
-  final Offset p; // to point
+
+  /// The target point.
+  final Offset p;
 }
 
+/// Gets control points of a point list.
 List<Offset> _getControlPoints(
   List<Offset> points,
   double ratio,
@@ -247,9 +269,10 @@ List<Offset> _getControlPoints(
   Vector3? min;
   Vector3? max;
 
-  // Real constraint box is:
-  // bbox of points, if constraint is null
-  // the bigger one of constraint and bbox of points, if constraint is not null
+  // The real constraint is calculated as:
+  // - If constraint is null, is the boundary of points.
+  // - If constraint is not null, is the larger one of constraint and boundary of
+  // points.
   if (hasConstraint) {
     min = Vector3(double.infinity, double.infinity, 0);
     max = Vector3(double.negativeInfinity, double.negativeInfinity, 0);
@@ -313,6 +336,7 @@ List<Offset> _getControlPoints(
   return cps;
 }
 
+/// Produces a cubic Catmull–Rom spline.
 List<BezierSegment> getBezierSegments(
   List<Offset> points,
   bool isLoop,

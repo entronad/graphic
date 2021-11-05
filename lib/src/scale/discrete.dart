@@ -25,7 +25,7 @@ abstract class DiscreteScale<V> extends Scale<V, int> {
           maxTickCount: maxTickCount,
         );
 
-  /// Candidate values.
+  /// The candidate values.
   ///
   /// It is a [List] not a [Set] because the values must has an order for position.
   /// But it's better that each value occurs only once.
@@ -44,6 +44,7 @@ abstract class DiscreteScale<V> extends Scale<V, int> {
       align == other.align;
 }
 
+/// The discrete scale converter.
 abstract class DiscreteScaleConv<V, SP extends DiscreteScale<V>>
     extends ScaleConv<V, int> {
   DiscreteScaleConv(
@@ -51,7 +52,6 @@ abstract class DiscreteScaleConv<V, SP extends DiscreteScale<V>>
     List<Tuple> tuples,
     String variable,
   ) {
-    // values
     if (spec.values != null) {
       values = spec.values!;
     } else {
@@ -62,7 +62,6 @@ abstract class DiscreteScaleConv<V, SP extends DiscreteScale<V>>
       values = candidates.toList();
     }
 
-    // ticks
     if (spec.ticks != null) {
       ticks = spec.ticks!;
     } else {
@@ -79,10 +78,13 @@ abstract class DiscreteScaleConv<V, SP extends DiscreteScale<V>>
     band = 1 / values.length;
   }
 
+  /// The candidate values.
   late List<V> values;
 
+  /// The align ratio.
   late double align;
 
+  /// The band ratio of each value.
   late double band;
 
   @override

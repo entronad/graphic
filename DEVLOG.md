@@ -3776,6 +3776,20 @@ zIndex 与 scenes 排序的问题，还是采用基本不用排序，除非被�
 
 注意对于selection和signal update op，当其它变化引起的pulse不会触发它的 evalute，它会保持当前值
 
+定义为 A grammar of data visualization 数据可视化语法，grammar取其广泛义，data visualization 比 graphic
+
+更摩登更准确更广泛一些，同时也能与专指的GG区别开来。而graphic typological, declarative, interactive, animative 是特点。
+
+解决 element label的问题，定义是：
+
+对同一个element（哪怕是不同group）所有标签在所有图形上方，（不同element不管，如需标签在上方，把标签配在最上方的element中）（shadow还跟着原来的item是对的）
+
+对于使用场景很多的stack、饼图都得这么搞。而像点图图形被完全遮挡，label却出现在上面的这种情况，我只能说，它不适合加label
+
+实现方式是：
+
+在ElementRenderOp中将两者分拣出来。虽然这样在性能上差了一点，但不在shape中处理是因为那很难搞，而且render差点没关系，不是paint就行。
+
 ## TODO
 
 group selection

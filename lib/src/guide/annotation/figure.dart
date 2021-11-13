@@ -49,7 +49,6 @@ abstract class FigureAnnotation extends Annotation {
       super == other &&
       DeepCollectionEquality().equals(variables, other.variables) &&
       DeepCollectionEquality().equals(values, values);
-  // anchor is Function
 }
 
 /// The operator to create figures of a figure annotation.

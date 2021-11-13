@@ -26,7 +26,6 @@ class CustomAnnotation extends FigureAnnotation {
 
   @override
   bool operator ==(Object other) => other is CustomAnnotation && super == other;
-  // render is Function
 }
 
 /// The custom figure annotation operator.

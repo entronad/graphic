@@ -153,7 +153,6 @@ class TooltipGuide {
       other is TooltipGuide &&
       selection == other.selection &&
       DeepCollectionEquality().equals(followPointer, other.followPointer) &&
-      // anchor is Function.
       zIndex == other.zIndex &&
       element == other.element &&
       align == other.align &&
@@ -165,7 +164,6 @@ class TooltipGuide {
       textStyle == other.textStyle &&
       multiTuples == multiTuples &&
       DeepCollectionEquality().equals(variables, other.variables);
-  // render is Function.
 }
 
 /// The tooltip scene.

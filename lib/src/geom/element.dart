@@ -82,6 +82,9 @@ abstract class GeomElement<S extends Shape> {
   GradientAttr? gradient;
 
   /// The label attribute of this element.
+  /// 
+  /// For an element, labels are always painted above item graphics, no matter how
+  /// their [Figure]s are rendered in [Shape]s.
   LabelAttr? label;
 
   /// Algebra expression of the element position.
@@ -208,16 +211,26 @@ class ElementRenderOp extends Render<ElementScene> {
     final coord = params['coord'] as CoordConv;
     final origin = params['origin'] as Offset;
 
-    final figures = <Figure>[];
+    final basicItems = <Figure>[];
+    final labels = <TextFigure>[];
 
     for (var group in groups) {
-      final representShape = group.first.shape;
-      figures.addAll(representShape.renderGroup(
+      final groupFigures = group.first.shape.renderGroup(
         group,
         coord,
         origin,
-      ));
+      );
+      // Pick out the labels to make sure labels are always above item graphics.
+      for (var figure in groupFigures) {
+        if (figure is TextFigure) {
+          labels.add(figure);
+        } else {
+          basicItems.add(figure);
+        }
+      }
     }
+
+    final figures = [...basicItems, ...labels];
 
     scene
       ..setRegionClip(coord.region)

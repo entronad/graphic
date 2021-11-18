@@ -30,7 +30,6 @@ class CustomElement extends GeomElement<CustomShape> {
     SizeAttr? size,
     List<Modifier>? modifiers,
     int? zIndex,
-    String? groupBy,
     Map<String, Set<int>>? selected,
   }) : super(
           color: color,
@@ -42,7 +41,6 @@ class CustomElement extends GeomElement<CustomShape> {
           size: size,
           modifiers: modifiers,
           zIndex: zIndex,
-          groupBy: groupBy,
           selected: selected,
         );
 }

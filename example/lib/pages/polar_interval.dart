@@ -49,15 +49,14 @@ class PolarIntervalPage extends StatelessWidget {
                   ],
                   elements: [
                     IntervalElement(
-                      position: Varset('percent'),
+                      position: Varset('percent') / Varset('genre'),
                       label: LabelAttr(
-                          encode: (tuple) => Label(
+                          encoder: (tuple) => Label(
                                 tuple['sold'].toString(),
                                 LabelStyle(Defaults.runeStyle),
                               )),
                       color: ColorAttr(
                           variable: 'genre', values: Defaults.colors10),
-                      groupBy: 'genre',
                       modifiers: [StackModifier()],
                     )
                   ],
@@ -96,7 +95,7 @@ class PolarIntervalPage extends StatelessWidget {
                   elements: [
                     IntervalElement(
                       label: LabelAttr(
-                          encode: (tuple) => Label(tuple['name'].toString())),
+                          encoder: (tuple) => Label(tuple['name'].toString())),
                       shape: ShapeAttr(
                           value: RectShape(
                         borderRadius:
@@ -144,8 +143,7 @@ class PolarIntervalPage extends StatelessWidget {
                   },
                   elements: [
                     IntervalElement(
-                      position: Varset('index') * Varset('value'),
-                      groupBy: 'type',
+                      position: Varset('index') * Varset('value') / Varset('type'),
                       color: ColorAttr(
                           variable: 'type', values: Defaults.colors10),
                       modifiers: [StackModifier()],
@@ -193,7 +191,7 @@ class PolarIntervalPage extends StatelessWidget {
                   elements: [
                     IntervalElement(
                       label: LabelAttr(
-                          encode: (tuple) => Label(tuple['sold'].toString())),
+                          encoder: (tuple) => Label(tuple['sold'].toString())),
                       color: ColorAttr(
                         variable: 'genre',
                         values: Defaults.colors10,

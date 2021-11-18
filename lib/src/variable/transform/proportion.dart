@@ -1,4 +1,6 @@
+import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/geom/element.dart';
 import 'package:graphic/src/scale/scale.dart';
 
 import 'transform.dart';
@@ -14,7 +16,7 @@ class Proportion extends VariableTransform {
   /// Creates a proportion transform.
   Proportion({
     required this.variable,
-    this.groupBy,
+    this.nest,
     required this.as,
     this.scale,
   });
@@ -22,13 +24,15 @@ class Proportion extends VariableTransform {
   /// Which variable to calculate the proportion.
   String variable;
 
-  /// Which variable to group tuples by.
+  /// The algebracal expression to nest the proportion.
   ///
-  /// If set, the denominator of proportion will be sum of a group, and if null
-  /// will be sum of all.
-  ///
-  /// The variable should be discrete.
-  String? groupBy;
+  /// If set, the tuples will temporarily grouped by it, and the denominator of
+  /// proportion will be sum of a single group. If null, the denominator will be
+  /// sum of all.
+  /// 
+  /// See details about nesting rules in [Varset]. Note this property is only the
+  /// right oprand of nesting.
+  Varset? nest;
 
   /// The name identifier of result variable.
   String as;
@@ -43,12 +47,14 @@ class Proportion extends VariableTransform {
       other is Proportion &&
       super == other &&
       variable == other.variable &&
-      groupBy == other.groupBy &&
+      nest == other.nest &&
       as == other.as &&
       scale == other.scale;
 }
 
 /// The proportion transform operator.
+/// 
+/// The evaluation of nesting is like the [GroupOp].
 class ProportionOp extends TransformOp {
   ProportionOp(Map<String, dynamic> params) : super(params);
 
@@ -56,10 +62,10 @@ class ProportionOp extends TransformOp {
   List<Tuple> evaluate() {
     final tuples = params['tuples'] as List<Tuple>;
     final variable = params['variable'] as String;
-    final groupBy = params['groupBy'] as String?;
+    final nesters = params['nesters'] as List<AlgForm>;
     final as = params['as'] as String;
 
-    if (groupBy == null) {
+    if (nesters.isEmpty) {
       num sum = 0;
       for (var tuple in tuples) {
         sum += tuple[variable];
@@ -68,17 +74,47 @@ class ProportionOp extends TransformOp {
         tuple[as] = tuple[variable] / sum;
       }
     } else {
-      final sums = <String, num>{};
-      for (var tuple in tuples) {
-        final cat = tuple[groupBy];
-        var sum = sums[cat];
-        sum = sum == null ? tuple[variable] : sum + tuple[variable];
-        sums[cat] = sum!;
+      final nesterVariables = <String>[];
+      for (var nesterForm in nesters) {
+        for (var nesterTerm in nesterForm) {
+          nesterVariables.addAll(nesterTerm);
+        }
       }
-      for (var tuple in tuples) {
-        final cat = tuple[groupBy];
-        var sum = sums[cat];
-        tuple[as] = tuple[variable] / sum;
+
+      final nesterValuesMap = <String, Set>{};
+      for (var nester in nesterVariables) {
+        nesterValuesMap[nester] = {};
+        for (var tuple in tuples) {
+          nesterValuesMap[nester]!.add(tuple[nester]);
+        }
+      }
+
+      var groups = [tuples];
+
+      for (var nester in nesterVariables) {
+        final tmpRst = <List<Tuple>>[];
+        for (var group in groups) {
+          final nesterValues = nesterValuesMap[nester]!;
+          final tmpGroup = <dynamic, List<Tuple>>{};
+          for (var nesterValue in nesterValues) {
+            tmpGroup[nesterValue] = <Tuple>[];
+          }
+          for (var tuple in group) {
+            tmpGroup[tuple[nester]]!.add(tuple);
+          }
+          tmpRst.addAll(tmpGroup.values.where((g) => g.isNotEmpty));
+        }
+        groups = tmpRst;
+      }
+
+      for (var group in groups) {
+        num sum = 0;
+        for (var tuple in group) {
+          sum += tuple[variable];
+        }
+        for (var tuple in group) {
+          tuple[as] = tuple[variable] / sum;
+        }
       }
     }
 

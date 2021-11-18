@@ -3790,7 +3790,83 @@ zIndex 与 scenes 排序的问题，还是采用基本不用排序，除非被�
 
 在ElementRenderOp中将两者分拣出来。虽然这样在性能上差了一点，但不在shape中处理是因为那很难搞，而且render差点没关系，不是paint就行。
 
+Nest:
+
+由于nester本身已经在tuple中了，事实上nested已经不重要了，但为了代数规则，还是需要记录 nested
+
+nester 和 nested 都是form，一个表达式，应当只有一组nested和nester，表示数据只能有一次分组。这不是代数本身的要求，而是实现的要求。为保证这样，每次nest后要聚合，无法聚合报错
+
+nester是数组，表示多重nest，多重nest、和nester是cross的情况，按笛卡尔积进行分组
+
+nester 是blend的情况，书中没有例子，也按笛卡尔积进行分组。因为：第一感觉就该这么弄，别的也没法弄，第二不管是cross还是blend还是nest 的结果做 nester，原则是能分尽量分。
+
+虽然都是笛卡尔积进行分了，但是存储上有差别，体现代数规则。
+
+proportion transform中的groupBy的功能，主要就是为分组配套的，因此也改成 Varset，用它的form，命名为 nester，用户自行确保与想要的nester一样。
+
+Nest实现：
+
+对于仅有nest的情况，根据结合律，以任意方式添加括号都不受影响，即nest的定义是最左端的nested打头（没有就取其form），依次将所有东西添加到nester
+
+奇怪组合，nested可以不等，这是故意的，为了满足代数规则，但是两者发生cross和nest时，必须保证nester相等。
+
+form和nested不一样的情况，似乎只会从cross中产生。两个nested相同，form必相同；form相同，nested不一定相同。
+
+**定义 nest**：由于nest是nest的发源地，所以所有操作都按定义设定
+
+form取左侧form；
+
+nested取左侧form；
+
+nester依次添加右侧form、右侧nester，并深度去重。
+
+**定义 cross**：
+
+form取两个form的笛卡尔积；
+
+nested两者都没有就算了，只有当两者之一有时用那一个，两者都有报错；
+
+nester同nested。
+
+**定义blend**：
+
+form两边addAll后，齐次化，然后深度去重；
+
+nested两者都没有就算了，
+
+​    两者相同时（此时form必相同），左结合律，nested为此值，两个nester必须为单元素，两个nester进行addAll后深度去重（c/a+c被认为非法）
+
+​    两者不同时，如nester相同，右结合律，nested两边addAll后深度去重，nester取那个nester
+
+​	nested和nester都不同，报错。
+
+
+
+图形代数英文名称为 graphics algebra ，不大写，不加 the
+
+感觉所有的parse都放到parse函数中好，现在这样分没有意义，而且完全不知道哪个在哪里，现在后面 aes、element、selection完成窜了。
+
+nest和cross分面，在本系统中的区别，体现在 DiscreteScale的values上
+
+groups现在还是用list表示，今后如需要，大不了再配个对应的nester值的list。用nester值做键的map不太靠谱而且麻烦，不如这种都用list的，相当于index是键。
+
+分组的时候体现一下nest，就是每分完一次，去除一遍空数组，这在多重分组的时候是必要的。
+
+尽量让从前完后的nester相同的靠在一起。
+
+按照flutter项目的习惯，test文件夹就是单元测试，如果需要再搞同级的其它文件夹 text_fixes 等
+
+scaleConv.formatter 泛型的问题，对比convert，似乎是因为 formatter 不是方法的原因，套个方法解决
+
+time就不要引入 intl库支持mask了吧，那样要引入额外的规则和库，用户可通过fomatter函数和自己引入intl实现。
+
+类中，直接在成员定义时初始化优先级最高。
+
+所有spec中函数类型的property，还是都按名词命名吧，因为用户关注的它是什么（出自 Effectiv Dart）
+
 ## TODO
+
+整合errorlog，需处理：throw, assert, list.single
 
 group selection
 

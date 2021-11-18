@@ -1,15 +1,9 @@
 import 'dart:ui';
-import 'dart:math';
 
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/chart/chart.dart';
-import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/converter.dart';
-import 'package:graphic/src/common/operators/value.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/interaction/signal.dart';
-import 'package:graphic/src/parse/parse.dart';
 
 import 'rect.dart';
 import 'polar.dart';
@@ -116,89 +110,5 @@ class RegionOp extends Operator<Rect> {
 
     final container = Rect.fromLTWH(0, 0, size.width, size.height);
     return padding.deflateRect(container);
-  }
-}
-
-/// Parses the coordinate related specifications.
-void parseCoord(
-  Chart spec,
-  View view,
-  Scope scope,
-) {
-  final region = view.add(RegionOp({
-    'size': scope.size,
-    'padding': spec.padding ??
-        (spec.coord is PolarCoord
-            ? EdgeInsets.all(10)
-            : EdgeInsets.fromLTRB(40, 5, 10, 20)),
-  }));
-
-  final coordSpec = spec.coord ?? RectCoord();
-
-  if (coordSpec is RectCoord) {
-    Operator<List<double>> horizontalRange = view.add(Value<List<double>>(
-      coordSpec.horizontalRange ?? [0, 1],
-    ));
-    if (coordSpec.onHorizontalRangeSignal != null) {
-      horizontalRange = view.add(SignalUpdateOp({
-        'update': coordSpec.onHorizontalRangeSignal,
-        'initialValue': horizontalRange,
-        'signal': scope.signal,
-      }));
-    }
-    Operator<List<double>> verticalRange = view.add(Value<List<double>>(
-      coordSpec.verticalRange ?? [0, 1],
-    ));
-    if (coordSpec.onVerticalRangeSignal != null) {
-      verticalRange = view.add(SignalUpdateOp({
-        'update': coordSpec.onVerticalRangeSignal,
-        'initialValue': verticalRange,
-        'signal': scope.signal,
-      }));
-    }
-
-    scope.coord = view.add(RectCoordConvOp({
-      'region': region,
-      'dimCount': coordSpec.dimCount ?? 2,
-      'dimFill': coordSpec.dimFill ?? 0.5,
-      'transposed': coordSpec.transposed ?? false,
-      'renderRangeX': horizontalRange,
-      'renderRangeY': verticalRange,
-    }));
-  } else {
-    coordSpec as PolarCoord;
-    Operator<List<double>> angleRange = view.add(Value<List<double>>(
-      coordSpec.angleRange ?? [0, 1],
-    ));
-    if (coordSpec.onAngleRangeSignal != null) {
-      angleRange = view.add(SignalUpdateOp({
-        'update': coordSpec.onAngleRangeSignal,
-        'initialValue': angleRange,
-        'signal': scope.signal,
-      }));
-    }
-    Operator<List<double>> radiusRange = view.add(Value<List<double>>(
-      coordSpec.radiusRange ?? [0, 1],
-    ));
-    if (coordSpec.onRadiusRangeSignal != null) {
-      radiusRange = view.add(SignalUpdateOp({
-        'update': coordSpec.onRadiusRangeSignal,
-        'initialValue': radiusRange,
-        'signal': scope.signal,
-      }));
-    }
-
-    scope.coord = view.add(PolarCoordConvOp({
-      'region': region,
-      'dimCount': coordSpec.dimCount ?? 2,
-      'dimFill': coordSpec.dimFill ?? 0.5,
-      'transposed': coordSpec.transposed ?? false,
-      'renderRangeX': angleRange,
-      'renderRangeY': radiusRange,
-      'startAngle': coordSpec.startAngle ?? (-pi / 2),
-      'endAngle': coordSpec.endAngle ?? (3 * pi / 2),
-      'startRadius': coordSpec.startRadius ?? 0.0,
-      'endRadius': coordSpec.endRadius ?? 1.0,
-    }));
   }
 }

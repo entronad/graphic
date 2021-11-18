@@ -1,8 +1,6 @@
 import 'package:graphic/src/chart/chart.dart';
-import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/operators/value.dart';
 import 'package:graphic/src/interaction/signal.dart';
-import 'package:graphic/src/parse/parse.dart';
 
 /// The signal that may be emitted when data changes.
 ///
@@ -25,19 +23,4 @@ class ChangeDataSignal<D> extends Signal {
 /// The input data value operator.
 class DataOp<D> extends Value<List<D>> {
   DataOp(List<D> value) : super(value);
-}
-
-/// Parses the input data related specifications.
-void parseData<D>(
-  Chart<D> spec,
-  View<D> view,
-  Scope<D> scope,
-) {
-  scope.data = view.add(DataOp(spec.data));
-
-  view.listen<ChangeDataSignal<D>, List<D>>(
-    view.dataSouce,
-    scope.data,
-    (signal) => signal.data,
-  );
 }

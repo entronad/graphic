@@ -9,7 +9,7 @@ import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/interaction/gesture.dart';
 
 /// Gets signal update for different dimensions.
-SignalUpdate<List<double>> _getRangeUpdate(
+SignalUpdater<List<double>> _getRangeUpdate(
         double Function(ScaleUpdateDetails) getDeltaDim,
         double Function(ScaleUpdateDetails) getScaleDim,
         double Function(Size) getSizeDim) =>
@@ -160,7 +160,7 @@ abstract class Defaults {
       );
 
   /// A signal update for scaling and panning horizontal coordinate range.
-  static SignalUpdate<List<double>> get horizontalRangeSignal =>
+  static SignalUpdater<List<double>> get horizontalRangeSignal =>
       _getRangeUpdate(
         (detail) => detail.delta.dx,
         (detail) => detail.horizontalScale,
@@ -168,7 +168,7 @@ abstract class Defaults {
       );
 
   /// A signal update for scaling and panning vertical coordinate range.
-  static SignalUpdate<List<double>> get verticalRangeSignal => _getRangeUpdate(
+  static SignalUpdater<List<double>> get verticalRangeSignal => _getRangeUpdate(
         (detail) => -detail.delta.dy,
         (detail) => detail.verticalScale,
         (size) => size.height,

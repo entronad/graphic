@@ -102,8 +102,8 @@
 /// [ChangeDataSignal]. Selection means a tuple aesthetic attribute values change
 /// when it is selected or not.
 ///
-/// Signals are used by properties named in "on...Signal" with [SignalUpdate]. Selections
-/// are specified by [Chart.selections] and used by [Attr.onSelection] with [SelectionUpdate].
+/// Signals are used by properties named in "on...Signal" with [SignalUpdater]. Selections
+/// are specified by [Chart.selections] and used by [Attr.onSelection] with [SelectionUpdater].
 ///
 /// ## Guide
 ///
@@ -178,7 +178,7 @@ export 'src/coord/rect.dart' show RectCoord, RectCoordConv;
 
 export 'src/guide/axis/axis.dart'
     show TickLine, TickLineMapper, LabelMapper, GridMapper, AxisGuide;
-export 'src/guide/interaction/tooltip.dart' show TooltipGuide, RenderTooltip;
+export 'src/guide/interaction/tooltip.dart' show TooltipGuide, TooltipRenderer;
 export 'src/guide/interaction/crosshair.dart' show CrosshairGuide;
 export 'src/guide/annotation/annotation.dart' show Annotation;
 export 'src/guide/annotation/figure.dart' show FigureAnnotation;
@@ -188,10 +188,10 @@ export 'src/guide/annotation/mark.dart' show MarkAnnotation;
 export 'src/guide/annotation/tag.dart' show TagAnnotation;
 export 'src/guide/annotation/custom.dart' show CustomAnnotation;
 
-export 'src/interaction/signal.dart' show Signal, SignalType, SignalUpdate;
+export 'src/interaction/signal.dart' show Signal, SignalType, SignalUpdater;
 export 'src/interaction/gesture.dart' show GestureType, Gesture, GestureSignal;
 export 'src/interaction/selection/selection.dart'
-    show Selection, SelectionUpdate;
+    show Selection, SelectionUpdater;
 export 'src/interaction/selection/interval.dart' show IntervalSelection;
 export 'src/interaction/selection/point.dart' show PointSelection;
 

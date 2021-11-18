@@ -52,7 +52,7 @@ List<V> catAutoTicks<V>({
 
     var i = 0;
     final groups = categories.map((e) {
-      final rst = (i % step == 0) ? sublist(categories, i, i + step) : null;
+      final rst = (i % step == 0) ? categories.safeSublist(i, i + step) : null;
       i++;
       return rst;
     }).where((e) {

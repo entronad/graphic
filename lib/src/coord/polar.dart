@@ -77,7 +77,7 @@ class PolarCoord extends Coord {
   List<double>? angleRange;
 
   /// Signal update of [angleRange].
-  SignalUpdate<List<double>>? onAngleRangeSignal;
+  SignalUpdater<List<double>>? onAngleRangeSignal;
 
   /// Range ratio of coordinate radius to plane radius.
   ///
@@ -89,7 +89,7 @@ class PolarCoord extends Coord {
   List<double>? radiusRange;
 
   /// Signal update of [radiusRange].
-  SignalUpdate<List<double>>? onRadiusRangeSignal;
+  SignalUpdater<List<double>>? onRadiusRangeSignal;
 
   @override
   bool operator ==(Object other) =>

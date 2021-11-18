@@ -19,12 +19,12 @@ abstract class ChannelAttr<AV> extends Attr<AV> {
     this.values,
     this.stops,
     AV? value,
-    AV Function(Tuple)? encode,
-    Map<String, Map<bool, SelectionUpdate<AV>>>? onSelection,
+    AV Function(Tuple)? encoder,
+    Map<String, Map<bool, SelectionUpdater<AV>>>? onSelection,
   })  : assert(values == null || values.length >= 2),
         super(
           value: value,
-          encode: encode,
+          encoder: encoder,
           onSelection: onSelection,
         );
 
@@ -182,8 +182,8 @@ Encoder<AV> getChannelEncoder<AV>(
     }
     return ChannelEncoder(variable, conv);
   }
-  if (spec.encode != null) {
-    return CustomEncoder(spec.encode!);
+  if (spec.encoder != null) {
+    return CustomEncoder(spec.encoder!);
   }
   throw ArgumentError('Value, variable, or encode must be set.');
 }

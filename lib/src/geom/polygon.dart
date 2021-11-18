@@ -34,7 +34,6 @@ class PolygonElement extends PartitionElement<PolygonShape> {
     SizeAttr? size,
     List<Modifier>? modifiers,
     int? zIndex,
-    String? groupBy,
     Map<String, Set<int>>? selected,
   }) : super(
           color: color,
@@ -46,7 +45,6 @@ class PolygonElement extends PartitionElement<PolygonShape> {
           size: size,
           modifiers: modifiers,
           zIndex: zIndex,
-          groupBy: groupBy,
           selected: selected,
         );
 }

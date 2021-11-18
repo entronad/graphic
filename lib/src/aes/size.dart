@@ -12,15 +12,15 @@ class SizeAttr extends ChannelAttr<double> {
     String? variable,
     List<double>? values,
     List<double>? stops,
-    double Function(Tuple)? encode,
-    Map<String, Map<bool, SelectionUpdate<double>>>? onSelection,
-  })  : assert(isSingle([value, variable, encode])),
+    double Function(Tuple)? encoder,
+    Map<String, Map<bool, SelectionUpdater<double>>>? onSelection,
+  })  : assert(isSingle([value, variable, encoder])),
         super(
           value: value,
           variable: variable,
           values: values,
           stops: stops,
-          encode: encode,
+          encoder: encoder,
           onSelection: onSelection,
         );
 }

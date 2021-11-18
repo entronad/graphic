@@ -9,7 +9,6 @@ import 'package:graphic/src/aes/label.dart';
 import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
-import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
@@ -18,7 +17,6 @@ import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/graffiti/scene.dart';
-import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/scale/discrete.dart';
 import 'package:graphic/src/scale/scale.dart';
 import 'package:graphic/src/shape/area.dart';
@@ -30,10 +28,6 @@ import 'package:graphic/src/shape/shape.dart';
 import 'package:graphic/src/util/assert.dart';
 
 import 'modifier/modifier.dart';
-import 'modifier/dodge.dart';
-import 'modifier/jitter.dart';
-import 'modifier/stack.dart';
-import 'modifier/symmetric.dart';
 import 'area.dart';
 import 'custom.dart';
 import 'interval.dart';
@@ -60,7 +54,6 @@ abstract class GeomElement<S extends Shape> {
     this.size,
     this.modifiers,
     this.zIndex,
-    this.groupBy,
     this.selected,
   })  : assert(isSingle([color, gradient], allowNone: true)),
         assert(selected == null || selected.keys.length == 1);
@@ -89,13 +82,13 @@ abstract class GeomElement<S extends Shape> {
 
   /// Algebra expression of the element position.
   ///
-  /// See details about graphic algebra in [Varset].
+  /// See details about graphics algebra in [Varset].
   ///
   /// A certain type of graphing requires a certain count of variables in each
   /// dimension. If not satisfied, The geometory types have their own rules tring
   /// to complete the points. See details in subclasses.
   ///
-  /// If null, a crossing of first 2 variables is set by default.
+  /// If null, a crossing of first two variables is set by default.
   Varset? position;
 
   /// The shape attribute of this element.
@@ -118,19 +111,13 @@ abstract class GeomElement<S extends Shape> {
   ///
   /// They are applied in order of the list index.
   ///
-  /// If set, a [groupBy] is required.
+  /// If set, a nesting in the algebra for grouping is requied. See details in [Varset].
   List<Modifier>? modifiers;
 
   /// The z index of this element.
   ///
   /// If null, a default 0 is set.
   int? zIndex;
-
-  /// The variable by which the tuples are grouped.
-  ///
-  /// The grouping is usfull to seperate line and area shapes, and is requred for
-  /// [modifiers].
-  String? groupBy;
 
   /// The selection name and selected tuple indexes triggered initially.
   ///
@@ -149,14 +136,21 @@ abstract class GeomElement<S extends Shape> {
       size == other.size &&
       DeepCollectionEquality().equals(modifiers, other.modifiers) &&
       zIndex == other.zIndex &&
-      groupBy == other.groupBy &&
       selected == other.selected;
 }
 
 /// The operator to group aeses.
 ///
-/// The grouping is by [GeomElement.groupBy]. If it is null, all aeses will be in
-/// a same group.
+/// The nesters, no matter `x * y`, `a + y`, or `a / y`, will be used in cartesian
+/// production. If empty, all eases will be in a same group.
+/// 
+/// Empty groups will be removed after each grouping, which reflects the feature
+/// of nesting. It is nessasary especially in multiple nesters grouping.
+/// 
+/// Groups with same value of smaller indexed nester will stay together.
+/// 
+/// List is the best way to store groups. If nester values are needed for indexing,
+/// store them in another corresponding list. List indexes are better then map keys.
 class GroupOp extends Operator<AesGroups> {
   GroupOp(Map<String, dynamic> params) : super(params);
 
@@ -164,26 +158,36 @@ class GroupOp extends Operator<AesGroups> {
   AesGroups evaluate() {
     final aeses = params['aeses'] as List<Aes>;
     final tuples = params['tuples'] as List<Tuple>;
-    final groupBy = params['groupBy'] as String?;
+    final nesters = params['nesters'] as List<AlgForm>;
     final scales = params['scales'] as Map<String, ScaleConv>;
 
-    if (groupBy == null) {
-      return [aeses];
+    final nesterVariables = <String>[];
+    for (var nesterForm in nesters) {
+      for (var nesterTerm in nesterForm) {
+        nesterVariables.addAll(nesterTerm);
+      }
     }
 
-    final groupValues = (scales[groupBy] as DiscreteScaleConv).values;
-    final tmp = <dynamic, List<Aes>>{};
-    for (var groupValue in groupValues) {
-      tmp[groupValue] = <Aes>[];
+    var rst = [aeses];
+
+    for (var nester in nesterVariables) {
+      final tmpRst = <List<Aes>>[];
+      for (var group in rst) {
+        final nesterValues = (scales[nester] as DiscreteScaleConv).values;
+        final tmpGroup = <dynamic, List<Aes>>{};
+        for (var nesterValue in nesterValues) {
+          tmpGroup[nesterValue] = <Aes>[];
+        }
+        for (var aes in group) {
+          final tuple = tuples[aes.index];
+          tmpGroup[tuple[nester]]!.add(aes);
+        }
+        tmpRst.addAll(tmpGroup.values.where((g) => g.isNotEmpty));
+      }
+      rst = tmpRst;
     }
 
-    for (var i = 0; i < aeses.length; i++) {
-      final aes = aeses[i];
-      final tuple = tuples[i];
-      tmp[tuple[groupBy]]!.add(aes);
-    }
-
-    return tmp.values.toList();
+    return rst;
   }
 }
 
@@ -271,61 +275,3 @@ Shape getDefaultShape(GeomElement spec) => spec is AreaElement
                     : spec is PolygonElement
                         ? HeatmapShape()
                         : throw UnimplementedError('No such geom $spec.');
-
-/// Parses geometory related specifications.
-void parseGeom(
-  Chart spec,
-  View view,
-  Scope scope,
-) {
-  for (var i = 0; i < spec.elements.length; i++) {
-    final elementSpec = spec.elements[i];
-    final aeses = scope.aesesList[i];
-
-    Operator<AesGroups> groups = view.add(GroupOp({
-      'aeses': aeses,
-      'tuples': scope.tuples,
-      'groupBy': elementSpec.groupBy,
-      'scales': scope.scales,
-    }));
-
-    if (elementSpec.modifiers != null) {
-      for (var modifier in elementSpec.modifiers!) {
-        final form = scope.forms[i];
-        final origin = scope.origins[i];
-        GeomModifierOp geomModifier;
-        if (modifier is DodgeModifier) {
-          geomModifier = view.add(DodgeGeomModifierOp({
-            'ratio': modifier.ratio,
-            'symmetric': modifier.symmetric ?? true,
-            'form': form,
-            'scales': scope.scales,
-            'groups': groups,
-          }));
-        } else if (modifier is JitterModifier) {
-          geomModifier = view.add(JitterGeomModifierOp({
-            'ratio': modifier.ratio ?? 0.5,
-            'form': form,
-            'scales': scope.scales,
-          }));
-        } else if (modifier is StackModifier) {
-          geomModifier = view.add(StackGeomModifierOp({
-            'origin': origin,
-          }));
-        } else if (modifier is SymmetricModifier) {
-          geomModifier = view.add(SymmetricGeomModifierOp({
-            'origin': origin,
-          }));
-        } else {
-          throw UnimplementedError('No such modifier type: $modifier.');
-        }
-        groups = view.add(ModifyOp({
-          'groups': groups,
-          'modifier': geomModifier,
-        }));
-      }
-    }
-
-    scope.groupsList.add(groups);
-  }
-}

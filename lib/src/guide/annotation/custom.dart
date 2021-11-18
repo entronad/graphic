@@ -9,7 +9,7 @@ import 'figure.dart';
 class CustomAnnotation extends FigureAnnotation {
   /// Creates a custom annotation.
   CustomAnnotation({
-    required this.render,
+    required this.renderer,
     List<String>? variables,
     List? values,
     Offset Function(Size)? anchor,
@@ -22,7 +22,7 @@ class CustomAnnotation extends FigureAnnotation {
         );
 
   /// Indicates the custom render funcion of this annotation.
-  List<Figure> Function(Offset) render;
+  List<Figure> Function(Offset) renderer;
 
   @override
   bool operator ==(Object other) => other is CustomAnnotation && super == other;
@@ -35,8 +35,8 @@ class CustomAnnotOp extends FigureAnnotOp {
   @override
   List<Figure>? evaluate() {
     final anchor = params['anchor'] as Offset;
-    final render = params['render'] as List<Figure> Function(Offset);
+    final renderer = params['renderer'] as List<Figure> Function(Offset);
 
-    return render(anchor);
+    return renderer(anchor);
   }
 }

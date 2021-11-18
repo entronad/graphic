@@ -2,10 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
-import 'package:graphic/src/chart/chart.dart';
-import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/operators/value.dart';
-import 'package:graphic/src/parse/parse.dart';
 
 import 'signal.dart';
 
@@ -532,19 +529,4 @@ class GestureSignal extends Signal {
 class GestureOp extends Value<Gesture?> {
   @override
   bool get consume => true;
-}
-
-/// Parses the gesture related specifications.
-void parseGesture(
-  Chart spec,
-  View view,
-  Scope scope,
-) {
-  scope.gesture = view.add(GestureOp());
-
-  view.listen<GestureSignal, Gesture?>(
-    view.gestureSource,
-    scope.gesture,
-    (signal) => signal.gesture,
-  );
 }

@@ -1,12 +1,9 @@
-import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/size.dart';
-import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/operators/value.dart';
 import 'package:graphic/src/data/data_set.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
-import 'package:graphic/src/parse/parse.dart';
 
 /// Types of [Signal]s.
 enum SignalType {
@@ -29,7 +26,7 @@ enum SignalType {
 ///
 /// See also:
 ///
-/// - [SignalUpdate], updates a value when a signal occurs.
+/// - [SignalUpdater], updates a value when a signal occurs.
 /// - [Selection], to define a selection.
 abstract class Signal {
   /// type of the signal.
@@ -42,7 +39,7 @@ abstract class Signal {
 /// previous value before this update.
 ///
 /// Make sure the return value is a different instance from initialValue or preValue.
-typedef SignalUpdate<V> = V Function(V initialValue, V preValue, Signal signal);
+typedef SignalUpdater<V> = V Function(V initialValue, V preValue, Signal signal);
 
 /// The souce to generate signals.
 class SignalSource<S extends Signal> {
@@ -85,7 +82,7 @@ class SignalUpdateOp<V> extends Operator<V> {
 
   @override
   V evaluate() {
-    final update = params['update'] as SignalUpdate<V>;
+    final update = params['update'] as SignalUpdater<V>;
     final initialValue = params['initialValue'] as V;
     final signal = params['signal'] as Signal?;
 
@@ -98,30 +95,4 @@ class SignalUpdateOp<V> extends Operator<V> {
 
     return update(initialValue, value!, signal);
   }
-}
-
-/// Parses signal related specifications.
-void parseSignal<D>(
-  Chart<D> spec,
-  View<D> view,
-  Scope<D> scope,
-) {
-  scope.signal = view.add(SignalOp());
-
-  view
-    ..listen<Signal, Signal?>(
-      view.gestureSource,
-      scope.signal,
-      (signal) => signal,
-    )
-    ..listen<Signal, Signal?>(
-      view.sizeSouce,
-      scope.signal,
-      (signal) => signal,
-    )
-    ..listen<Signal, Signal?>(
-      view.dataSouce,
-      scope.signal,
-      (signal) => signal,
-    );
 }

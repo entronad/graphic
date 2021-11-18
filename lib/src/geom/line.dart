@@ -34,7 +34,6 @@ class LineElement extends FunctionElement<LineShape> {
     SizeAttr? size,
     List<Modifier>? modifiers,
     int? zIndex,
-    String? groupBy,
     Map<String, Set<int>>? selected,
   }) : super(
           color: color,
@@ -46,7 +45,6 @@ class LineElement extends FunctionElement<LineShape> {
           size: size,
           modifiers: modifiers,
           zIndex: zIndex,
-          groupBy: groupBy,
           selected: selected,
         );
 }

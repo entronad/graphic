@@ -185,6 +185,224 @@ class CustomPage extends StatelessWidget {
             children: <Widget>[
               Container(
                 child: const Text(
+                  'Custom Shape and Tooltip',
+                  style: TextStyle(fontSize: 20),
+                ),
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
+              ),
+              Container(
+                child: const Text(
+                  '- A custom shape attribution should corresponds to the geometory elemnet type.',
+                ),
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                width: 350,
+                height: 300,
+                child: Chart(
+                  data: basicData,
+                  variables: {
+                    'genre': Variable(
+                      accessor: (Map map) => map['genre'] as String,
+                    ),
+                    'sold': Variable(
+                        accessor: (Map map) => map['sold'] as num,
+                        scale: LinearScale(min: 0)),
+                  },
+                  elements: [
+                    IntervalElement(
+                      shape: ShapeAttr(value: TriangleShape()),
+                      label: LabelAttr(
+                          encoder: (tuple) => Label(tuple['sold'].toString())),
+                      elevation: ElevationAttr(value: 0, onSelection: {
+                        'tap': {true: (_) => 5}
+                      }),
+                      color:
+                          ColorAttr(value: Defaults.primaryColor, onSelection: {
+                        'tap': {false: (color) => color.withAlpha(100)}
+                      }),
+                    )
+                  ],
+                  axes: [
+                    Defaults.horizontalAxis,
+                    Defaults.verticalAxis,
+                  ],
+                  selections: {'tap': PointSelection(dim: 1)},
+                  tooltip: TooltipGuide(renderer: simpleTooltip),
+                  crosshair: CrosshairGuide(),
+                ),
+              ),
+              Container(
+                child: const Text(
+                  'Central Pie Label by Custom Tooltip',
+                  style: TextStyle(fontSize: 20),
+                ),
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                width: 350,
+                height: 300,
+                child: Chart(
+                  data: basicData,
+                  variables: {
+                    'genre': Variable(
+                      accessor: (Map map) => map['genre'] as String,
+                    ),
+                    'sold': Variable(
+                      accessor: (Map map) => map['sold'] as num,
+                    ),
+                  },
+                  transforms: [
+                    Proportion(
+                      variable: 'sold',
+                      as: 'percent',
+                    )
+                  ],
+                  elements: [
+                    IntervalElement(
+                      position: Varset('percent') / Varset('genre'),
+                      color: ColorAttr(
+                          variable: 'genre', values: Defaults.colors10),
+                      modifiers: [StackModifier()],
+                    )
+                  ],
+                  coord: PolarCoord(
+                    transposed: true,
+                    dimCount: 1,
+                    startRadius: 0.4,
+                  ),
+                  selections: {'tap': PointSelection()},
+                  tooltip: TooltipGuide(renderer: centralPieLabel),
+                ),
+              ),
+              Container(
+                child: const Text(
+                  'Custom Legend',
+                  style: TextStyle(fontSize: 20),
+                ),
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
+              ),
+              Container(
+                child: const Text(
+                  '- Custom legend by mark and tag annotations.',
+                ),
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
+              ),
+              Container(
+                child: const Text(
+                  '- With dodge modifier.',
+                ),
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                width: 350,
+                height: 300,
+                child: Chart(
+                  padding: const EdgeInsets.fromLTRB(40, 5, 10, 40),
+                  data: adjustData,
+                  variables: {
+                    'index': Variable(
+                      accessor: (Map map) => map['index'].toString(),
+                    ),
+                    'type': Variable(
+                      accessor: (Map map) => map['type'] as String,
+                    ),
+                    'value': Variable(
+                      accessor: (Map map) => map['value'] as num,
+                    ),
+                  },
+                  elements: [
+                    IntervalElement(
+                      position: Varset('index') * Varset('value') / Varset('type'),
+                      color: ColorAttr(
+                          variable: 'type', values: Defaults.colors10),
+                      size: SizeAttr(value: 2),
+                      modifiers: [DodgeModifier(ratio: 0.1)],
+                    )
+                  ],
+                  axes: [
+                    Defaults.horizontalAxis,
+                    Defaults.verticalAxis,
+                  ],
+                  selections: {
+                    'tap': PointSelection(
+                      variable: 'index',
+                    )
+                  },
+                  tooltip: TooltipGuide(multiTuples: true),
+                  crosshair: CrosshairGuide(),
+                  annotations: [
+                    MarkAnnotation(
+                      relativePath: Path()..addRect(Rect.fromCircle(center: const Offset(0, 0), radius: 5)),
+                      style: Paint()..color = Defaults.colors10[0],
+                      anchor: (size) => const Offset(25, 290),
+                    ),
+                    TagAnnotation(
+                      label: Label(
+                        'Email',
+                        LabelStyle(Defaults.textStyle, align: Alignment.centerRight),
+                      ),
+                      anchor: (size) => const Offset(34, 290),
+                    ),
+                    MarkAnnotation(
+                      relativePath: Path()..addRect(Rect.fromCircle(center: const Offset(0, 0), radius: 5)),
+                      style: Paint()..color = Defaults.colors10[1],
+                      anchor: (size) => Offset(25 + size.width / 5, 290),
+                    ),
+                    TagAnnotation(
+                      label: Label(
+                        'Affiliate',
+                        LabelStyle(Defaults.textStyle, align: Alignment.centerRight),
+                      ),
+                      anchor: (size) => Offset(34 + size.width / 5, 290),
+                    ),
+                    MarkAnnotation(
+                      relativePath: Path()..addRect(Rect.fromCircle(center: const Offset(0, 0), radius: 5)),
+                      style: Paint()..color = Defaults.colors10[2],
+                      anchor: (size) => Offset(25 + size.width / 5 * 2, 290),
+                    ),
+                    TagAnnotation(
+                      label: Label(
+                        'Video',
+                        LabelStyle(Defaults.textStyle, align: Alignment.centerRight),
+                      ),
+                      anchor: (size) => Offset(34 + size.width / 5 * 2, 290),
+                    ),
+                    MarkAnnotation(
+                      relativePath: Path()..addRect(Rect.fromCircle(center: const Offset(0, 0), radius: 5)),
+                      style: Paint()..color = Defaults.colors10[3],
+                      anchor: (size) => Offset(25 + size.width / 5 * 3, 290),
+                    ),
+                    TagAnnotation(
+                      label: Label(
+                        'Direct',
+                        LabelStyle(Defaults.textStyle, align: Alignment.centerRight),
+                      ),
+                      anchor: (size) => Offset(34 + size.width / 5 * 3, 290),
+                    ),
+                    MarkAnnotation(
+                      relativePath: Path()..addRect(Rect.fromCircle(center: const Offset(0, 0), radius: 5)),
+                      style: Paint()..color = Defaults.colors10[4],
+                      anchor: (size) => Offset(25 + size.width / 5 * 4, 290),
+                    ),
+                    TagAnnotation(
+                      label: Label(
+                        'Search',
+                        LabelStyle(Defaults.textStyle, align: Alignment.centerRight),
+                      ),
+                      anchor: (size) => Offset(34 + size.width / 5 * 4, 290),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                child: const Text(
                   'Candlestick Chart',
                   style: TextStyle(fontSize: 20),
                 ),
@@ -259,7 +477,7 @@ class CustomPage extends StatelessWidget {
                               Varset('min') +
                               Varset('end')),
                       color: ColorAttr(
-                          encode: (tuple) => tuple['end'] >= tuple['start']
+                          encoder: (tuple) => tuple['end'] >= tuple['start']
                               ? Colors.red
                               : Colors.green),
                     )
@@ -270,102 +488,6 @@ class CustomPage extends StatelessWidget {
                   ],
                   coord: RectCoord(
                       onHorizontalRangeSignal: Defaults.horizontalRangeSignal),
-                ),
-              ),
-              Container(
-                child: const Text(
-                  'Custom Shape and Tooltip',
-                  style: TextStyle(fontSize: 20),
-                ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
-              ),
-              Container(
-                child: const Text(
-                  '- A custom shape attribution should corresponds to the geometory elemnet type.',
-                ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 10),
-                width: 350,
-                height: 300,
-                child: Chart(
-                  data: basicData,
-                  variables: {
-                    'genre': Variable(
-                      accessor: (Map map) => map['genre'] as String,
-                    ),
-                    'sold': Variable(
-                        accessor: (Map map) => map['sold'] as num,
-                        scale: LinearScale(min: 0)),
-                  },
-                  elements: [
-                    IntervalElement(
-                      shape: ShapeAttr(value: TriangleShape()),
-                      label: LabelAttr(
-                          encode: (tuple) => Label(tuple['sold'].toString())),
-                      elevation: ElevationAttr(value: 0, onSelection: {
-                        'tap': {true: (_) => 5}
-                      }),
-                      color:
-                          ColorAttr(value: Defaults.primaryColor, onSelection: {
-                        'tap': {false: (color) => color.withAlpha(100)}
-                      }),
-                    )
-                  ],
-                  axes: [
-                    Defaults.horizontalAxis,
-                    Defaults.verticalAxis,
-                  ],
-                  selections: {'tap': PointSelection(dim: 1)},
-                  tooltip: TooltipGuide(render: simpleTooltip),
-                  crosshair: CrosshairGuide(),
-                ),
-              ),
-              Container(
-                child: const Text(
-                  'Central Pie Label by Custom Tooltip',
-                  style: TextStyle(fontSize: 20),
-                ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 10),
-                width: 350,
-                height: 300,
-                child: Chart(
-                  data: basicData,
-                  variables: {
-                    'genre': Variable(
-                      accessor: (Map map) => map['genre'] as String,
-                    ),
-                    'sold': Variable(
-                      accessor: (Map map) => map['sold'] as num,
-                    ),
-                  },
-                  transforms: [
-                    Proportion(
-                      variable: 'sold',
-                      as: 'percent',
-                    )
-                  ],
-                  elements: [
-                    IntervalElement(
-                      position: Varset('percent'),
-                      color: ColorAttr(
-                          variable: 'genre', values: Defaults.colors10),
-                      groupBy: 'genre',
-                      modifiers: [StackModifier()],
-                    )
-                  ],
-                  coord: PolarCoord(
-                    transposed: true,
-                    dimCount: 1,
-                    startRadius: 0.4,
-                  ),
-                  selections: {'tap': PointSelection()},
-                  tooltip: TooltipGuide(render: centralPieLabel),
                 ),
               ),
             ],

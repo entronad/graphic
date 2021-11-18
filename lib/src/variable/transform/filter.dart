@@ -11,11 +11,11 @@ import 'transform.dart';
 class Filter extends VariableTransform {
   /// Creates a filter transform.
   Filter({
-    required this.test,
+    required this.predicate,
   });
 
-  /// The predicate test.
-  bool Function(Tuple) test;
+  /// The testing predicate.
+  bool Function(Tuple) predicate;
 
   @override
   bool operator ==(Object other) => other is Filter && super == other;
@@ -28,8 +28,8 @@ class FilterOp extends TransformOp {
   @override
   List<Tuple> evaluate() {
     final tuples = params['tuples'] as List<Tuple>;
-    final test = params['test'] as bool Function(Tuple);
+    final predicate = params['predicate'] as bool Function(Tuple);
 
-    return tuples.where((tuple) => test(tuple)).toList();
+    return tuples.where((tuple) => predicate(tuple)).toList();
   }
 }

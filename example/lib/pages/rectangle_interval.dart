@@ -65,7 +65,7 @@ class RectangleIntervalPage extends StatelessWidget {
                   elements: [
                     IntervalElement(
                       label: LabelAttr(
-                          encode: (tuple) => Label(tuple['sold'].toString())),
+                          encoder: (tuple) => Label(tuple['sold'].toString())),
                       elevation: ElevationAttr(value: 0, onSelection: {
                         'tap': {true: (_) => 5}
                       }),
@@ -116,7 +116,7 @@ class RectangleIntervalPage extends StatelessWidget {
                   elements: [
                     IntervalElement(
                       label: LabelAttr(
-                          encode: (tuple) => Label(tuple['sold'].toString())),
+                          encoder: (tuple) => Label(tuple['sold'].toString())),
                       gradient: GradientAttr(
                           value: const LinearGradient(colors: [
                             Color(0x8883bff6),
@@ -217,7 +217,14 @@ class RectangleIntervalPage extends StatelessWidget {
               ),
               Container(
                 child: const Text(
-                  '- Grouped by type.',
+                  '- Nested by type.',
+                ),
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
+              ),
+              Container(
+                child: const Text(
+                  '- With a label in middle of each bar.',
                 ),
                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                 alignment: Alignment.centerLeft,
@@ -256,58 +263,16 @@ class RectangleIntervalPage extends StatelessWidget {
                   },
                   elements: [
                     IntervalElement(
-                      position: Varset('index') * Varset('value'),
-                      groupBy: 'type',
+                      position: Varset('index') * Varset('value') / Varset('type'),
+                      shape: ShapeAttr(value: RectShape(labelPosition: 0.5)),
                       color: ColorAttr(
                           variable: 'type', values: Defaults.colors10),
+                      label: LabelAttr(
+                          encoder: (tuple) => Label(
+                                tuple['value'].toString(),
+                                LabelStyle(const TextStyle(fontSize: 6)),
+                              )),
                       modifiers: [StackModifier()],
-                    )
-                  ],
-                  axes: [
-                    Defaults.horizontalAxis,
-                    Defaults.verticalAxis,
-                  ],
-                  selections: {
-                    'tap': PointSelection(
-                      variable: 'index',
-                    )
-                  },
-                  tooltip: TooltipGuide(multiTuples: true),
-                  crosshair: CrosshairGuide(),
-                ),
-              ),
-              Container(
-                child: const Text(
-                  'Dodged Bar Chart',
-                  style: TextStyle(fontSize: 20),
-                ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 10),
-                width: 350,
-                height: 300,
-                child: Chart(
-                  data: adjustData,
-                  variables: {
-                    'index': Variable(
-                      accessor: (Map map) => map['index'].toString(),
-                    ),
-                    'type': Variable(
-                      accessor: (Map map) => map['type'] as String,
-                    ),
-                    'value': Variable(
-                      accessor: (Map map) => map['value'] as num,
-                    ),
-                  },
-                  elements: [
-                    IntervalElement(
-                      position: Varset('index') * Varset('value'),
-                      groupBy: 'type',
-                      color: ColorAttr(
-                          variable: 'type', values: Defaults.colors10),
-                      size: SizeAttr(value: 2),
-                      modifiers: [DodgeModifier(ratio: 0.1)],
                     )
                   ],
                   axes: [
@@ -355,7 +320,7 @@ class RectangleIntervalPage extends StatelessWidget {
                   elements: [
                     IntervalElement(
                       label: LabelAttr(
-                          encode: (tuple) => Label(
+                          encoder: (tuple) => Label(
                                 tuple['sold'].toString(),
                                 LabelStyle(Defaults.runeStyle),
                               )),

@@ -209,7 +209,7 @@ class TickInfoOp extends Operator<List<TickInfo>> {
     final ticks = scale.ticks
         .map((value) => TickInfo(
               scale.normalize(scale.convert(value)),
-              scale.formatter(value),
+              scale.format(value),
             ))
         .toList();
 

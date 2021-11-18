@@ -1,10 +1,7 @@
 import 'package:collection/collection.dart';
-import 'package:graphic/src/chart/chart.dart';
-import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/guide/axis/axis.dart';
 import 'package:graphic/src/guide/interaction/tooltip.dart';
-import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/util/assert.dart';
 import 'package:flutter/foundation.dart';
 import 'package:graphic/src/common/converter.dart';
@@ -89,6 +86,9 @@ abstract class ScaleConv<V, SV extends num> extends Converter<V, SV> {
   late String title;
 
   /// The scale formatter
+  /// 
+  /// This should not be directly used. Use method [format] insead to avoid generic
+  /// problems.
   late String Function(V) formatter;
 
   /// The scale ticks.
@@ -115,6 +115,11 @@ abstract class ScaleConv<V, SV extends num> extends Converter<V, SV> {
   /// The zero of [V].
   @protected
   V get zero;
+
+  /// Formats a value to string.
+  /// 
+  /// This is a method wrapper of [formatter] to avoid generic problems.
+  String format(V value) => formatter(value);
 
   /// The default formatter of [V] for [formatter].
   @protected
@@ -171,21 +176,4 @@ class ScaleOp extends Operator<List<Scaled>> {
       return scaled;
     }).toList();
   }
-}
-
-/// Parses the scale related specifications.
-void parseScale(
-  Chart spec,
-  View view,
-  Scope scope,
-) {
-  scope.scales = view.add(ScaleConvOp({
-    'tuples': scope.tuples,
-    'specs': scope.scaleSpecs,
-  }));
-
-  scope.scaleds = view.add(ScaleOp({
-    'tuples': scope.tuples,
-    'convs': scope.scales,
-  }));
 }

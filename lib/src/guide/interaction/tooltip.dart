@@ -20,7 +20,7 @@ import 'package:graphic/src/util/assert.dart';
 /// Gets the figures of a tooltip.
 ///
 /// The [anchor] is the result either set directly or calculated.
-typedef RenderTooltip = List<Figure> Function(
+typedef TooltipRenderer = List<Figure> Function(
   Offset anchor,
   List<Tuple> selectedTuples,
 );
@@ -28,7 +28,7 @@ typedef RenderTooltip = List<Figure> Function(
 /// The specification of a tooltip
 ///
 /// A default tooltip construct and style is provided with slight configurations,
-/// But you can deeply custom your own tooltip with [render] property.
+/// But you can deeply custom your own tooltip with [renderer] property.
 class TooltipGuide {
   /// Creates a tooltip.
   TooltipGuide({
@@ -46,16 +46,16 @@ class TooltipGuide {
     this.textStyle,
     this.multiTuples,
     this.variables,
-    this.render,
-  })  : assert(isSingle([render, align], allowNone: true)),
-        assert(isSingle([render, offset], allowNone: true)),
-        assert(isSingle([render, padding], allowNone: true)),
-        assert(isSingle([render, backgroundColor], allowNone: true)),
-        assert(isSingle([render, radius], allowNone: true)),
-        assert(isSingle([render, elevation], allowNone: true)),
-        assert(isSingle([render, textStyle], allowNone: true)),
-        assert(isSingle([render, multiTuples], allowNone: true)),
-        assert(isSingle([render, variables], allowNone: true));
+    this.renderer,
+  })  : assert(isSingle([renderer, align], allowNone: true)),
+        assert(isSingle([renderer, offset], allowNone: true)),
+        assert(isSingle([renderer, padding], allowNone: true)),
+        assert(isSingle([renderer, backgroundColor], allowNone: true)),
+        assert(isSingle([renderer, radius], allowNone: true)),
+        assert(isSingle([renderer, elevation], allowNone: true)),
+        assert(isSingle([renderer, textStyle], allowNone: true)),
+        assert(isSingle([renderer, multiTuples], allowNone: true)),
+        assert(isSingle([renderer, variables], allowNone: true));
 
   /// The selection this tooltip reacts to.
   ///
@@ -146,7 +146,7 @@ class TooltipGuide {
   ///
   /// If set, [align], [offset], [padding], [backgroundColor], [radius], [elevation],
   /// [textStyle], [multiTuples], and [variables] are useless and not allowed.
-  RenderTooltip? render;
+  TooltipRenderer? renderer;
 
   @override
   bool operator ==(Object other) =>
@@ -198,7 +198,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
     final elevation = params['elevation'] as double?;
     final textStyle = params['textStyle'] as TextStyle;
     final multiTuples = params['multiTuples'] as bool;
-    final render = params['render'] as RenderTooltip?;
+    final renderer = params['renderer'] as TooltipRenderer?;
     final followPointer = params['followPointer'] as List<bool>;
     final anchor = params['anchor'] as Offset Function(Size)?;
     final size = params['size'] as Size;
@@ -249,8 +249,8 @@ class TooltipRenderOp extends Render<TooltipScene> {
     }
 
     List<Figure> figures;
-    if (render != null) {
-      figures = render(
+    if (renderer != null) {
+      figures = renderer(
         anchorRst,
         selectedTuples,
       );
@@ -262,12 +262,12 @@ class TooltipRenderOp extends Render<TooltipScene> {
         var field = fields.first;
         var scale = scales[field]!;
         var title = scale.title;
-        textContent += '$title: ${scale.formatter(tuple[field])}';
+        textContent += '$title: ${scale.format(tuple[field])}';
         for (var i = 1; i < fields.length; i++) {
           field = fields[i];
           scale = scales[field]!;
           title = scale.title;
-          textContent += '\n$title: ${scale.formatter(tuple[field])}';
+          textContent += '\n$title: ${scale.format(tuple[field])}';
         }
       } else {
         final groupField = selector.variable;
@@ -289,7 +289,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
 
         if (groupField != null) {
           textContent +=
-              scales[groupField]!.formatter(selectedTuples.first[groupField]);
+              scales[groupField]!.format(selectedTuples.first[groupField]);
         }
         for (var tuple in selectedTuples) {
           final domainField = fields.first;
@@ -297,7 +297,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
           final domainScale = scales[domainField]!;
           final measureScale = scales[measureField]!;
           textContent +=
-              '\n${domainScale.formatter(tuple[domainField])}: ${measureScale.formatter(tuple[measureField])}';
+              '\n${domainScale.format(tuple[domainField])}: ${measureScale.format(tuple[measureField])}';
         }
       }
 

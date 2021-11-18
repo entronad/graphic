@@ -26,7 +26,6 @@ abstract class PartitionElement<S extends PartitionShape>
     SizeAttr? size,
     List<Modifier>? modifiers,
     int? zIndex,
-    String? groupBy,
     Map<String, Set<int>>? selected,
   }) : super(
           color: color,
@@ -38,7 +37,6 @@ abstract class PartitionElement<S extends PartitionShape>
           size: size,
           modifiers: modifiers,
           zIndex: zIndex,
-          groupBy: groupBy,
           selected: selected,
         );
 }

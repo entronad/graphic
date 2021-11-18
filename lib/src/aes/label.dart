@@ -10,10 +10,10 @@ import 'aes.dart';
 class LabelAttr extends Attr<Label> {
   /// Creates a label attribute.
   LabelAttr({
-    required Label Function(Tuple) encode,
-    Map<String, Map<bool, SelectionUpdate<Label>>>? onSelection,
+    required Label Function(Tuple) encoder,
+    Map<String, Map<bool, SelectionUpdater<Label>>>? onSelection,
   }) : super(
-          encode: encode,
+          encoder: encoder,
           onSelection: onSelection,
         );
 }

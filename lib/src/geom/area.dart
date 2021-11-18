@@ -34,7 +34,6 @@ class AreaElement extends FunctionElement<AreaShape> {
     SizeAttr? size,
     List<Modifier>? modifiers,
     int? zIndex,
-    String? groupBy,
     Map<String, Set<int>>? selected,
   }) : super(
           color: color,
@@ -46,7 +45,6 @@ class AreaElement extends FunctionElement<AreaShape> {
           size: size,
           modifiers: modifiers,
           zIndex: zIndex,
-          groupBy: groupBy,
           selected: selected,
         );
 }

@@ -16,15 +16,15 @@ class GradientAttr extends ChannelAttr<Gradient> {
     String? variable,
     List<Gradient>? values,
     List<double>? stops,
-    Gradient Function(Tuple)? encode,
-    Map<String, Map<bool, SelectionUpdate<Gradient>>>? onSelection,
-  })  : assert(isSingle([value, variable, encode])),
+    Gradient Function(Tuple)? encoder,
+    Map<String, Map<bool, SelectionUpdater<Gradient>>>? onSelection,
+  })  : assert(isSingle([value, variable, encoder])),
         super(
           value: value,
           variable: variable,
           values: values,
           stops: stops,
-          encode: encode,
+          encoder: encoder,
           onSelection: onSelection,
         );
 }

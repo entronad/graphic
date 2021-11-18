@@ -42,7 +42,7 @@ class RectCoord extends Coord {
   List<double>? horizontalRange;
 
   /// Signal update of [horizontalRange].
-  SignalUpdate<List<double>>? onHorizontalRangeSignal;
+  SignalUpdater<List<double>>? onHorizontalRangeSignal;
 
   /// Range ratio of coordinate height to coordinate region height.
   ///
@@ -54,7 +54,7 @@ class RectCoord extends Coord {
   List<double>? verticalRange;
 
   /// Signal update of [verticalRange].
-  SignalUpdate<List<double>>? onVerticalRangeSignal;
+  SignalUpdater<List<double>>? onVerticalRangeSignal;
 
   @override
   bool operator ==(Object other) =>

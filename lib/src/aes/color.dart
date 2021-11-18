@@ -14,15 +14,15 @@ class ColorAttr extends ChannelAttr<Color> {
     String? variable,
     List<Color>? values,
     List<double>? stops,
-    Color Function(Tuple)? encode,
-    Map<String, Map<bool, SelectionUpdate<Color>>>? onSelection,
-  })  : assert(isSingle([value, variable, encode])),
+    Color Function(Tuple)? encoder,
+    Map<String, Map<bool, SelectionUpdater<Color>>>? onSelection,
+  })  : assert(isSingle([value, variable, encoder])),
         super(
           value: value,
           variable: variable,
           values: values,
           stops: stops,
-          encode: encode,
+          encoder: encoder,
           onSelection: onSelection,
         );
 }

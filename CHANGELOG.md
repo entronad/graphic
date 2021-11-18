@@ -1,3 +1,14 @@
+## 0.5.0
+
+**2021-11-18**
+
+- Add nest operator: `\` of algebra.
+- Remove `GeomElement.groupBy`, which is replaced by nesting.
+- Force labels always above graphics in an element.
+- Rename All function properties to nouns.
+- Fix a scale fommatter generic bug: https://github.com/entronad/graphic/issues/22.
+- Constrain flutter version to `'>=2.4.0 <2.6.0'` for `ScaleUpdate.delta`: https://github.com/entronad/graphic/issues/21.
+
 ## 0.4.1
 
 **2021-10-27**

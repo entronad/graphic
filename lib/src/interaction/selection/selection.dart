@@ -3,19 +3,15 @@ import 'dart:ui';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/aes/aes.dart';
-import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/coord/coord.dart';
-import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/geom/element.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/gesture.dart';
-import 'package:graphic/src/parse/parse.dart';
 import 'package:graphic/src/shape/shape.dart';
 import 'package:collection/collection.dart';
 
@@ -30,7 +26,7 @@ import 'point.dart';
 ///
 /// See also:
 ///
-/// - [SelectionUpdate], updates an aesthetic attribute value when the selection
+/// - [SelectionUpdater], updates an aesthetic attribute value when the selection
 /// state changes.
 /// - [Attr.onSelection], where selection updates are defined.
 abstract class Selection {
@@ -91,7 +87,7 @@ abstract class Selection {
 /// See also:
 ///
 /// - [Attr.onSelection], where selection updates are defined.
-typedef SelectionUpdate<V> = V Function(V initialValue);
+typedef SelectionUpdater<V> = V Function(V initialValue);
 
 /// The base class of selectors.
 ///
@@ -300,7 +296,7 @@ class SelectOp extends Operator<Set<int>?> {
 V? _update<V>(
   V? value,
   bool select,
-  Map<bool, SelectionUpdate<V>>? updator,
+  Map<bool, SelectionUpdater<V>>? updator,
 ) {
   if (value != null && updator != null) {
     final update = updator[select];
@@ -322,17 +318,17 @@ class SelectionUpdateOp extends Operator<AesGroups> {
     final initialSelector = params['initialSelector'] as String?;
     final selects = params['selects'] as Set<int>?;
     final shapeUpdaters = params['shapeUpdaters']
-        as Map<String, Map<bool, SelectionUpdate<Shape>>>?;
+        as Map<String, Map<bool, SelectionUpdater<Shape>>>?;
     final colorUpdaters = params['colorUpdaters']
-        as Map<String, Map<bool, SelectionUpdate<Color>>>?;
+        as Map<String, Map<bool, SelectionUpdater<Color>>>?;
     final gradientUpdaters = params['gradientUpdaters']
-        as Map<String, Map<bool, SelectionUpdate<Gradient>>>?;
+        as Map<String, Map<bool, SelectionUpdater<Gradient>>>?;
     final elevationUpdaters = params['elevationUpdaters']
-        as Map<String, Map<bool, SelectionUpdate<double>>>?;
+        as Map<String, Map<bool, SelectionUpdater<double>>>?;
     final labelUpdaters = params['labelUpdaters']
-        as Map<String, Map<bool, SelectionUpdate<Label>>>?;
+        as Map<String, Map<bool, SelectionUpdater<Label>>>?;
     final sizeUpdaters = params['sizeUpdaters']
-        as Map<String, Map<bool, SelectionUpdate<double>>>?;
+        as Map<String, Map<bool, SelectionUpdater<double>>>?;
 
     // For initially selected tuples of Element.selected, use the indecated selecor
     // name.
@@ -378,96 +374,5 @@ class SelectionUpdateOp extends Operator<AesGroups> {
       rst.add(groupRst);
     }
     return rst;
-  }
-}
-
-/// Parses selection related specifications.
-void parseSelection(
-  Chart spec,
-  View view,
-  Scope scope,
-) {
-  if (spec.selections != null) {
-    final selectSpecs = spec.selections!;
-    final onTypes = <GestureType, String>{};
-    final clearTypes = <GestureType>{};
-    for (var name in selectSpecs.keys) {
-      final selectSpec = selectSpecs[name]!;
-
-      assert(!(selectSpec is IntervalSelection && spec.coord is PolarCoord));
-
-      final on = selectSpec.on ??
-          (selectSpec is PointSelection
-              ? {GestureType.tap}
-              : {GestureType.scaleUpdate, GestureType.scroll});
-      final clear = selectSpec.clear ?? {GestureType.doubleTap};
-      for (var type in on) {
-        assert(!onTypes.keys.contains(type));
-        onTypes[type] = name;
-      }
-      clearTypes.addAll(clear);
-    }
-
-    final selector = view.add(SelectorOp({
-      'specs': selectSpecs,
-      'onTypes': onTypes,
-      'clearTypes': clearTypes,
-      'gesture': scope.gesture,
-    }));
-    scope.selector = selector;
-
-    final selectorScene = view.graffiti.add(SelectorScene(0));
-    view.add(SelectorRenderOp({
-      'selector': selector,
-    }, selectorScene, view));
-
-    for (var i = 0; i < spec.elements.length; i++) {
-      final elementSpec = spec.elements[i];
-      final geom = scope.groupsList[i];
-
-      String? initialSelector;
-
-      Set<int>? initialSelected;
-
-      if (elementSpec.selected != null) {
-        initialSelector = elementSpec.selected!.keys.single;
-        initialSelected = elementSpec.selected![initialSelector];
-      }
-
-      final selects = view.add(SelectOp({
-        'selector': selector,
-        'groups': geom,
-        'tuples': scope.tuples,
-        'coord': scope.coord,
-      }, initialSelected));
-      scope.selectsList.add(selects);
-
-      final update = view.add(SelectionUpdateOp({
-        'groups': geom,
-        'selector': selector,
-        'initialSelector': initialSelector,
-        'selects': selects,
-        'shapeUpdaters': elementSpec.shape?.onSelection,
-        'colorUpdaters': elementSpec.color?.onSelection,
-        'gradientUpdaters': elementSpec.gradient?.onSelection,
-        'elevationUpdaters': elementSpec.elevation?.onSelection,
-        'labelUpdaters': elementSpec.label?.onSelection,
-        'sizeUpdaters': elementSpec.size?.onSelection,
-      }));
-      scope.groupsList[i] = update;
-    }
-  }
-  for (var i = 0; i < spec.elements.length; i++) {
-    final elementSpec = spec.elements[i];
-    final groups = scope.groupsList[i];
-    final origin = scope.origins[i];
-
-    final elementScene =
-        view.graffiti.add(ElementScene(elementSpec.zIndex ?? 0));
-    view.add(ElementRenderOp({
-      'groups': groups,
-      'coord': scope.coord,
-      'origin': origin,
-    }, elementScene, view));
   }
 }

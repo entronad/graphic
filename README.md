@@ -14,9 +14,13 @@ Graphic is a declarative, interactive grammar of data visualization. It provides
 
 Install from the [pub.dev](https://pub.dev/packages/graphic/install).
 
+## Tutorials
+
+[The Versatility of the Grammar of Graphics](https://medium.com/@entronad/the-versatility-of-the-grammar-of-graphics-d1366760424d)
+
 ## Documentation
 
-See in the [documentation](https://pub.dev/documentation/graphic/latest/graphic/graphic-library.html) written in dart-doc.
+See in the [documentation](https://pub.dev/documentation/graphic/latest/graphic/graphic-library.html).
 
 ## Examples
 

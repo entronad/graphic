@@ -15,14 +15,17 @@ class IntervalSelection extends Selection {
   /// Creates an interval selection.
   IntervalSelection({
     this.color,
-    this.zIndex,
     int? dim,
     String? variable,
     Set<GestureType>? clear,
+    Set<PointerDeviceKind>? devices,
+    int? zIndex,
   }) : super(
           dim: dim,
           variable: variable,
           clear: clear,
+          devices: devices,
+          zIndex: zIndex,
         );
 
   /// The color of the interval mark.
@@ -30,17 +33,9 @@ class IntervalSelection extends Selection {
   /// If null, a default `Color(0x10101010)` is set.
   Color? color;
 
-  /// The z index of the interval mark.
-  ///
-  /// If null, a default 0 is set.
-  int? zIndex;
-
   @override
   bool operator ==(Object other) =>
-      other is IntervalSelection &&
-      super == other &&
-      color == other.color &&
-      zIndex == other.zIndex;
+      other is IntervalSelection && super == other && color == other.color;
 }
 
 /// The interval selector.
@@ -49,13 +44,10 @@ class IntervalSelection extends Selection {
 class IntervalSelector extends Selector {
   IntervalSelector(
     this.color,
-    this.zIndex,
-    String name,
     int? dim,
     String? variable,
     List<Offset> points,
   ) : super(
-          name,
           dim,
           variable,
           points,
@@ -63,9 +55,6 @@ class IntervalSelector extends Selector {
 
   /// The color of the interval mark.
   final Color color;
-
-  /// The z index of the interval mark.
-  final int zIndex;
 
   @override
   Set<int>? select(

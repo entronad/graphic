@@ -263,7 +263,8 @@ class RectangleIntervalPage extends StatelessWidget {
                   },
                   elements: [
                     IntervalElement(
-                      position: Varset('index') * Varset('value') / Varset('type'),
+                      position:
+                          Varset('index') * Varset('value') / Varset('type'),
                       shape: ShapeAttr(value: RectShape(labelPosition: 0.5)),
                       color: ColorAttr(
                           variable: 'type', values: Defaults.colors10),

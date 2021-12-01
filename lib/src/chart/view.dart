@@ -48,11 +48,6 @@ class View<D> extends Dataflow {
   /// The view is dirty when any [Render] operater has rendered.
   bool dirty = false;
 
-  /// Whether to tirgger a [Graffiti.sort] after evaluation.
-  ///
-  /// If any scene's z index is chanaged, [graffiti] will have to resort its scenes.
-  bool disordered = false;
-
   /// Emits a gesture signal.
   Future<void> gesture(Gesture gesture) async {
     await gestureSource.emit(GestureSignal(gesture));
@@ -74,11 +69,6 @@ class View<D> extends Dataflow {
     await super.evaluate();
 
     if (dirty) {
-      if (disordered) {
-        graffiti.sort();
-        disordered = false;
-      }
-
       repaint();
       dirty = false;
     }

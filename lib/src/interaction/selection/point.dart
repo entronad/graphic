@@ -17,11 +17,15 @@ class PointSelection extends Selection {
     String? variable,
     Set<GestureType>? on,
     Set<GestureType>? clear,
+    Set<PointerDeviceKind>? devices,
+    int? zIndex,
   }) : super(
           dim: dim,
           variable: variable,
           on: on,
           clear: clear,
+          devices: devices,
+          zIndex: zIndex,
         );
 
   /// Whether triggered tuples should be toggled (inserted or removed from) or replace
@@ -58,13 +62,11 @@ class PointSelector extends Selector {
     this.toggle,
     this.nearest,
     this.testRadius,
-    String name,
     int? dim,
     String? variable,
     List<Offset> points,
   )   : assert(toggle != true || variable == null),
         super(
-          name,
           dim,
           variable,
           points,

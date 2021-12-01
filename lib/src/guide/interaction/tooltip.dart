@@ -16,6 +16,7 @@ import 'package:graphic/src/interaction/selection/point.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/scale/scale.dart';
 import 'package:graphic/src/util/assert.dart';
+import 'package:graphic/src/util/list.dart';
 
 /// Gets the figures of a tooltip.
 ///
@@ -32,7 +33,7 @@ typedef TooltipRenderer = List<Figure> Function(
 class TooltipGuide {
   /// Creates a tooltip.
   TooltipGuide({
-    this.selection,
+    this.selections,
     this.followPointer,
     this.anchor,
     this.zIndex,
@@ -46,6 +47,7 @@ class TooltipGuide {
     this.textStyle,
     this.multiTuples,
     this.variables,
+    this.constrained,
     this.renderer,
   })  : assert(isSingle([renderer, align], allowNone: true)),
         assert(isSingle([renderer, offset], allowNone: true)),
@@ -55,12 +57,15 @@ class TooltipGuide {
         assert(isSingle([renderer, elevation], allowNone: true)),
         assert(isSingle([renderer, textStyle], allowNone: true)),
         assert(isSingle([renderer, multiTuples], allowNone: true)),
+        assert(isSingle([renderer, constrained], allowNone: true)),
         assert(isSingle([renderer, variables], allowNone: true));
 
-  /// The selection this tooltip reacts to.
+  /// The selections this crosshair reacts to.
   ///
-  /// If null, the first selection is set by default.
-  String? selection;
+  /// Make sure this selections will not occur simultaneously.
+  ///
+  /// If null, it will reacts to all selections.
+  Set<String>? selections;
 
   /// Whether the position for each dimension follows the pointer or stick to selected
   /// points.
@@ -129,8 +134,8 @@ class TooltipGuide {
   /// For single tuple, [variables] are layed in rows showing title and value. For
   /// multiple tuples, tuples are layed in rows showing the 2 [variables] values.
   ///
-  /// If null, A default false if [selection] is [PointSelection] and true if [IntervalSelection]
-  /// is set.
+  /// If null, it will varies according to triggering selector, and false for a
+  /// [PointSelection] and true for a [IntervalSelection];
   bool? multiTuples;
 
   /// The variable values of tuples to show on in this tooltip.
@@ -142,16 +147,25 @@ class TooltipGuide {
   /// except [Selection.variable] for multiple tuples.
   List<String>? variables;
 
+  /// Whether the tooltip should be constrained within the chart widget border.
+  ///
+  /// If constrained, the position will be adjusted if the tooltip may overflow
+  /// the chart widget border. If not, the outside part will be clipped.
+  ///
+  /// If null, a default true is set.
+  bool? constrained;
+
   /// Indicates a custom render funcion of this tooltip.
   ///
   /// If set, [align], [offset], [padding], [backgroundColor], [radius], [elevation],
-  /// [textStyle], [multiTuples], and [variables] are useless and not allowed.
+  /// [textStyle], [multiTuples], [variables], and [constrained] are useless and
+  /// not allowed.
   TooltipRenderer? renderer;
 
   @override
   bool operator ==(Object other) =>
       other is TooltipGuide &&
-      selection == other.selection &&
+      DeepCollectionEquality().equals(selections, other.selections) &&
       DeepCollectionEquality().equals(followPointer, other.followPointer) &&
       zIndex == other.zIndex &&
       element == other.element &&
@@ -162,8 +176,9 @@ class TooltipGuide {
       radius == other.radius &&
       elevation == other.elevation &&
       textStyle == other.textStyle &&
-      multiTuples == multiTuples &&
-      DeepCollectionEquality().equals(variables, other.variables);
+      multiTuples == other.multiTuples &&
+      DeepCollectionEquality().equals(variables, other.variables) &&
+      constrained == other.constrained;
 }
 
 /// The tooltip scene.
@@ -184,9 +199,9 @@ class TooltipRenderOp extends Render<TooltipScene> {
 
   @override
   void render() {
-    final selectorName = params['selectorName'] as String;
-    final selector = params['selector'] as Selector?;
-    final selects = params['selects'] as Set<int>?;
+    final selections = params['selections'] as Set<String>;
+    final selectors = params['selectors'] as Map<String, Selector>?;
+    final selects = params['selects'] as Map<String, Set<int>>?;
     final coord = params['coord'] as CoordConv;
     final groups = params['groups'] as AesGroups;
     final tuples = params['tuples'] as List<Tuple>;
@@ -197,24 +212,30 @@ class TooltipRenderOp extends Render<TooltipScene> {
     final radius = params['radius'] as Radius?;
     final elevation = params['elevation'] as double?;
     final textStyle = params['textStyle'] as TextStyle;
-    final multiTuples = params['multiTuples'] as bool;
+    final multiTuples = params['multiTuples'] as bool?;
     final renderer = params['renderer'] as TooltipRenderer?;
     final followPointer = params['followPointer'] as List<bool>;
     final anchor = params['anchor'] as Offset Function(Size)?;
     final size = params['size'] as Size;
     final variables = params['variables'] as List<String>?;
+    final constrained = params['constrained'] as bool;
     final scales = params['scales'] as Map<String, ScaleConv>;
 
-    if (selector == null ||
-        selects == null ||
-        selects.isEmpty ||
-        selector.name != selectorName) {
+    final name = singleIntersection(selectors?.keys, selections);
+
+    final selector = name == null ? null : selectors?[name];
+    final indexes = name == null ? null : selects?[name];
+
+    if (selector == null || indexes == null || indexes.isEmpty) {
       scene.figures = null;
       return;
     }
 
+    final multiTuplesRst =
+        multiTuples ?? (selector is PointSelector ? false : true);
+
     final selectedTuples = <Tuple>[];
-    for (var index in selects) {
+    for (var index in indexes) {
       selectedTuples.add(tuples[index]);
     }
 
@@ -237,7 +258,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
         }
         return Offset.zero;
       };
-      for (var index in selects) {
+      for (var index in indexes) {
         selectedPoint += findPoint(index);
       }
       selectedPoint = selectedPoint / count.toDouble();
@@ -256,7 +277,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
       );
     } else {
       String textContent = '';
-      if (!multiTuples) {
+      if (!multiTuplesRst) {
         final fields = variables ?? scales.keys.toList();
         final tuple = selectedTuples.last;
         var field = fields.first;
@@ -317,33 +338,53 @@ class TooltipRenderOp extends Render<TooltipScene> {
         align,
       );
 
-      final widow = Rect.fromLTWH(
+      var windowRect = Rect.fromLTWH(
         paintPoint.dx,
         paintPoint.dy,
         width,
         height,
       );
 
-      final widowPath = radius == null
-          ? (Path()..addRect(widow))
-          : (Path()..addRRect(RRect.fromRectAndRadius(widow, radius)));
+      var textPaintPoint = paintPoint + padding.topLeft;
+
+      if (constrained) {
+        final horizontalAdjust = windowRect.left < 0
+            ? -windowRect.left
+            : (windowRect.right > size.width
+                ? size.width - windowRect.right
+                : 0.0);
+        final verticalAdjust = windowRect.top < 0
+            ? -windowRect.top
+            : (windowRect.bottom > size.height
+                ? size.height - windowRect.bottom
+                : 0.0);
+        if (horizontalAdjust != 0 || verticalAdjust != 0) {
+          windowRect = windowRect.translate(horizontalAdjust, verticalAdjust);
+          textPaintPoint =
+              textPaintPoint.translate(horizontalAdjust, verticalAdjust);
+        }
+      }
+
+      final windowPath = radius == null
+          ? (Path()..addRect(windowRect))
+          : (Path()..addRRect(RRect.fromRectAndRadius(windowRect, radius)));
 
       figures = <Figure>[];
 
       if (elevation != null && elevation != 0) {
         figures.add(ShadowFigure(
-          widowPath,
+          windowPath,
           backgroundColor,
           elevation,
         ));
       }
       figures.add(PathFigure(
-        widowPath,
+        windowPath,
         Paint()..color = backgroundColor,
       ));
       figures.add(TextFigure(
         painter,
-        paintPoint + padding.topLeft,
+        textPaintPoint,
       ));
     }
 

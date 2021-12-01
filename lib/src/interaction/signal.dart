@@ -39,7 +39,8 @@ abstract class Signal {
 /// previous value before this update.
 ///
 /// Make sure the return value is a different instance from initialValue or preValue.
-typedef SignalUpdater<V> = V Function(V initialValue, V preValue, Signal signal);
+typedef SignalUpdater<V> = V Function(
+    V initialValue, V preValue, Signal signal);
 
 /// The souce to generate signals.
 class SignalSource<S extends Signal> {

@@ -466,7 +466,7 @@ class Gesture {
   /// Creates a gesture.
   Gesture(
     this.type,
-    this.kind,
+    this.device,
     this.localPosition,
     this.chartSize,
     this.details, {
@@ -478,7 +478,7 @@ class Gesture {
   final GestureType type;
 
   /// the kind of device that triggers the pointer event.
-  final PointerDeviceKind kind;
+  final PointerDeviceKind device;
 
   /// The local position of the pointer event that triggers this gesture.
   final Offset localPosition;

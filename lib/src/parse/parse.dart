@@ -108,7 +108,7 @@ void parse<D>(Chart<D> spec, View<D> view) {
       signal,
       (signal) => signal,
     );
-  
+
   // Coord.
 
   final region = view.add(RegionOp({
@@ -230,8 +230,7 @@ void parse<D>(Chart<D> spec, View<D> view) {
       } else if (transformSpec is Proportion) {
         final as = transformSpec.as;
         assert(scaleSpecs[as] == null);
-        scaleSpecs[as] =
-            transformSpec.scale ?? LinearScale(min: 0, max: 1);
+        scaleSpecs[as] = transformSpec.scale ?? LinearScale(min: 0, max: 1);
 
         var nesters = <AlgForm>[];
         if (transformSpec.nest != null) {
@@ -272,10 +271,10 @@ void parse<D>(Chart<D> spec, View<D> view) {
 
   // Selection.
 
-  SelectorOp? selector;
+  SelectorOp? selectors;
   if (spec.selections != null) {
     final selectSpecs = spec.selections!;
-    final onTypes = <GestureType, String>{};
+    final onTypes = <GestureType, List<String>>{};
     final clearTypes = <GestureType>{};
     for (var name in selectSpecs.keys) {
       final selectSpec = selectSpecs[name]!;
@@ -288,23 +287,30 @@ void parse<D>(Chart<D> spec, View<D> view) {
               : {GestureType.scaleUpdate, GestureType.scroll});
       final clear = selectSpec.clear ?? {GestureType.doubleTap};
       for (var type in on) {
-        assert(!onTypes.keys.contains(type));
-        onTypes[type] = name;
+        if (onTypes[type] == null) {
+          onTypes[type] = [name];
+        } else {
+          onTypes[type]!.add(name);
+        }
       }
       clearTypes.addAll(clear);
     }
 
-    selector = view.add(SelectorOp({
+    selectors = view.add(SelectorOp({
       'specs': selectSpecs,
       'onTypes': onTypes,
       'clearTypes': clearTypes,
       'gesture': gesture,
     }));
 
-    final selectorScene = view.graffiti.add(SelectorScene(0));
-    view.add(SelectorRenderOp({
-      'selector': selector,
-    }, selectorScene, view));
+    for (var name in selectSpecs.keys) {
+      final selectorScene =
+          view.graffiti.add(SelectorScene(selectSpecs[name]!.zIndex ?? 0));
+      view.add(SelectorRenderOp({
+        'selectors': selectors,
+        'name': name,
+      }, selectorScene, view));
+    }
   }
 
   // Element.
@@ -431,35 +437,52 @@ void parse<D>(Chart<D> spec, View<D> view) {
       }
     }
 
-    if (selector != null) {
-      String? initialSelector;
-
-      Set<int>? initialSelected;
-
-      if (elementSpec.selected != null) {
-        initialSelector = elementSpec.selected!.keys.single;
-        initialSelected = elementSpec.selected![initialSelector];
-      }
-
+    if (selectors != null) {
       final selects = view.add(SelectOp({
-        'selector': selector,
+        'selectors': selectors,
         'groups': groups,
         'tuples': tuples,
         'coord': coord,
-      }, initialSelected));
+      }, elementSpec.selected));
       selectsList.add(selects);
+
+      final shapeUpdaters = elementSpec.shape?.onSelection;
+      final colorUpdaters = elementSpec.color?.onSelection;
+      final gradientUpdaters = elementSpec.gradient?.onSelection;
+      final elevationUpdaters = elementSpec.elevation?.onSelection;
+      final labelUpdaters = elementSpec.label?.onSelection;
+      final sizeUpdaters = elementSpec.size?.onSelection;
+
+      final updaterNames = <String>{};
+      if (shapeUpdaters != null) {
+        updaterNames.addAll(shapeUpdaters.keys);
+      }
+      if (colorUpdaters != null) {
+        updaterNames.addAll(colorUpdaters.keys);
+      }
+      if (gradientUpdaters != null) {
+        updaterNames.addAll(gradientUpdaters.keys);
+      }
+      if (elevationUpdaters != null) {
+        updaterNames.addAll(elevationUpdaters.keys);
+      }
+      if (labelUpdaters != null) {
+        updaterNames.addAll(labelUpdaters.keys);
+      }
+      if (sizeUpdaters != null) {
+        updaterNames.addAll(sizeUpdaters.keys);
+      }
 
       final update = view.add(SelectionUpdateOp({
         'groups': groups,
-        'selector': selector,
-        'initialSelector': initialSelector,
         'selects': selects,
-        'shapeUpdaters': elementSpec.shape?.onSelection,
-        'colorUpdaters': elementSpec.color?.onSelection,
-        'gradientUpdaters': elementSpec.gradient?.onSelection,
-        'elevationUpdaters': elementSpec.elevation?.onSelection,
-        'labelUpdaters': elementSpec.label?.onSelection,
-        'sizeUpdaters': elementSpec.size?.onSelection,
+        'shapeUpdaters': shapeUpdaters,
+        'colorUpdaters': colorUpdaters,
+        'gradientUpdaters': gradientUpdaters,
+        'elevationUpdaters': elevationUpdaters,
+        'labelUpdaters': labelUpdaters,
+        'sizeUpdaters': sizeUpdaters,
+        'updaterNames': updaterNames,
       }));
       groups = update;
     }
@@ -596,7 +619,7 @@ void parse<D>(Chart<D> spec, View<D> view) {
   }
 
   if (spec.crosshair != null) {
-    assert(selector != null);
+    assert(selectors != null);
 
     final crosshairSpec = spec.crosshair!;
     final elementIndex = crosshairSpec.element ?? 0;
@@ -604,8 +627,8 @@ void parse<D>(Chart<D> spec, View<D> view) {
     final crosshairScene =
         view.graffiti.add(CrosshairScene(crosshairSpec.zIndex ?? 0));
     view.add(CrosshairRenderOp({
-      'selectorName': crosshairSpec.selection ?? spec.selections!.keys.first,
-      'selector': selector!,
+      'selections': crosshairSpec.selections ?? spec.selections!.keys.toSet(),
+      'selectors': selectors!,
       'selects': selectsList[elementIndex],
       'coord': coord,
       'groups': groupsList[elementIndex],
@@ -619,19 +642,16 @@ void parse<D>(Chart<D> spec, View<D> view) {
   }
 
   if (spec.tooltip != null) {
-    assert(selector != null);
+    assert(selectors != null);
 
     final tooltipSpec = spec.tooltip!;
     final elementIndex = tooltipSpec.element ?? 0;
 
     final tooltipScene =
         view.graffiti.add(TooltipScene(tooltipSpec.zIndex ?? 0));
-    final selectorName = tooltipSpec.selection ?? spec.selections!.keys.first;
-    final multiTuples = tooltipSpec.multiTuples ??
-        ((spec.selections![selectorName] is PointSelection) ? false : true);
     view.add(TooltipRenderOp({
-      'selectorName': selectorName,
-      'selector': selector!,
+      'selections': tooltipSpec.selections ?? spec.selections!.keys.toSet(),
+      'selectors': selectors!,
       'selects': selectsList[elementIndex],
       'coord': coord,
       'groups': groupsList[elementIndex],
@@ -647,12 +667,13 @@ void parse<D>(Chart<D> spec, View<D> view) {
             color: Color(0xff595959),
             fontSize: 12,
           ),
-      'multiTuples': multiTuples,
+      'multiTuples': tooltipSpec.multiTuples,
       'renderer': tooltipSpec.renderer,
       'followPointer': tooltipSpec.followPointer ?? [false, false],
       'anchor': tooltipSpec.anchor,
       'size': size,
       'variables': tooltipSpec.variables,
+      'constrained': tooltipSpec.constrained ?? true,
       'scales': scales,
     }, tooltipScene, view));
   }

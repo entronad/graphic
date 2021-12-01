@@ -62,10 +62,10 @@ extension AlgFormExt on AlgForm {
 ///
 /// Varset means variable set in graphics algebra. Varsets, connected with operators,
 /// create an algebra expression.
-/// 
+///
 /// The algebra specifies how variable sets construct the plane frame, such as how
 /// they are assigned to dimensions and how tuples are grouped.
-/// 
+///
 /// There are three operators in graphics algebra:
 ///
 /// - [*], called **cross**, which assigns varsets to different dimensions (Usually
@@ -74,7 +74,7 @@ extension AlgFormExt on AlgForm {
 /// - [+], called **blend**, which assigns varsets to a same dimension in order.
 /// The meaning of the variables respectively in that dimension is determined by
 /// geometory type.
-/// 
+///
 /// - [/], called **nest**, which groups all tuples by the right varset. Grouping
 /// is used for faceting, collision modifiers, or seperating lines or areas. The
 /// nesting variables should be discrete.
@@ -93,10 +93,10 @@ extension AlgFormExt on AlgForm {
 /// ```dart
 /// Varset('date') * (Varset('min') + Varset('max'))
 /// ```
-/// 
+///
 /// A line chart of `sales` in every `day`, but different `category`s in different
 /// lines:
-/// 
+///
 /// ```dart
 /// Varset('day') * Varset('sales') / Varset('category')
 /// ```
@@ -108,12 +108,12 @@ extension AlgFormExt on AlgForm {
 /// Varset('x') * Varset('y') * Varset('z') == Varset('x') * (Varset('y') * Varset('z'))
 /// Varset('x') + Varset('y') + Varset('z') == Varset('x') + (Varset('y') + Varset('z'))
 /// Varset('x') / Varset('y') / Varset('z') == Varset('x') / (Varset('y') / Varset('z'))
-/// 
+///
 /// Varset('x') * (Varset('y') + Varset('z')) == Varset('x') * Varset('y') + Varset('x') * Varset('z')
 /// (Varset('x') + Varset('y')) * Varset('z') == Varset('x') * Varset('z') + Varset('y') * Varset('z')
 /// Varset('x') / (Varset('y') + Varset('z')) == Varset('x') / Varset('y') + Varset('x') / Varset('z')
 /// (Varset('x') + Varset('y')) / Varset('z') == Varset('x') / Varset('z') + Varset('y') / Varset('z')
-/// 
+///
 /// Varset('x') * Varset('y') != Varset('y') * Varset('x')
 /// Varset('x') + Varset('y') != Varset('y') + Varset('x')
 /// Varset('x') / Varset('y') != Varset('y') / Varset('x')
@@ -142,19 +142,17 @@ class Varset {
         ],
         nested = null,
         nesters = [];
-  
+
   /// Creates a varset with properties.
   Varset._create(
-    AlgForm form,
-    [AlgForm? nested,
-    List<AlgForm> nesters = const [],]
-  ) : assert(
-        (nested == null && nesters.isEmpty) ||
-        (nested != null && nesters.isNotEmpty)
-      ),
-      this.form = form,
-      this.nested = nested,
-      this.nesters = nesters;
+    AlgForm form, [
+    AlgForm? nested,
+    List<AlgForm> nesters = const [],
+  ])  : assert((nested == null && nesters.isEmpty) ||
+            (nested != null && nesters.isNotEmpty)),
+        this.form = form,
+        this.nested = nested,
+        this.nesters = nesters;
 
   /// The numerator part of the algebra expression.
   ///
@@ -175,7 +173,7 @@ class Varset {
       DeepCollectionEquality().equals(nesters, other.nesters);
 
   /// The nest operator.
-  /// 
+  ///
   /// Nesting groups all tuples by the right varset. Grouping is used for faceting,
   /// collision modifiers, or seperating lines or areas. The nesting variables should
   /// be discrete.
@@ -197,11 +195,11 @@ class Varset {
   }
 
   /// The cross operator.
-  /// 
+  ///
   /// Crossing assigns varsets to different dimensions (Usually x and y) in order.
   Varset operator *(Varset other) {
     // It creates a term:
-    // 
+    //
     // - [form], cartisian products left and right.
     // - [nested], if only one has, uses that one; if both has, throws an error.
     // - [nesters], the same as [nested].
@@ -238,12 +236,12 @@ class Varset {
   }
 
   /// The blend operator.
-  /// 
+  ///
   /// Blending assigns varsets to a same dimension in order. The meaning of the
   /// variables respectively in that dimension is determined by geometory type.
   Varset operator +(Varset other) {
     // It creates a polynomial:
-    // 
+    //
     // - [form], append all right form terms to the left ones, normalizes the form,
     // and deduplicates.
     // - [nested], only for distributivity, if nesteds are same, uses that nested,
@@ -253,11 +251,11 @@ class Varset {
     // - [nesters], see in [nested].
 
     final AlgForm formRst = (<AlgTerm>[]
-      ..addAll(form)
-      ..addAll(other.form)
-      .._normalize())
-      .collectionItemDeduplicate();
-    
+          ..addAll(form)
+          ..addAll(other.form)
+          .._normalize())
+        .collectionItemDeduplicate();
+
     AlgForm? nestedRst;
     List<AlgForm> nestersRst = [];
     if (nested == null && other.nested == null) {
@@ -268,7 +266,10 @@ class Varset {
       nestedRst = nested;
       final leftNester = nesters.single;
       final rightNester = other.nesters.single;
-      nestersRst = [([...leftNester, ...rightNester].._normalize()).collectionItemDeduplicate()];
+      nestersRst = [
+        ([...leftNester, ...rightNester].._normalize())
+            .collectionItemDeduplicate()
+      ];
     } else {
       // nested != other.nested
 
@@ -277,10 +278,12 @@ class Varset {
       if (DeepCollectionEquality().equals(leftNester, rightNester)) {
         // Left distributivity: x / z + y / z = (x + y) / z.
 
-        nestedRst = ([...nested!, ...other.nested!].._normalize()).collectionItemDeduplicate();
+        nestedRst = ([...nested!, ...other.nested!].._normalize())
+            .collectionItemDeduplicate();
         nestersRst = nesters;
       } else {
-        throw ArgumentError('Two nested operands without distributivity can not blend');
+        throw ArgumentError(
+            'Two nested operands without distributivity can not blend');
       }
     }
 

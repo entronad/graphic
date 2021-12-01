@@ -86,7 +86,7 @@ abstract class ScaleConv<V, SV extends num> extends Converter<V, SV> {
   late String title;
 
   /// The scale formatter
-  /// 
+  ///
   /// This should not be directly used. Use method [format] insead to avoid generic
   /// problems.
   late String Function(V) formatter;
@@ -117,7 +117,7 @@ abstract class ScaleConv<V, SV extends num> extends Converter<V, SV> {
   V get zero;
 
   /// Formats a value to string.
-  /// 
+  ///
   /// This is a method wrapper of [formatter] to avoid generic problems.
   String format(V value) => formatter(value);
 

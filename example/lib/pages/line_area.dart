@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
 import 'package:intl/intl.dart';
@@ -156,6 +157,139 @@ class LineAreaPage extends StatelessWidget {
               ),
               Container(
                 child: const Text(
+                  'Group interactions',
+                  style: TextStyle(fontSize: 20),
+                ),
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
+              ),
+              Container(
+                child: const Text(
+                  '- Select and change color of a whole group',
+                ),
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
+              ),
+              Container(
+                child: const Text(
+                  '- The group and tooltip selections are different but triggerd by same gesture.',
+                ),
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
+              ),
+              Container(
+                child: const Text(
+                  '- Different interactions for different devices',
+                ),
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                width: 350,
+                height: 300,
+                child: Chart(
+                  data: complexGroupData,
+                  variables: {
+                    'date': Variable(
+                      accessor: (Map map) => map['date'] as String,
+                      scale: OrdinalScale(tickCount: 5),
+                    ),
+                    'points': Variable(
+                      accessor: (Map map) => map['points'] as num,
+                    ),
+                    'name': Variable(
+                      accessor: (Map map) => map['name'] as String,
+                    ),
+                  },
+                  elements: [
+                    LineElement(
+                      position:
+                          Varset('date') * Varset('points') / Varset('name'),
+                      shape: ShapeAttr(value: BasicLineShape(smooth: true)),
+                      size: SizeAttr(value: 0.5),
+                      color: ColorAttr(
+                        variable: 'name',
+                        values: Defaults.colors10,
+                        onSelection: {
+                          'groupMouse': {
+                            false: (color) => color.withAlpha(100)
+                          },
+                          'groupTouch': {
+                            false: (color) => color.withAlpha(100)
+                          },
+                        },
+                      ),
+                    ),
+                    PointElement(
+                      color: ColorAttr(
+                        variable: 'name',
+                        values: Defaults.colors10,
+                        onSelection: {
+                          'groupMouse': {
+                            false: (color) => color.withAlpha(100)
+                          },
+                          'groupTouch': {
+                            false: (color) => color.withAlpha(100)
+                          },
+                        },
+                      ),
+                    ),
+                  ],
+                  axes: [
+                    Defaults.horizontalAxis,
+                    Defaults.verticalAxis,
+                  ],
+                  selections: {
+                    'tooltipMouse': PointSelection(on: {
+                      GestureType.hover,
+                    }, devices: {
+                      PointerDeviceKind.mouse
+                    }),
+                    'groupMouse': PointSelection(
+                        on: {
+                          GestureType.hover,
+                        },
+                        variable: 'name',
+                        devices: {PointerDeviceKind.mouse}),
+                    'tooltipTouch': PointSelection(on: {
+                      GestureType.scaleUpdate,
+                      GestureType.tapDown,
+                      GestureType.longPressMoveUpdate
+                    }, devices: {
+                      PointerDeviceKind.touch
+                    }),
+                    'groupTouch': PointSelection(
+                        on: {
+                          GestureType.scaleUpdate,
+                          GestureType.tapDown,
+                          GestureType.longPressMoveUpdate
+                        },
+                        variable: 'name',
+                        devices: {PointerDeviceKind.touch}),
+                  },
+                  tooltip: TooltipGuide(
+                    selections: {'tooltipTouch', 'tooltipMouse'},
+                    followPointer: [true, true],
+                    align: Alignment.topLeft,
+                    element: 0,
+                    variables: [
+                      'date',
+                      'name',
+                      'points',
+                    ],
+                  ),
+                  crosshair: CrosshairGuide(
+                    selections: {'tooltipTouch', 'tooltipMouse'},
+                    styles: [
+                      StrokeStyle(color: const Color(0xffbfbfbf)),
+                      StrokeStyle(color: const Color(0x00bfbfbf)),
+                    ],
+                    followPointer: [true, false],
+                  ),
+                ),
+              ),
+              Container(
+                child: const Text(
                   'River chart',
                   style: TextStyle(fontSize: 20),
                 ),
@@ -182,7 +316,8 @@ class LineAreaPage extends StatelessWidget {
                   },
                   elements: [
                     AreaElement(
-                      position: Varset('date') * Varset('value') / Varset('type'),
+                      position:
+                          Varset('date') * Varset('value') / Varset('type'),
                       shape: ShapeAttr(value: BasicAreaShape(smooth: true)),
                       color: ColorAttr(
                         variable: 'type',
@@ -249,7 +384,8 @@ class LineAreaPage extends StatelessWidget {
                   },
                   elements: [
                     LineElement(
-                      position: Varset('index') * Varset('value') / Varset('type'),
+                      position:
+                          Varset('index') * Varset('value') / Varset('type'),
                       shape: ShapeAttr(value: BasicLineShape(loop: true)),
                       color: ColorAttr(
                           variable: 'type', values: Defaults.colors10),

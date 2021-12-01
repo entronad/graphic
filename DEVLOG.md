@@ -3864,9 +3864,25 @@ time就不要引入 intl库支持mask了吧，那样要引入额外的规则和�
 
 所有spec中函数类型的property，还是都按名词命名吧，因为用户关注的它是什么（出自 Effectiv Dart）
 
+selection 同时唯一性：
+
+现在的逻辑是这样的：同时只有一个 gesture -> 现在规定一个gesture只能定义一个selection -> 所以自然产生对于同一个element同时只会发生一个selection
+
+但是对于同一个element同时只会发生一个selection应当是一个额外的规定，同一个gesture应该可以定义多个 selection，同一时刻产生多个selects（用map存储），而在update中判断onSelection不能定义有同时发生的selection
+
+对应 element update，最重要的目的是，同一时间只能有一个selection起效，当只触发一个selection时，OK，当触发多个selection时，必须确保只有其中的一个在defined names中
+
+selection定义中添加一个仅在某些设备上运行的开关（signal中可在实际Gesture signal detail中判断设备）
+
+tooltip添加一个自动往里挤的功能，可开关
+
+现在新的selector渲染机制也不需要动态zIndex了，决定把改机制去了，zIndex都是静态的。
+
+默认值应当尽量在parse中设置，而不在op中处理
+
 ## TODO
 
-整合errorlog，需处理：throw, assert, list.single
+整合errorlog，需处理：throw, assert, list.single，singleIntersection
 
 group selection
 

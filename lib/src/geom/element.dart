@@ -75,7 +75,7 @@ abstract class GeomElement<S extends Shape> {
   GradientAttr? gradient;
 
   /// The label attribute of this element.
-  /// 
+  ///
   /// For an element, labels are always painted above item graphics, no matter how
   /// their [Figure]s are rendered in [Shape]s.
   LabelAttr? label;
@@ -143,12 +143,12 @@ abstract class GeomElement<S extends Shape> {
 ///
 /// The nesters, no matter `x * y`, `a + y`, or `a / y`, will be used in cartesian
 /// production. If empty, all eases will be in a same group.
-/// 
+///
 /// Empty groups will be removed after each grouping, which reflects the feature
 /// of nesting. It is nessasary especially in multiple nesters grouping.
-/// 
+///
 /// Groups with same value of smaller indexed nester will stay together.
-/// 
+///
 /// List is the best way to store groups. If nester values are needed for indexing,
 /// store them in another corresponding list. List indexes are better then map keys.
 class GroupOp extends Operator<AesGroups> {

@@ -319,7 +319,8 @@ class CustomPage extends StatelessWidget {
                   },
                   elements: [
                     IntervalElement(
-                      position: Varset('index') * Varset('value') / Varset('type'),
+                      position:
+                          Varset('index') * Varset('value') / Varset('type'),
                       color: ColorAttr(
                           variable: 'type', values: Defaults.colors10),
                       size: SizeAttr(value: 2),
@@ -339,62 +340,77 @@ class CustomPage extends StatelessWidget {
                   crosshair: CrosshairGuide(),
                   annotations: [
                     MarkAnnotation(
-                      relativePath: Path()..addRect(Rect.fromCircle(center: const Offset(0, 0), radius: 5)),
+                      relativePath: Path()
+                        ..addRect(Rect.fromCircle(
+                            center: const Offset(0, 0), radius: 5)),
                       style: Paint()..color = Defaults.colors10[0],
                       anchor: (size) => const Offset(25, 290),
                     ),
                     TagAnnotation(
                       label: Label(
                         'Email',
-                        LabelStyle(Defaults.textStyle, align: Alignment.centerRight),
+                        LabelStyle(Defaults.textStyle,
+                            align: Alignment.centerRight),
                       ),
                       anchor: (size) => const Offset(34, 290),
                     ),
                     MarkAnnotation(
-                      relativePath: Path()..addRect(Rect.fromCircle(center: const Offset(0, 0), radius: 5)),
+                      relativePath: Path()
+                        ..addRect(Rect.fromCircle(
+                            center: const Offset(0, 0), radius: 5)),
                       style: Paint()..color = Defaults.colors10[1],
                       anchor: (size) => Offset(25 + size.width / 5, 290),
                     ),
                     TagAnnotation(
                       label: Label(
                         'Affiliate',
-                        LabelStyle(Defaults.textStyle, align: Alignment.centerRight),
+                        LabelStyle(Defaults.textStyle,
+                            align: Alignment.centerRight),
                       ),
                       anchor: (size) => Offset(34 + size.width / 5, 290),
                     ),
                     MarkAnnotation(
-                      relativePath: Path()..addRect(Rect.fromCircle(center: const Offset(0, 0), radius: 5)),
+                      relativePath: Path()
+                        ..addRect(Rect.fromCircle(
+                            center: const Offset(0, 0), radius: 5)),
                       style: Paint()..color = Defaults.colors10[2],
                       anchor: (size) => Offset(25 + size.width / 5 * 2, 290),
                     ),
                     TagAnnotation(
                       label: Label(
                         'Video',
-                        LabelStyle(Defaults.textStyle, align: Alignment.centerRight),
+                        LabelStyle(Defaults.textStyle,
+                            align: Alignment.centerRight),
                       ),
                       anchor: (size) => Offset(34 + size.width / 5 * 2, 290),
                     ),
                     MarkAnnotation(
-                      relativePath: Path()..addRect(Rect.fromCircle(center: const Offset(0, 0), radius: 5)),
+                      relativePath: Path()
+                        ..addRect(Rect.fromCircle(
+                            center: const Offset(0, 0), radius: 5)),
                       style: Paint()..color = Defaults.colors10[3],
                       anchor: (size) => Offset(25 + size.width / 5 * 3, 290),
                     ),
                     TagAnnotation(
                       label: Label(
                         'Direct',
-                        LabelStyle(Defaults.textStyle, align: Alignment.centerRight),
+                        LabelStyle(Defaults.textStyle,
+                            align: Alignment.centerRight),
                       ),
                       anchor: (size) => Offset(34 + size.width / 5 * 3, 290),
                     ),
                     MarkAnnotation(
-                      relativePath: Path()..addRect(Rect.fromCircle(center: const Offset(0, 0), radius: 5)),
+                      relativePath: Path()
+                        ..addRect(Rect.fromCircle(
+                            center: const Offset(0, 0), radius: 5)),
                       style: Paint()..color = Defaults.colors10[4],
                       anchor: (size) => Offset(25 + size.width / 5 * 4, 290),
                     ),
                     TagAnnotation(
                       label: Label(
                         'Search',
-                        LabelStyle(Defaults.textStyle, align: Alignment.centerRight),
+                        LabelStyle(Defaults.textStyle,
+                            align: Alignment.centerRight),
                       ),
                       anchor: (size) => Offset(34 + size.width / 5 * 4, 290),
                     ),

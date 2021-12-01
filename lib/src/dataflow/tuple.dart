@@ -23,7 +23,7 @@ typedef Tuple = Map<String, dynamic>;
 /// The key strings are variable names.
 ///
 /// See also:
-/// 
+///
 /// - [Scale], which converts original value tuples to scaled value tuples.
 /// - [Tuple], original value tuple.
 typedef Scaled = Map<String, num>;

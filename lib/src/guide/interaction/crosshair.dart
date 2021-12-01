@@ -13,25 +13,29 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
+import 'package:graphic/src/util/list.dart';
 import 'package:graphic/src/util/path.dart';
 
 /// The specification of a crosshair
 ///
-/// A corsshair indicates the position of the pointer or the selected point.
+/// A corsshair indicates the position of the pointer or the selected point. If
+/// no point is selected, it will not occur.
 class CrosshairGuide {
   /// Creates a crosshair.
   CrosshairGuide({
-    this.selection,
+    this.selections,
     this.styles,
     this.followPointer,
     this.zIndex,
     this.element,
   });
 
-  /// The selection this crosshair reacts to.
+  /// The selections this crosshair reacts to.
   ///
-  /// If null, the first selection is set by default.
-  String? selection;
+  /// Make sure this selections will not occur simultaneously.
+  ///
+  /// If null, it will reacts to all selections.
+  Set<String>? selections;
 
   /// The stroke styles of crosshair lines for each dimension.
   ///
@@ -62,7 +66,7 @@ class CrosshairGuide {
   @override
   bool operator ==(Object other) =>
       other is CrosshairGuide &&
-      selection == other.selection &&
+      DeepCollectionEquality().equals(selections, other.selections) &&
       DeepCollectionEquality().equals(styles, other.styles) &&
       DeepCollectionEquality().equals(followPointer, other.followPointer) &&
       zIndex == other.zIndex &&
@@ -87,15 +91,20 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
 
   @override
   void render() {
-    final selectorName = params['selectorName'] as String;
-    final selector = params['selector'] as Selector?;
-    final selects = params['selects'] as Set<int>?;
+    final selections = params['selections'] as Set<String>;
+    final selectors = params['selectors'] as Map<String, Selector>?;
+    final selects = params['selects'] as Map<String, Set<int>>?;
     final coord = params['coord'] as CoordConv;
     final groups = params['groups'] as AesGroups;
     final styles = params['styles'] as List<StrokeStyle?>;
     final followPointer = params['followPointer'] as List<bool>;
 
-    if (selector == null || selects == null || selector.name != selectorName) {
+    final name = singleIntersection(selectors?.keys, selections);
+
+    final selector = name == null ? null : selectors?[name];
+    final indexes = name == null ? null : selects?[name];
+
+    if (selector == null || indexes == null || indexes.isEmpty) {
       scene.figures = null;
       return;
     }
@@ -115,7 +124,7 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
       }
       return Offset.zero;
     };
-    for (var index in selects) {
+    for (var index in indexes) {
       selectedPoint += findPoint(index);
     }
     selectedPoint = selectedPoint / count.toDouble();

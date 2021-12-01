@@ -29,7 +29,7 @@ class Proportion extends VariableTransform {
   /// If set, the tuples will temporarily grouped by it, and the denominator of
   /// proportion will be sum of a single group. If null, the denominator will be
   /// sum of all.
-  /// 
+  ///
   /// See details about nesting rules in [Varset]. Note this property is only the
   /// right oprand of nesting.
   Varset? nest;
@@ -53,7 +53,7 @@ class Proportion extends VariableTransform {
 }
 
 /// The proportion transform operator.
-/// 
+///
 /// The evaluation of nesting is like the [GroupOp].
 class ProportionOp extends TransformOp {
   ProportionOp(Map<String, dynamic> params) : super(params);

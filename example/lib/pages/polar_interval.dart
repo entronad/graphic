@@ -143,7 +143,8 @@ class PolarIntervalPage extends StatelessWidget {
                   },
                   elements: [
                     IntervalElement(
-                      position: Varset('index') * Varset('value') / Varset('type'),
+                      position:
+                          Varset('index') * Varset('value') / Varset('type'),
                       color: ColorAttr(
                           variable: 'type', values: Defaults.colors10),
                       modifiers: [StackModifier()],

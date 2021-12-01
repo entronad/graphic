@@ -33,15 +33,4 @@ abstract class Render<S extends Scene> extends Operator {
 
   /// Renders the [scene].
   void render();
-
-  /// Sets the [scene]'s z index.
-  ///
-  /// It will diff and set view.disordered automatically. So always use this method
-  /// instead of set scene.zIndex directly.
-  void setZIndex(int zIndex) {
-    if (scene.zIndex != zIndex) {
-      scene.zIndex = zIndex;
-      view.disordered = true;
-    }
-  }
 }

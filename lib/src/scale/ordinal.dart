@@ -8,6 +8,7 @@ import 'discrete.dart';
 class OrdinalScale extends DiscreteScale<String> {
   OrdinalScale({
     List<String>? values,
+    bool? inflate,
     double? align,
     String? title,
     String Function(String)? formatter,
@@ -16,6 +17,7 @@ class OrdinalScale extends DiscreteScale<String> {
     int? maxTickCount,
   }) : super(
           values: values,
+          inflate: inflate,
           align: align,
           title: title,
           formatter: formatter,

@@ -106,9 +106,9 @@ class RegionOp extends Operator<Rect> {
   @override
   Rect evaluate() {
     final size = params['size'] as Size;
-    final padding = params['padding'] as EdgeInsets;
+    final padding = params['padding'] as EdgeInsets Function(Size);
 
     final container = Rect.fromLTWH(0, 0, size.width, size.height);
-    return padding.deflateRect(container);
+    return padding(size).deflateRect(container);
   }
 }

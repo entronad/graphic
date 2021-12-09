@@ -301,7 +301,7 @@ class RectangleIntervalPage extends StatelessWidget {
                 width: 350,
                 height: 300,
                 child: Chart(
-                  padding: const EdgeInsets.all(10),
+                  padding: (_) => const EdgeInsets.all(10),
                   data: basicData,
                   variables: {
                     'genre': Variable(

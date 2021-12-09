@@ -20,6 +20,9 @@ abstract class Paths {
         ..moveTo(from.dx, from.dy)
         ..lineTo(to.dx, to.dy);
 
+  /// A polyline path function.
+  ///
+  /// This functions can either return a new path or add to existing [path].
   static Path polyline({
     required List<Offset> points,
     required bool smooth,
@@ -41,6 +44,17 @@ abstract class Paths {
 
     return path;
   }
+
+  /// A circle path function.
+  ///
+  /// This functions can either return a new path or add to existing [path].
+  static Path circle({
+    required Offset center,
+    required double radius,
+    Path? path,
+  }) =>
+      (path ?? Path())
+        ..addOval(Rect.fromCircle(center: center, radius: radius));
 
   /// A sector path function.
   ///

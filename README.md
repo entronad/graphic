@@ -24,7 +24,7 @@ See in the [documentation](https://pub.dev/documentation/graphic/latest/graphic/
 
 ## Examples
 
-Example of charts can be seen in the [Example App](https://github.com/entronad/graphic/tree/main/example).
+Example of charts can be seen in the [Example App](https://github.com/entronad/graphic/tree/main/example). Please clone this repository and run the example project in example directory.
 
 ## Reference
 

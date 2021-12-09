@@ -56,6 +56,14 @@ import 'package:graphic/src/variable/transform/proportion.dart';
 import 'package:graphic/src/variable/transform/sort.dart';
 import 'package:graphic/src/variable/variable.dart';
 
+/// The default padding function for rectangle coordinate.
+EdgeInsets _defaultRectPadding(Size _) =>
+  EdgeInsets.fromLTRB(40, 5, 10, 20);
+
+/// The default padding function for polar coordinate.
+EdgeInsets _defaultPolarPadding(Size _) =>
+  EdgeInsets.all(10);
+
 /// Parses the specification for a view.
 void parse<D>(Chart<D> spec, View<D> view) {
   // Size.
@@ -115,8 +123,8 @@ void parse<D>(Chart<D> spec, View<D> view) {
     'size': size,
     'padding': spec.padding ??
         (spec.coord is PolarCoord
-            ? EdgeInsets.all(10)
-            : EdgeInsets.fromLTRB(40, 5, 10, 20)),
+            ? _defaultPolarPadding
+            : _defaultRectPadding),
   }));
 
   final coordSpec = spec.coord ?? RectCoord();
@@ -609,8 +617,6 @@ void parse<D>(Chart<D> spec, View<D> view) {
             view.graffiti.add(FigureAnnotScene(annotSpec.zIndex ?? 0));
         view.add(FigureAnnotRenderOp({
           'figures': annot,
-          'inRegion': annotSpec.anchor == null,
-          'coord': coord,
         }, annotScene, view));
       } else {
         throw UnimplementedError('No such annotation type $annotSpec.');

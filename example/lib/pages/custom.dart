@@ -304,7 +304,7 @@ class CustomPage extends StatelessWidget {
                 width: 350,
                 height: 300,
                 child: Chart(
-                  padding: const EdgeInsets.fromLTRB(40, 5, 10, 40),
+                  padding: (_) => const EdgeInsets.fromLTRB(40, 5, 10, 40),
                   data: adjustData,
                   variables: {
                     'index': Variable(

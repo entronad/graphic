@@ -80,13 +80,16 @@ class Chart<D> extends StatefulWidget {
   final Coord? coord;
 
   /// The padding from coordinate region to the widget border.
+  /// 
+  /// This is a function with chart size as input that you may need to calculate
+  /// the padding.
   ///
   /// Usually, the [axes] is attached to the border of coordinate region (See details
   /// in [Coord]), and in the [padding] space.
   ///
   /// If null, a default `EdgeInsets.fromLTRB(40, 5, 10, 20)` for [RectCoord] and
   /// `EdgeInsets.all(10)` for [PolarCoord] is set.
-  final EdgeInsets? padding;
+  final EdgeInsets Function(Size)? padding;
 
   /// Specifications of axes.
   final List<AxisGuide>? axes;
@@ -124,7 +127,6 @@ class Chart<D> extends StatefulWidget {
       DeepCollectionEquality().equals(transforms, other.transforms) &&
       DeepCollectionEquality().equals(elements, other.elements) &&
       coord == other.coord &&
-      padding == other.padding &&
       DeepCollectionEquality().equals(axes, other.axes) &&
       tooltip == other.tooltip &&
       crosshair == other.crosshair &&

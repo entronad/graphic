@@ -134,8 +134,8 @@ class TooltipGuide {
   /// For single tuple, [variables] are layed in rows showing title and value. For
   /// multiple tuples, tuples are layed in rows showing the 2 [variables] values.
   ///
-  /// If null, it will varies according to triggering selector, and false for a
-  /// [PointSelection] and true for a [IntervalSelection];
+  /// If null, it will varies according to triggering selector, that true for an
+  /// [IntervalSelection] or [Selection.variable] is set, and false otherwise.
   bool? multiTuples;
 
   /// The variable values of tuples to show on in this tooltip.
@@ -232,7 +232,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
     }
 
     final multiTuplesRst =
-        multiTuples ?? (selector is PointSelector ? false : true);
+        multiTuples ?? (selector is IntervalSelector || selector.variable != null);
 
     final selectedTuples = <Tuple>[];
     for (var index in indexes) {

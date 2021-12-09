@@ -10,6 +10,16 @@
 
 ## 0.5.0
 
+**2021-12-01**
+
+- Tooltip constraints.
+- Now selections triggerd with same gesture is allowd.
+- Device settings of selection.
+- Now all z indexes are static, thus no need to resort scenes.
+- Some updates above are inspired by https://github.com/entronad/graphic/issues/27.
+
+## 0.5.0
+
 **2021-11-18**
 
 - Add nest operator: `\` of algebra.

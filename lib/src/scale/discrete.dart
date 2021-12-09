@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/scale/auto_ticks/cat.dart';
+import 'package:graphic/src/util/assert.dart';
 
 import 'scale.dart';
 
@@ -11,13 +12,15 @@ abstract class DiscreteScale<V> extends Scale<V, int> {
   /// Creates a discrete scale.
   DiscreteScale({
     this.values,
+    this.inflate,
     this.align,
     String? title,
     String Function(V)? formatter,
     List<V>? ticks,
     int? tickCount,
     int? maxTickCount,
-  }) : super(
+  }) : assert(isSingle([inflate, align], allowNone: true)),
+       super(
           title: title,
           formatter: formatter,
           ticks: ticks,
@@ -31,6 +34,12 @@ abstract class DiscreteScale<V> extends Scale<V, int> {
   /// But it's better that each value occurs only once.
   List<V>? values;
 
+  /// Whether the points distribution will inflate the axis range.
+  /// 
+  /// If true, The points will distribute in the axis range from end to end, with
+  /// equal intervals. The [align] is not allowd then.
+  bool? inflate;
+
   /// The align ratio of the exact position in the value position band.
   ///
   /// If null, a default 0.5 is set, which means in the middle of the band.
@@ -41,6 +50,7 @@ abstract class DiscreteScale<V> extends Scale<V, int> {
       other is DiscreteScale<V> &&
       super == other &&
       DeepCollectionEquality().equals(values, other.values) &&
+      inflate == other.inflate &&
       align == other.align;
 }
 
@@ -74,12 +84,20 @@ abstract class DiscreteScaleConv<V, SP extends DiscreteScale<V>>
 
     title = spec.title ?? variable;
     formatter = spec.formatter ?? defaultFormatter;
-    align = spec.align ?? 0.5;
-    band = 1 / values.length;
+    inflate = spec.inflate ?? false;
+    band = inflate
+      ? 1 / (values.length - 1)
+      : 1 / values.length;
+    align = inflate
+      ? 0
+      : spec.align ?? 0.5;
   }
 
   /// The candidate values.
   late List<V> values;
+
+  /// Whether to inflate the axis range.
+  late bool inflate;
 
   /// The align ratio.
   late double align;

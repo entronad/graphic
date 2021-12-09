@@ -40,7 +40,7 @@ abstract class FigureAnnotation extends Annotation {
   /// the position.
   ///
   /// If set, this annotation's position will no longer determined by [variables]
-  /// and [values], and can be out of the coordinate region.
+  /// and [values].
   Offset Function(Size)? anchor;
 
   @override
@@ -108,13 +108,7 @@ class FigureAnnotRenderOp extends AnnotRenderOp<FigureAnnotScene> {
   @override
   void render() {
     final figures = params['figures'] as List<Figure>?;
-    final inRegion = params['inRegion'] as bool;
-    final coord = params['coord'] as CoordConv;
 
     scene..figures = figures;
-
-    if (inRegion) {
-      scene.setRegionClip(coord.region);
-    }
   }
 }

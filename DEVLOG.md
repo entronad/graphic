@@ -3880,11 +3880,23 @@ tooltip添加一个自动往里挤的功能，可开关
 
 默认值应当尽量在parse中设置，而不在op中处理
 
+矩形树图 treemap 本质上还是图可视化，对应树状数据结构，先不管。
+
+echarts example upgrade
+
+1.当selection设置了variable，默认也是multituples
+
+2.增加OrdinalScale.inflate
+
+3 FigureAnnot都不要clip了，因为它自然发生时总不是好的，尤其是在首位数据处，可以伸到padding里面，如果确要clip用户自行设置path
+
+4 chart padding 也应该是size的函数
+
+
+
 ## TODO
 
 整合errorlog，需处理：throw, assert, list.single，singleIntersection
-
-group selection
 
 tooltip grammar
 

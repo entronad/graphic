@@ -195,7 +195,8 @@ class SelectorOp extends Operator<Map<String, Selector>?> {
               } else {
                 // Pans to move.
 
-                final delta = detail.delta - gesture.preScaleDetail!.delta;
+                final delta = detail.focalPointDelta -
+                    gesture.preScaleDetail!.focalPointDelta;
                 points = [prePoints.first + delta, prePoints.last + delta];
               }
             } else {

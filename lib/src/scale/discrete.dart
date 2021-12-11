@@ -19,8 +19,8 @@ abstract class DiscreteScale<V> extends Scale<V, int> {
     List<V>? ticks,
     int? tickCount,
     int? maxTickCount,
-  }) : assert(isSingle([inflate, align], allowNone: true)),
-       super(
+  })  : assert(isSingle([inflate, align], allowNone: true)),
+        super(
           title: title,
           formatter: formatter,
           ticks: ticks,
@@ -35,7 +35,7 @@ abstract class DiscreteScale<V> extends Scale<V, int> {
   List<V>? values;
 
   /// Whether the points distribution will inflate the axis range.
-  /// 
+  ///
   /// If true, The points will distribute in the axis range from end to end, with
   /// equal intervals. The [align] is not allowd then.
   bool? inflate;
@@ -85,12 +85,8 @@ abstract class DiscreteScaleConv<V, SP extends DiscreteScale<V>>
     title = spec.title ?? variable;
     formatter = spec.formatter ?? defaultFormatter;
     inflate = spec.inflate ?? false;
-    band = inflate
-      ? 1 / (values.length - 1)
-      : 1 / values.length;
-    align = inflate
-      ? 0
-      : spec.align ?? 0.5;
+    band = inflate ? 1 / (values.length - 1) : 1 / values.length;
+    align = inflate ? 0 : spec.align ?? 0.5;
   }
 
   /// The candidate values.

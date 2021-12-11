@@ -57,12 +57,10 @@ import 'package:graphic/src/variable/transform/sort.dart';
 import 'package:graphic/src/variable/variable.dart';
 
 /// The default padding function for rectangle coordinate.
-EdgeInsets _defaultRectPadding(Size _) =>
-  EdgeInsets.fromLTRB(40, 5, 10, 20);
+EdgeInsets _defaultRectPadding(Size _) => EdgeInsets.fromLTRB(40, 5, 10, 20);
 
 /// The default padding function for polar coordinate.
-EdgeInsets _defaultPolarPadding(Size _) =>
-  EdgeInsets.all(10);
+EdgeInsets _defaultPolarPadding(Size _) => EdgeInsets.all(10);
 
 /// Parses the specification for a view.
 void parse<D>(Chart<D> spec, View<D> view) {
@@ -122,9 +120,7 @@ void parse<D>(Chart<D> spec, View<D> view) {
   final region = view.add(RegionOp({
     'size': size,
     'padding': spec.padding ??
-        (spec.coord is PolarCoord
-            ? _defaultPolarPadding
-            : _defaultRectPadding),
+        (spec.coord is PolarCoord ? _defaultPolarPadding : _defaultRectPadding),
   }));
 
   final coordSpec = spec.coord ?? RectCoord();

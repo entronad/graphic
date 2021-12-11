@@ -94,23 +94,23 @@ class EchartsPage extends StatelessWidget {
                         onSelection: {
                           'groupMouse': {
                             false: (gradient) => LinearGradient(
-                              begin: const Alignment(0, 0),
-                              end: const Alignment(0, 1),
-                              colors: [
-                                gradient.colors.first.withAlpha(25),
-                                gradient.colors.last.withAlpha(25),
-                              ],
-                            ),
+                                  begin: const Alignment(0, 0),
+                                  end: const Alignment(0, 1),
+                                  colors: [
+                                    gradient.colors.first.withAlpha(25),
+                                    gradient.colors.last.withAlpha(25),
+                                  ],
+                                ),
                           },
                           'groupTouch': {
                             false: (gradient) => LinearGradient(
-                              begin: const Alignment(0, 0),
-                              end: const Alignment(0, 1),
-                              colors: [
-                                gradient.colors.first.withAlpha(25),
-                                gradient.colors.last.withAlpha(25),
-                              ],
-                            ),
+                                  begin: const Alignment(0, 0),
+                                  end: const Alignment(0, 1),
+                                  colors: [
+                                    gradient.colors.first.withAlpha(25),
+                                    gradient.colors.last.withAlpha(25),
+                                  ],
+                                ),
                           },
                         },
                       ),
@@ -240,51 +240,63 @@ class EchartsPage extends StatelessWidget {
                       ),
                     ),
                     MarkAnnotation(
-                      relativePath: Paths.circle(center: Offset.zero, radius: 5),
+                      relativePath:
+                          Paths.circle(center: Offset.zero, radius: 5),
                       style: Paint()..color = const Color(0xff5470c6),
                       values: ['Wed', 13],
                     ),
                     MarkAnnotation(
-                      relativePath: Paths.circle(center: Offset.zero, radius: 5),
+                      relativePath:
+                          Paths.circle(center: Offset.zero, radius: 5),
                       style: Paint()..color = const Color(0xff5470c6),
                       values: ['Sun', 9],
                     ),
                     MarkAnnotation(
-                      relativePath: Paths.circle(center: Offset.zero, radius: 5),
+                      relativePath:
+                          Paths.circle(center: Offset.zero, radius: 5),
                       style: Paint()..color = const Color(0xff91cc75),
                       values: ['Tue', -2],
                     ),
                     MarkAnnotation(
-                      relativePath: Paths.circle(center: Offset.zero, radius: 5),
+                      relativePath:
+                          Paths.circle(center: Offset.zero, radius: 5),
                       style: Paint()..color = const Color(0xff91cc75),
                       values: ['Thu', 5],
                     ),
                     TagAnnotation(
-                      label: Label('13', LabelStyle(
-                        Defaults.textStyle,
-                        offset: const Offset(0, -10),
-                      )),
+                      label: Label(
+                          '13',
+                          LabelStyle(
+                            Defaults.textStyle,
+                            offset: const Offset(0, -10),
+                          )),
                       values: ['Wed', 13],
                     ),
                     TagAnnotation(
-                      label: Label('9', LabelStyle(
-                        Defaults.textStyle,
-                        offset: const Offset(0, -10),
-                      )),
+                      label: Label(
+                          '9',
+                          LabelStyle(
+                            Defaults.textStyle,
+                            offset: const Offset(0, -10),
+                          )),
                       values: ['Sun', 9],
                     ),
                     TagAnnotation(
-                      label: Label('-2', LabelStyle(
-                        Defaults.textStyle,
-                        offset: const Offset(0, -10),
-                      )),
+                      label: Label(
+                          '-2',
+                          LabelStyle(
+                            Defaults.textStyle,
+                            offset: const Offset(0, -10),
+                          )),
                       values: ['Tue', -2],
                     ),
                     TagAnnotation(
-                      label: Label('5', LabelStyle(
-                        Defaults.textStyle,
-                        offset: const Offset(0, -10),
-                      )),
+                      label: Label(
+                          '5',
+                          LabelStyle(
+                            Defaults.textStyle,
+                            offset: const Offset(0, -10),
+                          )),
                       values: ['Thu', 5],
                     ),
                   ],
@@ -300,7 +312,7 @@ class EchartsPage extends StatelessWidget {
                   variables: {
                     'time': Variable(
                       accessor: (List datum) => datum[0] as String,
-                      scale: OrdinalScale(inflate: true),
+                      scale: OrdinalScale(inflate: true, maxTickCount: 6),
                     ),
                     'value': Variable(
                       accessor: (List datum) => datum[1] as num,
@@ -311,9 +323,11 @@ class EchartsPage extends StatelessWidget {
                       ),
                     ),
                   },
-                  elements: [LineElement(
-                    shape: ShapeAttr(value: BasicLineShape(smooth: true)),
-                  )],
+                  elements: [
+                    LineElement(
+                      shape: ShapeAttr(value: BasicLineShape(smooth: true)),
+                    )
+                  ],
                   axes: [
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,

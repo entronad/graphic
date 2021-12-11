@@ -231,8 +231,8 @@ class TooltipRenderOp extends Render<TooltipScene> {
       return;
     }
 
-    final multiTuplesRst =
-        multiTuples ?? (selector is IntervalSelector || selector.variable != null);
+    final multiTuplesRst = multiTuples ??
+        (selector is IntervalSelector || selector.variable != null);
 
     final selectedTuples = <Tuple>[];
     for (var index in indexes) {

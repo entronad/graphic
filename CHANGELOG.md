@@ -1,3 +1,13 @@
+## 0.6.0
+
+**2021-12-11**
+
+- Upgrade flutter version to `'>=2.6.0'` for `ScaleUpdate.focalPointDelta`: https://github.com/entronad/graphic/issues/21.
+- The default `multituples` is true if a selection's variable is set.
+- Add `OrdinalScale.inflate`.
+- Remove the clip of figure annotation.
+- `Chart.padding` is a function of chart size now.
+
 ## 0.5.1
 
 **2021-12-01**

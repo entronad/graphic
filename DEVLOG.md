@@ -3892,7 +3892,7 @@ echarts example upgrade
 
 4 chart padding 也应该是size的函数
 
-
+antv scale 的 nice number计算已经早就改为用d3的了，后续需要更新。
 
 ## TODO
 

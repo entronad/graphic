@@ -80,7 +80,7 @@ class Chart<D> extends StatefulWidget {
   final Coord? coord;
 
   /// The padding from coordinate region to the widget border.
-  /// 
+  ///
   /// This is a function with chart size as input that you may need to calculate
   /// the padding.
   ///

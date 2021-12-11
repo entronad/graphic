@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/label.dart';
@@ -162,14 +160,14 @@ abstract class Defaults {
   /// A signal update for scaling and panning horizontal coordinate range.
   static SignalUpdater<List<double>> get horizontalRangeSignal =>
       _getRangeUpdate(
-        (detail) => detail.delta.dx,
+        (detail) => detail.focalPointDelta.dx,
         (detail) => detail.horizontalScale,
         (size) => size.width,
       );
 
   /// A signal update for scaling and panning vertical coordinate range.
   static SignalUpdater<List<double>> get verticalRangeSignal => _getRangeUpdate(
-        (detail) => -detail.delta.dy,
+        (detail) => -detail.focalPointDelta.dy,
         (detail) => detail.verticalScale,
         (size) => size.height,
       );

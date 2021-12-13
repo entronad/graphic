@@ -3894,6 +3894,10 @@ echarts example upgrade
 
 antv scale 的 nice number计算已经早就改为用d3的了，后续需要更新。
 
+_ChartLayoutDelegate 关于relayout的机制恐怕涉及动画时还要再思考一番，现在就先用 shouldRelayout一律为true的方式
+
+spec的hash和相等要再好好研究一下，现在先全用rebuild控制
+
 ## TODO
 
 整合errorlog，需处理：throw, assert, list.single，singleIntersection

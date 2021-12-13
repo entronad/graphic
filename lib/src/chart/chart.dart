@@ -185,7 +185,8 @@ class _ChartState<D> extends State<Chart<D>> {
     super.didUpdateWidget(oldWidget);
 
     // Checke whether to rebuild or tirgger changeData.
-    if (widget.rebuild ?? !widget.equalSpecTo(oldWidget)) {
+    // TODO: !widget.equalSpecTo(oldWidget) is false for now.
+    if (widget.rebuild ?? false) {
       view = null;
     } else if (widget.changeData == true ||
         (widget.changeData == null && widget.data != oldWidget.data)) {
@@ -665,7 +666,7 @@ class _ChartLayoutDelegate<D> extends SingleChildLayoutDelegate {
   final _ChartState<D> state;
 
   @override
-  bool shouldRelayout(covariant SingleChildLayoutDelegate oldDelegate) => false;
+  bool shouldRelayout(covariant SingleChildLayoutDelegate oldDelegate) => true;
 
   @override
   Offset getPositionForChild(Size size, Size childSize) {

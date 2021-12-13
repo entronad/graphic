@@ -1,3 +1,10 @@
+## 0.6.1
+
+**2021-12-13**
+
+- Fix the issue of shouldRelayout: https://github.com/entronad/graphic/issues/29.
+- Temporarily remove the auto spec diff feature. Now the default `rebuild` is always false.
+
 ## 0.6.0
 
 **2021-12-11**

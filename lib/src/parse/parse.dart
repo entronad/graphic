@@ -603,7 +603,7 @@ void parse<D>(Chart<D> spec, View<D> view) {
           }));
         } else {
           annotSpec as CustomAnnotation;
-          annot = view.add(TagAnnotOp({
+          annot = view.add(CustomAnnotOp({
             'anchor': anchor,
             'renderer': annotSpec.renderer,
           }));

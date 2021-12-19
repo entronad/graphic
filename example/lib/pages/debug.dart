@@ -74,25 +74,35 @@ class _DebugPageState extends State<DebugPage> {
 
   @override
   void initState() {
+    const cv = -7;
+
     data = [
-      {'genre': 'Sports', 'sold': rdm.nextInt(300)},
-      {'genre': 'Strategy', 'sold': rdm.nextInt(300)},
-      {'genre': 'Action', 'sold': rdm.nextInt(300)},
-      {'genre': 'Shooter', 'sold': rdm.nextInt(300)},
-      {'genre': 'Other', 'sold': rdm.nextInt(300)},
+      {'genre': 'Sports', 'sold': cv},
+      {'genre': 'Strategy', 'sold': cv},
+      {'genre': 'Action', 'sold': cv},
+      {'genre': 'Shooter', 'sold': cv},
+      {'genre': 'Other', 'sold': cv},
     ];
 
-    final timer = Timer.periodic(Duration(seconds: 3), (_) {
-      setState(() {
-        data = [
-          {'genre': 'Sports', 'sold': rdm.nextInt(300)},
-          {'genre': 'Strategy', 'sold': rdm.nextInt(300)},
-          {'genre': 'Action', 'sold': rdm.nextInt(300)},
-          {'genre': 'Shooter', 'sold': rdm.nextInt(300)},
-          {'genre': 'Other', 'sold': rdm.nextInt(300)},
-        ];
-      });
-    });
+    // data = [
+    //   {'genre': 'Sports', 'sold': rdm.nextInt(300)},
+    //   {'genre': 'Strategy', 'sold': rdm.nextInt(300)},
+    //   {'genre': 'Action', 'sold': rdm.nextInt(300)},
+    //   {'genre': 'Shooter', 'sold': rdm.nextInt(300)},
+    //   {'genre': 'Other', 'sold': rdm.nextInt(300)},
+    // ];
+
+    // final timer = Timer.periodic(Duration(seconds: 3), (_) {
+    //   setState(() {
+    //     data = [
+    //       {'genre': 'Sports', 'sold': rdm.nextInt(300)},
+    //       {'genre': 'Strategy', 'sold': rdm.nextInt(300)},
+    //       {'genre': 'Action', 'sold': rdm.nextInt(300)},
+    //       {'genre': 'Shooter', 'sold': rdm.nextInt(300)},
+    //       {'genre': 'Other', 'sold': rdm.nextInt(300)},
+    //     ];
+    //   });
+    // });
 
     super.initState();
   }
@@ -122,6 +132,7 @@ class _DebugPageState extends State<DebugPage> {
                     ),
                     'sold': Variable(
                       accessor: (Map map) => map['sold'] as num,
+                      scale: LinearScale(max: 0),
                     ),
                   },
                   elements: [IntervalElement()],

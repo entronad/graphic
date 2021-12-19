@@ -3892,11 +3892,23 @@ echarts example upgrade
 
 4 chart padding 也应该是size的函数
 
-antv scale 的 nice number计算已经早就改为用d3的了，后续需要更新。
-
 _ChartLayoutDelegate 关于relayout的机制恐怕涉及动画时还要再思考一番，现在就先用 shouldRelayout一律为true的方式
 
 spec的hash和相等要再好好研究一下，现在先全用rebuild控制
+
+在scale range需要计算时，如果所有值都一样，interval就取这个值的绝对值，时间的话取1s（国际标准单位）
+
+antv scale 的 nice number计算已经早就改为用d3的了，后续需要更新。
+
+这是flutter team对于虚线的讨论https://github.com/flutter/flutter/issues/4858
+
+目前来看由于虚线的实现性能不好，按照消耗高的要实现起来比较麻烦的原则，没有直接提供接口。它可以通过Path.computeMetrics 实现的。因此flutter并没有不鼓励使用dash，只是他们觉得应该用一种麻烦的方式用。
+
+就用path_drawing去实现吧，因为它是flutter成员做的，并且表示它和本体是一样的，只是为了遵循高消耗高麻烦的原则没有加入本体。
+
+charts_flutter中的虚线是自己实现的，只能画垂直或水平。fl_chart等中也是用的path_drawing
+
+hash选用31做底数，因为它1是个不大不小的底数，2.31 * i == (i << 5) - i
 
 ## TODO
 

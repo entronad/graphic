@@ -9,7 +9,7 @@ import 'pages/polygon.dart';
 import 'pages/custom.dart';
 import 'pages/bigdata.dart';
 import 'pages/echarts.dart';
-// import 'pages/debug.dart';
+import 'pages/debug.dart';
 
 final routes = {
   '/': (context) => const HomePage(),
@@ -21,7 +21,7 @@ final routes = {
   '/examples/Custom': (context) => CustomPage(),
   '/examples/Bigdata': (context) => BigdataPage(),
   '/examples/Echarts': (context) => EchartsPage(),
-  // '/examples/Debug': (context) => DebugPage(),
+  '/examples/Debug': (context) => DebugPage(),
 };
 
 class MyApp extends StatelessWidget {

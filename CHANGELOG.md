@@ -1,3 +1,10 @@
+## 0.6.2
+
+**2021-12-19**
+
+- Fix the issue of CustomAnnotation: https://github.com/entronad/graphic/issues/33.
+- Fix the auto scale range when all data values are equal: https://github.com/entronad/graphic/issues/30.
+
 ## 0.6.1
 
 **2021-12-13**

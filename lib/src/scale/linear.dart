@@ -74,7 +74,8 @@ class LinearScaleConv extends ContinuousScaleConv<num> {
         }
       }
 
-      final range = maxTmp - minTmp;
+      // If all data are the same, the range is this value.
+      final range = maxTmp == minTmp ? maxTmp.abs() : maxTmp - minTmp;
       final marginMin = range * (spec.marginMin ?? 0.1);
       final marginMax = range * (spec.marginMax ?? 0.1);
       min = spec.min ?? minTmp - marginMin;

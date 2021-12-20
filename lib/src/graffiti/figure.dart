@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/painting.dart';
 
 /// The base class of figures.

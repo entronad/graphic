@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/styles.dart';
@@ -26,12 +24,12 @@ List<Figure>? renderCircularAxis(
 
   if (line != null) {
     rst.add(PathFigure(
-      Path()
+      line.dashPath(Path()
         ..addArc(
           Rect.fromCircle(center: coord.center, radius: r),
           coord.startAngle,
           coord.endAngle - coord.startAngle,
-        ),
+        )),
       line.toPaint()..style = PaintingStyle.stroke,
     ));
   }
@@ -80,10 +78,10 @@ List<Figure>? renderCircularGrid(
       final angle = coord.convertAngle(tick.position);
       if (angle >= coord.startAngle && angle <= coord.endAngle) {
         rst.add(PathFigure(
-          Paths.line(
+          tick.grid!.dashPath(Paths.line(
             from: coord.polarToOffset(angle, coord.startRadius),
             to: coord.polarToOffset(angle, coord.endRadius),
-          ),
+          )),
           tick.grid!.toPaint(),
         ));
       }

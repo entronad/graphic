@@ -33,6 +33,13 @@ class LineAreaPage extends StatelessWidget {
               ),
               Container(
                 child: const Text(
+                  '- Dash line.',
+                ),
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
+              ),
+              Container(
+                child: const Text(
                   '- With time scale in domain dimension.',
                 ),
                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
@@ -62,7 +69,7 @@ class LineAreaPage extends StatelessWidget {
                       accessor: (TimeSeriesSales datum) => datum.sales,
                     ),
                   },
-                  elements: [LineElement()],
+                  elements: [LineElement(shape: ShapeAttr(value: BasicLineShape(dash: [5, 2])))],
                   axes: [
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,

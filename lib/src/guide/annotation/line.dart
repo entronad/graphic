@@ -83,7 +83,7 @@ class LineAnnotRenderOp extends AnnotRenderOp<LineAnnotScene> {
     if (coord is PolarCoordConv && coord.getCanvasDim(dim) == 2) {
       scene.figures = [
         PathFigure(
-          Path()
+          style.dashPath(Path()
             ..addArc(
               Rect.fromCircle(
                 center: coord.center,
@@ -91,21 +91,21 @@ class LineAnnotRenderOp extends AnnotRenderOp<LineAnnotScene> {
               ),
               coord.angles.first,
               coord.angles.last - coord.angles.first,
-            ),
+            )),
           style.toPaint(),
         )
       ];
     } else {
       scene.figures = [
         PathFigure(
-          Paths.line(
+          style.dashPath(Paths.line(
             from: coord.convert(
               dim == 1 ? Offset(position, 0) : Offset(0, position),
             ),
             to: coord.convert(
               dim == 1 ? Offset(position, 1) : Offset(1, position),
             ),
-          ),
+          )),
           style.toPaint(),
         )
       ];

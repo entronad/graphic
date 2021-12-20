@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/styles.dart';
@@ -25,10 +23,10 @@ List<Figure>? renderHorizontalAxis(
 
   if (line != null) {
     rst.add(PathFigure(
-      Paths.line(
+      line.dashPath(Paths.line(
         from: Offset(region.left, y),
         to: Offset(region.right, y),
-      ),
+      )),
       line.toPaint(),
     ));
   }
@@ -40,10 +38,10 @@ List<Figure>? renderHorizontalAxis(
     if (x >= region.left && x <= region.right) {
       if (tick.tickLine != null) {
         rst.add(PathFigure(
-          Paths.line(
+          tick.tickLine!.style.dashPath(Paths.line(
             from: Offset(x, y),
             to: Offset(x, y + tick.tickLine!.length * flipSign),
-          ),
+          )),
           tick.tickLine!.style.toPaint(),
         ));
       }
@@ -75,10 +73,10 @@ List<Figure>? renderHorizontalGrid(
       final x = coordLeft + tick.position * (coordRight - coordLeft);
       if (x >= region.left && x <= region.right) {
         rst.add(PathFigure(
-          Paths.line(
+          tick.grid!.dashPath(Paths.line(
             from: Offset(x, region.bottom),
             to: Offset(x, region.top),
-          ),
+          )),
           tick.grid!.toPaint(),
         ));
       }

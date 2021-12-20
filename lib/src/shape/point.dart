@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';

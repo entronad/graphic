@@ -1,6 +1,3 @@
-import 'dart:ui';
-
-import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 
 import 'scene.dart';

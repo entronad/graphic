@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:path_drawing/path_drawing.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:graphic/src/util/math.dart';
 
@@ -44,6 +45,22 @@ abstract class Paths {
 
     return path;
   }
+
+  /// A dash line path function.
+  ///
+  /// It is drawn from the segments of [source]. Passing a [source] that is an empty
+  /// path will return an empty path. Dash intervals are controled by the [dashArray].
+  /// The [dashOffset] specifies an initial starting point for the dashing.
+  ///
+  /// This functions can either return a new path or add to existing [path].
+  static Path dashLine({
+    required Path source,
+    required List<double> dashArray,
+    DashOffset? dashOffset,
+    Path? path,
+  }) =>
+      (path ?? Path())
+        ..addPath(dashPath(source, dashArray: CircularIntervalList(dashArray), dashOffset: dashOffset), Offset.zero);
 
   /// A circle path function.
   ///

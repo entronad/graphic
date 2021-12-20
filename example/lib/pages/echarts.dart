@@ -230,6 +230,7 @@ class EchartsPage extends StatelessWidget {
                       value: 11.14,
                       style: StrokeStyle(
                         color: const Color(0xff5470c6).withAlpha(100),
+                        dash: [2],
                       ),
                     ),
                     LineAnnotation(
@@ -237,6 +238,7 @@ class EchartsPage extends StatelessWidget {
                       value: 1.57,
                       style: StrokeStyle(
                         color: const Color(0xff91cc75).withAlpha(100),
+                        dash: [2],
                       ),
                     ),
                     MarkAnnotation(

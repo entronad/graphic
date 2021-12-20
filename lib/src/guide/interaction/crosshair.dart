@@ -143,19 +143,19 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
       final canvasCross = coord.convert(cross);
       if (canvasStyleX != null) {
         figures.add(PathFigure(
-          Paths.line(
+          canvasStyleX.dashPath(Paths.line(
             from: Offset(canvasCross.dx, region.top),
             to: Offset(canvasCross.dx, region.bottom),
-          ),
+          )),
           canvasStyleX.toPaint(),
         ));
       }
       if (canvasStyleY != null) {
         figures.add(PathFigure(
-          Paths.line(
+          canvasStyleY.dashPath(Paths.line(
             from: Offset(region.left, canvasCross.dy),
             to: Offset(region.right, canvasCross.dy),
-          ),
+          )),
           canvasStyleY.toPaint(),
         ));
       }
@@ -165,10 +165,10 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
         final angle = polarCoord
             .convertAngle(polarCoord.transposed ? cross.dy : cross.dx);
         figures.add(PathFigure(
-          Paths.line(
+          canvasStyleX.dashPath(Paths.line(
             from: polarCoord.polarToOffset(angle, coord.startRadius),
             to: polarCoord.polarToOffset(angle, coord.endRadius),
-          ),
+          )),
           canvasStyleX.toPaint(),
         ));
       }
@@ -176,12 +176,12 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
         final r = polarCoord
             .convertRadius(polarCoord.transposed ? cross.dx : cross.dy);
         figures.add(PathFigure(
-          Path()
+          canvasStyleY.dashPath(Path()
             ..addArc(
               Rect.fromCircle(center: coord.center, radius: r),
               coord.startAngle,
               coord.endAngle - coord.startAngle,
-            ),
+            )),
           canvasStyleY.toPaint()..style = PaintingStyle.stroke,
         ));
       }

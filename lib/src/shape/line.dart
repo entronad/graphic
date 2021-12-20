@@ -1,5 +1,4 @@
-import 'dart:ui';
-
+import 'package:collection/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
@@ -35,6 +34,7 @@ class BasicLineShape extends LineShape {
   BasicLineShape({
     this.smooth = false,
     this.loop = false,
+    this.dash,
   });
 
   /// Whether this line is smooth.
@@ -45,9 +45,17 @@ class BasicLineShape extends LineShape {
   /// It is usefull in the polar coordinate.
   final bool loop;
 
+  /// The circular array of dash offsets and lengths.
+  ///
+  /// For example, the array `[5, 10]` would result in dashes 5 pixels long
+  /// followed by blank spaces 10 pixels long.  The array `[5, 10, 5]` would
+  /// result in a 5 pixel dash, a 10 pixel gap, a 5 pixel dash, a 5 pixel gap,
+  /// a 10 pixel dash, etc.
+  final List<double>? dash;
+
   @override
   bool equalTo(Object other) =>
-      other is BasicLineShape && smooth == other.smooth && loop == other.loop;
+      other is BasicLineShape && smooth == other.smooth && loop == other.loop && DeepCollectionEquality().equals(dash, other.dash);
 
   @override
   List<Figure> renderGroup(
@@ -95,7 +103,7 @@ class BasicLineShape extends LineShape {
 
     final represent = group.first;
     rst.addAll(renderBasicItem(
-      path,
+      dash == null ? path : Paths.dashLine(source: path, dashArray: dash!),
       represent,
       true,
       represent.size ?? defaultSize,

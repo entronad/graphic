@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/chart/chart.dart';
@@ -12,7 +10,6 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/selection/interval.dart';
-import 'package:graphic/src/interaction/selection/point.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/scale/scale.dart';
 import 'package:graphic/src/util/assert.dart';

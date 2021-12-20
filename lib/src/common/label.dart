@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/aes/label.dart';
 import 'package:graphic/src/graffiti/figure.dart';

@@ -1,7 +1,4 @@
-import 'dart:ui';
-
 import 'package:flutter/painting.dart';
-import 'package:graphic/graphic.dart';
 import 'package:graphic/src/aes/position.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/dataflow/operator.dart';

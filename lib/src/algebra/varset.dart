@@ -1,8 +1,7 @@
 import 'dart:math';
 
-import 'package:collection/collection.dart';
 import 'package:graphic/src/common/reserveds.dart';
-import 'package:graphic/src/util/list.dart';
+import 'package:graphic/src/util/collection.dart';
 
 /// The term composing algebracal forms.
 ///
@@ -168,9 +167,9 @@ class Varset {
   @override
   bool operator ==(Object other) =>
       other is Varset &&
-      DeepCollectionEquality().equals(form, other.form) &&
-      DeepCollectionEquality().equals(nested, other.nested) &&
-      DeepCollectionEquality().equals(nesters, other.nesters);
+      deepCollectionEquals(form, other.form) &&
+      deepCollectionEquals(nested, other.nested) &&
+      deepCollectionEquals(nesters, other.nesters);
 
   /// The nest operator.
   ///
@@ -260,7 +259,7 @@ class Varset {
     List<AlgForm> nestersRst = [];
     if (nested == null && other.nested == null) {
       // Does nothing.
-    } else if (DeepCollectionEquality().equals(nested, other.nested)) {
+    } else if (deepCollectionEquals(nested, other.nested)) {
       // Right distributivity: x / y + x / z = x / (y + z).
 
       nestedRst = nested;
@@ -275,7 +274,7 @@ class Varset {
 
       final leftNester = nesters.single;
       final rightNester = other.nesters.single;
-      if (DeepCollectionEquality().equals(leftNester, rightNester)) {
+      if (deepCollectionEquals(leftNester, rightNester)) {
         // Left distributivity: x / z + y / z = (x + y) / z.
 
         nestedRst = ([...nested!, ...other.nested!].._normalize())

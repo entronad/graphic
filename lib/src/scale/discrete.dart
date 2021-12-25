@@ -1,4 +1,4 @@
-import 'package:collection/collection.dart';
+import 'package:graphic/src/util/collection.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/scale/auto_ticks/cat.dart';
 import 'package:graphic/src/util/assert.dart';
@@ -49,7 +49,7 @@ abstract class DiscreteScale<V> extends Scale<V, int> {
   bool operator ==(Object other) =>
       other is DiscreteScale<V> &&
       super == other &&
-      DeepCollectionEquality().equals(values, other.values) &&
+      deepCollectionEquals(values, other.values) &&
       inflate == other.inflate &&
       align == other.align;
 }
@@ -126,7 +126,7 @@ abstract class DiscreteScaleConv<V, SP extends DiscreteScale<V>>
   bool operator ==(Object other) =>
       other is DiscreteScaleConv<V, SP> &&
       super == other &&
-      DeepCollectionEquality().equals(values, other.values) &&
+      deepCollectionEquals(values, other.values) &&
       align == other.align &&
       band == other.band;
 }

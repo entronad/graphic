@@ -1,10 +1,9 @@
 import 'dart:ui';
 import 'dart:math';
 
-import 'package:collection/collection.dart';
+import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/interaction/signal.dart';
-import 'package:graphic/src/util/map.dart';
 import 'package:graphic/src/util/transform.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:graphic/src/util/math.dart';
@@ -99,12 +98,8 @@ class PolarCoord extends Coord {
       endAngle == other.endAngle &&
       startRadius == other.startRadius &&
       endRadius == other.endRadius &&
-      DeepCollectionEquality().equals(angleRange, other.angleRange) &&
-      DeepCollectionEquality(MapKeyEquality())
-          .equals(onAngleRangeSignal, other.onAngleRangeSignal) &&
-      DeepCollectionEquality().equals(radiusRange, other.radiusRange) &&
-      DeepCollectionEquality(MapKeyEquality())
-          .equals(onRadiusRangeSignal, onRadiusRangeSignal);
+      deepCollectionEquals(angleRange, other.angleRange) &&
+      deepCollectionEquals(radiusRange, other.radiusRange);
 }
 
 /// The converter of a polar coordinate.

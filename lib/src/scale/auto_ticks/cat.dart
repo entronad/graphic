@@ -1,4 +1,4 @@
-import 'package:graphic/src/util/list.dart';
+import 'package:graphic/src/util/collection.dart';
 
 const _defaultMaxCount = 8;
 

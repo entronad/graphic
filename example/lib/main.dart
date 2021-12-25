@@ -7,9 +7,10 @@ import 'pages/line_area.dart';
 import 'pages/point.dart';
 import 'pages/polygon.dart';
 import 'pages/custom.dart';
+import 'pages/dynamic.dart';
 import 'pages/bigdata.dart';
 import 'pages/echarts.dart';
-import 'pages/debug.dart';
+// import 'pages/debug.dart';
 
 final routes = {
   '/': (context) => const HomePage(),
@@ -18,10 +19,11 @@ final routes = {
   '/examples/Line and Area Element': (context) => LineAreaPage(),
   '/examples/Point Element': (context) => PointPage(),
   '/examples/Polygon Element': (context) => PolygonPage(),
+  '/examples/Dynamic': (context) => const DynamicPage(),
   '/examples/Custom': (context) => CustomPage(),
   '/examples/Bigdata': (context) => BigdataPage(),
   '/examples/Echarts': (context) => EchartsPage(),
-  '/examples/Debug': (context) => DebugPage(),
+  // '/examples/Debug': (context) => const DebugPage(),
 };
 
 class MyApp extends StatelessWidget {

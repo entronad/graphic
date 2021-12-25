@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:collection/collection.dart';
+import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/aes/color.dart';
 import 'package:graphic/src/aes/elevation.dart';
@@ -134,7 +134,7 @@ abstract class GeomElement<S extends Shape> {
       position == other.position &&
       shape == other.shape &&
       size == other.size &&
-      DeepCollectionEquality().equals(modifiers, other.modifiers) &&
+      deepCollectionEquals(modifiers, other.modifiers) &&
       zIndex == other.zIndex &&
       selected == other.selected;
 }

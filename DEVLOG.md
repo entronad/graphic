@@ -3914,6 +3914,12 @@ charts_flutter中的虚线是自己实现的，只能画垂直或水平。fl_cha
 
 hash选用31做底数，因为它1是个不大不小的底数，2.31 * i == (i << 5) - i
 
+Spec的相等用自己写的函数，只要涉及到函数就一律不判断。
+
+集合判断函数取名 deepCollectionEquals，致敬deepCollectionEquals。collection 包还是。
+
+由于集合判断函数主要用来处理字面量，所以set也按list判断，这就要求顺序相同，但能避免多对一。
+
 ## TODO
 
 整合errorlog，需处理：throw, assert, list.single，singleIntersection

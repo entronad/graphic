@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
-import 'package:collection/collection.dart';
+import 'package:graphic/src/util/collection.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/coord/coord.dart';
@@ -47,8 +47,8 @@ abstract class FigureAnnotation extends Annotation {
   bool operator ==(Object other) =>
       other is FigureAnnotation &&
       super == other &&
-      DeepCollectionEquality().equals(variables, other.variables) &&
-      DeepCollectionEquality().equals(values, values);
+      deepCollectionEquals(variables, other.variables) &&
+      deepCollectionEquals(values, values);
 }
 
 /// The operator to create figures of a figure annotation.

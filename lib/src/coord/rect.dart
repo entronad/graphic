@@ -1,9 +1,8 @@
 import 'dart:ui';
 
-import 'package:collection/collection.dart';
+import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/interaction/signal.dart';
-import 'package:graphic/src/util/map.dart';
 
 import 'coord.dart';
 
@@ -60,12 +59,8 @@ class RectCoord extends Coord {
   bool operator ==(Object other) =>
       other is RectCoord &&
       super == other &&
-      DeepCollectionEquality().equals(horizontalRange, other.horizontalRange) &&
-      DeepCollectionEquality(MapKeyEquality())
-          .equals(onHorizontalRangeSignal, other.onHorizontalRangeSignal) &&
-      DeepCollectionEquality().equals(verticalRange, other.verticalRange) &&
-      DeepCollectionEquality(MapKeyEquality())
-          .equals(onVerticalRangeSignal, onVerticalRangeSignal);
+      deepCollectionEquals(horizontalRange, other.horizontalRange) &&
+      deepCollectionEquals(verticalRange, other.verticalRange);
 }
 
 /// The converter of a rectangle coordinate.

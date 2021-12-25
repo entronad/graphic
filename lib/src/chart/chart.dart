@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:collection/collection.dart';
+import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:graphic/src/coord/polar.dart';
@@ -26,7 +26,7 @@ import 'view.dart';
 ///
 /// Usually, if any specification or data is changed, the chart will rebuild or
 /// reevaluate automatically. Some subtle setting is controlled by [rebuild] and
-/// [changeData].
+/// [changeData]. Note that function properties will not be checked in change test.
 ///
 /// The generic [D] is the type of datum in [data] list.
 class Chart<D> extends StatefulWidget {
@@ -123,15 +123,15 @@ class Chart<D> extends StatefulWidget {
       other is Chart<D> &&
       // data are checked by changeData.
       changeData == other.changeData &&
-      DeepCollectionEquality().equals(variables, other.variables) &&
-      DeepCollectionEquality().equals(transforms, other.transforms) &&
-      DeepCollectionEquality().equals(elements, other.elements) &&
+      deepCollectionEquals(variables, other.variables) &&
+      deepCollectionEquals(transforms, other.transforms) &&
+      deepCollectionEquals(elements, other.elements) &&
       coord == other.coord &&
-      DeepCollectionEquality().equals(axes, other.axes) &&
+      deepCollectionEquals(axes, other.axes) &&
       tooltip == other.tooltip &&
       crosshair == other.crosshair &&
-      DeepCollectionEquality().equals(annotations, other.annotations) &&
-      DeepCollectionEquality().equals(selections, other.selections) &&
+      deepCollectionEquals(annotations, other.annotations) &&
+      deepCollectionEquals(selections, other.selections) &&
       rebuild == other.rebuild;
 
   @override
@@ -185,8 +185,7 @@ class _ChartState<D> extends State<Chart<D>> {
     super.didUpdateWidget(oldWidget);
 
     // Checke whether to rebuild or tirgger changeData.
-    // TODO: !widget.equalSpecTo(oldWidget) is false for now.
-    if (widget.rebuild ?? false) {
+    if (widget.rebuild ?? !widget.equalSpecTo(oldWidget)) {
       view = null;
     } else if (widget.changeData == true ||
         (widget.changeData == null && widget.data != oldWidget.data)) {

@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:collection/collection.dart';
+import 'package:graphic/src/util/collection.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/layers.dart';
 import 'package:graphic/src/coord/coord.dart';
@@ -49,7 +49,7 @@ class RegionAnnotation extends Annotation {
       super == other &&
       dim == other.dim &&
       variable == other.variable &&
-      DeepCollectionEquality().equals(values, other.values) &&
+      deepCollectionEquals(values, other.values) &&
       color == color;
 }
 

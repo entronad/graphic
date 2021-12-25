@@ -13,8 +13,7 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/shape/shape.dart';
-import 'package:collection/collection.dart';
-import 'package:graphic/src/util/list.dart';
+import 'package:graphic/src/util/collection.dart';
 
 import 'interval.dart';
 import 'point.dart';
@@ -83,9 +82,9 @@ abstract class Selection {
       other is Selection &&
       dim == other.dim &&
       variable == other.variable &&
-      DeepCollectionEquality().equals(on, other.on) &&
-      DeepCollectionEquality().equals(clear, other.clear) &&
-      DeepCollectionEquality().equals(devices, other.devices) &&
+      deepCollectionEquals(on, other.on) &&
+      deepCollectionEquals(clear, other.clear) &&
+      deepCollectionEquals(devices, other.devices) &&
       zIndex == other.zIndex;
 }
 

@@ -1,4 +1,4 @@
-import 'package:collection/collection.dart';
+import 'package:graphic/src/util/collection.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/guide/axis/axis.dart';
 import 'package:graphic/src/guide/interaction/tooltip.dart';
@@ -67,7 +67,7 @@ abstract class Scale<V, SV extends num> {
   bool operator ==(Object other) =>
       other is Scale<V, SV> &&
       title == other.title &&
-      DeepCollectionEquality().equals(ticks, other.ticks) &&
+      deepCollectionEquals(ticks, other.ticks) &&
       tickCount == other.tickCount &&
       maxTickCount == other.maxTickCount;
 }
@@ -128,7 +128,7 @@ abstract class ScaleConv<V, SV extends num> extends Converter<V, SV> {
   @override
   bool operator ==(Object other) =>
       other is ScaleConv<V, SV> &&
-      DeepCollectionEquality().equals(ticks, other.ticks);
+      deepCollectionEquals(ticks, other.ticks);
 }
 
 /// The operator to create scale converters.

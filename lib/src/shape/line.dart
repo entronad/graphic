@@ -1,4 +1,4 @@
-import 'package:collection/collection.dart';
+import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
@@ -55,7 +55,7 @@ class BasicLineShape extends LineShape {
 
   @override
   bool equalTo(Object other) =>
-      other is BasicLineShape && smooth == other.smooth && loop == other.loop && DeepCollectionEquality().equals(dash, other.dash);
+      other is BasicLineShape && smooth == other.smooth && loop == other.loop && deepCollectionEquals(dash, other.dash);
 
   @override
   List<Figure> renderGroup(

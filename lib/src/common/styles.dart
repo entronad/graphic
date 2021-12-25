@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:collection/collection.dart';
+import 'package:graphic/src/util/collection.dart';
 import 'package:graphic/src/util/path.dart';
 
 /// The style of a stroke.
@@ -27,7 +27,7 @@ class StrokeStyle {
   List<double>? dash;
 
   bool operator ==(Object other) =>
-      other is StrokeStyle && color == other.color && width == other.width && DeepCollectionEquality().equals(dash, other.dash);
+      other is StrokeStyle && color == other.color && width == other.width && deepCollectionEquals(dash, other.dash);
 
   /// Gets [Paint] object from this stroke style.
   ///

@@ -1,4 +1,4 @@
-import 'package:collection/collection.dart';
+import 'package:graphic/src/util/collection.dart';
 import 'package:graphic/src/common/converter.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/scale/continuous.dart';
@@ -44,8 +44,8 @@ abstract class ChannelAttr<AV> extends Attr<AV> {
       other is ChannelAttr &&
       super == other &&
       variable == other.variable &&
-      DeepCollectionEquality().equals(values, other.values) &&
-      DeepCollectionEquality().equals(stops, other.stops);
+      deepCollectionEquals(values, other.values) &&
+      deepCollectionEquals(stops, other.stops);
 }
 
 /// The converter for channel attributes.

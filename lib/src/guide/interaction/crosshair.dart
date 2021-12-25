@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:collection/collection.dart';
+import 'package:graphic/src/util/collection.dart';
 import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/layers.dart';
@@ -13,7 +13,7 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
-import 'package:graphic/src/util/list.dart';
+import 'package:graphic/src/util/collection.dart';
 import 'package:graphic/src/util/path.dart';
 
 /// The specification of a crosshair
@@ -66,9 +66,9 @@ class CrosshairGuide {
   @override
   bool operator ==(Object other) =>
       other is CrosshairGuide &&
-      DeepCollectionEquality().equals(selections, other.selections) &&
-      DeepCollectionEquality().equals(styles, other.styles) &&
-      DeepCollectionEquality().equals(followPointer, other.followPointer) &&
+      deepCollectionEquals(selections, other.selections) &&
+      deepCollectionEquals(styles, other.styles) &&
+      deepCollectionEquals(followPointer, other.followPointer) &&
       zIndex == other.zIndex &&
       element == other.element;
 }

@@ -1,4 +1,4 @@
-import 'package:collection/collection.dart';
+import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
@@ -13,7 +13,6 @@ import 'package:graphic/src/interaction/selection/interval.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/scale/scale.dart';
 import 'package:graphic/src/util/assert.dart';
-import 'package:graphic/src/util/list.dart';
 
 /// Gets the figures of a tooltip.
 ///
@@ -162,8 +161,8 @@ class TooltipGuide {
   @override
   bool operator ==(Object other) =>
       other is TooltipGuide &&
-      DeepCollectionEquality().equals(selections, other.selections) &&
-      DeepCollectionEquality().equals(followPointer, other.followPointer) &&
+      deepCollectionEquals(selections, other.selections) &&
+      deepCollectionEquals(followPointer, other.followPointer) &&
       zIndex == other.zIndex &&
       element == other.element &&
       align == other.align &&
@@ -174,7 +173,7 @@ class TooltipGuide {
       elevation == other.elevation &&
       textStyle == other.textStyle &&
       multiTuples == other.multiTuples &&
-      DeepCollectionEquality().equals(variables, other.variables) &&
+      deepCollectionEquals(variables, other.variables) &&
       constrained == other.constrained;
 }
 

@@ -33,7 +33,7 @@ class AreaElement extends FunctionElement<AreaShape> {
     ShapeAttr<AreaShape>? shape,
     SizeAttr? size,
     List<Modifier>? modifiers,
-    int? zIndex,
+    int? layer,
     Map<String, Set<int>>? selected,
   }) : super(
           color: color,
@@ -44,7 +44,7 @@ class AreaElement extends FunctionElement<AreaShape> {
           shape: shape,
           size: size,
           modifiers: modifiers,
-          zIndex: zIndex,
+          layer: layer,
           selected: selected,
         );
 }

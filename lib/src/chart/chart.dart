@@ -201,6 +201,8 @@ class _ChartState<D> extends State<Chart<D>> {
       child: Listener(
         child: GestureDetector(
           child: CustomPaint(
+            // Make sure the Listener and the GestureDetector inflate the container.
+            size: Size.infinite,
             painter: _ChartPainter<D>(this),
           ),
           onDoubleTap: () {
@@ -681,7 +683,7 @@ class _ChartLayoutDelegate<D> extends SingleChildLayoutDelegate {
         size,
         state.repaint,
       );
-    } else if (size != state.view!.size) {
+    } else if (size != state.view!.graffiti.size) {
       // Only emmit resize when size is realy changed.
 
       state.view!.resize(size);

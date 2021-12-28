@@ -23,7 +23,7 @@ final routes = {
   '/examples/Custom': (context) => CustomPage(),
   '/examples/Bigdata': (context) => BigdataPage(),
   '/examples/Echarts': (context) => EchartsPage(),
-  // '/examples/Debug': (context) => const DebugPage(),
+  // '/examples/Debug': (context) => DebugPage(),
 };
 
 class MyApp extends StatelessWidget {

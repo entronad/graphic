@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:graphic/src/util/collection.dart';
 import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
-import 'package:graphic/src/common/layers.dart';
+import 'package:graphic/src/common/intrinsic_layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/coord/coord.dart';
@@ -26,7 +26,7 @@ class CrosshairGuide {
     this.selections,
     this.styles,
     this.followPointer,
-    this.zIndex,
+    this.layer,
     this.element,
   });
 
@@ -49,10 +49,10 @@ class CrosshairGuide {
   /// If null, a default `[false, false]` is set.
   List<bool>? followPointer;
 
-  /// The z index of this crosshair.
+  /// The layer of this crosshair.
   ///
   /// If null, a default 0 is set.
-  int? zIndex;
+  int? layer;
 
   /// Which element series this crosshair reacts to.
   ///
@@ -69,16 +69,16 @@ class CrosshairGuide {
       deepCollectionEquals(selections, other.selections) &&
       deepCollectionEquals(styles, other.styles) &&
       deepCollectionEquals(followPointer, other.followPointer) &&
-      zIndex == other.zIndex &&
+      layer == other.layer &&
       element == other.element;
 }
 
 /// The crosshair scene.
 class CrosshairScene extends Scene {
-  CrosshairScene(int zIndex) : super(zIndex);
+  CrosshairScene(int layer) : super(layer);
 
   @override
-  int get layer => Layers.crosshair;
+  int get intrinsicLayer => IntrinsicLayers.crosshair;
 }
 
 /// The crosshair render operator.

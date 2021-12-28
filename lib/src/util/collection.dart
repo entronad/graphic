@@ -42,7 +42,8 @@ bool deepCollectionEquals<T>(T? a, T? b) {
   }
   if (a == null || b == null) {
     return false;
-  }  
+  }
+
   // Since the equality is for specification literals, sets are also treated ordered.
   // Thus equal Sets should have same order. This avoids collection item duplication
   // in sets: {{1, 1}, {1, 1}} and {{1, 1}, {1, 2}}.

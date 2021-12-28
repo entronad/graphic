@@ -25,10 +25,7 @@ SignalUpdater<List<double>> _getRangeUpdate(
         if (detail.pointerCount == 1) {
           // Panning.
 
-          // ScaleUpdateDetails.delta is from moveStart, not from previous one.
-          final prePan = getDeltaDim(gesture.preScaleDetail!);
-          final pan = getDeltaDim(detail);
-          final deltaRatio = pan - prePan;
+          final deltaRatio = getDeltaDim(gesture.preScaleDetail!);
           final delta = deltaRatio / getSizeDim(gesture.chartSize);
           return [pre.first + delta, pre.last + delta];
         } else {

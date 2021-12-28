@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/util/collection.dart';
 import 'package:graphic/src/chart/view.dart';
-import 'package:graphic/src/common/layers.dart';
+import 'package:graphic/src/common/intrinsic_layers.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/graffiti/figure.dart';
@@ -19,11 +19,11 @@ abstract class FigureAnnotation extends Annotation {
     this.variables,
     this.values,
     this.anchor,
-    int? zIndex,
+    int? layer,
   })  : assert(isSingle([variables, anchor], allowNone: true)),
         assert(isSingle([values, anchor])),
         super(
-          zIndex: zIndex,
+          layer: layer,
         );
 
   /// The variables in each dimension refered to for position.
@@ -91,10 +91,10 @@ class FigureAnnotCalcAnchorOp extends Operator<Offset> {
 
 /// The figure annotation scene.
 class FigureAnnotScene extends AnnotScene {
-  FigureAnnotScene(int zIndex) : super(zIndex);
+  FigureAnnotScene(int layer) : super(layer);
 
   @override
-  int get layer => Layers.figureAnnot;
+  int get intrinsicLayer => IntrinsicLayers.figureAnnot;
 }
 
 /// The figure annotation render operator.

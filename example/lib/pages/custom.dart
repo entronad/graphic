@@ -229,7 +229,7 @@ class CustomPage extends StatelessWidget {
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
                   ],
-                  selections: {'tap': PointSelection(dim: 1)},
+                  selections: {'tap': PointSelection(dim: Dim.x)},
                   tooltip: TooltipGuide(renderer: simpleTooltip),
                   crosshair: CrosshairGuide(),
                 ),

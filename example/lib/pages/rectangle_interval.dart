@@ -79,7 +79,7 @@ class RectangleIntervalPage extends StatelessWidget {
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
                   ],
-                  selections: {'tap': PointSelection(dim: 1)},
+                  selections: {'tap': PointSelection(dim: Dim.x)},
                   tooltip: TooltipGuide(),
                   crosshair: CrosshairGuide(),
                 ),
@@ -151,7 +151,7 @@ class RectangleIntervalPage extends StatelessWidget {
                       ..line = null
                       ..grid = Defaults.strokeStyle,
                   ],
-                  selections: {'tap': PointSelection(dim: 1)},
+                  selections: {'tap': PointSelection(dim: Dim.x)},
                 ),
               ),
               Container(

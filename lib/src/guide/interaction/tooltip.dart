@@ -3,7 +3,7 @@ import 'package:flutter/painting.dart';
 import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/label.dart';
-import 'package:graphic/src/common/layers.dart';
+import 'package:graphic/src/common/intrinsic_layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
@@ -32,7 +32,7 @@ class TooltipGuide {
     this.selections,
     this.followPointer,
     this.anchor,
-    this.zIndex,
+    this.layer,
     this.element,
     this.align,
     this.offset,
@@ -77,10 +77,10 @@ class TooltipGuide {
   /// If set, this tooltip will no longer follow the pointer or the selected point.
   Offset Function(Size)? anchor;
 
-  /// The z index of this tooltip.
+  /// The layer of this tooltip.
   ///
   /// If null, a default 0 is set.
-  int? zIndex;
+  int? layer;
 
   /// Which element series this tooltip reacts to.
   ///
@@ -163,7 +163,7 @@ class TooltipGuide {
       other is TooltipGuide &&
       deepCollectionEquals(selections, other.selections) &&
       deepCollectionEquals(followPointer, other.followPointer) &&
-      zIndex == other.zIndex &&
+      layer == other.layer &&
       element == other.element &&
       align == other.align &&
       offset == other.offset &&
@@ -179,10 +179,10 @@ class TooltipGuide {
 
 /// The tooltip scene.
 class TooltipScene extends Scene {
-  TooltipScene(int zIndex) : super(zIndex);
+  TooltipScene(int layer) : super(layer);
 
   @override
-  int get layer => Layers.tooltip;
+  int get intrinsicLayer => IntrinsicLayers.tooltip;
 }
 
 /// The tooltip render operator.

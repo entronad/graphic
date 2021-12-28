@@ -14,6 +14,7 @@ import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/size.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/defaults.dart';
+import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/operators/value.dart';
 import 'package:graphic/src/common/reserveds.dart';
@@ -65,7 +66,7 @@ EdgeInsets _defaultPolarPadding(Size _) => EdgeInsets.all(10);
 void parse<D>(Chart<D> spec, View<D> view) {
   // Size.
 
-  final size = view.add(SizeOp(view.size));
+  final size = view.add(SizeOp(view.graffiti.size));
 
   view.listen<ResizeSignal, Size>(
     view.sizeSouce,
@@ -308,7 +309,7 @@ void parse<D>(Chart<D> spec, View<D> view) {
 
     for (var name in selectSpecs.keys) {
       final selectorScene =
-          view.graffiti.add(SelectorScene(selectSpecs[name]!.zIndex ?? 0));
+          view.graffiti.add(SelectorScene(selectSpecs[name]!.layer ?? 0));
       view.add(SelectorRenderOp({
         'selectors': selectors,
         'name': name,
@@ -493,7 +494,7 @@ void parse<D>(Chart<D> spec, View<D> view) {
     groupsList.add(groups);
 
     final elementScene =
-        view.graffiti.add(ElementScene(elementSpec.zIndex ?? 0));
+        view.graffiti.add(ElementScene(elementSpec.layer ?? 0));
     view.add(ElementRenderOp({
       'groups': groups,
       'coord': coord,
@@ -506,8 +507,9 @@ void parse<D>(Chart<D> spec, View<D> view) {
   if (spec.axes != null) {
     for (var i = 0; i < spec.axes!.length; i++) {
       final axisSpec = spec.axes![i];
-      final dim = axisSpec.dim ?? i + 1;
-      final variable = axisSpec.variable ?? firstVariables![dim - 1];
+      final dim = axisSpec.dim ?? (i == 0 ? Dim.x : Dim.y);
+      final variable =
+          axisSpec.variable ?? firstVariables![dim == Dim.x ? 0 : 1];
 
       final ticks = view.add(TickInfoOp({
         'variable': variable,
@@ -520,7 +522,7 @@ void parse<D>(Chart<D> spec, View<D> view) {
         'gridMapper': axisSpec.gridMapper,
       }));
 
-      final axisScene = view.graffiti.add(AxisScene(axisSpec.zIndex ?? 0));
+      final axisScene = view.graffiti.add(AxisScene(axisSpec.layer ?? 0));
       view.add(AxisRenderOp({
         'coord': coord,
         'dim': dim,
@@ -542,10 +544,11 @@ void parse<D>(Chart<D> spec, View<D> view) {
   if (spec.annotations != null) {
     for (var annotSpec in spec.annotations!) {
       if (annotSpec is RegionAnnotation) {
-        final dim = annotSpec.dim ?? 1;
-        final variable = annotSpec.variable ?? firstVariables![dim - 1];
+        final dim = annotSpec.dim ?? Dim.x;
+        final variable =
+            annotSpec.variable ?? firstVariables![dim == Dim.x ? 0 : 1];
         final annotScene =
-            view.graffiti.add(RegionAnnotScene(annotSpec.zIndex ?? 0));
+            view.graffiti.add(RegionAnnotScene(annotSpec.layer ?? 0));
         view.add(RegionAnnotRenderOp({
           'dim': dim,
           'variable': variable,
@@ -555,10 +558,11 @@ void parse<D>(Chart<D> spec, View<D> view) {
           'coord': coord,
         }, annotScene, view));
       } else if (annotSpec is LineAnnotation) {
-        final dim = annotSpec.dim ?? 1;
-        final variable = annotSpec.variable ?? firstVariables![dim - 1];
+        final dim = annotSpec.dim ?? Dim.x;
+        final variable =
+            annotSpec.variable ?? firstVariables![dim == Dim.x ? 0 : 1];
         final annotScene =
-            view.graffiti.add(LineAnnotScene(annotSpec.zIndex ?? 0));
+            view.graffiti.add(LineAnnotScene(annotSpec.layer ?? 0));
         view.add(LineAnnotRenderOp({
           'dim': dim,
           'variable': variable,
@@ -609,7 +613,7 @@ void parse<D>(Chart<D> spec, View<D> view) {
         }
 
         final annotScene =
-            view.graffiti.add(FigureAnnotScene(annotSpec.zIndex ?? 0));
+            view.graffiti.add(FigureAnnotScene(annotSpec.layer ?? 0));
         view.add(FigureAnnotRenderOp({
           'figures': annot,
         }, annotScene, view));
@@ -626,7 +630,7 @@ void parse<D>(Chart<D> spec, View<D> view) {
     final elementIndex = crosshairSpec.element ?? 0;
 
     final crosshairScene =
-        view.graffiti.add(CrosshairScene(crosshairSpec.zIndex ?? 0));
+        view.graffiti.add(CrosshairScene(crosshairSpec.layer ?? 0));
     view.add(CrosshairRenderOp({
       'selections': crosshairSpec.selections ?? spec.selections!.keys.toSet(),
       'selectors': selectors!,
@@ -649,7 +653,7 @@ void parse<D>(Chart<D> spec, View<D> view) {
     final elementIndex = tooltipSpec.element ?? 0;
 
     final tooltipScene =
-        view.graffiti.add(TooltipScene(tooltipSpec.zIndex ?? 0));
+        view.graffiti.add(TooltipScene(tooltipSpec.layer ?? 0));
     view.add(TooltipRenderOp({
       'selections': tooltipSpec.selections ?? spec.selections!.keys.toSet(),
       'selectors': selectors!,

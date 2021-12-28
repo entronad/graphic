@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:graphic/src/common/layers.dart';
+import 'package:graphic/src/common/intrinsic_layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
 
 import 'figure.dart';
@@ -13,16 +13,16 @@ import 'graffiti.dart';
 /// and rendering engine. Once the chart is built, the scene instances will not
 /// change, but the figures they hold may vary on reevaluation.
 abstract class Scene {
-  Scene(this.zIndex);
+  Scene(this.layer);
 
-  /// The z index of this scene.
-  int zIndex;
+  /// The layer of this scene.
+  int layer;
 
-  /// The default layer of this scene.
+  /// The intrinsic layer of this scene.
   ///
-  /// It determins the stacking order when [zIndex]s are the same. It is picked
-  /// from [Layers] by subclass implementation.
-  int get layer;
+  /// It determins the stacking order when [layer]s are the same. It is picked
+  /// from [IntrinsicLayers] by subclass implementation.
+  int get intrinsicLayer;
 
   /// The previous stakcking order.
   ///

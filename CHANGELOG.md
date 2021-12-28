@@ -1,3 +1,14 @@
+## 0.7.0
+
+**2021-12-28**
+
+- Dimensions now has a enum type `Dim` instead of int [1, 2], which is always confused with [0, 1]: https://github.com/entronad/graphic/issues/31.
+- `layer` now replace `zIndex`, which may confuse with z dimension and has a flavour of HTML.
+- Fix `ScaleUpdateDetails.delta` problem.
+- Fix resize problem. Now chart will resize properly and will inflate even if parent has no indicated size: https://github.com/entronad/graphic/issues/37.
+- Fix and recover the auto spec diff feature.
+- Add dash line feature.
+
 ## 0.6.2
 
 **2021-12-19**

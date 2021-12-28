@@ -1,5 +1,6 @@
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/converter.dart';
+import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 
@@ -79,10 +80,10 @@ abstract class CoordConv extends Converter<Offset, Offset> {
 
   /// Transforms an abstract dimension to canvas dimension according to whether
   /// [transposed].
-  int getCanvasDim(int abstractDim) => dimCount == 1
+  Dim getCanvasDim(Dim abstractDim) => dimCount == 1
       // The last dimension is the mearure dimension.
-      ? (transposed ? 1 : 2)
-      : (transposed ? (3 - abstractDim) : abstractDim);
+      ? (transposed ? Dim.x : Dim.y)
+      : (transposed ? (abstractDim == Dim.x ? Dim.y : Dim.x) : abstractDim);
 
   /// Inverts a distance in canvas to abstract distance.
   double invertDistance(double canvasDistance, [int? dim]);

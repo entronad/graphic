@@ -127,8 +127,7 @@ abstract class ScaleConv<V, SV extends num> extends Converter<V, SV> {
 
   @override
   bool operator ==(Object other) =>
-      other is ScaleConv<V, SV> &&
-      deepCollectionEquals(ticks, other.ticks);
+      other is ScaleConv<V, SV> && deepCollectionEquals(ticks, other.ticks);
 }
 
 /// The operator to create scale converters.

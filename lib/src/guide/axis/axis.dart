@@ -1,7 +1,8 @@
 import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
+import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/common/label.dart';
-import 'package:graphic/src/common/layers.dart';
+import 'package:graphic/src/common/intrinsic_layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/coord/coord.dart';
@@ -67,7 +68,7 @@ class AxisGuide<V> {
     this.labelMapper,
     this.grid,
     this.gridMapper,
-    this.zIndex,
+    this.layer,
     this.gridZIndex,
   })  : assert(isSingle([tickLine, tickLineMapper], allowNone: true)),
         assert(isSingle([label, labelMapper], allowNone: true)),
@@ -75,9 +76,8 @@ class AxisGuide<V> {
 
   /// The dimension where this axis lies.
   ///
-  /// If null, the index of this axis in the [Chart.axes] list plus 1 is set by
-  /// default.
-  int? dim;
+  /// If null, it will be set according to the order in [Chart.axes].
+  Dim? dim;
 
   /// The variable this axis is binded to.
   ///
@@ -139,12 +139,12 @@ class AxisGuide<V> {
   /// Only one in [grid] and [gridMapper] can be set.
   GridMapper? gridMapper;
 
-  /// The z index of this axis.
+  /// The layer of this axis.
   ///
   /// If null, a default 0 is set.
-  int? zIndex;
+  int? layer;
 
-  /// The z index of the grids.
+  /// The layer of the grids.
   ///
   /// If null, a default 0 is set.
   int? gridZIndex;
@@ -160,7 +160,7 @@ class AxisGuide<V> {
       tickLine == other.tickLine &&
       label == other.label &&
       grid == other.grid &&
-      zIndex == other.zIndex &&
+      layer == other.layer &&
       gridZIndex == other.gridZIndex;
 }
 
@@ -239,10 +239,10 @@ class TickInfoOp extends Operator<List<TickInfo>> {
 
 /// The axis scene.
 class AxisScene extends Scene {
-  AxisScene(int zIndex) : super(zIndex);
+  AxisScene(int layer) : super(layer);
 
   @override
-  int get layer => Layers.axis;
+  int get intrinsicLayer => IntrinsicLayers.axis;
 }
 
 /// The axis render operator.
@@ -256,7 +256,7 @@ class AxisRenderOp extends Render<AxisScene> {
   @override
   void render() {
     final coord = params['coord'] as CoordConv;
-    final dim = params['dim'] as int;
+    final dim = params['dim'] as Dim;
     final position = params['position'] as double;
     final flip = params['flip'] as bool;
     final line = params['line'] as StrokeStyle?;
@@ -264,7 +264,7 @@ class AxisRenderOp extends Render<AxisScene> {
 
     final canvasDim = coord.getCanvasDim(dim);
     if (coord is RectCoordConv) {
-      if (canvasDim == 1) {
+      if (canvasDim == Dim.x) {
         scene.figures = renderHorizontalAxis(
           ticks,
           position,
@@ -283,7 +283,7 @@ class AxisRenderOp extends Render<AxisScene> {
       }
     } else {
       coord as PolarCoordConv;
-      if (canvasDim == 1) {
+      if (canvasDim == Dim.x) {
         scene.figures = renderCircularAxis(
           ticks,
           position,
@@ -306,10 +306,10 @@ class AxisRenderOp extends Render<AxisScene> {
 
 /// The axis grid scene.
 class GridScene extends Scene {
-  GridScene(int zIndex) : super(zIndex);
+  GridScene(int layer) : super(layer);
 
   @override
-  int get layer => Layers.grid;
+  int get intrinsicLayer => IntrinsicLayers.grid;
 }
 
 /// The axis grid render operator.
@@ -320,12 +320,12 @@ class GridRenderOp extends Render<GridScene> {
   @override
   void render() {
     final coord = params['coord'] as CoordConv;
-    final dim = params['dim'] as int;
+    final dim = params['dim'] as Dim;
     final ticks = params['ticks'] as List<TickInfo>;
 
     final canvasDim = coord.getCanvasDim(dim);
     if (coord is RectCoordConv) {
-      if (canvasDim == 1) {
+      if (canvasDim == Dim.x) {
         scene.figures = renderHorizontalGrid(
           ticks,
           coord,
@@ -338,7 +338,7 @@ class GridRenderOp extends Render<GridScene> {
       }
     } else {
       coord as PolarCoordConv;
-      if (canvasDim == 1) {
+      if (canvasDim == Dim.y) {
         scene.figures = renderCircularGrid(
           ticks,
           coord,

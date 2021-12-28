@@ -1,7 +1,8 @@
 import 'dart:ui';
 
 import 'package:graphic/src/chart/view.dart';
-import 'package:graphic/src/common/layers.dart';
+import 'package:graphic/src/common/dim.dart';
+import 'package:graphic/src/common/intrinsic_layers.dart';
 import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
@@ -19,15 +20,15 @@ class LineAnnotation extends Annotation {
     this.variable,
     required this.value,
     this.style,
-    int? zIndex,
+    int? layer,
   }) : super(
-          zIndex: zIndex,
+          layer: layer,
         );
 
   /// The dimension where the line stands.
   ///
-  /// If null, a default 1 is set.
-  int? dim;
+  /// If null, a default [Dim.x] is set.
+  Dim? dim;
 
   /// The variable refered to for position.
   ///
@@ -52,10 +53,10 @@ class LineAnnotation extends Annotation {
 
 /// The line annotation scene.
 class LineAnnotScene extends AnnotScene {
-  LineAnnotScene(int zIndex) : super(zIndex);
+  LineAnnotScene(int layer) : super(layer);
 
   @override
-  int get layer => Layers.lineAnnot;
+  int get intrinsicLayer => IntrinsicLayers.lineAnnot;
 }
 
 /// The line annotation render operator.
@@ -68,7 +69,7 @@ class LineAnnotRenderOp extends AnnotRenderOp<LineAnnotScene> {
 
   @override
   void render() {
-    final dim = params['dim'] as int;
+    final dim = params['dim'] as Dim;
     final variable = params['variable'] as String;
     final value = params['value'];
     final style = params['style'] as StrokeStyle;
@@ -80,7 +81,7 @@ class LineAnnotRenderOp extends AnnotRenderOp<LineAnnotScene> {
     final scale = scales[variable]!;
     final position = scale.normalize(scale.convert(value));
 
-    if (coord is PolarCoordConv && coord.getCanvasDim(dim) == 2) {
+    if (coord is PolarCoordConv && coord.getCanvasDim(dim) == Dim.y) {
       scene.figures = [
         PathFigure(
           style.dashPath(Path()

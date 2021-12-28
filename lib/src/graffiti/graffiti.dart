@@ -4,10 +4,7 @@ import 'scene.dart';
 
 /// The rendering engine.
 class Graffiti {
-  /// Creates a graffiti.
-  ///
-  /// Because the canvas is a relative coordinate with the origin at the chart widgit's
-  /// top left, the input chart [size] determins the canvas boundary.
+  /// Creates a graffiti with the chart size.
   Graffiti(Size size)
       : _clip = Rect.fromLTWH(
           0,
@@ -24,10 +21,13 @@ class Graffiti {
   /// It is a rectangle of the canvas boundary.
   Rect _clip;
 
-  /// Sets the [_clip] with the chart size.
+  /// The graffiti size, which is also the chart size.
   ///
   /// Because the canvas is a relative coordinate with the origin at the chart widgit's
   /// top left, the chart size determins the canvas boundary.
+  Size get size => _clip.size;
+
+  /// Sets the graffiti size.
   void set size(Size value) {
     _clip = Rect.fromLTWH(
       0,
@@ -45,19 +45,19 @@ class Graffiti {
 
   /// Sorts [_scenes].
   ///
-  /// The priority of comparing is [Scene.zIndex] > [Scene.layer] > [Scene.preOrder].
+  /// The priority of comparing is [Scene.layer] > [Scene.layer] > [Scene.preOrder].
   void sort() {
     for (var i = 0; i < _scenes.length; i++) {
       _scenes[i].preOrder = i;
     }
     _scenes.sort((a, b) {
-      final zIndexRst = a.zIndex - b.zIndex;
-      if (zIndexRst != 0) {
-        return zIndexRst;
+      final layerRst = a.layer - b.layer;
+      if (layerRst != 0) {
+        return layerRst;
       } else {
-        final layerRst = a.layer - b.layer;
-        if (layerRst != 0) {
-          return layerRst;
+        final intrinsicLayerRst = a.intrinsicLayer - b.intrinsicLayer;
+        if (intrinsicLayerRst != 0) {
+          return intrinsicLayerRst;
         } else {
           return a.preOrder - b.preOrder;
         }

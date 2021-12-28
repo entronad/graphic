@@ -3920,6 +3920,16 @@ Spec的相等用自己写的函数，只要涉及到函数就一律不判断。
 
 由于集合判断函数主要用来处理字面量，所以set也按list判断，这就要求顺序相同，但能避免多对一。
 
+最里层的CustomPaint组件需要设置个infinity的size（默认是0），就能起到撑满父元素的效果
+
+View 不持有 size，sizeop初始化用graffiti中的。
+
+维度的指定，经过仔细思考，除了gpl之外，没有哪一个不是用的x，y，而且从0开始还是从1开始确实很容易混淆。所以我们也用枚举吧，但是先不要用 Dim.xy 这种，同时指定还是null
+
+zIndex 改名叫 layer，因为z以后可能指坐标轴，而且摆脱html的影响，固定的那个叫IntrinsicLayer
+
+ScaleUpdateDetails.delta 改成 focalPointDelta之后，那个从初始算起的bug也修复了。
+
 ## TODO
 
 整合errorlog，需处理：throw, assert, list.single，singleIntersection

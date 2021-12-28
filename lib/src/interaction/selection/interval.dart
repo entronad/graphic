@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
@@ -15,17 +16,17 @@ class IntervalSelection extends Selection {
   /// Creates an interval selection.
   IntervalSelection({
     this.color,
-    int? dim,
+    Dim? dim,
     String? variable,
     Set<GestureType>? clear,
     Set<PointerDeviceKind>? devices,
-    int? zIndex,
+    int? layer,
   }) : super(
           dim: dim,
           variable: variable,
           clear: clear,
           devices: devices,
-          zIndex: zIndex,
+          layer: layer,
         );
 
   /// The color of the interval mark.
@@ -44,7 +45,7 @@ class IntervalSelection extends Selection {
 class IntervalSelector extends Selector {
   IntervalSelector(
     this.color,
-    int? dim,
+    Dim? dim,
     String? variable,
     List<Offset> points,
   ) : super(
@@ -74,7 +75,7 @@ class IntervalSelector extends Selector {
         return testRegion.contains(p);
       };
     } else {
-      if (dim == 1) {
+      if (dim == Dim.x) {
         test = (aes) {
           final p = aes.representPoint;
           return p.dx.between(start.dx, end.dx);

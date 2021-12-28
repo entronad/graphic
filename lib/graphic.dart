@@ -199,6 +199,7 @@ export 'src/common/styles.dart' show StrokeStyle;
 export 'src/common/label.dart'
     show Label, LabelStyle, renderLabel, getPaintPoint;
 export 'src/common/defaults.dart' show Defaults;
+export 'src/common/dim.dart' show Dim;
 
 export 'src/dataflow/tuple.dart' show Tuple, Aes;
 

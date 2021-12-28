@@ -1,3 +1,4 @@
+import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'dart:ui';
@@ -13,19 +14,19 @@ class PointSelection extends Selection {
     this.toggle,
     this.nearest,
     this.testRadius,
-    int? dim,
+    Dim? dim,
     String? variable,
     Set<GestureType>? on,
     Set<GestureType>? clear,
     Set<PointerDeviceKind>? devices,
-    int? zIndex,
+    int? layer,
   }) : super(
           dim: dim,
           variable: variable,
           on: on,
           clear: clear,
           devices: devices,
-          zIndex: zIndex,
+          layer: layer,
         );
 
   /// Whether triggered tuples should be toggled (inserted or removed from) or replace
@@ -62,7 +63,7 @@ class PointSelector extends Selector {
     this.toggle,
     this.nearest,
     this.testRadius,
-    int? dim,
+    Dim? dim,
     String? variable,
     List<Offset> points,
   )   : assert(toggle != true || variable == null),
@@ -102,7 +103,7 @@ class PointSelector extends Selector {
         }
       };
     } else {
-      final getProjection = dim == 1
+      final getProjection = dim == Dim.x
           ? (Offset offset) => offset.dx
           : (Offset offset) => offset.dy;
       updateNearest = (aes) {

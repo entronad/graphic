@@ -1,8 +1,9 @@
 import 'dart:ui';
 
+import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/util/collection.dart';
 import 'package:graphic/src/chart/view.dart';
-import 'package:graphic/src/common/layers.dart';
+import 'package:graphic/src/common/intrinsic_layers.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
@@ -20,15 +21,15 @@ class RegionAnnotation extends Annotation {
     this.variable,
     required this.values,
     this.color,
-    int? zIndex,
+    int? layer,
   }) : super(
-          zIndex: zIndex,
+          layer: layer,
         );
 
   /// The dimension where this region stands.
   ///
-  /// If null, a default 1 is set.
-  int? dim;
+  /// If null, a default [Dim.x] is set.
+  Dim? dim;
 
   /// The variable refered to for position.
   ///
@@ -55,10 +56,10 @@ class RegionAnnotation extends Annotation {
 
 /// The region annotation scene.
 class RegionAnnotScene extends AnnotScene {
-  RegionAnnotScene(int zIndex) : super(zIndex);
+  RegionAnnotScene(int layer) : super(layer);
 
   @override
-  int get layer => Layers.regionAnnot;
+  int get intrinsicLayer => IntrinsicLayers.regionAnnot;
 }
 
 /// The region annotation render operator.
@@ -71,7 +72,7 @@ class RegionAnnotRenderOp extends AnnotRenderOp<RegionAnnotScene> {
 
   @override
   void render() {
-    final dim = params['dim'] as int;
+    final dim = params['dim'] as Dim;
     final variable = params['variable'] as String;
     final values = params['values'] as List;
     final color = params['color'] as Color;
@@ -90,10 +91,10 @@ class RegionAnnotRenderOp extends AnnotRenderOp<RegionAnnotScene> {
           Path()
             ..addRect(Rect.fromPoints(
               coord.convert(
-                dim == 1 ? Offset(start, 0) : Offset(0, start),
+                dim == Dim.x ? Offset(start, 0) : Offset(0, start),
               ),
               coord.convert(
-                dim == 1 ? Offset(end, 1) : Offset(1, end),
+                dim == Dim.x ? Offset(end, 1) : Offset(1, end),
               ),
             )),
           Paint()..color = color,
@@ -101,7 +102,7 @@ class RegionAnnotRenderOp extends AnnotRenderOp<RegionAnnotScene> {
       ];
     } else {
       coord as PolarCoordConv;
-      if (coord.getCanvasDim(dim) == 1) {
+      if (coord.getCanvasDim(dim) == Dim.x) {
         scene.figures = [
           PathFigure(
             Paths.sector(

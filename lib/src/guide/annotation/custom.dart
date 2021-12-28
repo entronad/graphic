@@ -13,12 +13,12 @@ class CustomAnnotation extends FigureAnnotation {
     List<String>? variables,
     List? values,
     Offset Function(Size)? anchor,
-    int? zIndex,
+    int? layer,
   }) : super(
           variables: variables,
           values: values,
           anchor: anchor,
-          zIndex: zIndex,
+          layer: layer,
         );
 
   /// Indicates the custom render funcion of this annotation.

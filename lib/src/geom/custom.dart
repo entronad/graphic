@@ -29,7 +29,7 @@ class CustomElement extends GeomElement<CustomShape> {
     ShapeAttr<CustomShape>? shape,
     SizeAttr? size,
     List<Modifier>? modifiers,
-    int? zIndex,
+    int? layer,
     Map<String, Set<int>>? selected,
   }) : super(
           color: color,
@@ -40,7 +40,7 @@ class CustomElement extends GeomElement<CustomShape> {
           shape: shape,
           size: size,
           modifiers: modifiers,
-          zIndex: zIndex,
+          layer: layer,
           selected: selected,
         );
 }

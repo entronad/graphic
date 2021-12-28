@@ -69,7 +69,10 @@ class LineAreaPage extends StatelessWidget {
                       accessor: (TimeSeriesSales datum) => datum.sales,
                     ),
                   },
-                  elements: [LineElement(shape: ShapeAttr(value: BasicLineShape(dash: [5, 2])))],
+                  elements: [
+                    LineElement(
+                        shape: ShapeAttr(value: BasicLineShape(dash: [5, 2])))
+                  ],
                   axes: [
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
@@ -81,7 +84,7 @@ class LineAreaPage extends StatelessWidget {
                         GestureType.tapDown,
                         GestureType.longPressMoveUpdate
                       },
-                      dim: 1,
+                      dim: Dim.x,
                     )
                   },
                   tooltip: TooltipGuide(
@@ -151,7 +154,7 @@ class LineAreaPage extends StatelessWidget {
                         GestureType.tapDown,
                         GestureType.longPressMoveUpdate
                       },
-                      dim: 1,
+                      dim: Dim.x,
                     )
                   },
                   tooltip: TooltipGuide(
@@ -344,7 +347,7 @@ class LineAreaPage extends StatelessWidget {
                         GestureType.tapDown,
                         GestureType.longPressMoveUpdate
                       },
-                      dim: 1,
+                      dim: Dim.x,
                       variable: 'date',
                     )
                   },
@@ -410,7 +413,7 @@ class LineAreaPage extends StatelessWidget {
                         GestureType.tapDown,
                         GestureType.longPressMoveUpdate
                       },
-                      dim: 1,
+                      dim: Dim.x,
                       variable: 'index',
                     )
                   },

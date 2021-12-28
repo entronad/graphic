@@ -15,7 +15,7 @@ import 'size.dart';
 class View<D> extends Dataflow {
   View(
     Chart<D> spec,
-    this.size,
+    Size size,
     this.repaint,
   ) : graffiti = Graffiti(size) {
     parse<D>(spec, this);
@@ -25,14 +25,11 @@ class View<D> extends Dataflow {
     run();
   }
 
-  /// The size of the chart.
-  final Size size;
-
   /// Asks the chart state to trigger a repaint.
   final void Function() repaint;
 
   /// The rendering engine.
-  final graffiti;
+  final Graffiti graffiti;
 
   /// The gesture signal source.
   final gestureSource = SignalSource<GestureSignal>();
@@ -55,6 +52,7 @@ class View<D> extends Dataflow {
 
   /// Emits a resize signal.
   Future<void> resize(Size size) async {
+    // Only the graffiti and the sizeOp hold the size.
     graffiti.size = size;
     await sizeSouce.emit(ResizeSignal(size));
   }

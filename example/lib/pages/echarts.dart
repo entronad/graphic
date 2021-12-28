@@ -207,14 +207,14 @@ class EchartsPage extends StatelessWidget {
                       GestureType.hover,
                     }, devices: {
                       PointerDeviceKind.mouse
-                    }, variable: 'day', dim: 1),
+                    }, variable: 'day', dim: Dim.x),
                     'tooltipTouch': PointSelection(on: {
                       GestureType.scaleUpdate,
                       GestureType.tapDown,
                       GestureType.longPressMoveUpdate
                     }, devices: {
                       PointerDeviceKind.touch
-                    }, variable: 'day', dim: 1),
+                    }, variable: 'day', dim: Dim.x),
                   },
                   tooltip: TooltipGuide(
                     followPointer: [true, true],
@@ -226,7 +226,7 @@ class EchartsPage extends StatelessWidget {
                   ),
                   annotations: [
                     LineAnnotation(
-                      dim: 2,
+                      dim: Dim.y,
                       value: 11.14,
                       style: StrokeStyle(
                         color: const Color(0xff5470c6).withAlpha(100),
@@ -234,7 +234,7 @@ class EchartsPage extends StatelessWidget {
                       ),
                     ),
                     LineAnnotation(
-                      dim: 2,
+                      dim: Dim.y,
                       value: 1.57,
                       style: StrokeStyle(
                         color: const Color(0xff91cc75).withAlpha(100),
@@ -339,14 +339,14 @@ class EchartsPage extends StatelessWidget {
                       GestureType.hover,
                     }, devices: {
                       PointerDeviceKind.mouse
-                    }, dim: 1),
+                    }, dim: Dim.x),
                     'tooltipTouch': PointSelection(on: {
                       GestureType.scaleUpdate,
                       GestureType.tapDown,
                       GestureType.longPressMoveUpdate
                     }, devices: {
                       PointerDeviceKind.touch
-                    }, dim: 1),
+                    }, dim: Dim.x),
                   },
                   tooltip: TooltipGuide(
                     followPointer: [true, true],

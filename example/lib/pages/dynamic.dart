@@ -102,7 +102,7 @@ class _DynamicPageState extends State<DynamicPage> {
                         GestureType.hover,
                         GestureType.tap,
                       },
-                      dim: 1,
+                      dim: Dim.x,
                     )
                   },
                   tooltip: TooltipGuide(

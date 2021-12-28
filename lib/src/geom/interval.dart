@@ -35,7 +35,7 @@ class IntervalElement extends FunctionElement<IntervalShape> {
     ShapeAttr<IntervalShape>? shape,
     SizeAttr? size,
     List<Modifier>? modifiers,
-    int? zIndex,
+    int? layer,
     Map<String, Set<int>>? selected,
   }) : super(
           color: color,
@@ -46,7 +46,7 @@ class IntervalElement extends FunctionElement<IntervalShape> {
           shape: shape,
           size: size,
           modifiers: modifiers,
-          zIndex: zIndex,
+          layer: layer,
           selected: selected,
         );
 }

@@ -33,7 +33,7 @@ class PolygonElement extends PartitionElement<PolygonShape> {
     ShapeAttr<PolygonShape>? shape,
     SizeAttr? size,
     List<Modifier>? modifiers,
-    int? zIndex,
+    int? layer,
     Map<String, Set<int>>? selected,
   }) : super(
           color: color,
@@ -44,7 +44,7 @@ class PolygonElement extends PartitionElement<PolygonShape> {
           shape: shape,
           size: size,
           modifiers: modifiers,
-          zIndex: zIndex,
+          layer: layer,
           selected: selected,
         );
 }

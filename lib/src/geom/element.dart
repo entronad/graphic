@@ -10,7 +10,7 @@ import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
 import 'package:graphic/src/chart/view.dart';
-import 'package:graphic/src/common/layers.dart';
+import 'package:graphic/src/common/intrinsic_layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/operator.dart';
@@ -53,7 +53,7 @@ abstract class GeomElement<S extends Shape> {
     this.shape,
     this.size,
     this.modifiers,
-    this.zIndex,
+    this.layer,
     this.selected,
   })  : assert(isSingle([color, gradient], allowNone: true)),
         assert(selected == null || selected.keys.length == 1);
@@ -114,10 +114,10 @@ abstract class GeomElement<S extends Shape> {
   /// If set, a nesting in the algebra for grouping is requied. See details in [Varset].
   List<Modifier>? modifiers;
 
-  /// The z index of this element.
+  /// The layer of this element.
   ///
   /// If null, a default 0 is set.
-  int? zIndex;
+  int? layer;
 
   /// The selection name and selected tuple indexes triggered initially.
   ///
@@ -135,7 +135,7 @@ abstract class GeomElement<S extends Shape> {
       shape == other.shape &&
       size == other.size &&
       deepCollectionEquals(modifiers, other.modifiers) &&
-      zIndex == other.zIndex &&
+      layer == other.layer &&
       selected == other.selected;
 }
 
@@ -195,10 +195,10 @@ class GroupOp extends Operator<AesGroups> {
 ///
 /// All items of a geometory element are in a same scene, and their order is immutable.
 class ElementScene extends Scene {
-  ElementScene(int zIndex) : super(zIndex);
+  ElementScene(int layer) : super(layer);
 
   @override
-  int get layer => Layers.element;
+  int get intrinsicLayer => IntrinsicLayers.element;
 }
 
 /// The geometory element render operator.

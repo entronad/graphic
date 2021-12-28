@@ -60,7 +60,11 @@ abstract class Paths {
     Path? path,
   }) =>
       (path ?? Path())
-        ..addPath(dashPath(source, dashArray: CircularIntervalList(dashArray), dashOffset: dashOffset), Offset.zero);
+        ..addPath(
+            dashPath(source,
+                dashArray: CircularIntervalList(dashArray),
+                dashOffset: dashOffset),
+            Offset.zero);
 
   /// A circle path function.
   ///

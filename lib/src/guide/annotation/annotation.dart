@@ -6,22 +6,21 @@ import 'package:graphic/src/graffiti/scene.dart';
 abstract class Annotation {
   /// Creates an annotation.
   Annotation({
-    this.zIndex,
+    this.layer,
   });
 
-  /// The z index of this annotation.
+  /// The layer of this annotation.
   ///
   /// If null, a default 0 is set.
-  int? zIndex;
+  int? layer;
 
   @override
-  bool operator ==(Object other) =>
-      other is Annotation && zIndex == other.zIndex;
+  bool operator ==(Object other) => other is Annotation && layer == other.layer;
 }
 
 /// The annotation scene.
 abstract class AnnotScene extends Scene {
-  AnnotScene(int zIndex) : super(zIndex);
+  AnnotScene(int layer) : super(layer);
 }
 
 /// The annotation render operator.

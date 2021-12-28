@@ -1,5 +1,5 @@
-/// Internal layer orders, if the components has same z index.
-abstract class Layers {
+/// Intrinsic layer orders, if the components has same layer.
+abstract class IntrinsicLayers {
   static const grid = 0;
   static const regionAnnot = 1;
   static const axis = 2;

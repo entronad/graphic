@@ -27,7 +27,10 @@ class StrokeStyle {
   List<double>? dash;
 
   bool operator ==(Object other) =>
-      other is StrokeStyle && color == other.color && width == other.width && deepCollectionEquals(dash, other.dash);
+      other is StrokeStyle &&
+      color == other.color &&
+      width == other.width &&
+      deepCollectionEquals(dash, other.dash);
 
   /// Gets [Paint] object from this stroke style.
   ///
@@ -37,9 +40,8 @@ class StrokeStyle {
     ..style = PaintingStyle.stroke
     ..color = color
     ..strokeWidth = width;
-  
+
   /// Gets the dash line from a source path.
-  Path dashPath(Path path) => dash == null
-    ? path
-    : Paths.dashLine(source: path, dashArray: dash!);
+  Path dashPath(Path path) =>
+      dash == null ? path : Paths.dashLine(source: path, dashArray: dash!);
 }

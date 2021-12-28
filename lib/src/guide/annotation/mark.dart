@@ -16,12 +16,12 @@ class MarkAnnotation extends FigureAnnotation {
     List<String>? variables,
     List? values,
     Offset Function(Size)? anchor,
-    int? zIndex,
+    int? layer,
   }) : super(
           variables: variables,
           values: values,
           anchor: anchor,
-          zIndex: zIndex,
+          layer: layer,
         );
 
   /// The relative path definition of the mark.

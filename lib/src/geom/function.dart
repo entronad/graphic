@@ -25,7 +25,7 @@ abstract class FunctionElement<S extends FunctionShape> extends GeomElement<S> {
     ShapeAttr<S>? shape,
     SizeAttr? size,
     List<Modifier>? modifiers,
-    int? zIndex,
+    int? layer,
     Map<String, Set<int>>? selected,
   }) : super(
           color: color,
@@ -36,7 +36,7 @@ abstract class FunctionElement<S extends FunctionShape> extends GeomElement<S> {
           shape: shape,
           size: size,
           modifiers: modifiers,
-          zIndex: zIndex,
+          layer: layer,
           selected: selected,
         );
 }

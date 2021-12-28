@@ -4,8 +4,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/aes/aes.dart';
 import 'package:graphic/src/chart/view.dart';
+import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/common/label.dart';
-import 'package:graphic/src/common/layers.dart';
+import 'package:graphic/src/common/intrinsic_layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/operator.dart';
@@ -37,13 +38,13 @@ abstract class Selection {
     this.on,
     this.clear,
     this.devices,
-    this.zIndex,
+    this.layer,
   });
 
   /// Which diemsion of data values will be tested.
   ///
   /// If null, all dimensions will be tested.
-  int? dim;
+  Dim? dim;
 
   /// If set, all tuples sharing the same this variable value with the selected
   /// tuple, will also be selected.
@@ -72,10 +73,10 @@ abstract class Selection {
   /// If null, this selection will be triggered on all device kinds.
   Set<PointerDeviceKind>? devices;
 
-  /// The z index of the selector mark.
+  /// The layer of the selector mark.
   ///
   /// If null, a default 0 is set.
-  int? zIndex;
+  int? layer;
 
   @override
   bool operator ==(Object other) =>
@@ -85,7 +86,7 @@ abstract class Selection {
       deepCollectionEquals(on, other.on) &&
       deepCollectionEquals(clear, other.clear) &&
       deepCollectionEquals(devices, other.devices) &&
-      zIndex == other.zIndex;
+      layer == other.layer;
 }
 
 /// Updates an easthetic attribute value when the selection state of an element
@@ -115,7 +116,7 @@ abstract class Selector {
   );
 
   /// Which diemsion of data values will be tested.
-  final int? dim;
+  final Dim? dim;
 
   /// If set, all tuples sharing the same this variable value with the selected
   /// tuple, will also be selected.
@@ -194,8 +195,7 @@ class SelectorOp extends Operator<Map<String, Selector>?> {
               } else {
                 // Pans to move.
 
-                final delta = detail.focalPointDelta -
-                    gesture.preScaleDetail!.focalPointDelta;
+                final delta = detail.focalPointDelta;
                 points = [prePoints.first + delta, prePoints.last + delta];
               }
             } else {
@@ -254,15 +254,15 @@ class SelectorOp extends Operator<Map<String, Selector>?> {
 
 /// The selector scene.
 class SelectorScene extends Scene {
-  SelectorScene(int zIndex) : super(zIndex);
+  SelectorScene(int layer) : super(layer);
 
   @override
-  int get layer => Layers.selector;
+  int get intrinsicLayer => IntrinsicLayers.selector;
 }
 
 /// The selector render operator.
 ///
-/// Because the selectors may have different z indexes, each defined selection has
+/// Because the selectors may have different layeres, each defined selection has
 /// an own scene and render operator, but the untriggered will has no figures.
 class SelectorRenderOp extends Render<SelectorScene> {
   SelectorRenderOp(

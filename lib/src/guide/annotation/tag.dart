@@ -12,12 +12,12 @@ class TagAnnotation extends FigureAnnotation {
     List<String>? variables,
     List? values,
     Offset Function(Size)? anchor,
-    int? zIndex,
+    int? layer,
   }) : super(
           variables: variables,
           values: values,
           anchor: anchor,
-          zIndex: zIndex,
+          layer: layer,
         );
 
   /// The label definition of this tag.

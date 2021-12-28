@@ -55,7 +55,10 @@ class BasicLineShape extends LineShape {
 
   @override
   bool equalTo(Object other) =>
-      other is BasicLineShape && smooth == other.smooth && loop == other.loop && deepCollectionEquals(dash, other.dash);
+      other is BasicLineShape &&
+      smooth == other.smooth &&
+      loop == other.loop &&
+      deepCollectionEquals(dash, other.dash);
 
   @override
   List<Figure> renderGroup(

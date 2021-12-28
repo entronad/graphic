@@ -25,7 +25,7 @@ abstract class PartitionElement<S extends PartitionShape>
     ShapeAttr<S>? shape,
     SizeAttr? size,
     List<Modifier>? modifiers,
-    int? zIndex,
+    int? layer,
     Map<String, Set<int>>? selected,
   }) : super(
           color: color,
@@ -36,7 +36,7 @@ abstract class PartitionElement<S extends PartitionShape>
           shape: shape,
           size: size,
           modifiers: modifiers,
-          zIndex: zIndex,
+          layer: layer,
           selected: selected,
         );
 }

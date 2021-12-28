@@ -32,7 +32,7 @@ class PointElement extends FunctionElement<PointShape> {
     ShapeAttr<PointShape>? shape,
     SizeAttr? size,
     List<Modifier>? modifiers,
-    int? zIndex,
+    int? layer,
     Map<String, Set<int>>? selected,
   }) : super(
           color: color,
@@ -43,7 +43,7 @@ class PointElement extends FunctionElement<PointShape> {
           shape: shape,
           size: size,
           modifiers: modifiers,
-          zIndex: zIndex,
+          layer: layer,
           selected: selected,
         );
 }

@@ -3930,6 +3930,32 @@ zIndex 改名叫 layer，因为z以后可能指坐标轴，而且摆脱html的�
 
 ScaleUpdateDetails.delta 改成 focalPointDelta之后，那个从初始算起的bug也修复了。
 
+d3中称scale的输入输出范围（或备选）分别为 domain 和 range。我们不取这个术语，因为我们的输出范围是固定的，输入一般称为value，输出如需要称为 scaled value。range 取其更广泛的本意。
+
+tick的美化分成两步，一步是调整domain的端点称为nice，第二部是获取ticks
+
+是否需要nice range 在spec中用 niceRange 指定
+
+两种都通过conv的保护方法实现分别称为 calculateRange 和 calculateTicks 方法，自己在构造函数中调用。oridinal和linear的ticks完全基于 Wilkinson extended 方法（放在util中），oridinal只不过是在整数领域，就不搞另外的d3-linear和 r-pretty的可选项了。
+
+niceNumber的util方法尽量将niceNumber 理论封装起来
+
+onlyLoose 为 true的时候，严格确保最两端的tick在min、max之外，false的时候，有可能ticks在min、max之内了，以使得ticks为最接近min、max的nice number
+
+在 antv 0.3 版本中，nice的唯一作用就是作为onlyLoose，cat中强制不是nice。而且如果不是nice，会再次筛选去掉在min、max之外的 tick。
+
+在 antv 0.4 中，对max 和min 的nice独立出来了，onlyLoose与之无关了一直是默认的true。
+
+我们采用0.4的体系。
+
+nice number的计算还是统一用double吧，逃不出内部的计算，oridinal到时候大部分时候不需要算 nice number，默认全有。转int还是用round吧，toInt是直接去位
+
+Nice number 计算中的一些极小值、浮点数精度处理还是尽量用它的吧，可能有一些机关
+
+注意 loge10应当是ln10
+
+计算 nice number 时只有 0.0001和0.00001感觉有点奇怪，前者和antv不一样（可能是由于log10不一样引起的），但感觉也不能算错
+
 ## TODO
 
 整合errorlog，需处理：throw, assert, list.single，singleIntersection

@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/scale/auto_ticks/num.dart';
-import 'package:graphic/src/util/assert.dart';
+import 'package:graphic/src/scale/util/nice_numbers.dart';
+import 'package:graphic/src/scale/util/nice_range.dart';
 
 import 'continuous.dart';
 
@@ -12,8 +12,6 @@ import 'continuous.dart';
 class LinearScale extends ContinuousScale<num> {
   /// Creates a linear scale.
   LinearScale({
-    this.tickInterval,
-    this.nice,
     num? min,
     num? max,
     double? marginMin,
@@ -22,11 +20,8 @@ class LinearScale extends ContinuousScale<num> {
     String Function(num)? formatter,
     List<num>? ticks,
     int? tickCount,
-    int? maxTickCount,
-  })  : assert(isSingle([ticks, tickCount, maxTickCount, tickInterval],
-            allowNone: true)),
-        assert(isSingle([ticks, nice], allowNone: true)),
-        super(
+    bool? niceRange,
+  }) : super(
           min: min,
           max: max,
           marginMin: marginMin,
@@ -35,21 +30,11 @@ class LinearScale extends ContinuousScale<num> {
           formatter: formatter,
           ticks: ticks,
           tickCount: tickCount,
-          maxTickCount: maxTickCount,
+          niceRange: niceRange,
         );
 
-  /// The interval between two ticks.
-  num? tickInterval;
-
-  /// Weither to calculate the ticks to nice numbers.
-  bool? nice;
-
   @override
-  bool operator ==(Object other) =>
-      other is LinearScale &&
-      super == other &&
-      tickInterval == other.tickInterval &&
-      nice == other.nice;
+  bool operator ==(Object other) => other is LinearScale && super == other;
 }
 
 /// The linear scale converter.
@@ -82,53 +67,18 @@ class LinearScaleConv extends ContinuousScaleConv<num> {
       max = spec.max ?? maxTmp + marginMax;
     }
 
+    final tickCount = spec.tickCount ?? 5;
+
+    if (spec.niceRange == true) {
+      final niceRange = linearNiceRange(min!, max!, tickCount);
+      min = niceRange.first;
+      max = niceRange.last;
+    }
+
     if (spec.ticks != null) {
       ticks = spec.ticks!;
-      final firstTick = ticks.first;
-      final lastTick = ticks.last;
-      if (min! > firstTick) {
-        min = firstTick;
-      }
-      if (max! < lastTick) {
-        max = lastTick;
-      }
     } else {
-      List<num> calcTicks;
-      if (spec.tickCount != 0) {
-        calcTicks = numAutoTicks(
-          minValue: min!,
-          maxValue: max!,
-          minCount: spec.tickCount,
-          maxCount: spec.tickCount,
-          interval: spec.tickInterval,
-        );
-      } else {
-        calcTicks = numAutoTicks(
-          minValue: min!,
-          maxValue: max!,
-          minCount: 1,
-          maxCount: spec.maxTickCount,
-          interval: spec.tickInterval,
-        );
-      }
-      final nice = spec.nice ?? false;
-      if (nice) {
-        ticks = calcTicks;
-        min = calcTicks.first;
-        max = calcTicks.last;
-      } else {
-        ticks = [];
-        for (var tick in calcTicks) {
-          if (tick >= min! && tick <= max!) {
-            ticks.add(tick);
-          }
-        }
-
-        if (ticks.isEmpty) {
-          ticks.add(min!);
-          ticks.add(max!);
-        }
-      }
+      ticks = linearNiceNumbers(min!, max!, tickCount);
     }
 
     title = spec.title ?? variable;

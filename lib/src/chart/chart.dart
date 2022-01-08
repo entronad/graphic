@@ -50,19 +50,6 @@ class Chart<D> extends StatefulWidget {
   /// The data list to visualize.
   final List<D> data;
 
-  /// The behavior of data reevaluation when widget is updated.
-  ///
-  /// If null, new [data] will be compared with the old one, a [ChangeDataSignal]
-  /// will be emitted and the chart will be reevaluated only when they are not the
-  /// same instance.
-  ///
-  /// If true, a [ChangeDataSignal] will always be emitted and the chart will always
-  /// be reevaluated.
-  ///
-  /// If false, a [ChangeDataSignal] will never be emitted and the chart will never
-  /// be reevaluated.
-  final bool? changeData;
-
   /// Name identifiers and specifications of variables.
   ///
   /// The name identifier string will represent the variable in other specifications.
@@ -108,15 +95,28 @@ class Chart<D> extends StatefulWidget {
   /// The name identifier string will represent the selection in other specifications.
   final Map<String, Selection>? selections;
 
-  /// The behavior when widget is updated.
+  /// The behavior of chart rebuilding when widget is updated.
   ///
   /// If null, new [Chart] will be compared with the old one, and chart will rebuild
   /// only when specifications are changed.
   ///
-  /// If true, chart will always rebuild.
+  /// If true, chart will always rebuild. **So be cautious to set true**.
   ///
   /// If false, chart will never rebuild.
   final bool? rebuild;
+
+  /// The behavior of data reevaluation when widget is updated.
+  ///
+  /// If null, new [data] will be compared with the old one, a [ChangeDataSignal]
+  /// will be emitted and the chart will be reevaluated only when they are not the
+  /// same instance.
+  ///
+  /// If true, a [ChangeDataSignal] will always be emitted and the chart will always
+  /// be reevaluated. **So be cautious to set true**.
+  ///
+  /// If false, a [ChangeDataSignal] will never be emitted and the chart will never
+  /// be reevaluated.
+  final bool? changeData;
 
   /// Checks the equlity of two chart specifications.
   bool equalSpecTo(Object other) =>

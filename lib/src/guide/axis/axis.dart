@@ -338,7 +338,7 @@ class GridRenderOp extends Render<GridScene> {
       }
     } else {
       coord as PolarCoordConv;
-      if (canvasDim == Dim.y) {
+      if (canvasDim == Dim.x) {
         scene.figures = renderCircularGrid(
           ticks,
           coord,

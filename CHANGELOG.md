@@ -1,3 +1,11 @@
+## 0.8.0
+
+**2022-01-08**
+
+- Upgrade the tick nice numbers algorithm and API.
+- Optimize radical axis label alignment.
+- Forced data operator `equalValue` method to false so that modifying the data list instance can trigger evaluation: https://github.com/entronad/graphic/issues/43.
+
 ## 0.7.0
 
 **2021-12-28**

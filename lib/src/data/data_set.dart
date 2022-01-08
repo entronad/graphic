@@ -23,4 +23,10 @@ class ChangeDataSignal<D> extends Signal {
 /// The input data value operator.
 class DataOp<D> extends Value<List<D>> {
   DataOp(List<D> value) : super(value);
+
+  // In case the change data signal is triggerd by modifying the same data list
+  // instance and force Chart.changeData to true, the data operator value is always
+  // regarded different when updated.
+  @override
+  bool equalValue(List<D> a, List<D> b) => false;
 }

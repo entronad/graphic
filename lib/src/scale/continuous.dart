@@ -12,11 +12,11 @@ abstract class ContinuousScale<V> extends Scale<V, double> {
     this.max,
     this.marginMin,
     this.marginMax,
+    this.niceRange,
     String? title,
     String Function(V)? formatter,
     List<V>? ticks,
     int? tickCount,
-    int? maxTickCount,
   })  : assert(isSingle([min, marginMin], allowNone: true)),
         assert(isSingle([max, marginMax], allowNone: true)),
         super(
@@ -24,7 +24,6 @@ abstract class ContinuousScale<V> extends Scale<V, double> {
           formatter: formatter,
           ticks: ticks,
           tickCount: tickCount,
-          maxTickCount: maxTickCount,
         );
 
   /// Indicates the minimum input boundary directly.
@@ -42,6 +41,9 @@ abstract class ContinuousScale<V> extends Scale<V, double> {
 
   /// The margin ratio from maxinum input value to calculated [max].
   double? marginMax;
+
+  /// Whether to extend the [min] and [max] to get nice round values.
+  bool? niceRange;
 
   @override
   bool operator ==(Object other) =>

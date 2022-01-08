@@ -30,7 +30,7 @@ class _DynamicPageState extends State<DynamicPage> {
       {'genre': 'Other', 'sold': rdm.nextInt(300)},
     ];
 
-    timer = Timer.periodic(const Duration(seconds: 3), (_) {
+    timer = Timer.periodic(const Duration(seconds: 1), (_) {
       setState(() {
         data = [
           {'genre': 'Sports', 'sold': rdm.nextInt(300)},
@@ -72,7 +72,7 @@ class _DynamicPageState extends State<DynamicPage> {
               ),
               Container(
                 child: const Text(
-                  '- Change data in every 3 secondes.',
+                  '- Change data in every second.',
                 ),
                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                 alignment: Alignment.centerLeft,
@@ -82,6 +82,7 @@ class _DynamicPageState extends State<DynamicPage> {
                 width: 650,
                 height: 300,
                 child: Chart(
+                  rebuild: false,
                   data: data,
                   variables: {
                     'genre': Variable(

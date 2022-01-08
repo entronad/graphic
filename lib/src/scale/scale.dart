@@ -37,8 +37,7 @@ abstract class Scale<V, SV extends num> {
     this.formatter,
     this.ticks,
     this.tickCount,
-    this.maxTickCount,
-  }) : assert(isSingle([ticks, tickCount, maxTickCount], allowNone: true));
+  }) : assert(isSingle([ticks, tickCount], allowNone: true));
 
   /// Title of the variable this scale corresponds to.
   ///
@@ -55,21 +54,21 @@ abstract class Scale<V, SV extends num> {
   /// Indicates the axis ticks directly.
   List<V>? ticks;
 
-  /// The exact count of axis ticks.
-  int? tickCount;
-
-  /// The maximum count of axis ticks.
+  /// The desired count of axis ticks.
   ///
-  /// If set, the exact count will be calculated automaticly.
-  int? maxTickCount;
+  /// The final tick count, calculated with nice numbers algorithm, may be more
+  /// or less than this setting.
+  ///
+  /// If null, a default 5 will be set for [ContinuousScale] and [DiscreteScale]
+  /// will show all ticks.
+  int? tickCount;
 
   @override
   bool operator ==(Object other) =>
       other is Scale<V, SV> &&
       title == other.title &&
       deepCollectionEquals(ticks, other.ticks) &&
-      tickCount == other.tickCount &&
-      maxTickCount == other.maxTickCount;
+      tickCount == other.tickCount;
 }
 
 /// The scale converter.

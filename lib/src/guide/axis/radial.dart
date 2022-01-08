@@ -67,7 +67,14 @@ List<Figure>? renderRadialAxis(
     ));
   }
 
-  for (var tick in ticks) {
+  // The align of all labels should be consist, so loop twice.
+
+  final labelAnchors = <int, Offset>{};
+  var featureOffset = Offset.zero;
+
+  for (var i = 0; i < ticks.length; i++) {
+    final tick = ticks[i];
+
     // Polar coord dose not allow tick lines.
     assert(tick.tickLine == null);
 
@@ -76,13 +83,22 @@ List<Figure>? renderRadialAxis(
       if (tick.label != null) {
         final labelAnchor = coord.polarToOffset(angle, r);
         final anchorOffset = labelAnchor - coord.center;
-        rst.add(renderLabel(
-          Label(tick.text, tick.label!),
-          labelAnchor,
-          radialLabelAlign(anchorOffset) * flipSign,
-        ));
+        labelAnchors[i] = labelAnchor;
+        if (anchorOffset != Offset.zero) {
+          featureOffset = anchorOffset;
+        }
       }
     }
+  }
+
+  final labelAlign = radialLabelAlign(featureOffset) * flipSign;
+  for (var index in labelAnchors.keys) {
+    final tick = ticks[index];
+    rst.add(renderLabel(
+      Label(tick.text, tick.label!),
+      labelAnchors[index]!,
+      labelAlign,
+    ));
   }
 
   return rst.isEmpty ? null : rst;

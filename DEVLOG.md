@@ -3936,7 +3936,7 @@ tick的美化分成两步，一步是调整domain的端点称为nice，第二部
 
 是否需要nice range 在spec中用 niceRange 指定
 
-两种都通过conv的保护方法实现分别称为 calculateRange 和 calculateTicks 方法，自己在构造函数中调用。oridinal和linear的ticks完全基于 Wilkinson extended 方法（放在util中），oridinal只不过是在整数领域，就不搞另外的d3-linear和 r-pretty的可选项了。
+两种都通过conv的保护方法实现分别称为 calculateNiceRange (仅continuous需要）和 calculateTicks 方法，自己在构造函数中调用。oridinal和linear的ticks完全基于 Wilkinson extended 方法（放在util中），oridinal只不过是在整数领域，就不搞另外的d3-linear和 r-pretty的可选项了。
 
 niceNumber的util方法尽量将niceNumber 理论封装起来
 
@@ -3955,6 +3955,32 @@ Nice number 计算中的一些极小值、浮点数精度处理还是尽量用�
 注意 loge10应当是ln10
 
 计算 nice number 时只有 0.0001和0.00001感觉有点奇怪，前者和antv不一样（可能是由于log10不一样引起的），但感觉也不能算错
+
+接口设计只保留 tickCount，为近似，linear中增加个niceRange
+
+经过深思熟虑，先不加 tickInterval，我们认为对ticks的设定仅依据对图表整体的设计
+
+Calculate range 和 tick 就不单独拉方法了，因为参数和返回太复杂，过程直接放在构造函数中。
+
+对于ticks的直接设置，存在它与values或range不一致的情况。对于continuous，与range不一致是允许的。对于discrete，会在 convert中报错，这同样存在于数据与values不一致的情况。
+
+TimeScale先用最简单的方式计算或指定，不算nice number，也不要有nice range
+
+由于设置了 onlyLoose，ticks的范围会永远会比max和min大。
+
+单单ticks的设置不会影响range。nice range 不仅仅与ticks有关，它直接影响range
+
+Wilkinson extend的输入还是用num吧，它更通用一些
+
+Ordinal 好像根本就不需要 nice number。先通过 ceil算出每份的数量，再通过模位移。
+
+目前来看 ticks 更合理了，避免了之前不均匀的问题。
+
+同一根 radius axis 上的align应当一样
+
+value operator 虽然不会evaluate，但是它在被dataflow进行update的时候，也会判断一下equalvalues，只有false才会touch它的下级，因此作为dataflow的启动点的他们，也要关注一下他的equalvalues，比如data就不能用实例相等。
+
+那么value operator的equalValues是要统一设为false还是一事一议呢。还是一事一议吧，因为equalValues应该是一个仅与op负载值类型有关的本质属性，而与op的角色无关，data需要改是因为list是集合，而不是因为它是value
 
 ## TODO
 

@@ -314,7 +314,7 @@ class EchartsPage extends StatelessWidget {
                   variables: {
                     'time': Variable(
                       accessor: (List datum) => datum[0] as String,
-                      scale: OrdinalScale(inflate: true, maxTickCount: 6),
+                      scale: OrdinalScale(inflate: true, tickCount: 6),
                     ),
                     'value': Variable(
                       accessor: (List datum) => datum[1] as num,

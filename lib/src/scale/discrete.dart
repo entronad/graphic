@@ -1,6 +1,5 @@
 import 'package:graphic/src/util/collection.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/scale/auto_ticks/cat.dart';
 import 'package:graphic/src/util/assert.dart';
 
 import 'scale.dart';
@@ -18,14 +17,12 @@ abstract class DiscreteScale<V> extends Scale<V, int> {
     String Function(V)? formatter,
     List<V>? ticks,
     int? tickCount,
-    int? maxTickCount,
   })  : assert(isSingle([inflate, align], allowNone: true)),
         super(
           title: title,
           formatter: formatter,
           ticks: ticks,
           tickCount: tickCount,
-          maxTickCount: maxTickCount,
         );
 
   /// The candidate values.
@@ -74,12 +71,19 @@ abstract class DiscreteScaleConv<V, SP extends DiscreteScale<V>>
 
     if (spec.ticks != null) {
       ticks = spec.ticks!;
+    } else if (spec.tickCount == null || spec.tickCount! >= values.length) {
+      ticks = values;
+    } else if (spec.tickCount! <= 0) {
+      ticks = [];
     } else {
-      ticks = catAutoTicks<V>(
-        categories: values,
-        isRounding: spec.tickCount != null,
-        maxCount: spec.maxTickCount ?? spec.tickCount,
-      );
+      final step = (values.length / spec.tickCount!).ceil();
+      final tail = (values.length - 1) % step;
+      int index = tail ~/ 2;
+      ticks = [];
+      while (index < values.length) {
+        ticks.add(values[index]);
+        index += step;
+      }
     }
 
     title = spec.title ?? variable;

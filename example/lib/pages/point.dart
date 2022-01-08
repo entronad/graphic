@@ -211,6 +211,7 @@ class PointPage extends StatelessWidget {
                   variables: {
                     '0': Variable(
                       accessor: (List datum) => datum[0] as num,
+                      scale: LinearScale(min: 0, max: 80000, tickCount: 8),
                     ),
                     '1': Variable(
                       accessor: (List datum) => datum[1] as num,
@@ -239,8 +240,22 @@ class PointPage extends StatelessWidget {
                     )
                   ],
                   axes: [
-                    Defaults.circularAxis,
-                    Defaults.radialAxis,
+                    Defaults.circularAxis
+                      ..labelMapper = (_, index, total) {
+                        if (index == total - 1) {
+                          return null;
+                        }
+                        return LabelStyle(Defaults.textStyle);
+                      }
+                      ..label = null,
+                    Defaults.radialAxis
+                      ..labelMapper = (_, index, total) {
+                        if (index == total - 1) {
+                          return null;
+                        }
+                        return LabelStyle(Defaults.textStyle);
+                      }
+                      ..label = null,
                   ],
                   coord: PolarCoord(),
                   selections: {'choose': PointSelection(toggle: true)},

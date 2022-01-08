@@ -96,6 +96,8 @@ abstract class Operator<V> {
   V evaluate();
 
   /// Checks whether the new [value]s is modifed to the old one.
+  ///
+  /// This method should be determind by the trait of [V], not the role of this operator.
   @protected
   bool equalValue(V a, V b) => a == b;
 

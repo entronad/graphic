@@ -14,7 +14,6 @@ class OrdinalScale extends DiscreteScale<String> {
     String Function(String)? formatter,
     List<String>? ticks,
     int? tickCount,
-    int? maxTickCount,
   }) : super(
           values: values,
           inflate: inflate,
@@ -23,8 +22,10 @@ class OrdinalScale extends DiscreteScale<String> {
           formatter: formatter,
           ticks: ticks,
           tickCount: tickCount,
-          maxTickCount: maxTickCount,
         );
+
+  @override
+  bool operator ==(Object other) => other is OrdinalScale && super == other;
 }
 
 /// The ordinal scale converter.

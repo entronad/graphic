@@ -5,6 +5,8 @@ import 'continuous.dart';
 /// The specification of a time scale.
 ///
 /// It converts [DateTime] to [double]s normalized to `[0, 1]` linearly.
+///
+/// This time scale will not apply nice numbers and range.
 class TimeScale extends ContinuousScale<DateTime> {
   TimeScale({
     DateTime? min,
@@ -15,7 +17,6 @@ class TimeScale extends ContinuousScale<DateTime> {
     String Function(DateTime)? formatter,
     List<DateTime>? ticks,
     int? tickCount,
-    int? maxTickCount,
   }) : super(
           min: min,
           max: max,
@@ -25,8 +26,10 @@ class TimeScale extends ContinuousScale<DateTime> {
           formatter: formatter,
           ticks: ticks,
           tickCount: tickCount,
-          maxTickCount: maxTickCount,
         );
+
+  @override
+  bool operator ==(Object other) => other is TimeScale && super == other;
 }
 
 /// Picks the later one of two [DateTime]s.
@@ -68,7 +71,7 @@ class TimeScaleConv extends ContinuousScaleConv<DateTime> {
     } else {
       final minMicro = min!.microsecondsSinceEpoch;
       final maxMicro = max!.microsecondsSinceEpoch;
-      final count = spec.tickCount ?? spec.maxTickCount ?? 5;
+      final count = spec.tickCount ?? 5;
       final step = (maxMicro - minMicro) ~/ (count - 1);
 
       ticks = [];

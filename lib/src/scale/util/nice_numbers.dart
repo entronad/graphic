@@ -1,51 +1,37 @@
 import 'dart:math' as dart_math;
 
-List<double> doubleNiceNumbers(
-  double min,
-  double max,
+List<num> linearNiceNumbers(
+  num min,
+  num max,
   int n,
-) => _wilkinsonExtended(
-  min,
-  max,
-  n,
-  true,
-  [1, 5, 2, 2.5, 4, 3],
-  [0.25, 0.2, 0.5, 0.05],
-);
-
-List<int> intNiceNumber(
-  int min,
-  int max,
-  int n,
-) => _wilkinsonExtended(
-  min.toDouble(),
-  max.toDouble(),
-  n,
-  true,
-  [1, 2, 5, 3, 4, 7, 6, 8, 9],
-  [0.25, 0.2, 0.5, 0.05],
-).map((tick) => tick.round()).toList();
+) =>
+    _wilkinsonExtended(
+      min,
+      max,
+      n,
+      true,
+      [1, 5, 2, 2.5, 4, 3],
+      [0.25, 0.2, 0.5, 0.05],
+    );
 
 const _maxLoop = 10000;
 
 const _esp = 2.220446049250313e-16 * 100;
 
-double _prettyNumber(double n) =>
-  n.abs() < 1e-15 ? n : double.parse(n.toStringAsFixed(15));
+num _prettyNumber(num n) =>
+    n.abs() < 1e-15 ? n : double.parse(n.toStringAsFixed(15));
 
-double _mod(double n, double m) =>
-  ((n % m) + m) % m;
+num _mod(num n, num m) => ((n % m) + m) % m;
 
-double _round(double n) =>
-  (n * 1e12).round() / 1e12;
+num _round(num n) => (n * 1e12).round() / 1e12;
 
-double _simplicity(
-  double q,
-  List<double> candidates,
+num _simplicity(
+  num q,
+  List<num> candidates,
   int j,
-  double lMin,
-  double lMax,
-  double lStep,
+  num lMin,
+  num lMax,
+  num lStep,
 ) {
   final n = candidates.length;
   final i = candidates.indexOf(q);
@@ -57,9 +43,9 @@ double _simplicity(
   return 1 - i / (n - 1) - j + v;
 }
 
-double _simplicityMax(
-  double q,
-  List<double> candidates,
+num _simplicityMax(
+  num q,
+  List<num> candidates,
   int j,
 ) {
   final n = candidates.length;
@@ -68,20 +54,20 @@ double _simplicityMax(
   return 1 - i / (n - 1) - j + v;
 }
 
-double _density(
+num _density(
   int k,
   int m,
-  double min,
-  double max,
-  double lMin,
-  double lMax,
+  num min,
+  num max,
+  num lMin,
+  num lMax,
 ) {
   final r = (k - 1) / (lMax - lMin);
   final rt = (m - 1) / (dart_math.max(lMax, max) - dart_math.min(min, lMin));
   return 2 - dart_math.max(r / rt, rt / r);
 }
 
-double _densityMax(
+num _densityMax(
   int k,
   int m,
 ) {
@@ -91,20 +77,22 @@ double _densityMax(
   return 1;
 }
 
-double _coverage(
-  double min,
-  double max,
-  double lMin,
-  double lMax,
+num _coverage(
+  num min,
+  num max,
+  num lMin,
+  num lMax,
 ) {
   final range = max - min;
-  return 1 - (0.5 * (dart_math.pow(max - lMax, 2) + dart_math.pow(min - lMin, 2))) / dart_math.pow(0.1 * range, 2);
+  return 1 -
+      (0.5 * (dart_math.pow(max - lMax, 2) + dart_math.pow(min - lMin, 2))) /
+          dart_math.pow(0.1 * range, 2);
 }
 
-double _coverageMax(
-  double min,
-  double max,
-  double span,
+num _coverageMax(
+  num min,
+  num max,
+  num span,
 ) {
   final range = max - min;
   if (span > range) {
@@ -114,21 +102,17 @@ double _coverageMax(
   return 1;
 }
 
-double _legibility() => 1;
+num _legibility() => 1;
 
-List<double> _wilkinsonExtended(
-  double min,
-  double max,
+List<num> _wilkinsonExtended(
+  num min,
+  num max,
   int n,
   bool onlyLoose,
-  List<double> candidates,
+  List<num> candidates,
   List<double> w,
 ) {
-  if (
-    min.isNaN ||
-    max.isNaN ||
-    n <= 0
-  ) {
+  if (min.isNaN || max.isNaN || n <= 0) {
     return [];
   }
 
@@ -136,10 +120,10 @@ List<double> _wilkinsonExtended(
     return [min];
   }
 
-  double bestScore = -2;
-  double bestLMin = 0;
-  double bestLMax = 0;
-  double bestLStep = 0;
+  num bestScore = -2;
+  num bestLMin = 0;
+  num bestLMax = 0;
+  num bestLStep = 0;
 
   int j = 1;
   while (j < _maxLoop) {
@@ -184,7 +168,8 @@ List<double> _wilkinsonExtended(
               final l = _legibility();
 
               final score = w[0] * s + w[1] * c + w[2] * g + w[3] * l;
-              if (score > bestScore && (!onlyLoose || (lMin <= min && lMax >= max))) {
+              if (score > bestScore &&
+                  (!onlyLoose || (lMin <= min && lMax >= max))) {
                 bestLMin = lMin;
                 bestLMax = lMax;
                 bestLStep = lStep;
@@ -205,7 +190,7 @@ List<double> _wilkinsonExtended(
   final lStep = _prettyNumber(bestLStep);
 
   final tickCount = _round((lMax - lMin) / lStep).floor() + 1;
-  final ticks = List<double>.filled(tickCount, 0);
+  final ticks = List<num>.filled(tickCount, 0);
 
   ticks[0] = _prettyNumber(lMin);
   for (var i = 1; i < tickCount; i++) {

@@ -91,7 +91,7 @@ class EchartsPage extends StatelessWidget {
                             ],
                           ),
                         ],
-                        onSelection: {
+                        updaters: {
                           'groupMouse': {
                             false: (gradient) => LinearGradient(
                                   begin: const Alignment(0, 0),

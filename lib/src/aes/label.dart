@@ -11,9 +11,9 @@ class LabelAttr extends Attr<Label> {
   /// Creates a label attribute.
   LabelAttr({
     required Label Function(Tuple) encoder,
-    Map<String, Map<bool, SelectionUpdater<Label>>>? onSelection,
+    Map<String, Map<bool, SelectionUpdater<Label>>>? updaters,
   }) : super(
           encoder: encoder,
-          onSelection: onSelection,
+          updaters: updaters,
         );
 }

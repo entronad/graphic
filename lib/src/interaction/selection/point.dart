@@ -124,7 +124,7 @@ class PointSelector extends Selector {
 
     if (!nearest) {
       if (nearestDistance > coord.invertDistance(testRadius)) {
-        return {};
+        return null;
       }
     }
 
@@ -138,16 +138,19 @@ class PointSelector extends Selector {
           rst.add(i);
         }
       }
-      return rst;
+      return rst.isEmpty ? null : rst;
     }
+
+    Set<int> rst;
     if (toggle && preSelects != null) {
       if (preSelects.contains(nearestIndex)) {
-        return {...preSelects}..remove(nearestIndex);
+        rst = {...preSelects}..remove(nearestIndex);
       } else {
-        return {...preSelects}..add(nearestIndex);
+        rst = {...preSelects}..add(nearestIndex);
       }
     } else {
-      return {nearestIndex};
+      rst = {nearestIndex};
     }
+    return rst.isEmpty ? null : rst;
   }
 }

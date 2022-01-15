@@ -21,7 +21,7 @@ abstract class Attr<AV> {
   Attr({
     this.value,
     this.encoder,
-    this.onSelection,
+    this.updaters,
   });
 
   /// Indicates a attribute value for all tuples directly.
@@ -30,7 +30,7 @@ abstract class Attr<AV> {
   /// Indicates how to get attribute form a tuple directly.
   AV Function(Tuple)? encoder;
 
-  /// Attribute updates when a selection occurs.
+  /// Attribute updaters when a selection occurs.
   ///
   /// The keys of outer map are names of selections defined, and Corresponding definitions
   /// will only react to their on selections.
@@ -41,7 +41,7 @@ abstract class Attr<AV> {
   ///
   /// Not that this definition is only meaningfull when a selection orrurs. If there
   /// is no current selection, tuples are neither selected or unselected.
-  Map<String, Map<bool, SelectionUpdater<AV>>>? onSelection;
+  Map<String, Map<bool, SelectionUpdater<AV>>>? updaters;
 
   @override
   bool operator ==(Object other) => other is Attr<AV> && value == other.value;

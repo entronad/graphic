@@ -55,6 +55,7 @@ abstract class GeomElement<S extends Shape> {
     this.modifiers,
     this.layer,
     this.selected,
+    this.onSelection,
   })  : assert(isSingle([color, gradient], allowNone: true)),
         assert(selected == null || selected.keys.length == 1);
 
@@ -121,8 +122,11 @@ abstract class GeomElement<S extends Shape> {
 
   /// The selection name and selected tuple indexes triggered initially.
   ///
-  /// The map must be single entried.
+  /// This initial selection will not trigger [onSelection].
   Map<String, Set<int>>? selected;
+
+  /// Invoked when a selection occurs.
+  final void Function(Map<String, Set<int>>)? onSelection;
 
   @override
   bool operator ==(Object other) =>

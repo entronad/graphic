@@ -3982,6 +3982,20 @@ value operator 虽然不会evaluate，但是它在被dataflow进行update的时�
 
 那么value operator的equalValues是要统一设为false还是一事一议呢。还是一事一议吧，因为equalValues应该是一个仅与op负载值类型有关的本质属性，而与op的角色无关，data需要改是因为list是集合，而不是因为它是value
 
+关于内外通信。对外就增加 onSignal, onSelection （onSelection返回键与index的map）。关于向内要再想想，暴露什么，现在想的signal和selection都要可以发射。暴露又涉及到生命周期。最好什么周期和对内通信统一构成onXXX系列。再想想，观察观察需求。
+
+生命周期的理念是前馈式的，以signal、selection等的“因”为节点，再加上创建 onCreate，其中的创建也是指的chart stateWidget 的创建。还是弄个controller吧，不弄感觉太零散，因为函数不方便作为变量传递和保存。
+
+原来 XXUpdater 类型的都叫 onXX，其实应该改名叫updator，这样真正的回调叫 onXX
+
+Selection 只有当至少有一个被选中时才称为被触发。
+
+对于 emitSelection这种情况，应当直接update值，需要放开 dataflow.update的对外，run 和update不要合并，因为有时候要精细控制改了多个后再run。由于对selectOp直接修改了，需要手动执行以下onSelect方法（onSelect 方法也确实最适合放在evaluate方法中）
+
+要能直接update op，前提是外部能记录这个op
+
+
+
 ## TODO
 
 整合errorlog，需处理：throw, assert, list.single，singleIntersection

@@ -96,6 +96,12 @@ void parse<D>(Chart<D> spec, View<D> view) {
 
   // Signal.
 
+  if (spec.onSignal != null) {
+    view.gestureSource.on(spec.onSignal!);
+    view.sizeSouce.on(spec.onSignal!);
+    view.dataSouce.on(spec.onSignal!);
+  }
+
   final signal = view.add(SignalOp());
 
   view
@@ -130,9 +136,9 @@ void parse<D>(Chart<D> spec, View<D> view) {
     Operator<List<double>> horizontalRange = view.add(Value<List<double>>(
       coordSpec.horizontalRange ?? [0, 1],
     ));
-    if (coordSpec.onHorizontalRangeSignal != null) {
+    if (coordSpec.horizontalRangeUpdater != null) {
       horizontalRange = view.add(SignalUpdateOp({
-        'update': coordSpec.onHorizontalRangeSignal,
+        'update': coordSpec.horizontalRangeUpdater,
         'initialValue': horizontalRange,
         'signal': signal,
       }));
@@ -140,9 +146,9 @@ void parse<D>(Chart<D> spec, View<D> view) {
     Operator<List<double>> verticalRange = view.add(Value<List<double>>(
       coordSpec.verticalRange ?? [0, 1],
     ));
-    if (coordSpec.onVerticalRangeSignal != null) {
+    if (coordSpec.verticalRangeUpdater != null) {
       verticalRange = view.add(SignalUpdateOp({
-        'update': coordSpec.onVerticalRangeSignal,
+        'update': coordSpec.verticalRangeUpdater,
         'initialValue': verticalRange,
         'signal': signal,
       }));
@@ -161,9 +167,9 @@ void parse<D>(Chart<D> spec, View<D> view) {
     Operator<List<double>> angleRange = view.add(Value<List<double>>(
       coordSpec.angleRange ?? [0, 1],
     ));
-    if (coordSpec.onAngleRangeSignal != null) {
+    if (coordSpec.angleRangeUpdater != null) {
       angleRange = view.add(SignalUpdateOp({
-        'update': coordSpec.onAngleRangeSignal,
+        'update': coordSpec.angleRangeUpdater,
         'initialValue': angleRange,
         'signal': signal,
       }));
@@ -171,9 +177,9 @@ void parse<D>(Chart<D> spec, View<D> view) {
     Operator<List<double>> radiusRange = view.add(Value<List<double>>(
       coordSpec.radiusRange ?? [0, 1],
     ));
-    if (coordSpec.onRadiusRangeSignal != null) {
+    if (coordSpec.radiusRangeUpdater != null) {
       radiusRange = view.add(SignalUpdateOp({
-        'update': coordSpec.onRadiusRangeSignal,
+        'update': coordSpec.radiusRangeUpdater,
         'initialValue': radiusRange,
         'signal': signal,
       }));
@@ -319,6 +325,7 @@ void parse<D>(Chart<D> spec, View<D> view) {
 
   // Element.
 
+  // For all elements, they either all have or all have not select operator.
   final selectsList = <SelectOp>[];
   final groupsList = <Operator<AesGroups>>[];
   // First term of the form of the first element, in order to get first variable
@@ -447,15 +454,16 @@ void parse<D>(Chart<D> spec, View<D> view) {
         'groups': groups,
         'tuples': tuples,
         'coord': coord,
+        'onSelection': elementSpec.onSelection,
       }, elementSpec.selected));
       selectsList.add(selects);
 
-      final shapeUpdaters = elementSpec.shape?.onSelection;
-      final colorUpdaters = elementSpec.color?.onSelection;
-      final gradientUpdaters = elementSpec.gradient?.onSelection;
-      final elevationUpdaters = elementSpec.elevation?.onSelection;
-      final labelUpdaters = elementSpec.label?.onSelection;
-      final sizeUpdaters = elementSpec.size?.onSelection;
+      final shapeUpdaters = elementSpec.shape?.updaters;
+      final colorUpdaters = elementSpec.color?.updaters;
+      final gradientUpdaters = elementSpec.gradient?.updaters;
+      final elevationUpdaters = elementSpec.elevation?.updaters;
+      final labelUpdaters = elementSpec.label?.updaters;
+      final sizeUpdaters = elementSpec.size?.updaters;
 
       final updaterNames = <String>{};
       if (shapeUpdaters != null) {
@@ -490,6 +498,7 @@ void parse<D>(Chart<D> spec, View<D> view) {
       }));
       groups = update;
     }
+    view.onSelections.add(elementSpec.onSelection);
 
     groupsList.add(groups);
 

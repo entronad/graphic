@@ -98,7 +98,7 @@ class IntervalSelector extends Selector {
     }
 
     if (rst.isEmpty) {
-      return rst;
+      return null;
     }
 
     if (variable != null) {
@@ -113,7 +113,7 @@ class IntervalSelector extends Selector {
       }
     }
 
-    return rst;
+    return rst.isEmpty ? null : rst;
   }
 }
 

@@ -17,9 +17,9 @@ class RectCoord extends Coord {
   /// Creates a rectangle coordinate.
   RectCoord({
     this.horizontalRange,
-    this.onHorizontalRangeSignal,
+    this.horizontalRangeUpdater,
     this.verticalRange,
-    this.onVerticalRangeSignal,
+    this.verticalRangeUpdater,
     int? dimCount,
     double? dimFill,
     bool? transposed,
@@ -40,8 +40,8 @@ class RectCoord extends Coord {
   /// If null, a default `[0, 1]` is set, meaning the same with coordinate region width.
   List<double>? horizontalRange;
 
-  /// Signal update of [horizontalRange].
-  SignalUpdater<List<double>>? onHorizontalRangeSignal;
+  /// Signal updater of [horizontalRange].
+  SignalUpdater<List<double>>? horizontalRangeUpdater;
 
   /// Range ratio of coordinate height to coordinate region height.
   ///
@@ -52,8 +52,8 @@ class RectCoord extends Coord {
   /// If null, a default `[0, 1]` is set, meaning the same with coordinate region height.
   List<double>? verticalRange;
 
-  /// Signal update of [verticalRange].
-  SignalUpdater<List<double>>? onVerticalRangeSignal;
+  /// Signal updater of [verticalRange].
+  SignalUpdater<List<double>>? verticalRangeUpdater;
 
   @override
   bool operator ==(Object other) =>

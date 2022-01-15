@@ -66,11 +66,11 @@ class RectangleIntervalPage extends StatelessWidget {
                     IntervalElement(
                       label: LabelAttr(
                           encoder: (tuple) => Label(tuple['sold'].toString())),
-                      elevation: ElevationAttr(value: 0, onSelection: {
+                      elevation: ElevationAttr(value: 0, updaters: {
                         'tap': {true: (_) => 5}
                       }),
                       color:
-                          ColorAttr(value: Defaults.primaryColor, onSelection: {
+                          ColorAttr(value: Defaults.primaryColor, updaters: {
                         'tap': {false: (color) => color.withAlpha(100)}
                       }),
                     )
@@ -127,7 +127,7 @@ class RectangleIntervalPage extends StatelessWidget {
                             0.5,
                             1
                           ]),
-                          onSelection: {
+                          updaters: {
                             'tap': {
                               true: (_) => const LinearGradient(colors: [
                                     Color(0xee83bff6),

@@ -22,8 +22,9 @@ import 'point.dart';
 /// The specification of a selection.
 ///
 /// A selection is a data query driven by [Gesture]s. When a selection is triggered,
-/// data tuples become either selected or unselected states, thus may causing their
-/// aesthetic attributes change if [Attr.onSelection] is defined.
+/// data tuples become either selected or unselected states(At least one tuple is
+/// selected), thus may causing their aesthetic attributes change if [Attr.onSelection]
+/// is defined.
 ///
 /// See also:
 ///
@@ -304,6 +305,7 @@ class SelectOp extends Operator<Map<String, Set<int>>?> {
     final groups = params['groups'] as AesGroups;
     final tuples = params['tuples'] as List<Tuple>;
     final coord = params['coord'] as CoordConv;
+    final onSelection = params['onSelection'] as void Function(Map<String, Set<int>>)?;
 
     if (selectors == null) {
       return null;
@@ -318,8 +320,12 @@ class SelectOp extends Operator<Map<String, Set<int>>?> {
         coord,
       );
       if (indexes != null) {
+        // The Selector.select method has ensured indexes are not empty.
         rst[name] = indexes;
       }
+    }
+    if (onSelection != null && rst.isNotEmpty) {
+      onSelection(rst);
     }
     return rst.isEmpty ? null : rst;
   }
@@ -370,6 +376,9 @@ class SelectionUpdateOp extends Operator<AesGroups> {
     }
 
     final indexes = selects![name]!;
+    // Internal selected indexes will never be empty, this is for user set or emitted
+    // selects.
+    assert(indexes.isNotEmpty);
 
     final shapeUpdater = shapeUpdaters?[name];
     final colorUpdater = colorUpdaters?[name];

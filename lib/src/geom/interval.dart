@@ -37,6 +37,7 @@ class IntervalElement extends FunctionElement<IntervalShape> {
     List<Modifier>? modifiers,
     int? layer,
     Map<String, Set<int>>? selected,
+    void Function(Map<String, Set<int>>)? onSelection,
   }) : super(
           color: color,
           elevation: elevation,
@@ -48,6 +49,7 @@ class IntervalElement extends FunctionElement<IntervalShape> {
           modifiers: modifiers,
           layer: layer,
           selected: selected,
+          onSelection: onSelection,
         );
 }
 

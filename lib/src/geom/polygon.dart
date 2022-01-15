@@ -35,6 +35,7 @@ class PolygonElement extends PartitionElement<PolygonShape> {
     List<Modifier>? modifiers,
     int? layer,
     Map<String, Set<int>>? selected,
+    void Function(Map<String, Set<int>>)? onSelection,
   }) : super(
           color: color,
           elevation: elevation,
@@ -46,6 +47,7 @@ class PolygonElement extends PartitionElement<PolygonShape> {
           modifiers: modifiers,
           layer: layer,
           selected: selected,
+          onSelection: onSelection,
         );
 }
 

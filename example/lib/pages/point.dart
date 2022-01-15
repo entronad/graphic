@@ -74,7 +74,7 @@ class PointPage extends StatelessWidget {
                       color: ColorAttr(
                         variable: '4',
                         values: Defaults.colors10,
-                        onSelection: {
+                        updaters: {
                           'choose': {true: (_) => Colors.red}
                         },
                       ),
@@ -91,8 +91,8 @@ class PointPage extends StatelessWidget {
                   coord: RectCoord(
                     horizontalRange: [0.05, 0.95],
                     verticalRange: [0.05, 0.95],
-                    onHorizontalRangeSignal: Defaults.horizontalRangeSignal,
-                    onVerticalRangeSignal: Defaults.verticalRangeSignal,
+                    horizontalRangeUpdater: Defaults.horizontalRangeSignal,
+                    verticalRangeUpdater: Defaults.verticalRangeSignal,
                   ),
                   selections: {'choose': PointSelection(toggle: true)},
                   tooltip: TooltipGuide(
@@ -156,7 +156,7 @@ class PointPage extends StatelessWidget {
                       color: ColorAttr(
                         variable: '4',
                         values: Defaults.colors10,
-                        onSelection: {
+                        updaters: {
                           'choose': {true: (_) => Colors.red}
                         },
                       ),
@@ -229,7 +229,7 @@ class PointPage extends StatelessWidget {
                       color: ColorAttr(
                         variable: '4',
                         values: Defaults.colors10,
-                        onSelection: {
+                        updaters: {
                           'choose': {true: (_) => Colors.red}
                         },
                       ),

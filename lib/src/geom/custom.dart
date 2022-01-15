@@ -31,6 +31,7 @@ class CustomElement extends GeomElement<CustomShape> {
     List<Modifier>? modifiers,
     int? layer,
     Map<String, Set<int>>? selected,
+    void Function(Map<String, Set<int>>)? onSelection,
   }) : super(
           color: color,
           elevation: elevation,
@@ -42,6 +43,7 @@ class CustomElement extends GeomElement<CustomShape> {
           modifiers: modifiers,
           layer: layer,
           selected: selected,
+          onSelection: onSelection,
         );
 }
 

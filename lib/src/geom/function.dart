@@ -27,6 +27,7 @@ abstract class FunctionElement<S extends FunctionShape> extends GeomElement<S> {
     List<Modifier>? modifiers,
     int? layer,
     Map<String, Set<int>>? selected,
+    void Function(Map<String, Set<int>>)? onSelection,
   }) : super(
           color: color,
           elevation: elevation,
@@ -38,5 +39,6 @@ abstract class FunctionElement<S extends FunctionShape> extends GeomElement<S> {
           modifiers: modifiers,
           layer: layer,
           selected: selected,
+          onSelection: onSelection,
         );
 }

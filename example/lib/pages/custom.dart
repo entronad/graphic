@@ -216,11 +216,11 @@ class CustomPage extends StatelessWidget {
                       shape: ShapeAttr(value: TriangleShape()),
                       label: LabelAttr(
                           encoder: (tuple) => Label(tuple['sold'].toString())),
-                      elevation: ElevationAttr(value: 0, onSelection: {
+                      elevation: ElevationAttr(value: 0, updaters: {
                         'tap': {true: (_) => 5}
                       }),
                       color:
-                          ColorAttr(value: Defaults.primaryColor, onSelection: {
+                          ColorAttr(value: Defaults.primaryColor, updaters: {
                         'tap': {false: (color) => color.withAlpha(100)}
                       }),
                     )
@@ -503,7 +503,7 @@ class CustomPage extends StatelessWidget {
                     Defaults.verticalAxis,
                   ],
                   coord: RectCoord(
-                      onHorizontalRangeSignal: Defaults.horizontalRangeSignal),
+                      horizontalRangeUpdater: Defaults.horizontalRangeSignal),
                 ),
               ),
             ],

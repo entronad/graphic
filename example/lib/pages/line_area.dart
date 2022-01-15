@@ -220,7 +220,7 @@ class LineAreaPage extends StatelessWidget {
                       color: ColorAttr(
                         variable: 'name',
                         values: Defaults.colors10,
-                        onSelection: {
+                        updaters: {
                           'groupMouse': {
                             false: (color) => color.withAlpha(100)
                           },
@@ -234,7 +234,7 @@ class LineAreaPage extends StatelessWidget {
                       color: ColorAttr(
                         variable: 'name',
                         values: Defaults.colors10,
-                        onSelection: {
+                        updaters: {
                           'groupMouse': {
                             false: (color) => color.withAlpha(100)
                           },

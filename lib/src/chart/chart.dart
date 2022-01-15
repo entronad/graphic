@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:graphic/src/chart/size.dart';
+import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
@@ -45,6 +47,8 @@ class Chart<D> extends StatefulWidget {
     this.annotations,
     this.selections,
     this.rebuild,
+    this.onCreated,
+    this.onSignal,
   });
 
   /// The data list to visualize.
@@ -118,11 +122,20 @@ class Chart<D> extends StatefulWidget {
   /// be reevaluated.
   final bool? changeData;
 
+  /// Invoked when the chart widget is created.
+  /// 
+  /// This is before the dataflow graph is first built.
+  /// 
+  /// The controller of this chart can be get from the parameter.
+  final void Function(ChartController)? onCreated;
+
+  /// Invoked when a signal occurs.
+  final void Function(Signal)? onSignal;
+
   /// Checks the equlity of two chart specifications.
   bool equalSpecTo(Object other) =>
       other is Chart<D> &&
       // data are checked by changeData.
-      changeData == other.changeData &&
       deepCollectionEquals(variables, other.variables) &&
       deepCollectionEquals(transforms, other.transforms) &&
       deepCollectionEquals(elements, other.elements) &&
@@ -132,7 +145,8 @@ class Chart<D> extends StatefulWidget {
       crosshair == other.crosshair &&
       deepCollectionEquals(annotations, other.annotations) &&
       deepCollectionEquals(selections, other.selections) &&
-      rebuild == other.rebuild;
+      rebuild == other.rebuild &&
+      changeData == other.changeData;
 
   @override
   _ChartState<D> createState() => _ChartState<D>();
@@ -178,6 +192,14 @@ class _ChartState<D> extends State<Chart<D>> {
   /// Asks the chart state to trigger a repaint.
   void repaint() {
     setState(() {});
+  }
+
+  @override
+  void initState() {
+    if (widget.onCreated != null) {
+      widget.onCreated!(ChartController._(this));
+    }
+    super.initState();
   }
 
   @override
@@ -663,7 +685,7 @@ class _ChartState<D> extends State<Chart<D>> {
 class _ChartLayoutDelegate<D> extends SingleChildLayoutDelegate {
   _ChartLayoutDelegate(this.state);
 
-  /// The chart state for configuration.
+  /// The chart state.
   final _ChartState<D> state;
 
   @override
@@ -697,7 +719,7 @@ class _ChartLayoutDelegate<D> extends SingleChildLayoutDelegate {
 class _ChartPainter<D> extends CustomPainter {
   _ChartPainter(this.state);
 
-  /// The chart state for configuration.
+  /// The chart state.
   final _ChartState<D> state;
 
   @override
@@ -710,4 +732,36 @@ class _ChartPainter<D> extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) =>
       this != oldDelegate;
+}
+
+/// Controls a [Chart].
+/// 
+/// The chart controller instance can be obtained in the [Chart.onCreated].
+/// 
+/// Note that most chart behaviors of the chart is set in the specification declaratively.
+/// The chart controller only input some interaction mannually.
+class ChartController<D> {
+  ChartController._(this._state);
+
+  /// The chart state.
+  final _ChartState<D> _state;
+
+  /// Emits a signal.
+  void emitSignal<S extends Signal>(S signal) {
+    if (signal is GestureSignal) {
+      _state.view!.gesture(signal.gesture);
+    } else if (signal is ResizeSignal) {
+      _state.view!.resize(signal.size);
+    } else if (signal is ChangeDataSignal<D>) {
+      _state.view!.changeData(signal.data);
+    }
+  }
+
+  /// Emits a selection.
+  /// 
+  /// For the parameter, the list order corresponds to the element order, the map's
+  /// keys are names of selections and values are corresponding selected data item
+  /// indexes.
+  void emitSelection(List<Map<String, Set<int>>?> selected) =>
+    _state.view!.emitSelection(selected);
 }

@@ -61,8 +61,9 @@ class Dataflow {
 
   /// Update an operator's value directly.
   ///
-  /// Operator values cannot be updated directly outside the dataflow.
-  void _update<V>(
+  /// It will not [run] in this method because There may need only one [run] after
+  /// multiple [update]s. So remember to [run] mannually after your [update]s.
+  void update<V>(
     Operator<V> op,
     V value,
   ) {
@@ -141,10 +142,10 @@ class Dataflow {
   int listen<S extends Signal, V>(
     SignalSource<S> source,
     Value<V> target,
-    V Function(S) update,
+    V Function(S) updater,
   ) {
     return source.on((event) {
-      _update(target, update(event));
+      update(target, updater(event));
       run();
     });
   }

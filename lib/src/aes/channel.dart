@@ -20,12 +20,12 @@ abstract class ChannelAttr<AV> extends Attr<AV> {
     this.stops,
     AV? value,
     AV Function(Tuple)? encoder,
-    Map<String, Map<bool, SelectionUpdater<AV>>>? onSelection,
+    Map<String, Map<bool, SelectionUpdater<AV>>>? updaters,
   })  : assert(values == null || values.length >= 2),
         super(
           value: value,
           encoder: encoder,
-          onSelection: onSelection,
+          updaters: updaters,
         );
 
   /// The variable this attribute encodes from.

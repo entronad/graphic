@@ -13,7 +13,7 @@ class SizeAttr extends ChannelAttr<double> {
     List<double>? values,
     List<double>? stops,
     double Function(Tuple)? encoder,
-    Map<String, Map<bool, SelectionUpdater<double>>>? onSelection,
+    Map<String, Map<bool, SelectionUpdater<double>>>? updaters,
   })  : assert(isSingle([value, variable, encoder])),
         super(
           value: value,
@@ -21,7 +21,7 @@ class SizeAttr extends ChannelAttr<double> {
           values: values,
           stops: stops,
           encoder: encoder,
-          onSelection: onSelection,
+          updaters: updaters,
         );
 }
 

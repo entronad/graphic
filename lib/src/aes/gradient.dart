@@ -17,7 +17,7 @@ class GradientAttr extends ChannelAttr<Gradient> {
     List<Gradient>? values,
     List<double>? stops,
     Gradient Function(Tuple)? encoder,
-    Map<String, Map<bool, SelectionUpdater<Gradient>>>? onSelection,
+    Map<String, Map<bool, SelectionUpdater<Gradient>>>? updaters,
   })  : assert(isSingle([value, variable, encoder])),
         super(
           value: value,
@@ -25,7 +25,7 @@ class GradientAttr extends ChannelAttr<Gradient> {
           values: values,
           stops: stops,
           encoder: encoder,
-          onSelection: onSelection,
+          updaters: updaters,
         );
 }
 

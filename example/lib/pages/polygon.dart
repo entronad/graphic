@@ -114,7 +114,7 @@ class PolygonPage extends StatelessWidget {
                           const Color(0xff1890ff),
                           const Color(0xff0050b3)
                         ],
-                        onSelection: {
+                        updaters: {
                           'tap': {false: (color) => color.withAlpha(70)}
                         },
                       ),
@@ -167,7 +167,7 @@ class PolygonPage extends StatelessWidget {
                           const Color(0xff1890ff),
                           const Color(0xff0050b3)
                         ],
-                        onSelection: {
+                        updaters: {
                           'tap': {false: (color) => color.withAlpha(70)}
                         },
                       ),
@@ -222,7 +222,7 @@ class PolygonPage extends StatelessWidget {
                           const Color(0xff1890ff),
                           const Color(0xff0050b3)
                         ],
-                        onSelection: {
+                        updaters: {
                           'tap': {false: (color) => color.withAlpha(70)}
                         },
                       ),

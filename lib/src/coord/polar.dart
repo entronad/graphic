@@ -26,9 +26,9 @@ class PolarCoord extends Coord {
     this.startRadius,
     this.endRadius,
     this.angleRange,
-    this.onAngleRangeSignal,
+    this.angleRangeUpdater,
     this.radiusRange,
-    this.onRadiusRangeSignal,
+    this.radiusRangeUpdater,
     int? dimCount,
     double? dimFill,
     bool? transposed,
@@ -75,8 +75,8 @@ class PolarCoord extends Coord {
   /// If null, a default `[0, 1]` is set, meaning the same with plane angle.
   List<double>? angleRange;
 
-  /// Signal update of [angleRange].
-  SignalUpdater<List<double>>? onAngleRangeSignal;
+  /// Signal updater of [angleRange].
+  SignalUpdater<List<double>>? angleRangeUpdater;
 
   /// Range ratio of coordinate radius to plane radius.
   ///
@@ -87,8 +87,8 @@ class PolarCoord extends Coord {
   /// If null, a default `[0, 1]` is set, meaning the same with plane radius.
   List<double>? radiusRange;
 
-  /// Signal update of [radiusRange].
-  SignalUpdater<List<double>>? onRadiusRangeSignal;
+  /// Signal updater of [radiusRange].
+  SignalUpdater<List<double>>? radiusRangeUpdater;
 
   @override
   bool operator ==(Object other) =>

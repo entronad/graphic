@@ -15,13 +15,13 @@ class ShapeAttr<S extends Shape> extends ChannelAttr<S> {
     String? variable,
     List<S>? values, // Only descrete.
     S Function(Tuple)? encoder,
-    Map<String, Map<bool, SelectionUpdater<S>>>? onSelection,
+    Map<String, Map<bool, SelectionUpdater<S>>>? updaters,
   })  : assert(isSingle([value, variable, encoder])),
         super(
           value: value,
           variable: variable,
           values: values,
           encoder: encoder,
-          onSelection: onSelection,
+          updaters: updaters,
         );
 }

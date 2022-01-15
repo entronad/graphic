@@ -34,6 +34,7 @@ class PointElement extends FunctionElement<PointShape> {
     List<Modifier>? modifiers,
     int? layer,
     Map<String, Set<int>>? selected,
+    void Function(Map<String, Set<int>>)? onSelection,
   }) : super(
           color: color,
           elevation: elevation,
@@ -45,6 +46,7 @@ class PointElement extends FunctionElement<PointShape> {
           modifiers: modifiers,
           layer: layer,
           selected: selected,
+          onSelection: onSelection,
         );
 }
 

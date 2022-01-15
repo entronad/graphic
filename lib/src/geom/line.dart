@@ -35,6 +35,7 @@ class LineElement extends FunctionElement<LineShape> {
     List<Modifier>? modifiers,
     int? layer,
     Map<String, Set<int>>? selected,
+    void Function(Map<String, Set<int>>)? onSelection,
   }) : super(
           color: color,
           elevation: elevation,
@@ -46,6 +47,7 @@ class LineElement extends FunctionElement<LineShape> {
           modifiers: modifiers,
           layer: layer,
           selected: selected,
+          onSelection: onSelection,
         );
 }
 

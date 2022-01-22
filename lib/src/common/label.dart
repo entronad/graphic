@@ -95,6 +95,7 @@ Figure renderLabel(
   final painter = TextPainter(
     text: TextSpan(text: label.text, style: label.style.style),
     textDirection: TextDirection.ltr,
+    textAlign: TextAlign.center,
   );
   painter.layout();
 

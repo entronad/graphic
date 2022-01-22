@@ -3994,7 +3994,45 @@ Selection 只有当至少有一个被选中时才称为被触发。
 
 要能直接update op，前提是外部能记录这个op
 
+增加一个clip属性，默认为false，决定超出组件的部分是否绘制。coord region对element的限制是固有的。如果需要定制化裁剪，flutter本身提供了组件。
 
+~~经过深思熟虑，interaction channel 采用进出分开的形式：~~
+
+~~为什么不统一用controller：因为输入的stream可能想用其它方式产生，比如yeild（产生stream的根本方法就是yeild函数），而且现在分开如果想用controller也很方便。而且stream和sink概念更底层一些~~
+
+不同类型的signal采用统一的，因为如果分开的话太杂了，signal类型是一个可以扩展的概念
+
+selection放到element中，因为selection本身就是依附于element的概念，而且不这样确实也实现不了。
+
+这样chart本身不主导frp，但是channel的对外接口类型是stream和sink，与frp衔接
+
+需要考虑的一个重要场景是分面相互联动，这时如果输入输出分开，然后使用同一个controller的stream和sink，会产生回声，即stream中会收到controller本身和从chart发来的两次信号。
+
+stream一旦被创建只可被创建它的函数改动，自己本身不提供改动函数，而双向的可读可写的就是 StreamController了，它即是 Channel。由于它汇集到了一根线上，不会产生回声了。它本身也是dart最推荐最基础的实现此功能的类。
+
+统一叫法 Map<String, Set<int>> 称为 selected，Set<int>称为 selects
+
+需要从dataflow层面，实现op和streamcontroller的绑定，包括run，函数叫relay
+
+回声问题产生的本质是从通道中发出的通知触发op update后又会再次通知通道。因此解决办法就是通道引起的update不应当引起op通知通道。如果这的话，那有一个要求，就是op的输入输出不能分离，否则会输出会漏掉通道输入的部分（一个通道的话已经在通道中自行回流了）。
+
+Op 是能够从有值变为 null 的，channel的值也要为null，比如selection从有变为没有。（consume op的自动消失不会通知）
+
+按现在这种思路，最简单的办法是增加一个signal value，size等改为中间op
+
+现在要有一个输入源（Channel）只能对接一个op的理念
+
+并不需要value了，把value的几个特性isSouce（改名为 needInitialTouch）
+
+现在结构非常顺畅了，原理上就是将channel绑到op上， 没有就新建，这个过程应当在parse中。这样要返回给view一些channel，方便系统调用channel
+
+Value op 还是要的，有一些提供定值的场景
+
+由于分面的需要，不能一直clip这个chart的边界。是不是要加clip参数呢？感觉不要，因为当发生非预期的溢出时，它总是一个glich，不管切不切都不能说是标准行为或者更符合用户预期。只用一个bool带来的便利性意义不大。那反而套 clipRect更像是一个处理glich，而且可能开发者预先知道。而且这也是官方文档建议的处理CustomPaint的方法。
+
+这样为了简明，也先移除graffiti最外层的clip，仅有scene的clip。这样应当只有state持有处理size了
+
+三个signal需要分开，否则耦合通道时，本身的changeData会与通道的共振，而且有时候想用不同的data和size。
 
 ## TODO
 

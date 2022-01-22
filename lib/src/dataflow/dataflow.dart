@@ -1,8 +1,7 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:graphic/src/common/operators/value.dart';
-import 'package:graphic/src/interaction/signal.dart';
 import 'package:flutter/foundation.dart';
 
 import 'operator.dart';
@@ -34,7 +33,7 @@ class Dataflow {
   /// Add an operator to this dataflow.
   O add<O extends Operator>(O op) {
     _rank(op);
-    if (!op.isSouce) {
+    if (op.needInitialTouch) {
       _touch(op);
     }
 
@@ -61,9 +60,8 @@ class Dataflow {
 
   /// Update an operator's value directly.
   ///
-  /// It will not [run] in this method because There may need only one [run] after
-  /// multiple [update]s. So remember to [run] mannually after your [update]s.
-  void update<V>(
+  /// An operator can only be updated by it's channel.
+  void _update<V>(
     Operator<V> op,
     V value,
   ) {
@@ -138,15 +136,23 @@ class Dataflow {
     _heap.add(op);
   }
 
-  /// Registers an [Value] operator to listen to an [SignalSource].
-  int listen<S extends Signal, V>(
-    SignalSource<S> source,
-    Value<V> target,
-    V Function(S) updater,
+  /// Binds a channel to an operator.
+  /// 
+  /// The channels are the only way to communicate with outside for this dataflow.
+  /// 
+  /// An operator can only be binded to one channel.
+  /// 
+  /// The value changed to null will also trigger a communication. But the consume
+  /// operator's value turning to null after running will not.
+  void bindChannel<V>(
+    StreamController<V?> channel,
+    Operator<V> target,
   ) {
-    return source.on((event) {
-      update(target, updater(event));
+    assert(target.channel == null);
+    channel.stream.listen((value) {
+      _update(target, value);
       run();
     });
+    target.channel = channel;
   }
 }

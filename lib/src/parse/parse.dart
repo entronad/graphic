@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/painting.dart';
@@ -63,65 +64,42 @@ EdgeInsets _defaultRectPadding(Size _) => EdgeInsets.fromLTRB(40, 5, 10, 20);
 EdgeInsets _defaultPolarPadding(Size _) => EdgeInsets.all(10);
 
 /// Parses the specification for a view.
-void parse<D>(Chart<D> spec, View<D> view) {
-  // Size.
+void parse<D>(
+  Chart<D> spec,
+  View<D> view,
+  Size chartSize,
+) {
+  // Signal
 
-  final size = view.add(SizeOp(view.graffiti.size));
+  final gestureSignal = view.add(SignalOp<GestureSignal>());
 
-  view.listen<ResizeSignal, Size>(
-    view.sizeSouce,
-    size,
-    (signal) => signal.size,
-  );
+  final gestureChannel = spec.gestureChannel ?? StreamController<GestureSignal>();
+  view.bindChannel(gestureChannel, gestureSignal);
+  view.gestureChannel = gestureChannel;
 
-  // Gesture.
+  final resizeSignal = view.add(SignalOp<ResizeSignal>());
 
-  final gesture = view.add(GestureOp());
+  final resizeChannel = spec.resizeChannel ?? StreamController<ResizeSignal>();
+  view.bindChannel(resizeChannel, resizeSignal);
+  view.resizeChannel = resizeChannel;
 
-  view.listen<GestureSignal, Gesture?>(
-    view.gestureSource,
-    gesture,
-    (signal) => signal.gesture,
-  );
+  final changeDataSignal = view.add(SignalOp<ChangeDataSignal<D>>());
 
-  // Data.
+  final changeDataChannel = spec.changeDataChannel ?? StreamController<ChangeDataSignal<D>>();
+  view.bindChannel(changeDataChannel, changeDataSignal);
+  view.changeDataChannel = changeDataChannel;
 
-  final data = view.add(DataOp(spec.data));
-
-  view.listen<ChangeDataSignal<D>, List<D>>(
-    view.dataSouce,
-    data,
-    (signal) => signal.data,
-  );
-
-  // Signal.
-
-  if (spec.onSignal != null) {
-    view.gestureSource.on(spec.onSignal!);
-    view.sizeSouce.on(spec.onSignal!);
-    view.dataSouce.on(spec.onSignal!);
-  }
-
-  final signal = view.add(SignalOp());
-
-  view
-    ..listen<Signal, Signal?>(
-      view.gestureSource,
-      signal,
-      (signal) => signal,
-    )
-    ..listen<Signal, Signal?>(
-      view.sizeSouce,
-      signal,
-      (signal) => signal,
-    )
-    ..listen<Signal, Signal?>(
-      view.dataSouce,
-      signal,
-      (signal) => signal,
-    );
+  final signal = view.add(SignalReducerOp<D>({
+    'gesture': gestureSignal,
+    'resize': resizeSignal,
+    'changeData': changeDataSignal,
+  }));
 
   // Coord.
+
+  final size = view.add(SizeOp({
+    'signal': resizeSignal,
+  }, chartSize));
 
   final region = view.add(RegionOp({
     'size': size,
@@ -200,6 +178,10 @@ void parse<D>(Chart<D> spec, View<D> view) {
   }
 
   // Variable
+
+  final data = view.add(DataOp<D>({
+    'signal': changeDataSignal
+  }, spec.data));
 
   final accessors = <String, Accessor<D, dynamic>>{};
   final variableSpecs = spec.variables;
@@ -281,6 +263,10 @@ void parse<D>(Chart<D> spec, View<D> view) {
 
   // Selection.
 
+  final gesture = view.add(GestureOp({
+    'signal': gestureSignal,
+  }));
+
   SelectorOp? selectors;
   if (spec.selections != null) {
     final selectSpecs = spec.selections!;
@@ -326,7 +312,7 @@ void parse<D>(Chart<D> spec, View<D> view) {
   // Element.
 
   // For all elements, they either all have or all have not select operator.
-  final selectsList = <SelectOp>[];
+  final selectOpList = <SelectOp>[];
   final groupsList = <Operator<AesGroups>>[];
   // First term of the form of the first element, in order to get first variable
   // of each dimension.
@@ -449,14 +435,16 @@ void parse<D>(Chart<D> spec, View<D> view) {
     }
 
     if (selectors != null) {
-      final selects = view.add(SelectOp({
+      final selected = view.add(SelectOp({
         'selectors': selectors,
         'groups': groups,
         'tuples': tuples,
         'coord': coord,
-        'onSelection': elementSpec.onSelection,
       }, elementSpec.selected));
-      selectsList.add(selects);
+      if (elementSpec.selectionChannel != null) {
+        view.bindChannel(elementSpec.selectionChannel!, selected);
+      }
+      selectOpList.add(selected);
 
       final shapeUpdaters = elementSpec.shape?.updaters;
       final colorUpdaters = elementSpec.color?.updaters;
@@ -487,7 +475,7 @@ void parse<D>(Chart<D> spec, View<D> view) {
 
       final update = view.add(SelectionUpdateOp({
         'groups': groups,
-        'selects': selects,
+        'selected': selected,
         'shapeUpdaters': shapeUpdaters,
         'colorUpdaters': colorUpdaters,
         'gradientUpdaters': gradientUpdaters,
@@ -498,7 +486,6 @@ void parse<D>(Chart<D> spec, View<D> view) {
       }));
       groups = update;
     }
-    view.onSelections.add(elementSpec.onSelection);
 
     groupsList.add(groups);
 
@@ -643,7 +630,7 @@ void parse<D>(Chart<D> spec, View<D> view) {
     view.add(CrosshairRenderOp({
       'selections': crosshairSpec.selections ?? spec.selections!.keys.toSet(),
       'selectors': selectors!,
-      'selects': selectsList[elementIndex],
+      'selected': selectOpList[elementIndex],
       'coord': coord,
       'groups': groupsList[elementIndex],
       'styles': crosshairSpec.styles ??
@@ -666,7 +653,7 @@ void parse<D>(Chart<D> spec, View<D> view) {
     view.add(TooltipRenderOp({
       'selections': tooltipSpec.selections ?? spec.selections!.keys.toSet(),
       'selectors': selectors!,
-      'selects': selectsList[elementIndex],
+      'selected': selectOpList[elementIndex],
       'coord': coord,
       'groups': groupsList[elementIndex],
       'tuples': tuples,

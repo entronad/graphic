@@ -1,11 +1,10 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/data/data_set.dart';
 import 'package:graphic/src/dataflow/dataflow.dart';
 import 'package:graphic/src/graffiti/graffiti.dart';
-import 'package:graphic/src/interaction/selection/selection.dart';
-import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/parse/parse.dart';
 
@@ -18,8 +17,9 @@ class View<D> extends Dataflow {
     Chart<D> spec,
     Size size,
     this.repaint,
-  ) : graffiti = Graffiti(size) {
-    parse<D>(spec, this);
+  ) : graffiti = Graffiti() {
+    // The view won't hold the size, only to init the size operator.
+    parse<D>(spec, this, size);
 
     graffiti.sort();
 
@@ -32,62 +32,39 @@ class View<D> extends Dataflow {
   /// The rendering engine.
   final Graffiti graffiti;
 
-  /// The gesture signal source.
-  final gestureSource = SignalSource<GestureSignal>();
-
-  /// The resize signal source.
-  final sizeSouce = SignalSource<ResizeSignal>();
-
-  /// The change data signal source.
-  final dataSouce = SignalSource<ChangeDataSignal<D>>();
-
   /// Whether to trigger a [repaint] after evaluation.
   ///
   /// The view is dirty when any [Render] operater has rendered.
   bool dirty = false;
 
-  /// Select operators of this dataflow.
+  /// The gesture signal channel.
   /// 
-  /// This is for [emitSelection].
-  final List<SelectOp> selectOps = [];
+  /// This is generated in [parse] and hold by [View] for internal interactions.
+  late StreamController<GestureSignal> gestureChannel;
 
-  /// onSelections of this dataflow.
+  /// The resize signal channel.
   /// 
-  /// This is for [emitSelection].
-  final List<void Function(Map<String, Set<int>>)?> onSelections = [];
+  /// This is generated in [parse] and hold by [View] for internal interactions.
+  late StreamController<ResizeSignal> resizeChannel;
+
+  /// The changeData signal channel.
+  /// 
+  /// This is generated in [parse] and hold by [View] for internal interactions.
+  late StreamController<ChangeDataSignal<D>> changeDataChannel;
 
   /// Emits a gesture signal.
   Future<void> gesture(Gesture gesture) async {
-    await gestureSource.emit(GestureSignal(gesture));
+    await Future(() {gestureChannel.sink.add(GestureSignal(gesture));});
   }
 
   /// Emits a resize signal.
   Future<void> resize(Size size) async {
-    // Only the graffiti and the sizeOp hold the size.
-    graffiti.size = size;
-    await sizeSouce.emit(ResizeSignal(size));
+    await Future(() {resizeChannel.sink.add(ResizeSignal(size));});
   }
 
   /// Emits a change data signal.
   Future<void> changeData(List<D> data) async {
-    await dataSouce.emit(ChangeDataSignal(data));
-  }
-
-  /// Emits a selection.
-  void emitSelection(List<Map<String, Set<int>>?> selected) {
-    assert(selected.length <= selectOps.length);
-    for (var i = 0; i < selected.length; i++) {
-      final selects = selected[i];
-      if (selects != null) {
-        final selectOp = selectOps[i];
-        update(selectOp, selects);
-        final onSelection = onSelections[i];
-        if (onSelection != null) {
-          onSelection(selects);
-        }
-      }
-    }
-    run();
+    await Future(() {changeDataChannel.sink.add(ChangeDataSignal<D>(data));});
   }
 
   @override

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:graphic/src/aes/color.dart';
 import 'package:graphic/src/aes/elevation.dart';
 import 'package:graphic/src/aes/gradient.dart';
@@ -5,6 +7,7 @@ import 'package:graphic/src/aes/label.dart';
 import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
+import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/shape/partition.dart';
 
 import 'element.dart';
@@ -26,8 +29,8 @@ abstract class PartitionElement<S extends PartitionShape>
     SizeAttr? size,
     List<Modifier>? modifiers,
     int? layer,
-    Map<String, Set<int>>? selected,
-    void Function(Map<String, Set<int>>)? onSelection,
+    Selected? selected,
+    StreamController<Selected?>? selectionChannel,
   }) : super(
           color: color,
           elevation: elevation,
@@ -39,6 +42,6 @@ abstract class PartitionElement<S extends PartitionShape>
           modifiers: modifiers,
           layer: layer,
           selected: selected,
-          onSelection: onSelection,
+          selectionChannel: selectionChannel,
         );
 }

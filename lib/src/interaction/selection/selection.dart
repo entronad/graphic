@@ -294,18 +294,23 @@ class SelectorRenderOp extends Render<SelectorScene> {
   }
 }
 
+/// The result of selections of an element.
+/// 
+/// The keys are selection names, and the values are selected datum indexes sets
+/// of each selection.
+typedef Selected = Map<String, Set<int>>;
+
 /// The operator to select tuples by selectors.
-class SelectOp extends Operator<Map<String, Set<int>>?> {
-  SelectOp(Map<String, dynamic> params, Map<String, Set<int>>? value)
+class SelectOp extends Operator<Selected?> {
+  SelectOp(Map<String, dynamic> params, Selected? value)
       : super(params, value);
 
   @override
-  Map<String, Set<int>>? evaluate() {
+  Selected? evaluate() {
     final selectors = params['selectors'] as Map<String, Selector>?;
     final groups = params['groups'] as AesGroups;
     final tuples = params['tuples'] as List<Tuple>;
     final coord = params['coord'] as CoordConv;
-    final onSelection = params['onSelection'] as void Function(Map<String, Set<int>>)?;
 
     if (selectors == null) {
       return null;
@@ -323,9 +328,6 @@ class SelectOp extends Operator<Map<String, Set<int>>?> {
         // The Selector.select method has ensured indexes are not empty.
         rst[name] = indexes;
       }
-    }
-    if (onSelection != null && rst.isNotEmpty) {
-      onSelection(rst);
     }
     return rst.isEmpty ? null : rst;
   }
@@ -353,7 +355,7 @@ class SelectionUpdateOp extends Operator<AesGroups> {
   @override
   AesGroups evaluate() {
     final groups = params['groups'] as AesGroups;
-    final selects = params['selects'] as Map<String, Set<int>>?;
+    final selected = params['selected'] as Selected?;
     final shapeUpdaters = params['shapeUpdaters']
         as Map<String, Map<bool, SelectionUpdater<Shape>>>?;
     final colorUpdaters = params['colorUpdaters']
@@ -369,16 +371,16 @@ class SelectionUpdateOp extends Operator<AesGroups> {
     final updaterNames = params['updaterNames'] as Set<String>;
 
     // Makes sure only one selects result works.
-    final name = singleIntersection(selects?.keys, updaterNames);
+    final name = singleIntersection(selected?.keys, updaterNames);
 
     if (name == null) {
       return groups.map((group) => [...group]).toList();
     }
 
-    final indexes = selects![name]!;
+    final selects = selected![name]!;
     // Internal selected indexes will never be empty, this is for user set or emitted
     // selects.
-    assert(indexes.isNotEmpty);
+    assert(selects.isNotEmpty);
 
     final shapeUpdater = shapeUpdaters?[name];
     final colorUpdater = colorUpdaters?[name];
@@ -401,16 +403,16 @@ class SelectionUpdateOp extends Operator<AesGroups> {
       final groupRst = <Aes>[];
       for (var i = 0; i < group.length; i++) {
         final aes = group[i];
-        final selected = indexes.contains(aes.index);
+        final isSelected = selects.contains(aes.index);
         groupRst.add(Aes(
           index: aes.index,
           position: [...aes.position],
-          shape: _update(aes.shape, selected, shapeUpdater)!,
-          color: _update(aes.color, selected, colorUpdater),
-          gradient: _update(aes.gradient, selected, gradientUpdater),
-          elevation: _update(aes.elevation, selected, elevationUpdater),
-          label: _update(aes.label, selected, labelUpdater),
-          size: _update(aes.size, selected, sizeUpdater),
+          shape: _update(aes.shape, isSelected, shapeUpdater)!,
+          color: _update(aes.color, isSelected, colorUpdater),
+          gradient: _update(aes.gradient, isSelected, gradientUpdater),
+          elevation: _update(aes.elevation, isSelected, elevationUpdater),
+          label: _update(aes.label, isSelected, labelUpdater),
+          size: _update(aes.size, isSelected, sizeUpdater),
         ));
       }
       rst.add(groupRst);

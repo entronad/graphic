@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:ui';
 
+import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/aes/color.dart';
@@ -55,7 +57,7 @@ abstract class GeomElement<S extends Shape> {
     this.modifiers,
     this.layer,
     this.selected,
-    this.onSelection,
+    this.selectionChannel,
   })  : assert(isSingle([color, gradient], allowNone: true)),
         assert(selected == null || selected.keys.length == 1);
 
@@ -122,11 +124,17 @@ abstract class GeomElement<S extends Shape> {
 
   /// The selection name and selected tuple indexes triggered initially.
   ///
-  /// This initial selection will not trigger [onSelection].
-  Map<String, Set<int>>? selected;
+  /// This initial selection will not trigger [selectionChannel].
+  Selected? selected;
 
-  /// Invoked when a selection occurs.
-  final void Function(Map<String, Set<int>>)? onSelection;
+  /// The interaction channel of selections.
+  /// 
+  /// You can either get selection results by listening to it's stream, or mannually
+  /// emit selections into this element by add to it's sink.
+  /// 
+  /// You can also share it with other charts for sharing selections, in witch case
+  /// make sure it is broadcast.
+  StreamController<Selected?>? selectionChannel;
 
   @override
   bool operator ==(Object other) =>
@@ -140,7 +148,8 @@ abstract class GeomElement<S extends Shape> {
       size == other.size &&
       deepCollectionEquals(modifiers, other.modifiers) &&
       layer == other.layer &&
-      selected == other.selected;
+      selected == other.selected &&
+      selectionChannel == other.selectionChannel;
 }
 
 /// The operator to group aeses.

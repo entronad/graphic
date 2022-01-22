@@ -1,7 +1,7 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:graphic/src/chart/size.dart';
-import 'package:graphic/src/interaction/signal.dart';
 import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
@@ -31,6 +31,9 @@ import 'view.dart';
 /// [changeData]. Note that function properties will not be checked in change test.
 ///
 /// The generic [D] is the type of datum in [data] list.
+/// 
+/// The properties of this chart sepcification are final because it is also an immutable
+/// [StatefulWidget], but other specifications can be modified.
 class Chart<D> extends StatefulWidget {
   /// Creates a chart widget.
   Chart({
@@ -47,8 +50,9 @@ class Chart<D> extends StatefulWidget {
     this.annotations,
     this.selections,
     this.rebuild,
-    this.onCreated,
-    this.onSignal,
+    this.gestureChannel,
+    this.resizeChannel,
+    this.changeDataChannel,
   });
 
   /// The data list to visualize.
@@ -122,15 +126,32 @@ class Chart<D> extends StatefulWidget {
   /// be reevaluated.
   final bool? changeData;
 
-  /// Invoked when the chart widget is created.
+  /// The interaction channel of gesture signals.
   /// 
-  /// This is before the dataflow graph is first built.
+  /// You can either get gesture signals by listening to it's stream, or mannually
+  /// emit gesture signals into this chart by adding to it's sink.
   /// 
-  /// The controller of this chart can be get from the parameter.
-  final void Function(ChartController)? onCreated;
+  /// You can also share it with other charts for sharing gesture signals, in which
+  /// case make sure it is broadcast.
+  final StreamController<GestureSignal>? gestureChannel;
 
-  /// Invoked when a signal occurs.
-  final void Function(Signal)? onSignal;
+  /// The interaction channel of resize signals.
+  /// 
+  /// You can either get resize signals by listening to it's stream, or mannually
+  /// emit resize signals into this chart by adding to it's sink.
+  /// 
+  /// You can also share it with other charts for sharing resize signals, in which
+  /// case make sure it is broadcast.
+  final StreamController<ResizeSignal>? resizeChannel;
+
+  /// The interaction channel of change data signals.
+  /// 
+  /// You can either get change data signals by listening to it's stream, or mannually
+  /// emit change data signals into this chart by adding to it's sink.
+  /// 
+  /// You can also share it with other charts for sharing change data signals, in which
+  /// case make sure it is broadcast.
+  final StreamController<ChangeDataSignal<D>>? changeDataChannel;
 
   /// Checks the equlity of two chart specifications.
   bool equalSpecTo(Object other) =>
@@ -146,7 +167,10 @@ class Chart<D> extends StatefulWidget {
       deepCollectionEquals(annotations, other.annotations) &&
       deepCollectionEquals(selections, other.selections) &&
       rebuild == other.rebuild &&
-      changeData == other.changeData;
+      changeData == other.changeData &&
+      gestureChannel == other.gestureChannel &&
+      resizeChannel == other.resizeChannel &&
+      changeDataChannel == other.changeDataChannel;
 
   @override
   _ChartState<D> createState() => _ChartState<D>();
@@ -192,14 +216,6 @@ class _ChartState<D> extends State<Chart<D>> {
   /// Asks the chart state to trigger a repaint.
   void repaint() {
     setState(() {});
-  }
-
-  @override
-  void initState() {
-    if (widget.onCreated != null) {
-      widget.onCreated!(ChartController._(this));
-    }
-    super.initState();
   }
 
   @override
@@ -693,8 +709,6 @@ class _ChartLayoutDelegate<D> extends SingleChildLayoutDelegate {
 
   @override
   Offset getPositionForChild(Size size, Size childSize) {
-    state.size = size;
-
     if (state.view == null) {
       // When rebuild is required, the state.view is set null. To rebuild meanse
       // to create a new view. A view is and only is created in _ChartLayoutDelegate.getPositionForChild
@@ -705,11 +719,13 @@ class _ChartLayoutDelegate<D> extends SingleChildLayoutDelegate {
         size,
         state.repaint,
       );
-    } else if (size != state.view!.graffiti.size) {
+    } else if (size != state.size) {
       // Only emmit resize when size is realy changed.
 
       state.view!.resize(size);
     }
+    
+    state.size = size;
 
     return super.getPositionForChild(size, childSize);
   }
@@ -732,36 +748,4 @@ class _ChartPainter<D> extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) =>
       this != oldDelegate;
-}
-
-/// Controls a [Chart].
-/// 
-/// The chart controller instance can be obtained in the [Chart.onCreated].
-/// 
-/// Note that most chart behaviors of the chart is set in the specification declaratively.
-/// The chart controller only input some interaction mannually.
-class ChartController<D> {
-  ChartController._(this._state);
-
-  /// The chart state.
-  final _ChartState<D> _state;
-
-  /// Emits a signal.
-  void emitSignal<S extends Signal>(S signal) {
-    if (signal is GestureSignal) {
-      _state.view!.gesture(signal.gesture);
-    } else if (signal is ResizeSignal) {
-      _state.view!.resize(signal.size);
-    } else if (signal is ChangeDataSignal<D>) {
-      _state.view!.changeData(signal.data);
-    }
-  }
-
-  /// Emits a selection.
-  /// 
-  /// For the parameter, the list order corresponds to the element order, the map's
-  /// keys are names of selections and values are corresponding selected data item
-  /// indexes.
-  void emitSelection(List<Map<String, Set<int>>?> selected) =>
-    _state.view!.emitSelection(selected);
 }

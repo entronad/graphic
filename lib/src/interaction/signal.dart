@@ -4,6 +4,7 @@ import 'package:graphic/src/data/data_set.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
+import 'package:graphic/src/util/assert.dart';
 
 /// Types of [Signal]s.
 enum SignalType {
@@ -42,37 +43,31 @@ abstract class Signal {
 typedef SignalUpdater<V> = V Function(
     V initialValue, V preValue, Signal signal);
 
-/// The souce to generate signals.
-class SignalSource<S extends Signal> {
-  /// The registered listeners.
-  final _listeners = <void Function(S)?>[];
-
-  /// Registers a listener, and returns id of the listener.
-  int on(void Function(S) listener) {
-    _listeners.add(listener);
-    return _listeners.length - 1;
-  }
-
-  /// Releases a listener by id.
-  void off(int id) => _listeners[id] = null;
-
-  /// Releases all listeners.
-  void clear() => _listeners.clear();
-
-  /// Emit a signal and broadcast it to all listeners.
-  Future<void> emit(S signal) async {
-    for (var listener in _listeners) {
-      if (listener != null) {
-        listener(signal);
-      }
-    }
-  }
-}
-
 /// The signal value operator.
-class SignalOp extends Value<Signal?> {
+class SignalOp<S extends Signal> extends Value<S?> {
   @override
   bool get consume => true;
+}
+
+/// The signal reduces all types signals.
+class SignalReducerOp<D> extends Operator<Signal?> {
+  SignalReducerOp(Map<String, dynamic> params) : super(params);
+
+  @override
+  bool get needInitialTouch => false;
+
+  @override
+  bool get consume => true;
+
+  @override
+  Signal? evaluate() {
+    final gesture = params['gesture'] as GestureSignal?;
+    final resize = params['resize'] as ResizeSignal?;
+    final changeData = params['changeData'] as ChangeDataSignal<D>?;
+
+    assert(isSingle([gesture, resize, changeData]));
+    return [gesture, resize, changeData].singleWhere((element) => element != null);
+  }
 }
 
 /// The operator to update a value by a signal.

@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
-import 'package:graphic/src/common/operators/value.dart';
+import 'package:graphic/src/dataflow/operator.dart';
 
 import 'signal.dart';
 
@@ -525,8 +525,21 @@ class GestureSignal extends Signal {
   final Gesture gesture;
 }
 
-/// The gesture value operator.
-class GestureOp extends Value<Gesture?> {
+/// The gesture operator.
+class GestureOp extends Operator<Gesture?> {
+  GestureOp(
+    Map<String, dynamic> params,
+  ) : super(params);
+
+  @override
+  bool get needInitialTouch => false;
+
   @override
   bool get consume => true;
+
+  @override
+  Gesture? evaluate() {
+    final signal = params['signal'] as GestureSignal;
+    return signal.gesture;
+  }
 }

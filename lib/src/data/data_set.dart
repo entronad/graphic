@@ -1,5 +1,5 @@
 import 'package:graphic/src/chart/chart.dart';
-import 'package:graphic/src/common/operators/value.dart';
+import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/interaction/signal.dart';
 
 /// The signal that may be emitted when data changes.
@@ -20,9 +20,21 @@ class ChangeDataSignal<D> extends Signal {
   final List<D> data;
 }
 
-/// The input data value operator.
-class DataOp<D> extends Value<List<D>> {
-  DataOp(List<D> value) : super(value);
+/// The input data operator.
+class DataOp<D> extends Operator<List<D>> {
+  DataOp(
+    Map<String, dynamic> params,
+    List<D> value,
+  ) : super(params, value);
+
+  @override
+  bool get needInitialTouch => false;
+
+  @override
+  List<D> evaluate() {
+    final signal = params['signal'] as ChangeDataSignal<D>;
+    return signal.data;
+  }
 
   // In case the change data signal is triggerd by modifying the same data list
   // instance and force Chart.changeData to true, the data operator value is always

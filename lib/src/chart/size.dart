@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/common/operators/value.dart';
+import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/interaction/signal.dart';
 
 /// The signal emitted when chart size changes.
@@ -16,7 +16,19 @@ class ResizeSignal extends Signal {
   final Size size;
 }
 
-/// The chart size value operator.
-class SizeOp extends Value<Size> {
-  SizeOp(Size value) : super(value);
+/// The chart size operator.
+class SizeOp extends Operator<Size> {
+  SizeOp(
+    Map<String, dynamic> params,
+    Size value,
+  ) : super(params, value);
+
+  @override
+  bool get needInitialTouch => false;
+
+  @override
+  Size evaluate() {
+    final signal = params['signal'] as ResizeSignal;
+    return signal.size;
+  }
 }

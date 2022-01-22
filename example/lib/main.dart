@@ -1,26 +1,20 @@
 import 'package:flutter/material.dart';
 
 import 'home.dart';
-import 'pages/rectangle_interval.dart';
-import 'pages/polar_interval.dart';
-import 'pages/line_area.dart';
-import 'pages/point.dart';
-import 'pages/polygon.dart';
-import 'pages/custom.dart';
-import 'pages/dynamic.dart';
+import 'pages/interval.dart';
+import 'pages/line_area_point.dart';
+import 'pages/polygon_custom.dart';
+import 'pages/interaction_channel_dynamic.dart';
 import 'pages/bigdata.dart';
 import 'pages/echarts.dart';
 // import 'pages/debug.dart';
 
 final routes = {
   '/': (context) => const HomePage(),
-  '/examples/Rectangle Interval Element': (context) => RectangleIntervalPage(),
-  '/examples/Polar Interval Element': (context) => PolarIntervalPage(),
-  '/examples/Line and Area Element': (context) => LineAreaPage(),
-  '/examples/Point Element': (context) => PointPage(),
-  '/examples/Polygon Element': (context) => PolygonPage(),
-  '/examples/Dynamic': (context) => const DynamicPage(),
-  '/examples/Custom': (context) => CustomPage(),
+  '/examples/Interval Element': (context) => IntervalPage(),
+  '/examples/Line,Area,Point Element': (context) => LineAreaPointPage(),
+  '/examples/Polygon,Custom Element': (context) => PolygonCustomPage(),
+  '/examples/Interaction Channel, Dynamic': (context) => const InteractionChannelDynamicPage(),
   '/examples/Bigdata': (context) => BigdataPage(),
   '/examples/Echarts': (context) => EchartsPage(),
   // '/examples/Debug': (context) => DebugPage(),

@@ -191,7 +191,7 @@ export 'src/guide/annotation/custom.dart' show CustomAnnotation;
 export 'src/interaction/signal.dart' show Signal, SignalType, SignalUpdater;
 export 'src/interaction/gesture.dart' show GestureType, Gesture, GestureSignal;
 export 'src/interaction/selection/selection.dart'
-    show Selection, SelectionUpdater;
+    show Selection, Selected, SelectionUpdater;
 export 'src/interaction/selection/interval.dart' show IntervalSelection;
 export 'src/interaction/selection/point.dart' show PointSelection;
 

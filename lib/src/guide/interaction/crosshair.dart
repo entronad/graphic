@@ -13,7 +13,6 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
-import 'package:graphic/src/util/collection.dart';
 import 'package:graphic/src/util/path.dart';
 
 /// The specification of a crosshair
@@ -93,7 +92,7 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
   void render() {
     final selections = params['selections'] as Set<String>;
     final selectors = params['selectors'] as Map<String, Selector>?;
-    final selects = params['selects'] as Map<String, Set<int>>?;
+    final selected = params['selected'] as Selected?;
     final coord = params['coord'] as CoordConv;
     final groups = params['groups'] as AesGroups;
     final styles = params['styles'] as List<StrokeStyle?>;
@@ -102,9 +101,9 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
     final name = singleIntersection(selectors?.keys, selections);
 
     final selector = name == null ? null : selectors?[name];
-    final indexes = name == null ? null : selects?[name];
+    final selects = name == null ? null : selected?[name];
 
-    if (selector == null || indexes == null || indexes.isEmpty) {
+    if (selector == null || selects == null || selects.isEmpty) {
       scene.figures = null;
       return;
     }
@@ -124,7 +123,7 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
       }
       return Offset.zero;
     };
-    for (var index in indexes) {
+    for (var index in selects) {
       selectedPoint += findPoint(index);
     }
     selectedPoint = selectedPoint / count.toDouble();

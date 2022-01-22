@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:graphic/src/interaction/signal.dart';
 
@@ -34,13 +36,16 @@ abstract class Operator<V> {
   }
 
   /// The operator value.
+  /// 
+  /// Whether the operator value is nullable should be included in the generic [V].
+  /// This property is nullable for it may not be initialized.
   @protected
   V? value;
 
-  /// Whether this is a source operator.
-  ///
-  /// A source operator holds an unchangable value, it cannot be evaluated.
-  bool get isSouce => false;
+  /// Whether this operator needs a initial touch when added.
+  /// 
+  /// Some operators have inital value or can't be touched.
+  bool get needInitialTouch => true;
 
   /// Parameter values set directly or pulled inderectly.
   @protected
@@ -69,6 +74,9 @@ abstract class Operator<V> {
   /// Whether this operator has evaluated in this pulse.
   bool runed = false;
 
+  /// The channel binded to this operator.
+  StreamController<V?>? channel;
+
   /// Pulls parameter values from source operators.
   void _marshall() {
     for (var name in sources.keys) {
@@ -85,6 +93,12 @@ abstract class Operator<V> {
 
     _marshall();
     final modified = update(evaluate());
+    if (channel != null && modified) {
+      // Only the updates caused by operator.run will emit to it's channel sink.
+      // For now, singal channels are noticed by the view, while the selection channel
+      // is noticed by it's binded operator.
+      channel!.sink.add(value);
+    }
     runed = true;
     return modified;
   }

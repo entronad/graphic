@@ -197,7 +197,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
   void render() {
     final selections = params['selections'] as Set<String>;
     final selectors = params['selectors'] as Map<String, Selector>?;
-    final selects = params['selects'] as Map<String, Set<int>>?;
+    final selected = params['selected'] as Selected?;
     final coord = params['coord'] as CoordConv;
     final groups = params['groups'] as AesGroups;
     final tuples = params['tuples'] as List<Tuple>;
@@ -220,9 +220,9 @@ class TooltipRenderOp extends Render<TooltipScene> {
     final name = singleIntersection(selectors?.keys, selections);
 
     final selector = name == null ? null : selectors?[name];
-    final indexes = name == null ? null : selects?[name];
+    final selects = name == null ? null : selected?[name];
 
-    if (selector == null || indexes == null || indexes.isEmpty) {
+    if (selector == null || selects == null || selects.isEmpty) {
       scene.figures = null;
       return;
     }
@@ -231,7 +231,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
         (selector is IntervalSelector || selector.variable != null);
 
     final selectedTuples = <Tuple>[];
-    for (var index in indexes) {
+    for (var index in selects) {
       selectedTuples.add(tuples[index]);
     }
 
@@ -254,7 +254,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
         }
         return Offset.zero;
       };
-      for (var index in indexes) {
+      for (var index in selects) {
         selectedPoint += findPoint(index);
       }
       selectedPoint = selectedPoint / count.toDouble();

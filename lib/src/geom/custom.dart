@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:graphic/src/aes/color.dart';
@@ -7,6 +8,7 @@ import 'package:graphic/src/aes/label.dart';
 import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
+import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/shape/custom.dart';
 
 import 'element.dart';
@@ -30,8 +32,8 @@ class CustomElement extends GeomElement<CustomShape> {
     SizeAttr? size,
     List<Modifier>? modifiers,
     int? layer,
-    Map<String, Set<int>>? selected,
-    void Function(Map<String, Set<int>>)? onSelection,
+    Selected? selected,
+    StreamController<Selected?>? selectionChannel,
   }) : super(
           color: color,
           elevation: elevation,
@@ -43,7 +45,7 @@ class CustomElement extends GeomElement<CustomShape> {
           modifiers: modifiers,
           layer: layer,
           selected: selected,
-          onSelection: onSelection,
+          selectionChannel: selectionChannel,
         );
 }
 

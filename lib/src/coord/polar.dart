@@ -1,6 +1,8 @@
-import 'dart:ui';
 import 'dart:math';
 
+import 'package:graphic/src/chart/view.dart';
+import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/shape/util/gradient.dart';
 import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/interaction/signal.dart';
@@ -32,12 +34,16 @@ class PolarCoord extends Coord {
     int? dimCount,
     double? dimFill,
     bool? transposed,
+    Color? color,
+    Gradient? gradient,
   })  : assert(angleRange == null || angleRange.length == 2),
         assert(radiusRange == null || radiusRange.length == 2),
         super(
           dimCount: dimCount,
           dimFill: dimFill,
           transposed: transposed,
+          color: color,
+          gradient: gradient,
         );
 
   /// The start angle of the plane.
@@ -272,5 +278,57 @@ class PolarCoordConvOp extends CoordConvOp<PolarCoordConv> {
       startRadius * regionRadius,
       endRadius * regionRadius,
     );
+  }
+}
+
+/// The polar region color render operator.
+class PolarRegionColorRenderOp extends RegionBackgroundRenderOp {
+  PolarRegionColorRenderOp(
+    Map<String, dynamic> params,
+    RegionBackgroundScene scene,
+    View view,
+  ) : super(params, scene, view);
+
+  @override
+  void render() {
+    final region = params['region'] as Rect;
+    final color = params['color'] as Color;
+
+    final shortestSide = region.shortestSide;
+    final square = Rect.fromCenter(
+        center: region.center, width: shortestSide, height: shortestSide);
+
+    scene.figures = [
+      PathFigure(
+        Path()..addOval(square),
+        Paint()..color = color,
+      )
+    ];
+  }
+}
+
+/// The polar region gradient render operator.
+class PolarRegionGradientRenderOp extends RegionBackgroundRenderOp {
+  PolarRegionGradientRenderOp(
+    Map<String, dynamic> params,
+    RegionBackgroundScene scene,
+    View view,
+  ) : super(params, scene, view);
+
+  @override
+  void render() {
+    final region = params['region'] as Rect;
+    final gradient = params['gradient'] as Gradient;
+
+    final shortestSide = region.shortestSide;
+    final square = Rect.fromCenter(
+        center: region.center, width: shortestSide, height: shortestSide);
+
+    scene.figures = [
+      PathFigure(
+        Path()..addOval(square),
+        Paint()..shader = toUIGradient(gradient, square),
+      )
+    ];
   }
 }

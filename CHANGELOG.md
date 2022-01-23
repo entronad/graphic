@@ -1,3 +1,13 @@
+## 0.9.0
+
+**2022-01-23**
+
+- Add Interaction Channel feature. See details in [Chart.gestureChannel], [Chart.resizeChannel], [Chart.changeDataChannel] and [Element.selectionChannel].
+- Rename updater properties.
+- Add more [LabelStyle] properties. Now it includes all properties for [TextPainter].
+- Add coordinate region background.
+- Fix auto scale bug when all values are 0.
+
 ## 0.8.0
 
 **2022-01-08**

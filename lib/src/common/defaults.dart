@@ -125,7 +125,7 @@ abstract class Defaults {
   static AxisGuide get horizontalAxis => AxisGuide(
         line: strokeStyle,
         label: LabelStyle(
-          textStyle,
+          style: textStyle,
           offset: Offset(0, 7.5),
         ),
       );
@@ -133,7 +133,7 @@ abstract class Defaults {
   /// A specification for vertical axis.
   static AxisGuide get verticalAxis => AxisGuide(
         label: LabelStyle(
-          textStyle,
+          style: textStyle,
           offset: Offset(-7.5, 0),
         ),
         grid: strokeStyle,
@@ -142,7 +142,7 @@ abstract class Defaults {
   /// A specification for radial axis.
   static AxisGuide get radialAxis => AxisGuide(
         line: strokeStyle,
-        label: LabelStyle(textStyle),
+        label: LabelStyle(style: textStyle),
         grid: strokeStyle,
       );
 
@@ -150,7 +150,7 @@ abstract class Defaults {
   static AxisGuide get circularAxis => AxisGuide(
         position: 1,
         line: strokeStyle,
-        label: LabelStyle(textStyle),
+        label: LabelStyle(style: textStyle),
         grid: strokeStyle,
       );
 

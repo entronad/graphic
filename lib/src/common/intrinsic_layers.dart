@@ -1,12 +1,13 @@
 /// Intrinsic layer orders, if the components has same layer.
 abstract class IntrinsicLayers {
-  static const grid = 0;
-  static const regionAnnot = 1;
-  static const axis = 2;
-  static const element = 3;
-  static const lineAnnot = 4;
-  static const figureAnnot = 5;
-  static const selector = 6;
-  static const crosshair = 7;
-  static const tooltip = 8;
+  static const regionBackground = 0;
+  static const grid = 1;
+  static const regionAnnot = 2;
+  static const axis = 3;
+  static const element = 4;
+  static const lineAnnot = 5;
+  static const figureAnnot = 6;
+  static const selector = 7;
+  static const crosshair = 8;
+  static const tooltip = 9;
 }

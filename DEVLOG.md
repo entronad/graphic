@@ -4034,6 +4034,12 @@ Value op 还是要的，有一些提供定值的场景
 
 三个signal需要分开，否则耦合通道时，本身的changeData会与通道的共振，而且有时候想用不同的data和size。
 
+label 的设置原则是，既要具备 flutter textPainter的全部功能特性，又要具有简易信。需要具备textPainter所有属性看来是必要的了，实践中已经有这个issue了，这个没有疑义。
+
+现在最主要的就是text，style，和span的关系。决定采用这样的方式，就是text和style为主，span作为一个回调函数补完功能，和style对位。
+
+由于Label的构造函数不是采用命名函数，且我们主推的是用style方式定义LabelStyle，因此LabelStyle中的TextStyle简单命名为style
+
 ## TODO
 
 整合errorlog，需处理：throw, assert, list.single，singleIntersection

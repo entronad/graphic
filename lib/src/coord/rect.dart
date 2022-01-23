@@ -1,5 +1,6 @@
-import 'dart:ui';
-
+import 'package:graphic/src/chart/view.dart';
+import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/shape/util/gradient.dart';
 import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/interaction/signal.dart';
@@ -23,12 +24,16 @@ class RectCoord extends Coord {
     int? dimCount,
     double? dimFill,
     bool? transposed,
+    Color? color,
+    Gradient? gradient,
   })  : assert(horizontalRange == null || horizontalRange.length == 2),
         assert(verticalRange == null || verticalRange.length == 2),
         super(
           dimCount: dimCount,
           dimFill: dimFill,
           transposed: transposed,
+          color: color,
+          gradient: gradient,
         );
 
   /// Range ratio of coordinate width to coordinate region width.
@@ -158,5 +163,49 @@ class RectCoordConvOp extends CoordConvOp<RectCoordConv> {
       renderRangeX,
       renderRangeY,
     );
+  }
+}
+
+/// The rectangle region color render operator.
+class RectRegionColorRenderOp extends RegionBackgroundRenderOp {
+  RectRegionColorRenderOp(
+    Map<String, dynamic> params,
+    RegionBackgroundScene scene,
+    View view,
+  ) : super(params, scene, view);
+
+  @override
+  void render() {
+    final region = params['region'] as Rect;
+    final color = params['color'] as Color;
+
+    scene.figures = [
+      PathFigure(
+        Path()..addRect(region),
+        Paint()..color = color,
+      )
+    ];
+  }
+}
+
+/// The rectangle region gradient render operator.
+class RectRegionGradientRenderOp extends RegionBackgroundRenderOp {
+  RectRegionGradientRenderOp(
+    Map<String, dynamic> params,
+    RegionBackgroundScene scene,
+    View view,
+  ) : super(params, scene, view);
+
+  @override
+  void render() {
+    final region = params['region'] as Rect;
+    final gradient = params['gradient'] as Gradient;
+
+    scene.figures = [
+      PathFigure(
+        Path()..addRect(region),
+        Paint()..shader = toUIGradient(gradient, region),
+      )
+    ];
   }
 }

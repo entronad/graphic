@@ -31,7 +31,7 @@ import 'view.dart';
 /// [changeData]. Note that function properties will not be checked in change test.
 ///
 /// The generic [D] is the type of datum in [data] list.
-/// 
+///
 /// The properties of this chart sepcification are final because it is also an immutable
 /// [StatefulWidget], but other specifications can be modified.
 class Chart<D> extends StatefulWidget {
@@ -127,28 +127,28 @@ class Chart<D> extends StatefulWidget {
   final bool? changeData;
 
   /// The interaction channel of gesture signals.
-  /// 
+  ///
   /// You can either get gesture signals by listening to it's stream, or mannually
   /// emit gesture signals into this chart by adding to it's sink.
-  /// 
+  ///
   /// You can also share it with other charts for sharing gesture signals, in which
   /// case make sure it is broadcast.
   final StreamController<GestureSignal>? gestureChannel;
 
   /// The interaction channel of resize signals.
-  /// 
+  ///
   /// You can either get resize signals by listening to it's stream, or mannually
   /// emit resize signals into this chart by adding to it's sink.
-  /// 
+  ///
   /// You can also share it with other charts for sharing resize signals, in which
   /// case make sure it is broadcast.
   final StreamController<ResizeSignal>? resizeChannel;
 
   /// The interaction channel of change data signals.
-  /// 
+  ///
   /// You can either get change data signals by listening to it's stream, or mannually
   /// emit change data signals into this chart by adding to it's sink.
-  /// 
+  ///
   /// You can also share it with other charts for sharing change data signals, in which
   /// case make sure it is broadcast.
   final StreamController<ChangeDataSignal<D>>? changeDataChannel;
@@ -724,7 +724,7 @@ class _ChartLayoutDelegate<D> extends SingleChildLayoutDelegate {
 
       state.view!.resize(size);
     }
-    
+
     state.size = size;
 
     return super.getPositionForChild(size, childSize);

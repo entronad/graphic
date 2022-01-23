@@ -53,6 +53,13 @@ class LineAreaPointPage extends StatelessWidget {
                 alignment: Alignment.centerLeft,
               ),
               Container(
+                child: const Text(
+                  '- With coordinate region background color.',
+                ),
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
+              ),
+              Container(
                 margin: const EdgeInsets.only(top: 10),
                 width: 350,
                 height: 300,
@@ -73,6 +80,7 @@ class LineAreaPointPage extends StatelessWidget {
                     LineElement(
                         shape: ShapeAttr(value: BasicLineShape(dash: [5, 2])))
                   ],
+                  coord: RectCoord(color: const Color(0xffdddddd)),
                   axes: [
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
@@ -651,7 +659,7 @@ class LineAreaPointPage extends StatelessWidget {
                         if (index == total - 1) {
                           return null;
                         }
-                        return LabelStyle(Defaults.textStyle);
+                        return LabelStyle(style: Defaults.textStyle);
                       }
                       ..label = null,
                     Defaults.radialAxis
@@ -659,7 +667,7 @@ class LineAreaPointPage extends StatelessWidget {
                         if (index == total - 1) {
                           return null;
                         }
-                        return LabelStyle(Defaults.textStyle);
+                        return LabelStyle(style: Defaults.textStyle);
                       }
                       ..label = null,
                   ],
@@ -674,7 +682,8 @@ class LineAreaPointPage extends StatelessWidget {
                     TagAnnotation(
                       label: Label(
                           'DANGER',
-                          LabelStyle(const TextStyle(
+                          LabelStyle(
+                              style: const TextStyle(
                             color: Colors.red,
                             fontSize: 12,
                           ))),

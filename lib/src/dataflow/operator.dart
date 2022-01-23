@@ -36,14 +36,14 @@ abstract class Operator<V> {
   }
 
   /// The operator value.
-  /// 
+  ///
   /// Whether the operator value is nullable should be included in the generic [V].
   /// This property is nullable for it may not be initialized.
   @protected
   V? value;
 
   /// Whether this operator needs a initial touch when added.
-  /// 
+  ///
   /// Some operators have inital value or can't be touched.
   bool get needInitialTouch => true;
 

@@ -10,10 +10,12 @@ class InteractionChannelDynamicPage extends StatefulWidget {
   const InteractionChannelDynamicPage({Key? key}) : super(key: key);
 
   @override
-  _InteractionChannelDynamicPageState createState() => _InteractionChannelDynamicPageState();
+  _InteractionChannelDynamicPageState createState() =>
+      _InteractionChannelDynamicPageState();
 }
 
-class _InteractionChannelDynamicPageState extends State<InteractionChannelDynamicPage> {
+class _InteractionChannelDynamicPageState
+    extends State<InteractionChannelDynamicPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final rdm = Random();
@@ -101,16 +103,18 @@ class _InteractionChannelDynamicPageState extends State<InteractionChannelDynami
                       scale: LinearScale(min: 5, tickCount: 5),
                     ),
                   },
-                  elements: [LineElement(
-                    size: SizeAttr(value: 1),
-                  )],
+                  elements: [
+                    LineElement(
+                      size: SizeAttr(value: 1),
+                    )
+                  ],
                   axes: [
                     Defaults.horizontalAxis
                       ..label = null
                       ..line = null,
                     Defaults.verticalAxis
                       ..gridMapper = (_, index, __) =>
-                        index == 0 ? null : Defaults.strokeStyle,
+                          index == 0 ? null : Defaults.strokeStyle,
                   ],
                   selections: {
                     'touchMove': PointSelection(
@@ -150,9 +154,11 @@ class _InteractionChannelDynamicPageState extends State<InteractionChannelDynami
                       scale: LinearScale(min: 0),
                     ),
                   },
-                  elements: [IntervalElement(
-                    size: SizeAttr(value: 1),
-                  )],
+                  elements: [
+                    IntervalElement(
+                      size: SizeAttr(value: 1),
+                    )
+                  ],
                   axes: [
                     Defaults.horizontalAxis,
                   ],

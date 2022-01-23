@@ -1,8 +1,13 @@
 import 'package:flutter/painting.dart';
+import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/converter.dart';
 import 'package:graphic/src/common/dim.dart';
+import 'package:graphic/src/common/intrinsic_layers.dart';
+import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/graffiti/scene.dart';
+import 'package:graphic/src/util/assert.dart';
 
 import 'rect.dart';
 import 'polar.dart';
@@ -28,7 +33,10 @@ abstract class Coord {
     this.dimCount,
     this.dimFill,
     this.transposed,
-  }) : assert(dimCount == null || (dimCount >= 1 && dimCount <= 2));
+    this.color,
+    this.gradient,
+  })  : assert(dimCount == null || (dimCount >= 1 && dimCount <= 2)),
+        assert(isSingle([color, gradient], allowNone: true));
 
   /// The count of coordinate dimensions.
   ///
@@ -45,12 +53,23 @@ abstract class Coord {
   /// Weither to transpose domain dimension and measure dimension.
   bool? transposed;
 
+  /// The color of this coordinate region.
+  Color? color;
+
+  /// The gradient of this coordinate region.
+  Gradient? gradient;
+
+  /// The layer of this coordinate region background.
+  int? layer;
+
   @override
   bool operator ==(Object other) =>
       other is Coord &&
       dimCount == other.dimCount &&
       dimFill == other.dimFill &&
-      transposed == other.transposed;
+      transposed == other.transposed &&
+      color == other.color &&
+      gradient == other.gradient;
 }
 
 /// The converter of a coordinate.
@@ -110,4 +129,21 @@ class RegionOp extends Operator<Rect> {
     final container = Rect.fromLTWH(0, 0, size.width, size.height);
     return padding(size).deflateRect(container);
   }
+}
+
+/// The region background scene.
+class RegionBackgroundScene extends Scene {
+  RegionBackgroundScene(int layer) : super(layer);
+
+  @override
+  int get intrinsicLayer => IntrinsicLayers.regionBackground;
+}
+
+/// The region background render operator.
+abstract class RegionBackgroundRenderOp extends Render<RegionBackgroundScene> {
+  RegionBackgroundRenderOp(
+    Map<String, dynamic> params,
+    RegionBackgroundScene scene,
+    View view,
+  ) : super(params, scene, view);
 }

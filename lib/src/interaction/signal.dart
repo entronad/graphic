@@ -66,7 +66,8 @@ class SignalReducerOp<D> extends Operator<Signal?> {
     final changeData = params['changeData'] as ChangeDataSignal<D>?;
 
     assert(isSingle([gesture, resize, changeData]));
-    return [gesture, resize, changeData].singleWhere((element) => element != null);
+    return [gesture, resize, changeData]
+        .singleWhere((element) => element != null);
   }
 }
 

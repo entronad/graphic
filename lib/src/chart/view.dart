@@ -38,33 +38,39 @@ class View<D> extends Dataflow {
   bool dirty = false;
 
   /// The gesture signal channel.
-  /// 
+  ///
   /// This is generated in [parse] and hold by [View] for internal interactions.
   late StreamController<GestureSignal> gestureChannel;
 
   /// The resize signal channel.
-  /// 
+  ///
   /// This is generated in [parse] and hold by [View] for internal interactions.
   late StreamController<ResizeSignal> resizeChannel;
 
   /// The changeData signal channel.
-  /// 
+  ///
   /// This is generated in [parse] and hold by [View] for internal interactions.
   late StreamController<ChangeDataSignal<D>> changeDataChannel;
 
   /// Emits a gesture signal.
   Future<void> gesture(Gesture gesture) async {
-    await Future(() {gestureChannel.sink.add(GestureSignal(gesture));});
+    await Future(() {
+      gestureChannel.sink.add(GestureSignal(gesture));
+    });
   }
 
   /// Emits a resize signal.
   Future<void> resize(Size size) async {
-    await Future(() {resizeChannel.sink.add(ResizeSignal(size));});
+    await Future(() {
+      resizeChannel.sink.add(ResizeSignal(size));
+    });
   }
 
   /// Emits a change data signal.
   Future<void> changeData(List<D> data) async {
-    await Future(() {changeDataChannel.sink.add(ChangeDataSignal<D>(data));});
+    await Future(() {
+      changeDataChannel.sink.add(ChangeDataSignal<D>(data));
+    });
   }
 
   @override

@@ -1,6 +1,10 @@
-![examples](https://github.com/entronad/graphic/raw/main/devdoc/examples.jpg)
+# Graphic
 
-# [Graphic](https://pub.dev/packages/graphic)
+<p align="left">
+<a href="https://pub.dev/packages/graphic">
+<img src="https://img.shields.io/pub/v/graphic.svg" />
+</a>
+</p>
 
 Graphic is a declarative, interactive grammar of data visualization. It provides a Flutter charting library.
 
@@ -10,14 +14,6 @@ Graphic is a declarative, interactive grammar of data visualization. It provides
 - **Customizable**: With the *shape* and *figure* classes, it's easy to custom your own element, tooltip, annotation, etc.
 - **Dataflow Graph and Operators**: Graphic has a internal structure of a dataflow graph and operators. That is how the reactive reevaluation and interaction is implemented.
 
-## Installation
-
-Install from the [pub.dev](https://pub.dev/packages/graphic/install).
-
-## Tutorials
-
-[The Versatility of the Grammar of Graphics](https://medium.com/@entronad/the-versatility-of-the-grammar-of-graphics-d1366760424d)
-
 ## Documentation
 
 See in the [documentation](https://pub.dev/documentation/graphic/latest/graphic/graphic-library.html).
@@ -25,6 +21,17 @@ See in the [documentation](https://pub.dev/documentation/graphic/latest/graphic/
 ## Examples
 
 Example of charts can be seen in the [Example App](https://github.com/entronad/graphic/tree/main/example). Please clone this repository and run the example project in example directory.
+
+<div align="center">
+<img src="https://github.com/entronad/graphic/raw/main/devdoc/signal_channel.gif"/>
+<img src="https://github.com/entronad/graphic/raw/main/devdoc/selection_channel.gif"/>
+</div>
+
+![examples](https://github.com/entronad/graphic/raw/main/devdoc/examples.jpg)
+
+## Tutorials
+
+[The Versatility of the Grammar of Graphics](https://medium.com/@entronad/the-versatility-of-the-grammar-of-graphics-d1366760424d)
 
 ## Reference
 

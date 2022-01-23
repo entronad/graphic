@@ -295,15 +295,14 @@ class SelectorRenderOp extends Render<SelectorScene> {
 }
 
 /// The result of selections of an element.
-/// 
+///
 /// The keys are selection names, and the values are selected datum indexes sets
 /// of each selection.
 typedef Selected = Map<String, Set<int>>;
 
 /// The operator to select tuples by selectors.
 class SelectOp extends Operator<Selected?> {
-  SelectOp(Map<String, dynamic> params, Selected? value)
-      : super(params, value);
+  SelectOp(Map<String, dynamic> params, Selected? value) : super(params, value);
 
   @override
   Selected? evaluate() {

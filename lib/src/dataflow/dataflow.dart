@@ -137,11 +137,11 @@ class Dataflow {
   }
 
   /// Binds a channel to an operator.
-  /// 
+  ///
   /// The channels are the only way to communicate with outside for this dataflow.
-  /// 
+  ///
   /// An operator can only be binded to one channel.
-  /// 
+  ///
   /// The value changed to null will also trigger a communication. But the consume
   /// operator's value turning to null after running will not.
   void bindChannel<V>(

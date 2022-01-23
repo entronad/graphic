@@ -128,10 +128,10 @@ abstract class GeomElement<S extends Shape> {
   Selected? selected;
 
   /// The interaction channel of selections.
-  /// 
+  ///
   /// You can either get selection results by listening to it's stream, or mannually
   /// emit selections into this element by add to it's sink.
-  /// 
+  ///
   /// You can also share it with other charts for sharing selections, in witch case
   /// make sure it is broadcast.
   StreamController<Selected?>? selectionChannel;

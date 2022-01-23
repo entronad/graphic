@@ -73,7 +73,8 @@ void parse<D>(
 
   final gestureSignal = view.add(SignalOp<GestureSignal>());
 
-  final gestureChannel = spec.gestureChannel ?? StreamController<GestureSignal>();
+  final gestureChannel =
+      spec.gestureChannel ?? StreamController<GestureSignal>();
   view.bindChannel(gestureChannel, gestureSignal);
   view.gestureChannel = gestureChannel;
 
@@ -85,7 +86,8 @@ void parse<D>(
 
   final changeDataSignal = view.add(SignalOp<ChangeDataSignal<D>>());
 
-  final changeDataChannel = spec.changeDataChannel ?? StreamController<ChangeDataSignal<D>>();
+  final changeDataChannel =
+      spec.changeDataChannel ?? StreamController<ChangeDataSignal<D>>();
   view.bindChannel(changeDataChannel, changeDataSignal);
   view.changeDataChannel = changeDataChannel;
 
@@ -101,13 +103,43 @@ void parse<D>(
     'signal': resizeSignal,
   }, chartSize));
 
+  final coordSpec = spec.coord ?? RectCoord();
+
   final region = view.add(RegionOp({
     'size': size,
     'padding': spec.padding ??
-        (spec.coord is PolarCoord ? _defaultPolarPadding : _defaultRectPadding),
+        (coordSpec is RectCoord ? _defaultRectPadding : _defaultPolarPadding),
   }));
 
-  final coordSpec = spec.coord ?? RectCoord();
+  if (coordSpec.color != null) {
+    final regionBackgroundScene =
+        view.graffiti.add(RegionBackgroundScene(coordSpec.layer ?? 0));
+    if (coordSpec is RectCoord) {
+      view.add(RectRegionColorRenderOp({
+        'region': region,
+        'color': coordSpec.color,
+      }, regionBackgroundScene, view));
+    } else {
+      view.add(PolarRegionColorRenderOp({
+        'region': region,
+        'color': coordSpec.color,
+      }, regionBackgroundScene, view));
+    }
+  } else if (coordSpec.gradient != null) {
+    final regionBackgroundScene =
+        view.graffiti.add(RegionBackgroundScene(coordSpec.layer ?? 0));
+    if (coordSpec is RectCoord) {
+      view.add(RectRegionGradientRenderOp({
+        'region': region,
+        'gradient': coordSpec.gradient,
+      }, regionBackgroundScene, view));
+    } else {
+      view.add(PolarRegionGradientRenderOp({
+        'region': region,
+        'gradient': coordSpec.gradient,
+      }, regionBackgroundScene, view));
+    }
+  }
 
   late CoordConvOp coord;
   if (coordSpec is RectCoord) {
@@ -179,9 +211,7 @@ void parse<D>(
 
   // Variable
 
-  final data = view.add(DataOp<D>({
-    'signal': changeDataSignal
-  }, spec.data));
+  final data = view.add(DataOp<D>({'signal': changeDataSignal}, spec.data));
 
   final accessors = <String, Accessor<D, dynamic>>{};
   final variableSpecs = spec.variables;

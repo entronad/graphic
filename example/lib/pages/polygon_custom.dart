@@ -564,7 +564,8 @@ class PolygonCustomPage extends StatelessWidget {
                     TagAnnotation(
                       label: Label(
                         'Email',
-                        LabelStyle(Defaults.textStyle,
+                        LabelStyle(
+                            style: Defaults.textStyle,
                             align: Alignment.centerRight),
                       ),
                       anchor: (size) => const Offset(34, 290),
@@ -579,7 +580,8 @@ class PolygonCustomPage extends StatelessWidget {
                     TagAnnotation(
                       label: Label(
                         'Affiliate',
-                        LabelStyle(Defaults.textStyle,
+                        LabelStyle(
+                            style: Defaults.textStyle,
                             align: Alignment.centerRight),
                       ),
                       anchor: (size) => Offset(34 + size.width / 5, 290),
@@ -594,7 +596,8 @@ class PolygonCustomPage extends StatelessWidget {
                     TagAnnotation(
                       label: Label(
                         'Video',
-                        LabelStyle(Defaults.textStyle,
+                        LabelStyle(
+                            style: Defaults.textStyle,
                             align: Alignment.centerRight),
                       ),
                       anchor: (size) => Offset(34 + size.width / 5 * 2, 290),
@@ -609,7 +612,8 @@ class PolygonCustomPage extends StatelessWidget {
                     TagAnnotation(
                       label: Label(
                         'Direct',
-                        LabelStyle(Defaults.textStyle,
+                        LabelStyle(
+                            style: Defaults.textStyle,
                             align: Alignment.centerRight),
                       ),
                       anchor: (size) => Offset(34 + size.width / 5 * 3, 290),
@@ -624,7 +628,8 @@ class PolygonCustomPage extends StatelessWidget {
                     TagAnnotation(
                       label: Label(
                         'Search',
-                        LabelStyle(Defaults.textStyle,
+                        LabelStyle(
+                            style: Defaults.textStyle,
                             align: Alignment.centerRight),
                       ),
                       anchor: (size) => Offset(34 + size.width / 5 * 4, 290),

@@ -14,7 +14,8 @@ final routes = {
   '/examples/Interval Element': (context) => IntervalPage(),
   '/examples/Line,Area,Point Element': (context) => LineAreaPointPage(),
   '/examples/Polygon,Custom Element': (context) => PolygonCustomPage(),
-  '/examples/Interaction Channel, Dynamic': (context) => const InteractionChannelDynamicPage(),
+  '/examples/Interaction Channel, Dynamic': (context) =>
+      const InteractionChannelDynamicPage(),
   '/examples/Bigdata': (context) => BigdataPage(),
   '/examples/Echarts': (context) => EchartsPage(),
   // '/examples/Debug': (context) => DebugPage(),

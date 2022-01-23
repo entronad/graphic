@@ -269,7 +269,7 @@ class EchartsPage extends StatelessWidget {
                       label: Label(
                           '13',
                           LabelStyle(
-                            Defaults.textStyle,
+                            style: Defaults.textStyle,
                             offset: const Offset(0, -10),
                           )),
                       values: ['Wed', 13],
@@ -278,7 +278,7 @@ class EchartsPage extends StatelessWidget {
                       label: Label(
                           '9',
                           LabelStyle(
-                            Defaults.textStyle,
+                            style: Defaults.textStyle,
                             offset: const Offset(0, -10),
                           )),
                       values: ['Sun', 9],
@@ -287,7 +287,7 @@ class EchartsPage extends StatelessWidget {
                       label: Label(
                           '-2',
                           LabelStyle(
-                            Defaults.textStyle,
+                            style: Defaults.textStyle,
                             offset: const Offset(0, -10),
                           )),
                       values: ['Tue', -2],
@@ -296,7 +296,7 @@ class EchartsPage extends StatelessWidget {
                       label: Label(
                           '5',
                           LabelStyle(
-                            Defaults.textStyle,
+                            style: Defaults.textStyle,
                             offset: const Offset(0, -10),
                           )),
                       values: ['Thu', 5],

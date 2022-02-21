@@ -14,7 +14,7 @@ abstract class DiscreteScale<V> extends Scale<V, int> {
     this.inflate,
     this.align,
     String? title,
-    String Function(V)? formatter,
+    String? Function(V)? formatter,
     List<V>? ticks,
     int? tickCount,
   })  : assert(isSingle([inflate, align], allowNone: true)),

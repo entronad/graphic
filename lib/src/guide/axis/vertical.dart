@@ -45,7 +45,7 @@ List<Figure>? renderVerticalAxis(
           tick.tickLine!.style.toPaint(),
         ));
       }
-      if (tick.label != null) {
+      if (tick.haveLabel) {
         rst.add(renderLabel(
           Label(tick.text, tick.label!),
           Offset(x, y),

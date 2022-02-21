@@ -74,7 +74,7 @@ abstract class PointShapeBase extends PointShape {
       hollow,
       strokeWidth,
     ));
-    if (item.label != null) {
+    if (item.label != null && item.label!.haveText) {
       final point = coord.convert(representPoint(item.position));
       final anchor = Offset(
         point.dx,

@@ -49,7 +49,7 @@ abstract class Scale<V, SV extends num> {
   /// Convert the value to a [String] on the chart.
   ///
   /// If null, a default [Object.toString] is used.
-  String Function(V)? formatter;
+  String? Function(V)? formatter;
 
   /// Indicates the axis ticks directly.
   List<V>? ticks;
@@ -88,7 +88,7 @@ abstract class ScaleConv<V, SV extends num> extends Converter<V, SV> {
   ///
   /// This should not be directly used. Use method [format] insead to avoid generic
   /// problems.
-  late String Function(V) formatter;
+  late String? Function(V) formatter;
 
   /// The scale ticks.
   late List<V> ticks;
@@ -118,7 +118,7 @@ abstract class ScaleConv<V, SV extends num> extends Converter<V, SV> {
   /// Formats a value to string.
   ///
   /// This is a method wrapper of [formatter] to avoid generic problems.
-  String format(V value) => formatter(value);
+  String? format(V value) => formatter(value);
 
   /// The default formatter of [V] for [formatter].
   @protected

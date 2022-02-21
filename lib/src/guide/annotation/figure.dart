@@ -52,6 +52,8 @@ abstract class FigureAnnotation extends Annotation {
 }
 
 /// The operator to create figures of a figure annotation.
+///
+/// The figures value is nullable.
 abstract class FigureAnnotOp extends Operator<List<Figure>?> {
   FigureAnnotOp(Map<String, dynamic> params) : super(params);
 }

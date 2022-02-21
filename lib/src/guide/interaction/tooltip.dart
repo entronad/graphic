@@ -306,7 +306,8 @@ class TooltipRenderOp extends Render<TooltipScene> {
 
         if (groupField != null) {
           textContent +=
-              scales[groupField]!.format(selectedTuples.first[groupField]);
+              scales[groupField]!.format(selectedTuples.first[groupField]) ??
+                  '';
         }
         for (var tuple in selectedTuples) {
           final domainField = fields.first;

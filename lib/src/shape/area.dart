@@ -140,10 +140,11 @@ class BasicAreaShape extends AreaShape {
       represent,
       false,
       0,
+      coord.region,
     ));
 
     for (var item in labels.keys) {
-      if (item.label != null) {
+      if (item.label != null && item.label!.haveText) {
         rst.add(renderLabel(
           item.label!,
           labels[item]!,

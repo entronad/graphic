@@ -14,7 +14,7 @@ abstract class ContinuousScale<V> extends Scale<V, double> {
     this.marginMax,
     this.niceRange,
     String? title,
-    String Function(V)? formatter,
+    String? Function(V)? formatter,
     List<V>? ticks,
     int? tickCount,
   })  : assert(isSingle([min, marginMin], allowNone: true)),

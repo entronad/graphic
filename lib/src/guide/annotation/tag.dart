@@ -37,12 +37,14 @@ class TagAnnotOp extends FigureAnnotOp {
     final anchor = params['anchor'] as Offset;
     final label = params['label'] as Label;
 
-    return [
-      renderLabel(
-        label,
-        anchor,
-        Alignment.center,
-      )
-    ];
+    return label.haveText
+        ? [
+            renderLabel(
+              label,
+              anchor,
+              Alignment.center,
+            )
+          ]
+        : null;
   }
 }

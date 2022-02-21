@@ -109,7 +109,6 @@ class IntervalPage extends StatelessWidget {
                     ),
                     'sold': Variable(
                       accessor: (Map map) => map['sold'] as num,
-                      scale: LinearScale(min: 0),
                     ),
                   },
                   elements: [

@@ -39,17 +39,17 @@ class TickLine {
 /// Gets an axis tick line form an axis value text.
 ///
 /// [index] and [total] is current and total count of all ticks respectively.
-typedef TickLineMapper = TickLine? Function(String text, int index, int total);
+typedef TickLineMapper = TickLine? Function(String? text, int index, int total);
 
 /// Gets an axis label form an axis value text.
 ///
 /// [index] and [total] is current and total count of all ticks respectively.
-typedef LabelMapper = LabelStyle? Function(String text, int index, int total);
+typedef LabelMapper = LabelStyle? Function(String? text, int index, int total);
 
 /// Gets an axis grid stroke style form an axis value text.
 ///
 /// [index] and [total] is current and total count of all ticks respectively.
-typedef GridMapper = StrokeStyle? Function(String text, int index, int total);
+typedef GridMapper = StrokeStyle? Function(String? text, int index, int total);
 
 /// The specification of an axis.
 ///
@@ -175,7 +175,7 @@ class TickInfo {
   final double position;
 
   /// The text of the tick label.
-  final String text;
+  final String? text;
 
   /// The tick line specification.
   TickLine? tickLine;
@@ -185,6 +185,9 @@ class TickInfo {
 
   /// The stroke style of the tick grid line.
   StrokeStyle? grid;
+
+  /// Whether this tick has a label to render.
+  bool get haveLabel => label != null && text != null && text!.isNotEmpty;
 }
 
 /// The operator to create tick informations.

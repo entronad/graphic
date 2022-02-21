@@ -11,7 +11,7 @@ class OrdinalScale extends DiscreteScale<String> {
     bool? inflate,
     double? align,
     String? title,
-    String Function(String)? formatter,
+    String? Function(String)? formatter,
     List<String>? ticks,
     int? tickCount,
   }) : super(

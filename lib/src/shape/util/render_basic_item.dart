@@ -20,15 +20,18 @@ List<Figure> renderBasicItem(
   Path path,
   Aes aes,
   bool hollow,
-  double strokeWidth,
-) {
+  double strokeWidth, [
+  Rect? gradientBounds,
+]) {
   final rst = <Figure>[];
 
   final style = Paint();
   if (aes.gradient != null) {
     style.shader = toUIGradient(
       aes.gradient!,
-      path.getBounds(),
+      gradientBounds == null
+          ? path.getBounds()
+          : path.getBounds().intersect(gradientBounds),
     );
   } else {
     style.color = aes.color!;

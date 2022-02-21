@@ -80,7 +80,7 @@ List<Figure>? renderRadialAxis(
 
     final r = coord.convertRadius(tick.position);
     if (r >= coord.startRadius && r <= coord.endRadius) {
-      if (tick.label != null) {
+      if (tick.haveLabel) {
         final labelAnchor = coord.polarToOffset(angle, r);
         final anchorOffset = labelAnchor - coord.center;
         labelAnchors[i] = labelAnchor;

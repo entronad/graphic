@@ -14,7 +14,7 @@ class TimeScale extends ContinuousScale<DateTime> {
     double? marginMin,
     double? marginMax,
     String? title,
-    String Function(DateTime)? formatter,
+    String? Function(DateTime)? formatter,
     List<DateTime>? ticks,
     int? tickCount,
   }) : super(

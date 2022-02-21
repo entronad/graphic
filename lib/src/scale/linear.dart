@@ -17,7 +17,7 @@ class LinearScale extends ContinuousScale<num> {
     double? marginMin,
     double? marginMax,
     String? title,
-    String Function(num)? formatter,
+    String? Function(num)? formatter,
     List<num>? ticks,
     int? tickCount,
     bool? niceRange,

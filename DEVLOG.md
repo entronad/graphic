@@ -4040,12 +4040,28 @@ label 的设置原则是，既要具备 flutter textPainter的全部功能特性
 
 由于Label的构造函数不是采用命名函数，且我们主推的是用style方式定义LabelStyle，因此LabelStyle中的TextStyle简单命名为style
 
+aesthetic attribute 类名为 Attr 而不是 Aes 的最重要的一个原因是 Attr 更多人知道什么意思，Aes 不知道
+
+~~label 和 elevation 这两个 attr，由于本身确实是可以等于null的（且不一定是全null），因此Attr的泛型也应当允许null，同时label处理函数中对null和空字符串也应当单独处理，防止性能问题。~~
+
+由于机制问题，attr的value不能为null，因此采用 elevation为0，label的string为null或者空字符串。
+
+scale的formatter（tick）也应该允许返回null，并在渲染tick时判断
+
+除了point shape，都设置 gradientConstraint.
+
+先不管扇面的gradient，让它也是按图元的。否则扇面堆叠等情况太复杂
+
 ## TODO
+
+area gradient 超出coord region的问题
+
+Label还是LabelAttr 支持null
 
 整合errorlog，需处理：throw, assert, list.single，singleIntersection
 
-tooltip grammar
+后续两大方向：
 
-legend grammar
+animation
 
-in and out communication
+树状等其它数据结构，实现treemap、桑基图等类型

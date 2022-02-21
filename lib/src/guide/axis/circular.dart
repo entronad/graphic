@@ -40,7 +40,7 @@ List<Figure>? renderCircularAxis(
 
     final angle = coord.convertAngle(tick.position);
     if (angle >= coord.startAngle && angle <= coord.endAngle) {
-      if (tick.label != null) {
+      if (tick.haveLabel) {
         final labelAnchor = coord.polarToOffset(angle, r);
         Alignment defaultAlign;
         // Calculate default alignment according to anchor's quadrant.

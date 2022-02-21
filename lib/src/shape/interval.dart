@@ -202,7 +202,7 @@ class RectShape extends IntervalShape {
               )),
               coord,
             ));
-            if (item.label != null) {
+            if (item.label != null && item.label!.haveText) {
               final labelAnchor = coord.convert(
                   position[0] + (position[1] - position[0]) * labelPosition);
               final anchorOffset = labelAnchor - coord.center;
@@ -328,6 +328,7 @@ class RectShape extends IntervalShape {
       item,
       false,
       0,
+      coord.region,
     ));
 
     if (item.label != null) {
@@ -352,7 +353,7 @@ class RectShape extends IntervalShape {
     double r0,
     double startAngle,
     double endAngle,
-    bool hasLabel,
+    bool haveLabel,
     Offset labelAnchor,
     PolarCoordConv coord,
   ) {
@@ -390,9 +391,10 @@ class RectShape extends IntervalShape {
       item,
       false,
       0,
+      coord.region,
     ));
 
-    if (hasLabel && item.label != null) {
+    if (haveLabel && item.label != null) {
       Alignment defaultAlign;
       if (labelPosition == 1) {
         // Calculate default alignment according to anchor's quadrant.
@@ -548,6 +550,7 @@ class FunnelShape extends IntervalShape {
       item,
       false,
       0,
+      coord.region,
     ));
 
     if (item.label != null) {

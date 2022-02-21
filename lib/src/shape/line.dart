@@ -110,10 +110,11 @@ class BasicLineShape extends LineShape {
       represent,
       true,
       represent.size ?? defaultSize,
+      coord.region,
     ));
 
     for (var item in labels.keys) {
-      if (item.label != null) {
+      if (item.label != null && item.label!.haveText) {
         rst.add(renderLabel(
           item.label!,
           labels[item]!,

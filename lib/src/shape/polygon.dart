@@ -148,9 +148,10 @@ class HeatmapShape extends PolygonShape {
         item,
         false,
         0,
+        coord.region,
       ));
 
-      if (item.label != null) {
+      if (item.label != null && item.label!.haveText) {
         rst.add(renderLabel(
           item.label!,
           coord.convert(point),

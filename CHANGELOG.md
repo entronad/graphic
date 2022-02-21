@@ -1,3 +1,11 @@
+## 0.9.1
+
+**2022-02-21**
+
+- Allow `Label.text` and `Scale.formatter` return type to be null. For better performance, if they are null or empty string, nothing will be rendered: https://github.com/entronad/graphic/issues/51.
+- The element gradient will be constained within the coordinate region except point element: https://github.com/entronad/graphic/issues/53.
+- Fix non-gesture signal bug of signal updaters in `Defaults`: https://github.com/entronad/graphic/issues/52.
+
 ## 0.9.0
 
 **2022-01-23**

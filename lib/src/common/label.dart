@@ -164,6 +164,8 @@ class LabelStyle {
 ///
 /// A label is a span of text with styles. In is used for [LabelAttr], [TagAnnotation],
 /// etc in the chart.
+///
+/// If the [text] is null or empty, the label will render nothing.
 class Label {
   /// Creates a label.
   Label(
@@ -172,7 +174,7 @@ class Label {
   ]) : this.style = style ?? LabelStyle(style: Defaults.textStyle);
 
   /// The label text.
-  String text;
+  String? text;
 
   /// The label style.
   LabelStyle style;
@@ -180,6 +182,9 @@ class Label {
   @override
   bool operator ==(Object other) =>
       other is Label && text == other.text && style == other.style;
+
+  /// Whether the [text] is not null or empty;
+  bool get haveText => text != null && text!.isNotEmpty;
 }
 
 /// Calculates the real paint point for [TextPainter.paint].
@@ -205,10 +210,12 @@ Figure renderLabel(
   Offset anchor,
   Alignment defaultAlign,
 ) {
+  assert(label.haveText);
+
   final painter = TextPainter(
     text: label.style.style != null
         ? TextSpan(text: label.text, style: label.style.style)
-        : label.style.span!(label.text),
+        : label.style.span!(label.text!),
     textAlign: label.style.textAlign ?? TextAlign.start,
     textDirection: label.style.textDirection ?? TextDirection.ltr,
     textScaleFactor: label.style.textScaleFactor ?? 1.0,

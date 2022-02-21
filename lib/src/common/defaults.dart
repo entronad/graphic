@@ -16,42 +16,44 @@ SignalUpdater<List<double>> _getRangeUpdate(
       List<double> pre,
       Signal signal,
     ) {
-      signal as GestureSignal;
-      final gesture = signal.gesture;
+      if (signal is GestureSignal) {
+        final gesture = signal.gesture;
 
-      if (gesture.type == GestureType.scaleUpdate) {
-        final detail = gesture.details as ScaleUpdateDetails;
+        if (gesture.type == GestureType.scaleUpdate) {
+          final detail = gesture.details as ScaleUpdateDetails;
 
-        if (detail.pointerCount == 1) {
-          // Panning.
+          if (detail.pointerCount == 1) {
+            // Panning.
 
-          final deltaRatio = getDeltaDim(gesture.preScaleDetail!);
-          final delta = deltaRatio / getSizeDim(gesture.chartSize);
-          return [pre.first + delta, pre.last + delta];
-        } else {
-          // Scaling.
+            final deltaRatio = getDeltaDim(gesture.preScaleDetail!);
+            final delta = deltaRatio / getSizeDim(gesture.chartSize);
+            return [pre.first + delta, pre.last + delta];
+          } else {
+            // Scaling.
 
-          final preScale = getScaleDim(gesture.preScaleDetail!);
-          final scale = getScaleDim(detail);
-          final deltaRatio = (scale - preScale) / preScale / 2;
+            final preScale = getScaleDim(gesture.preScaleDetail!);
+            final scale = getScaleDim(detail);
+            final deltaRatio = (scale - preScale) / preScale / 2;
+            final preRange = pre.last - pre.first;
+            final delta = deltaRatio * preRange;
+            return [pre.first - delta, pre.last + delta];
+          }
+        } else if (gesture.type == GestureType.scroll) {
+          final step = 0.1;
+          final scrollDelta = gesture.details as Offset;
+          final deltaRatio = scrollDelta.dy == 0
+              ? 0.0
+              : scrollDelta.dy > 0
+                  ? (step / 2)
+                  : (-step / 2);
           final preRange = pre.last - pre.first;
           final delta = deltaRatio * preRange;
           return [pre.first - delta, pre.last + delta];
+        } else if (gesture.type == GestureType.doubleTap) {
+          return init;
         }
-      } else if (gesture.type == GestureType.scroll) {
-        final step = 0.1;
-        final scrollDelta = gesture.details as Offset;
-        final deltaRatio = scrollDelta.dy == 0
-            ? 0.0
-            : scrollDelta.dy > 0
-                ? (step / 2)
-                : (-step / 2);
-        final preRange = pre.last - pre.first;
-        final delta = deltaRatio * preRange;
-        return [pre.first - delta, pre.last + delta];
-      } else if (gesture.type == GestureType.doubleTap) {
-        return init;
       }
+
       return pre;
     };
 

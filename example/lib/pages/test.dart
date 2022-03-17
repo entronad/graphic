@@ -27,9 +27,9 @@ class TestPage extends StatelessWidget {
                 height: 300,
                 child: Chart<Map<String, num>>(
                   data: const [
-                    {'a': 1, 'b': 1},
-                    {'a': 2},
-                    {'a': 3, 'b': 3}
+                    {'a': 1, 'b': 1, 'c': 2},
+                    {'a': 2, 'c': 3},
+                    {'a': 3, 'b': 3, 'c': 4}
                   ],
                   variables: {
                     'a': Variable<Map<String, num>, num>(
@@ -39,11 +39,25 @@ class TestPage extends StatelessWidget {
                     'b': Variable<Map<String, num>, num>(
                         accessor: (Map<String, num> datum) =>
                             datum['b'] ?? double.nan,
-                        scale: LinearScale(ticks: [0, 1, 2, 3, 4])),
+                        scale: LinearScale(
+                          min: 0,
+                          max: 4,
+                          ticks: [0, 1, 2, 3, 4],
+                        )),
+                    'c': Variable<Map<String, num>, num>(
+                        accessor: (Map<String, num> datum) =>
+                            datum['c'] ?? double.nan,
+                        scale: LinearScale(
+                          min: 0,
+                          max: 4,
+                          ticks: [0, 1, 2, 3, 4],
+                        )),
                   },
                   elements: [
                     LineElement(position: Varset('a') * Varset('b')),
                     PointElement(position: Varset('a') * Varset('b')),
+                    LineElement(position: Varset('a') * Varset('c')),
+                    PointElement(position: Varset('a') * Varset('c')),
                   ],
                   coord: RectCoord(color: const Color(0xffdddddd)),
                   axes: [

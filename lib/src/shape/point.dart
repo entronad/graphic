@@ -5,8 +5,8 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/geom/point.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 
-import 'util/render_basic_item.dart';
 import 'function.dart';
+import 'util/render_basic_item.dart';
 
 /// The shape for the point element.
 ///
@@ -107,6 +107,11 @@ class CircleShape extends PointShapeBase {
   @override
   Path path(Aes item, CoordConv coord) {
     final point = coord.convert(item.position.last);
+
+    if (!point.dx.isFinite || !point.dy.isFinite) {
+      return Path();
+    }
+
     final size = item.size ?? defaultSize;
     return Path()
       ..addOval(Rect.fromCenter(

@@ -1,14 +1,14 @@
-import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/geom/line.dart';
 import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/util/collection.dart';
 import 'package:graphic/src/util/path.dart';
 
-import 'util/render_basic_item.dart';
 import 'function.dart';
+import 'util/render_basic_item.dart';
 
 /// The shape for the line element.
 ///
@@ -77,9 +77,6 @@ class BasicLineShape extends LineShape {
         final point = coord.convert(item.position.last);
         currentSegment.add(point);
         labels[item] = point;
-      } else if (currentSegment.isNotEmpty) {
-        segments.add(currentSegment);
-        currentSegment = [];
       }
     }
     if (currentSegment.isNotEmpty) {

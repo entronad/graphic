@@ -20,6 +20,20 @@ import 'signal.dart';
 /// - [Listener], which responses to common pointer events that compose [hover]
 /// and [scroll] gestures.
 enum GestureType {
+  /// Triggered when a mouse pointer has entered this widget.
+  ///
+  /// This callback is triggered when the pointer, with or without buttons
+  /// pressed, has started to be contained by the region of this widget.
+  mouseEnter,
+
+  /// Triggered when a mouse pointer has exited this widget when the widget is
+  /// still mounted.
+  ///
+  /// This callback is triggered when the pointer, with or without buttons
+  /// pressed, has stopped being contained by the region of this widget, except
+  /// when the exit is caused by the disappearance of this widget.
+  mouseExit,
+
   /// A tap with a primary button has occurred.
   ///
   /// This triggers when the tap gesture wins. If the tap gesture did not win,

@@ -5,8 +5,8 @@ import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/geom/point.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 
-import 'util/render_basic_item.dart';
 import 'function.dart';
+import 'util/render_basic_item.dart';
 
 /// The shape for the point element.
 ///
@@ -59,8 +59,8 @@ abstract class PointShapeBase extends PointShape {
     Offset origin,
   ) {
     for (var point in item.position) {
-      if (!point.dy.isFinite) {
-        continue;
+      if (!point.isFinite) {
+        return [];
       }
     }
 

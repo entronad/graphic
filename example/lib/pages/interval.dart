@@ -78,7 +78,13 @@ class IntervalPage extends StatelessWidget {
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,
                   ],
-                  selections: {'tap': PointSelection(dim: Dim.x)},
+                  selections: {
+                    'hover': PointSelection(
+                      dim: Dim.x,
+                      on: {GestureType.hover},
+                      clear: {GestureType.mouseExit},
+                    )
+                  },
                   tooltip: TooltipGuide(),
                   crosshair: CrosshairGuide(),
                 ),

@@ -76,6 +76,7 @@ class PositionOp extends Operator<PositionEncoder> {
     final completer = params['completer'] as PositionCompleter;
     final origin = params['origin'] as Offset;
 
+    /// Makes sure that scales in the same dim have same properties.
     assert(form.variablesByDim.every((dim) {
       final scale = scales[dim.first];
       for (var variable in dim) {

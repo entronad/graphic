@@ -1,3 +1,10 @@
+## 0.9.2
+
+**2022-04-05**
+
+- Remove tooltip on exit chart area: https://github.com/entronad/graphic/pull/63
+- Handle NaN in Point shape: https://github.com/entronad/graphic/pull/70
+
 ## 0.9.1
 
 **2022-02-21**

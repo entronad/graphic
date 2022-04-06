@@ -38,6 +38,7 @@ import 'view.dart';
 class Chart<D> extends StatefulWidget {
   /// Creates a chart widget.
   Chart({
+    Key? key,
     required this.data,
     this.changeData,
     required this.variables,
@@ -54,7 +55,7 @@ class Chart<D> extends StatefulWidget {
     this.gestureChannel,
     this.resizeChannel,
     this.changeDataChannel,
-  });
+  }) : super(key: key);
 
   /// The data list to visualize.
   final List<D> data;

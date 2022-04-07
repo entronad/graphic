@@ -222,9 +222,9 @@ class _ChartState<D> extends State<Chart<D>> {
   void initState() {
     super.initState();
 
-    _mouseIsConnected = RendererBinding.instance.mouseTracker.mouseIsConnected;
+    _mouseIsConnected = RendererBinding.instance!.mouseTracker.mouseIsConnected;
 
-    RendererBinding.instance.mouseTracker
+    RendererBinding.instance!.mouseTracker
         .addListener(_handleMouseTrackerChange);
   }
 
@@ -261,7 +261,7 @@ class _ChartState<D> extends State<Chart<D>> {
     }
 
     final mouseIsConnected =
-        RendererBinding.instance.mouseTracker.mouseIsConnected;
+        RendererBinding.instance!.mouseTracker.mouseIsConnected;
     if (mouseIsConnected != _mouseIsConnected) {
       setState(() {
         _mouseIsConnected = mouseIsConnected;

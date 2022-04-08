@@ -228,6 +228,14 @@ class _ChartState<D> extends State<Chart<D>> {
         .addListener(_handleMouseTrackerChange);
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+
+    RendererBinding.instance.mouseTracker
+        .removeListener(_handleMouseTrackerChange);
+  }
+
   /// Asks the chart state to trigger a repaint.
   void repaint() {
     setState(() {});

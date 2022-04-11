@@ -22,7 +22,7 @@ class CustomAnnotation extends FigureAnnotation {
         );
 
   /// Indicates the custom render funcion of this annotation.
-  List<Figure> Function(Offset) renderer;
+  List<Figure> Function(Offset, Size) renderer;
 
   @override
   bool operator ==(Object other) => other is CustomAnnotation && super == other;
@@ -35,8 +35,9 @@ class CustomAnnotOp extends FigureAnnotOp {
   @override
   List<Figure>? evaluate() {
     final anchor = params['anchor'] as Offset;
-    final renderer = params['renderer'] as List<Figure> Function(Offset);
+    final size = params['size'] as Size;
+    final renderer = params['renderer'] as List<Figure> Function(Offset, Size);
 
-    return renderer(anchor);
+    return renderer(anchor, size);
   }
 }

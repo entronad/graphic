@@ -634,6 +634,7 @@ void parse<D>(
           annotSpec as CustomAnnotation;
           annot = view.add(CustomAnnotOp({
             'anchor': anchor,
+            'size': size,
             'renderer': annotSpec.renderer,
           }));
         }

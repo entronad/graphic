@@ -6,6 +6,8 @@ import 'package:graphic/src/shape/shape.dart';
 import 'package:graphic/src/util/assert.dart';
 import 'package:graphic/src/variable/variable.dart';
 
+import '../util/collection.dart';
+
 /// The tuple to store the original values of a datum.
 ///
 /// The key strings are variable names. The value types can only be [num], [String],
@@ -70,6 +72,31 @@ class Aes {
 
   /// The represent point of [position] points.
   Offset get representPoint => shape.representPoint(position);
+
+  bool operator ==(Object other) =>
+      other is Aes &&
+      index == other.index &&
+      deepCollectionEquals(position, other.position) &&
+      shape == other.shape &&
+      color == other.color &&
+      gradient == other.gradient &&
+      elevation == other.elevation &&
+      label == other.label &&
+      size == other.size;
+
+  @override
+  String toString() {
+    return 'Aes('
+        'index: $index, '
+        'position: $position, '
+        'shape: $shape'
+        '${color != null ? ', color: $color' : ''}'
+        '${gradient != null ? ', gradient: $gradient' : ''}'
+        '${elevation != null ? ', elevation: $elevation' : ''}'
+        '${label != null ? ', label: $label' : ''}'
+        '${size != null ? ', size: $size' : ''}'
+        ')';
+  }
 }
 
 /// Aes lists for groups.

@@ -1,9 +1,9 @@
 import 'dart:ui';
 
+import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/scale/discrete.dart';
 import 'package:graphic/src/scale/scale.dart';
-import 'package:graphic/src/algebra/varset.dart';
 
 import 'modifier.dart';
 
@@ -17,7 +17,7 @@ class DodgeModifier extends Modifier {
     this.symmetric,
   });
 
-  /// The dodge ratio to the descrete band for each group.
+  /// The dodge ratio to the discrete band for each group.
   ///
   /// If null, a default reciprocal of group counts is set.
   double? ratio;
@@ -36,7 +36,7 @@ class DodgeModifier extends Modifier {
       symmetric == other.symmetric;
 }
 
-/// The dodge geometory modifier.
+/// The dodge geometry modifier.
 class DodgeGeomModifier extends GeomModifier {
   DodgeGeomModifier(
     this.ratio,
@@ -44,20 +44,29 @@ class DodgeGeomModifier extends GeomModifier {
     this.band,
   );
 
-  /// The dodge ratio to the descrete band for each group.
+  /// The dodge ratio to the discrete band for each group. Its range is ]0, 1].
   final double ratio;
 
   /// Whether the dodge will go both side around the original x or only positive
   /// side.
+  /// If false, every [Aes] will be shifted in the positive direction of the X
+  /// axis by [ratio]*[band].
+  /// If true, every [Aes] will be centered around its original offset.
   final bool symmetric;
 
-  /// The band ratio of each value.
+  /// The band ratio of each value. It represents the width of the interval the
+  /// [Aes]es have to position themselves within.
+  /// Its range is ]0, 1].
   final double band;
 
   @override
   void modify(AesGroups value) {
     final bias = ratio * band;
-    var accumulated = 0.0;
+    final numGroups = value.length;
+
+    // When symmetric, add a negative accumulation so that values are shifted
+    // left and centered around the original value.
+    var accumulated = symmetric ? -bias * (numGroups + 1) / 2 : 0.0;
 
     for (var group in value) {
       for (var aes in group) {
@@ -70,24 +79,10 @@ class DodgeGeomModifier extends GeomModifier {
       }
       accumulated += bias;
     }
-
-    if (symmetric) {
-      final symmetricBias = -accumulated / 2;
-      for (var group in value) {
-        for (var aes in group) {
-          final oldPosition = aes.position;
-          aes.position = oldPosition
-              .map(
-                (point) => Offset(point.dx + symmetricBias, point.dy),
-              )
-              .toList();
-        }
-      }
-    }
   }
 }
 
-/// The dodge geometory modifier operator.
+/// The dodge geometry modifier operator.
 class DodgeGeomModifierOp extends GeomModifierOp<DodgeGeomModifier> {
   DodgeGeomModifierOp(Map<String, dynamic> params) : super(params);
 

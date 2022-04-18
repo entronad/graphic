@@ -18,7 +18,7 @@ import 'package:graphic/src/shape/shape.dart';
 /// Rendering customization should be in the [Shape].
 abstract class Modifier extends CustomizableSpec {
   /// Modifies the position of element items.
-  /// 
+  ///
   /// The aesthetic attributes are in the [groups].
   void modify(
     AesGroups groups,

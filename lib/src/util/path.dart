@@ -94,6 +94,10 @@ abstract class Paths {
     final sweepAngle =
         clockwise ? endAngle - startAngle : startAngle - endAngle;
 
+    if (sweepAngle.equalTo(0)) {
+      return path;
+    }
+
     // The canvas can not fill a ring, so it is devided to two semi rings
     if (sweepAngle.abs().equalTo(pi * 2)) {
       sector(
@@ -145,7 +149,7 @@ abstract class Paths {
   ///
   /// For a sector, [Radius.x] is circular, [Radius.y] is radial, top is outer side,
   /// bottom is inner side, left is anticlockwise, right is clockwise.
-  static Path rsector({
+  static Path rSector({
     required Offset center,
     required double r,
     required double r0,
@@ -160,8 +164,15 @@ abstract class Paths {
   }) {
     path = path ?? Path();
 
+    final sweepAngle = endAngle - startAngle;
+    final sweepAngleAbs = (sweepAngle).abs();
+
+    if (sweepAngleAbs.equalTo(0)) {
+      return path;
+    }
+
     // The canvas can not fill a ring, so it is devided to two semi rings
-    if ((endAngle - startAngle).abs().equalTo(pi * 2)) {
+    if (sweepAngleAbs.equalTo(pi * 2)) {
       sector(
         center: center,
         r: r,
@@ -187,19 +198,27 @@ abstract class Paths {
     double arcEnd;
     double arcSweep;
 
+    // Makes sure the corners correct when radiuses or angles are reversed.
+
+    final cornerCircularSign = sweepAngle / sweepAngleAbs;
+    final radialInterval = r - r0;
+    final cornerRadialSign = radialInterval / radialInterval.abs();
+
     // Calculates the top angles.
 
-    arcStart =
-        clockwise ? startAngle + (topLeft.x / r) : startAngle - (topLeft.x / r);
-    arcEnd =
-        clockwise ? endAngle - (topRight.x / r) : endAngle + (topRight.x / r);
+    arcStart = clockwise
+        ? startAngle + cornerCircularSign * (topLeft.x / r)
+        : startAngle - cornerCircularSign * (topLeft.x / r);
+    arcEnd = clockwise
+        ? endAngle - cornerCircularSign * (topRight.x / r)
+        : endAngle + cornerCircularSign * (topRight.x / r);
     arcSweep = clockwise ? arcEnd - arcStart : arcStart - arcEnd;
 
     // The top left corner.
 
     path.moveTo(
-      cos(startAngle) * (r - topLeft.y) + center.dx,
-      sin(startAngle) * (r - topLeft.y) + center.dy,
+      cos(startAngle) * (r - cornerRadialSign * topLeft.y) + center.dx,
+      sin(startAngle) * (r - cornerRadialSign * topLeft.y) + center.dy,
     );
     path.quadraticBezierTo(
       cos(startAngle) * r + center.dx,
@@ -222,23 +241,23 @@ abstract class Paths {
     path.quadraticBezierTo(
       cos(endAngle) * r + center.dx,
       sin(endAngle) * r + center.dy,
-      cos(endAngle) * (r - topRight.y) + center.dx,
-      sin(endAngle) * (r - topRight.y) + center.dy,
+      cos(endAngle) * (r - cornerRadialSign * topRight.y) + center.dx,
+      sin(endAngle) * (r - cornerRadialSign * topRight.y) + center.dy,
     );
     path.lineTo(
-      cos(endAngle) * (r0 + bottomRight.y) + center.dx,
-      sin(endAngle) * (r0 + bottomRight.y) + center.dy,
+      cos(endAngle) * (r0 + cornerRadialSign * bottomRight.y) + center.dx,
+      sin(endAngle) * (r0 + cornerRadialSign * bottomRight.y) + center.dy,
     );
 
     if (r0 != 0) {
       // Calculates the bottom angles.
 
       arcStart = clockwise
-          ? startAngle + (bottomLeft.x / r)
-          : startAngle - (bottomLeft.x / r);
+          ? startAngle + cornerCircularSign * (bottomLeft.x / r0)
+          : startAngle - cornerCircularSign * (bottomLeft.x / r0);
       arcEnd = clockwise
-          ? endAngle - (bottomRight.x / r)
-          : endAngle + (bottomRight.x / r);
+          ? endAngle - cornerCircularSign * (bottomRight.x / r0)
+          : endAngle + cornerCircularSign * (bottomRight.x / r0);
       arcSweep = clockwise ? arcEnd - arcStart : arcStart - arcEnd;
 
       // The bottom right corner.
@@ -263,8 +282,8 @@ abstract class Paths {
       path.quadraticBezierTo(
         cos(startAngle) * r0 + center.dx,
         sin(startAngle) * r0 + center.dy,
-        cos(startAngle) * (r0 + bottomLeft.y) + center.dx,
-        sin(startAngle) * (r0 + bottomLeft.y) + center.dy,
+        cos(startAngle) * (r0 + cornerRadialSign * bottomLeft.y) + center.dx,
+        sin(startAngle) * (r0 + cornerRadialSign * bottomLeft.y) + center.dy,
       );
     }
 

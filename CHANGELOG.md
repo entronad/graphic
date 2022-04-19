@@ -1,3 +1,12 @@
+## 0.9.3
+
+**2022-04-19**
+
+- Fix: add key to Chart StatefulWidget: https://github.com/entronad/graphic/pull/75
+- Fix: add dispose to Chart.dart: https://github.com/entronad/graphic/pull/79
+- Add size argument to custom annotation renderer method for responsiveness: https://github.com/entronad/graphic/pull/82
+- Fix Sector corner radius bug: https://github.com/entronad/graphic/issues/58
+
 ## 0.9.2
 
 **2022-04-05**

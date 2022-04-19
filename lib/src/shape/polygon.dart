@@ -102,7 +102,7 @@ class HeatmapShape extends PolygonShape {
           final r = coord.transposed ? point.dx + biasX : point.dy + biasY;
           final r0 = coord.transposed ? point.dx - biasX : point.dy - biasY;
           if (borderRadius != null) {
-            Paths.rsector(
+            Paths.rSector(
               center: coord.center,
               r: coord.convertRadius(r),
               r0: coord.convertRadius(r0),

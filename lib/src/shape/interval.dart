@@ -191,8 +191,8 @@ class RectShape extends IntervalShape {
             final halfSize = (item.size ?? defaultSize) / 2;
             rst.addAll(_renderSector(
               item,
-              r - halfSize,
               r + halfSize,
+              r - halfSize,
               coord.convertAngle(position[0].dy),
               coord.convertAngle(position[1].dy),
               false,
@@ -361,7 +361,7 @@ class RectShape extends IntervalShape {
 
     Path path;
     if (borderRadius != null) {
-      path = Paths.rsector(
+      path = Paths.rSector(
         center: coord.center,
         r: r,
         r0: r0,

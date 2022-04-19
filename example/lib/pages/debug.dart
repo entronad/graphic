@@ -6,6 +6,30 @@ import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
 import 'package:graphic_example/data.dart';
 
+class Sector extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawPath(
+      Paths.rSector(
+        center: Offset(175, 150),
+        r: 20,
+        r0: 90,
+        startAngle: 0,
+        endAngle: -1.6,
+        clockwise: true,
+        topLeft: Radius.circular(5),
+        topRight: Radius.circular(5),
+        bottomRight: Radius.circular(5),
+        bottomLeft: Radius.circular(5),
+      ),
+      Paint(),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
 class DebugPage extends StatelessWidget {
   DebugPage({Key? key}) : super(key: key);
 
@@ -16,41 +40,41 @@ class DebugPage extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Container(
-          // Commenting out the next two lines is causing the problem
-          // width: 600,
-          // height: 400,
+          margin: const EdgeInsets.only(top: 10),
+          width: 350,
+          height: 300,
           child: Chart(
-            data: [
-              {'year': DateTime(2010), 'price': 10},
-              {'year': DateTime(2011), 'price': 8},
-              {'year': DateTime(2012), 'price': 12},
-              {'year': DateTime(2013), 'price': 16},
-              {'year': DateTime(2014), 'price': 9},
-              {'year': DateTime(2015), 'price': 17},
-              {'year': DateTime(2016), 'price': 13},
-            ],
+            data: basicData,
             variables: {
-              'year': Variable(
-                accessor: (Map map) => map['year'] as DateTime,
+              'genre': Variable(
+                accessor: (Map map) => map['genre'] as String,
               ),
-              'price': Variable(
-                accessor: (Map map) => map['price'] as int,
+              'sold': Variable(
+                accessor: (Map map) => map['sold'] as num,
+                scale: LinearScale(min: 0),
               ),
             },
-            elements: [LineElement()],
-            axes: [
-              Defaults.horizontalAxis,
-              Defaults.verticalAxis,
+            elements: [
+              IntervalElement(
+                label: LabelAttr(
+                    encoder: (tuple) => Label(tuple['sold'].toString())),
+                color: ColorAttr(
+                  variable: 'genre',
+                  values: Defaults.colors10,
+                ),
+                shape: ShapeAttr(
+                    value: RectShape(
+                        borderRadius: BorderRadius.all(Radius.circular(5)))),
+                size: SizeAttr(value: 10),
+              )
             ],
-            selections: {
-              // 'tooltipMouse': PointSelection(
-              //   on: {GestureType.hover},
-              //   devices: {PointerDeviceKind.mouse},
-              // ),
-              'p': PointSelection(),
-            },
-            crosshair: CrosshairGuide(),
+            coord: PolarCoord(transposed: true),
+            axes: [
+              Defaults.radialAxis..label = null,
+              Defaults.circularAxis,
+            ],
           ),
+          // child: CustomPaint(painter: Sector()),
         ),
       ),
     );
@@ -67,99 +91,60 @@ class DebugPage extends StatelessWidget {
 // class _DebugPageState extends State<DebugPage> {
 //   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-//   final rdm = Random();
+//   int _enterCounter = 0;
+//   int _exitCounter = 0;
+//   double x = 0.0;
+//   double y = 0.0;
 
-//   List<Map> data = [];
-
-//   @override
-//   void initState() {
-//     const cv = -7;
-
-//     data = [
-//       {'genre': 'Sports', 'sold': cv},
-//       {'genre': 'Strategy', 'sold': cv},
-//       {'genre': 'Action', 'sold': cv},
-//       {'genre': 'Shooter', 'sold': cv},
-//       {'genre': 'Other', 'sold': cv},
-//     ];
-
-//     // data = [
-//     //   {'genre': 'Sports', 'sold': rdm.nextInt(300)},
-//     //   {'genre': 'Strategy', 'sold': rdm.nextInt(300)},
-//     //   {'genre': 'Action', 'sold': rdm.nextInt(300)},
-//     //   {'genre': 'Shooter', 'sold': rdm.nextInt(300)},
-//     //   {'genre': 'Other', 'sold': rdm.nextInt(300)},
-//     // ];
-
-//     final timer = Timer.periodic(Duration(seconds: 3), (_) {
-//       setState(() {
-//         data = [
-//           {'genre': 'Sports', 'sold': rdm.nextInt(300)},
-//           {'genre': 'Strategy', 'sold': rdm.nextInt(300)},
-//           {'genre': 'Action', 'sold': rdm.nextInt(300)},
-//           {'genre': 'Shooter', 'sold': rdm.nextInt(300)},
-//           {'genre': 'Other', 'sold': rdm.nextInt(300)},
-//         ];
-//       });
+//   void _incrementEnter(PointerEvent details) {
+//     setState(() {
+//       _enterCounter++;
 //     });
+//   }
 
-//     super.initState();
+//   void _incrementExit(PointerEvent details) {
+//     setState(() {
+//       _exitCounter++;
+//     });
+//   }
+
+//   void _updateLocation(PointerEvent details) {
+//     setState(() {
+//       x = details.position.dx;
+//       y = details.position.dy;
+//     });
 //   }
 
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
-//       key: _scaffoldKey,
-//       appBar: AppBar(
-//         title: const Text('Debug'),
-//       ),
-//       backgroundColor: Colors.white,
-//       body: SingleChildScrollView(
-//         child: Center(
-//           child: Column(
-//             children: <Widget>[
-//               Container(
-//                 margin: const EdgeInsets.only(top: 10),
-//                 width: 650,
-//                 height: 300,
-//                 child: Chart(
-//                   // rebuild: true,
-//                   data: data,
-//                   variables: {
-//                     'genre': Variable(
-//                       accessor: (Map map) => map['genre'] as String,
-//                     ),
-//                     'sold': Variable(
-//                       accessor: (Map map) => map['sold'] as num,
-//                     ),
-//                   },
-//                   elements: [IntervalElement()],
-//                   axes: [
-//                     Defaults.horizontalAxis,
-//                     Defaults.verticalAxis,
-//                   ],
-//                   selections: {
-//                     'tap': PointSelection(
-//                       on: {
-//                         GestureType.hover,
-//                         GestureType.tap,
-//                       },
-//                       dim: 1,
-//                     )
-//                   },
-//                   tooltip: TooltipGuide(
-//                     backgroundColor: Colors.black,
-//                     elevation: 5,
-//                     textStyle: Defaults.textStyle,
-//                     variables: ['genre', 'sold'],
+//       body: Center(
+//         child: ConstrainedBox(
+//           constraints: BoxConstraints.tight(const Size(300.0, 200.0)),
+//           child: MouseRegion(
+//             onEnter: _incrementEnter,
+//             onHover: _updateLocation,
+//             onExit: _incrementExit,
+//             child: Container(
+//               color: Colors.lightBlueAccent,
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: <Widget>[
+//                   const Text(
+//                       'You have entered or exited this box this many times:'),
+//                   Text(
+//                     '$_enterCounter Entries\n$_exitCounter Exits',
+//                     style: Theme.of(context).textTheme.headline4,
 //                   ),
-//                   crosshair: CrosshairGuide(),
-//                 ),
+//                   Text(
+//                     'The cursor is here: (${x.toStringAsFixed(2)}, ${y.toStringAsFixed(2)})',
+//                   ),
+//                 ],
 //               ),
-//             ],
+//             ),
 //           ),
 //         ),
-//       ),
+//       )
 //     );
 //   }
 // }

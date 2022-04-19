@@ -1,6 +1,6 @@
 name: graphic
 description: A grammar of data visualization and Flutter charting library.
-version: 0.9.2
+version: 0.9.3
 homepage: https://github.com/entronad/graphic
 
 environment:

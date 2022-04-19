@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
+import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 
 import 'signal.dart';
@@ -20,18 +21,44 @@ import 'signal.dart';
 /// - [Listener], which responses to common pointer events that compose [hover]
 /// and [scroll] gestures.
 enum GestureType {
-  /// Triggered when a mouse pointer has entered this widget.
+  /// Triggered when a mouse pointer has entered this chart.
   ///
-  /// This callback is triggered when the pointer, with or without buttons
-  /// pressed, has started to be contained by the region of this widget.
+  /// This is triggered when the pointer, with or without buttons
+  /// pressed, has started to be contained by the region of this chart. More
+  /// specifically, this is triggered by the following cases:
+  ///
+  ///  * This chart has appeared under a pointer.
+  ///  * This chart has moved to under a pointer.
+  ///  * A new pointer has been added to somewhere within this chart.
+  ///  * An existing pointer has moved into this chart.
+  ///
+  /// This is not always matched by an [mouseExit]. If the [Chart]
+  /// is unmounted while being hovered by a pointer, the [mouseExit] of the chart
+  /// will not be emitted. For more details, see [mouseEnter].
+  ///
+  /// A gesture of this type has no details.
   mouseEnter,
 
-  /// Triggered when a mouse pointer has exited this widget when the widget is
+  /// Triggered when a mouse pointer has exited this chart when the chart is
   /// still mounted.
   ///
-  /// This callback is triggered when the pointer, with or without buttons
-  /// pressed, has stopped being contained by the region of this widget, except
-  /// when the exit is caused by the disappearance of this widget.
+  /// This is triggered when the pointer, with or without buttons
+  /// pressed, has stopped being contained by the region of this chart, except
+  /// when the exit is caused by the disappearance of this chart. More
+  /// specifically, this is triggered by the following cases:
+  ///
+  ///  * A pointer that is hovering this chart has moved away.
+  ///  * A pointer that is hovering this chart has been removed.
+  ///  * This chart, which is being hovered by a pointer, has moved away.
+  ///
+  /// And is __not__ triggered by the following case:
+  ///
+  ///  * This chart, which is being hovered by a pointer, has disappeared.
+  ///
+  /// This means that a [mouseExit] might not be matched by a
+  /// [mouseEnter].
+  ///
+  /// A gesture of this type has no details.
   mouseExit,
 
   /// A tap with a primary button has occurred.

@@ -4052,6 +4052,20 @@ scale的formatter（tick）也应该允许返回null，并在渲染tick时判断
 
 先不管扇面的gradient，让它也是按图元的。否则扇面堆叠等情况太复杂
 
+关于鼠标移入移出事件：https://github.com/entronad/graphic/pull/63 ：
+
+实现是模仿的Flutter本身的tooltip
+
+事件就叫 mouseEnter 和 mouseExit，因为它们只针对mouse，沿用自MouseRegion，由于MouseRegion本身有mouse字样，所以事件直接交 enter，exit，我们这里前面要加个mouse
+
+目前来看好像没有合适的detail
+
+关于rSector 中处理角度或半径不是从小到大导致的圆角问题，还是用添加符号的办法，而不是用固定从小到大法，这样能避免太死板，而且可能更简洁一些
+
+给形状加边框的还是继续用自定义形状吧，这哥们后来没有提PR：https://github.com/entronad/graphic/issues/57
+
+
+
 ## TODO
 
 area gradient 超出coord region的问题
@@ -4065,3 +4079,18 @@ Label还是LabelAttr 支持null
 animation
 
 树状等其它数据结构，实现treemap、桑基图等类型
+
+
+
+信
+
+介绍：
+
+声明式
+
+可交互
+
+问题
+
+1. 对nest的理解，group by
+2. elevation作为一个 aes attr

@@ -52,7 +52,7 @@ class DodgeGeomModifier extends GeomModifier {
   final bool symmetric;
 
   /// The band for each discrete x value.
-  /// 
+  ///
   /// It is a ratio to the total coordinate width.
   final double band;
 

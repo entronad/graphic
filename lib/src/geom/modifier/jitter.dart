@@ -39,7 +39,7 @@ class JitterGeomModifier extends GeomModifier {
   final double ratio;
 
   /// The band for each discrete x value.
-  /// 
+  ///
   /// It is a ratio to the total coordinate width.
   final double band;
 

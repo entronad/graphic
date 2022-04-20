@@ -33,7 +33,7 @@ Example of charts can be seen in the [Example App](https://github.com/entronad/g
 
 Graphic is used by these companies:
 
-[![rows](/devdoc/logo_rows.svg)](https://rows.com/)
+[![rows](https://github.com/entronad/graphic/raw/main/devdoc/logo_rows.svg)](https://rows.com/)
 
 ## Tutorials
 

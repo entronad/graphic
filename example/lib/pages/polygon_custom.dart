@@ -408,7 +408,7 @@ class PolygonCustomPage extends StatelessWidget {
               ),
               Container(
                 child: const Text(
-                  '- A custom shape attribution should corresponds to the geometory elemnet type.',
+                  '- A custom shape attribution should corresponds to the geometry elemnet type.',
                 ),
                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                 alignment: Alignment.centerLeft,
@@ -543,7 +543,7 @@ class PolygonCustomPage extends StatelessWidget {
                     )
                   ],
                   axes: [
-                    Defaults.horizontalAxis,
+                    Defaults.horizontalAxis..tickLine = TickLine(),
                     Defaults.verticalAxis,
                   ],
                   selections: {

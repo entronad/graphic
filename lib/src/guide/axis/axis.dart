@@ -1,5 +1,6 @@
 import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
+import 'package:graphic/src/common/defaults.dart';
 import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/intrinsic_layers.dart';
@@ -22,8 +23,8 @@ class TickLine {
   /// Creates a tick line.
   TickLine({
     StrokeStyle? style,
-    this.length = 2,
-  }) : style = style ?? StrokeStyle();
+    this.length = 5,
+  }) : style = style ?? Defaults.strokeStyle;
 
   /// The stroke style of this tick line.
   StrokeStyle style;

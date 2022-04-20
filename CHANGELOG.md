@@ -1,3 +1,9 @@
+## 0.9.4
+
+**2022-04-20**
+
+- Fix dodge modifier: https://github.com/entronad/graphic/pull/86
+
 ## 0.9.3
 
 **2022-04-19**

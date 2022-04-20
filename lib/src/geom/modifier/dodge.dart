@@ -17,7 +17,7 @@ class DodgeModifier extends Modifier {
     this.symmetric,
   });
 
-  /// The dodge ratio to the descrete band for each group.
+  /// The dodge ratio to the discrete band for each group.
   ///
   /// If null, a default reciprocal of group counts is set.
   double? ratio;
@@ -36,7 +36,7 @@ class DodgeModifier extends Modifier {
       symmetric == other.symmetric;
 }
 
-/// The dodge geometory modifier.
+/// The dodge geometry modifier.
 class DodgeGeomModifier extends GeomModifier {
   DodgeGeomModifier(
     this.ratio,
@@ -44,50 +44,39 @@ class DodgeGeomModifier extends GeomModifier {
     this.band,
   );
 
-  /// The dodge ratio to the descrete band for each group.
+  /// The dodge ratio to the discrete band for each group.
   final double ratio;
 
-  /// Whether the dodge will go both side around the original x or only positive
+  /// Whether the dodge will go both sides around the original x or only positive
   /// side.
   final bool symmetric;
 
-  /// The band ratio of each value.
+  /// The band for each discrete x value.
+  /// 
+  /// It is a ratio to the total coordinate width.
   final double band;
 
   @override
   void modify(AesGroups value) {
     final bias = ratio * band;
-    var accumulated = 0.0;
+    // If symmetric, negtively shifts half of the total bias.
+    var accumulated = symmetric ? -bias * (value.length - 1) / 2 : 0.0;
 
     for (var group in value) {
       for (var aes in group) {
         final oldPosition = aes.position;
         aes.position = oldPosition
             .map(
-              (point) => Offset(point.dx + accumulated + bias, point.dy),
+              (point) => Offset(point.dx + accumulated, point.dy),
             )
             .toList();
       }
       accumulated += bias;
     }
-
-    if (symmetric) {
-      final symmetricBias = -accumulated / 2;
-      for (var group in value) {
-        for (var aes in group) {
-          final oldPosition = aes.position;
-          aes.position = oldPosition
-              .map(
-                (point) => Offset(point.dx + symmetricBias, point.dy),
-              )
-              .toList();
-        }
-      }
-    }
   }
 }
 
-/// The dodge geometory modifier operator.
+/// The dodge geometry modifier operator.
 class DodgeGeomModifierOp extends GeomModifierOp<DodgeGeomModifier> {
   DodgeGeomModifierOp(Map<String, dynamic> params) : super(params);
 

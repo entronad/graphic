@@ -37,15 +37,15 @@ import 'line.dart';
 import 'point.dart';
 import 'polygon.dart';
 
-/// The specification of a geometory element.
+/// The specification of a geometry element.
 ///
-/// A geometory element applies a certain graphing rule to get a graph from the
+/// A geometry element applies a certain graphing rule to get a graph from the
 /// tuples.
 ///
-/// A *geometory element* corresponds to a set of all tuples, while an *element
+/// A *geometry element* corresponds to a set of all tuples, while an *element
 /// item* corresponds to a single tuple.
 abstract class GeomElement<S extends Shape> {
-  /// Creates a geometory element.
+  /// Creates a geometry element.
   GeomElement({
     this.color,
     this.elevation,
@@ -88,7 +88,7 @@ abstract class GeomElement<S extends Shape> {
   /// See details about graphics algebra in [Varset].
   ///
   /// A certain type of graphing requires a certain count of variables in each
-  /// dimension. If not satisfied, The geometory types have their own rules tring
+  /// dimension. If not satisfied, The geometry types have their own rules tring
   /// to complete the points. See details in subclasses.
   ///
   /// If null, a crossing of first two variables is set by default.
@@ -96,7 +96,7 @@ abstract class GeomElement<S extends Shape> {
 
   /// The shape attribute of this element.
   ///
-  /// If null, a default shape is set according to the geometory type. See details
+  /// If null, a default shape is set according to the geometry type. See details
   /// in subclasses.
   ShapeAttr<S>? shape;
 
@@ -204,9 +204,9 @@ class GroupOp extends Operator<AesGroups> {
   }
 }
 
-/// The geometory element scene.
+/// The geometry element scene.
 ///
-/// All items of a geometory element are in a same scene, and their order is immutable.
+/// All items of a geometry element are in a same scene, and their order is immutable.
 class ElementScene extends Scene {
   ElementScene(int layer) : super(layer);
 
@@ -214,7 +214,7 @@ class ElementScene extends Scene {
   int get intrinsicLayer => IntrinsicLayers.element;
 }
 
-/// The geometory element render operator.
+/// The geometry element render operator.
 class ElementRenderOp extends Render<ElementScene> {
   ElementRenderOp(
     Map<String, dynamic> params,
@@ -259,7 +259,7 @@ class ElementRenderOp extends Render<ElementScene> {
 typedef PositionCompleter = List<Offset> Function(
     List<Offset> position, Offset origin);
 
-/// Gets the position completer of the geometory element type.
+/// Gets the position completer of the geometry element type.
 PositionCompleter getPositionCompleter(GeomElement spec) => spec is AreaElement
     ? areaCompleter
     : spec is CustomElement
@@ -274,7 +274,7 @@ PositionCompleter getPositionCompleter(GeomElement spec) => spec is AreaElement
                         ? polygonCompleter
                         : throw UnimplementedError('No such geom $spec.');
 
-/// Gets the default shape of the geometory element type.
+/// Gets the default shape of the geometry element type.
 Shape getDefaultShape(GeomElement spec) => spec is AreaElement
     ? BasicAreaShape()
     : spec is CustomElement

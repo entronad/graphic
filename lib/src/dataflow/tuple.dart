@@ -45,7 +45,7 @@ class Aes {
 
   /// Position points of the tuple.
   ///
-  /// The count of points is determined by the geometory element type. The values
+  /// The count of points is determined by the geometry element type. The values
   /// of each point dimension is scaled and normalized value of `[0, 1]`. the position
   /// points can be converted to canvas points by [CoordConv].
   List<Offset> position;

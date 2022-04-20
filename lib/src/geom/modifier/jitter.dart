@@ -18,7 +18,7 @@ class JitterModifier extends Modifier {
     this.ratio,
   });
 
-  /// Ratio of the local neighborhood to the descrete band for each group.
+  /// Ratio of the local neighborhood to the discrete band for each group.
   ///
   /// If null, a default 0.5 is set.
   double? ratio;
@@ -28,17 +28,19 @@ class JitterModifier extends Modifier {
       other is JitterModifier && super == other && ratio == other.ratio;
 }
 
-/// The jitter geometory modifier.
+/// The jitter geometry modifier.
 class JitterGeomModifier extends GeomModifier {
   JitterGeomModifier(
     this.ratio,
     this.band,
   );
 
-  /// Ratio of the local neighborhood to the descrete band for each group.
+  /// Ratio of the local neighborhood to the discrete band for each group.
   final double ratio;
 
-  /// The band ratio of each value.
+  /// The band for each discrete x value.
+  /// 
+  /// It is a ratio to the total coordinate width.
   final double band;
 
   @override
@@ -59,7 +61,7 @@ class JitterGeomModifier extends GeomModifier {
   }
 }
 
-/// The jitter geometory modifier operator.
+/// The jitter geometry modifier operator.
 class JitterGeomModifierOp extends GeomModifierOp<JitterGeomModifier> {
   JitterGeomModifierOp(Map<String, dynamic> params) : super(params);
 

@@ -17,7 +17,7 @@ class SymmetricModifier extends Modifier {
       other is SymmetricModifier && super == other;
 }
 
-/// The symmetric geometory modifier.
+/// The symmetric geometry modifier.
 class SymmetricGeomModifier extends GeomModifier {
   SymmetricGeomModifier(this.normalZero);
 
@@ -54,7 +54,7 @@ class SymmetricGeomModifier extends GeomModifier {
   }
 }
 
-/// The symmetric geometory modifier operator.
+/// The symmetric geometry modifier operator.
 class SymmetricGeomModifierOp extends GeomModifierOp<SymmetricGeomModifier> {
   SymmetricGeomModifierOp(Map<String, dynamic> params) : super(params);
 

@@ -72,7 +72,7 @@ extension AlgFormExt on AlgForm {
 ///
 /// - [+], called **blend**, which assigns varsets to a same dimension in order.
 /// The meaning of the variables respectively in that dimension is determined by
-/// geometory type.
+/// geometry type.
 ///
 /// - [/], called **nest**, which groups all tuples by the right varset. Grouping
 /// is used for faceting, collision modifiers, or seperating lines or areas. The
@@ -237,7 +237,7 @@ class Varset {
   /// The blend operator.
   ///
   /// Blending assigns varsets to a same dimension in order. The meaning of the
-  /// variables respectively in that dimension is determined by geometory type.
+  /// variables respectively in that dimension is determined by geometry type.
   Varset operator +(Varset other) {
     // It creates a polynomial:
     //

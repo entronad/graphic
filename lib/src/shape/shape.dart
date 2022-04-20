@@ -8,7 +8,7 @@ import 'package:graphic/src/coord/coord.dart';
 /// The Base class of a shape.
 ///
 /// A shape renders figures of tuples from their aesthetic attribute values. It is
-/// the key of painting geometory elements. Besides, the shape it self is an aesthetic
+/// the key of painting geometry elements. Besides, the shape it self is an aesthetic
 /// attribute in Grammar of Graphics.
 ///
 /// Customizing subclasses of shape extenses chart types.

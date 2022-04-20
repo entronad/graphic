@@ -68,7 +68,7 @@ class Chart<D> extends StatefulWidget {
   /// Specifications of transforms applied to variable data.
   final List<VariableTransform>? transforms;
 
-  /// Specifications of geometory elements.
+  /// Specifications of geometry elements.
   final List<GeomElement> elements;
 
   /// Specification of the coordinate.

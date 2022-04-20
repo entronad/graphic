@@ -18,7 +18,7 @@ class StackModifier extends Modifier {
   bool operator ==(Object other) => other is StackModifier && super == other;
 }
 
-/// The stack geometory modifier.
+/// The stack geometry modifier.
 class StackGeomModifier extends GeomModifier {
   StackGeomModifier(this.normalZero);
 
@@ -55,7 +55,7 @@ class StackGeomModifier extends GeomModifier {
   }
 }
 
-/// The stack geometory modifier operator.
+/// The stack geometry modifier operator.
 class StackGeomModifierOp extends GeomModifierOp<StackGeomModifier> {
   StackGeomModifierOp(Map<String, dynamic> params) : super(params);
 

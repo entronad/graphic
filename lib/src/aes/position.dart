@@ -35,7 +35,7 @@ class PositionEncoder extends Encoder<List<Offset>> {
 
   /// The position points completer.
   ///
-  /// It is determined by the geometory element type.
+  /// It is determined by the geometry element type.
   final PositionCompleter completer;
 
   /// The origin point's position.

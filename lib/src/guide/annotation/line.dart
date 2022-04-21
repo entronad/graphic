@@ -101,10 +101,10 @@ class LineAnnotRenderOp extends AnnotRenderOp<LineAnnotScene> {
         PathFigure(
           style.dashPath(Paths.line(
             from: coord.convert(
-              dim == 1 ? Offset(position, 0) : Offset(0, position),
+              dim == Dim.x ? Offset(position, 0) : Offset(0, position),
             ),
             to: coord.convert(
-              dim == 1 ? Offset(position, 1) : Offset(1, position),
+              dim == Dim.x ? Offset(position, 1) : Offset(1, position),
             ),
           )),
           style.toPaint(),

@@ -234,8 +234,9 @@ class EchartsPage extends StatelessWidget {
                       ),
                     ),
                     LineAnnotation(
-                      dim: Dim.y,
-                      value: 1.57,
+                      dim: Dim.x,
+                      variable: 'day',
+                      value: 'Tue',
                       style: StrokeStyle(
                         color: const Color(0xff91cc75).withAlpha(100),
                         dash: [2],

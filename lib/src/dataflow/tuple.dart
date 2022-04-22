@@ -70,6 +70,20 @@ class Aes {
 
   /// The represent point of [position] points.
   Offset get representPoint => shape.representPoint(position);
+
+  @override
+  String toString() {
+    return 'Aes('
+        'index: $index, '
+        'position: $position, '
+        'shape: $shape'
+        '${color != null ? ', color: $color' : ''}'
+        '${gradient != null ? ', gradient: $gradient' : ''}'
+        '${elevation != null ? ', elevation: $elevation' : ''}'
+        '${label != null ? ', label: $label' : ''}'
+        '${size != null ? ', size: $size' : ''}'
+        ')';
+  }
 }
 
 /// Aes lists for groups.

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'home.dart';
+import 'pages/bigdata.dart';
+import 'pages/debug.dart';
+import 'pages/echarts.dart';
+import 'pages/interaction_channel_dynamic.dart';
 import 'pages/interval.dart';
 import 'pages/line_area_point.dart';
 import 'pages/polygon_custom.dart';
-import 'pages/interaction_channel_dynamic.dart';
-import 'pages/bigdata.dart';
-import 'pages/echarts.dart';
-import 'pages/debug.dart';
 
 final routes = {
   '/': (context) => const HomePage(),
@@ -18,7 +18,7 @@ final routes = {
       const InteractionChannelDynamicPage(),
   '/examples/Bigdata': (context) => BigdataPage(),
   '/examples/Echarts': (context) => EchartsPage(),
-  '/examples/Debug': (context) => DebugPage(),
+  '/examples/Debug': (context) => const DebugPage(),
 };
 
 class MyApp extends StatelessWidget {

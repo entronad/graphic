@@ -1,26 +1,23 @@
-import 'dart:async';
-import 'dart:math';
-
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
-import 'package:graphic_example/data.dart';
+
+import '../data.dart';
 
 class Sector extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawPath(
       Paths.rSector(
-        center: Offset(175, 150),
+        center: const Offset(175, 150),
         r: 20,
         r0: 90,
         startAngle: 0,
         endAngle: -1.6,
         clockwise: true,
-        topLeft: Radius.circular(5),
-        topRight: Radius.circular(5),
-        bottomRight: Radius.circular(5),
-        bottomLeft: Radius.circular(5),
+        topLeft: const Radius.circular(5),
+        topRight: const Radius.circular(5),
+        bottomRight: const Radius.circular(5),
+        bottomLeft: const Radius.circular(5),
       ),
       Paint(),
     );
@@ -31,9 +28,7 @@ class Sector extends CustomPainter {
 }
 
 class DebugPage extends StatelessWidget {
-  DebugPage({Key? key}) : super(key: key);
-
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  const DebugPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +59,8 @@ class DebugPage extends StatelessWidget {
                 ),
                 shape: ShapeAttr(
                     value: RectShape(
-                        borderRadius: BorderRadius.all(Radius.circular(5)))),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(5)))),
                 size: SizeAttr(value: 10),
               )
             ],

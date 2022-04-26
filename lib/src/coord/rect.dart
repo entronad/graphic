@@ -1,4 +1,5 @@
 import 'package:graphic/src/chart/view.dart';
+import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/shape/util/gradient.dart';
 import 'package:graphic/src/util/collection.dart';
@@ -127,13 +128,12 @@ class RectCoordConv extends CoordConv {
   }
 
   @override
-  double invertDistance(double canvasDistance, [int? dim]) {
-    assert(dim == null || dim == 1 || dim == 2);
+  double invertDistance(double canvasDistance, [Dim? dim]) {
     final h = canvasDistance / (horizontals.last - horizontals.first).abs();
     final v = canvasDistance / (verticals.last - verticals.first).abs();
-    if (dim == 1) {
+    if (dim == Dim.x) {
       return transposed ? v : h;
-    } else if (dim == 2) {
+    } else if (dim == Dim.y) {
       return transposed ? h : v;
     } else {
       return (h + v) / 2;

@@ -105,7 +105,7 @@ abstract class CoordConv extends Converter<Offset, Offset> {
       : (transposed ? (abstractDim == Dim.x ? Dim.y : Dim.x) : abstractDim);
 
   /// Inverts a distance in canvas to abstract distance.
-  double invertDistance(double canvasDistance, [int? dim]);
+  double invertDistance(double canvasDistance, [Dim? dim]);
 }
 
 /// The operator to create the coordinate converter.

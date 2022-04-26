@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:graphic/src/chart/view.dart';
+import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/shape/util/gradient.dart';
 import 'package:graphic/src/util/collection.dart';
@@ -229,14 +230,13 @@ class PolarCoordConv extends CoordConv {
   }
 
   @override
-  double invertDistance(double canvasDistance, [int? dim]) {
-    assert(dim == null || dim == 1 || dim == 2);
+  double invertDistance(double canvasDistance, [Dim? dim]) {
     // The radius in angle calculation is approximately the middle radius.
     final a = canvasDistance / ((startRadius + endRadius) * 2);
     final r = canvasDistance / (endRadius - startRadius).abs();
-    if (dim == 1) {
+    if (dim == Dim.x) {
       return transposed ? r : a;
-    } else if (dim == 2) {
+    } else if (dim == Dim.y) {
       return transposed ? a : r;
     } else {
       return (a + r) / 2;

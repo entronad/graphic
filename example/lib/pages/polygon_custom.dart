@@ -48,10 +48,11 @@ class TriangleShape extends IntervalShape {
   bool equalTo(Object other) => other is TriangleShape;
 }
 
-List<Figure> simpleTooltip(
-  Offset anchor,
-  List<Tuple> selectedTuples,
-) {
+List<Figure> simpleTooltip({
+  required Offset anchor,
+  required List<Tuple> selectedTuples,
+  required Set<int> selectedIndexes,
+}) {
   List<Figure> figures;
 
   String textContent = '';
@@ -127,10 +128,11 @@ List<Figure> simpleTooltip(
   return figures;
 }
 
-List<Figure> centralPieLabel(
-  Offset anchor,
-  List<Tuple> selectedTuples,
-) {
+List<Figure> centralPieLabel({
+  required Offset anchor,
+  required List<Tuple> selectedTuples,
+  required Set<int> selectedIndexes,
+}) {
   final tuple = selectedTuples.last;
 
   final titleSpan = TextSpan(

@@ -1,9 +1,8 @@
-import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
-import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/intrinsic_layers.dart';
+import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
@@ -13,14 +12,19 @@ import 'package:graphic/src/interaction/selection/interval.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/scale/scale.dart';
 import 'package:graphic/src/util/assert.dart';
+import 'package:graphic/src/util/collection.dart';
 
 /// Gets the figures of a tooltip.
 ///
 /// The [anchor] is the result either set directly or calculated.
-typedef TooltipRenderer = List<Figure> Function(
-  Offset anchor,
-  List<Tuple> selectedTuples,
-);
+///
+/// The [selectedTuples] and [selectedIndexes] provide the consumer with the
+/// necessary information to properly compute the content of the tooltip.
+typedef TooltipRenderer = List<Figure> Function({
+  required Offset anchor,
+  required List<Tuple> selectedTuples,
+  required Set<int> selectedIndexes,
+});
 
 /// The specification of a tooltip
 ///
@@ -268,8 +272,9 @@ class TooltipRenderOp extends Render<TooltipScene> {
     List<Figure> figures;
     if (renderer != null) {
       figures = renderer(
-        anchorRst,
-        selectedTuples,
+        anchor: anchorRst,
+        selectedTuples: selectedTuples,
+        selectedIndexes: selects,
       );
     } else {
       String textContent = '';

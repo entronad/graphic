@@ -9,18 +9,18 @@ import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/aes/shape.dart';
 import 'package:graphic/src/aes/size.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
-import 'package:graphic/src/shape/custom.dart';
+import 'package:graphic/src/shape/shape.dart';
 
 import 'element.dart';
 import 'modifier/modifier.dart';
 
 /// The specification of a custom element.
 ///
-/// A custom element has no special graphing rule, its graph is determined by the
-/// [CustomShape].
+/// A custom element has no special graphing rule. It accepts any built-in or custom
+/// [Shape]s.
 ///
 /// It will not check or complete the position points.
-class CustomElement extends GeomElement<CustomShape> {
+class CustomElement extends GeomElement<Shape> {
   /// Creates a custom element.
   CustomElement({
     ColorAttr? color,
@@ -28,7 +28,7 @@ class CustomElement extends GeomElement<CustomShape> {
     GradientAttr? gradient,
     LabelAttr? label,
     Varset? position,
-    ShapeAttr<CustomShape>? shape,
+    ShapeAttr<Shape>? shape,
     SizeAttr? size,
     List<Modifier>? modifiers,
     int? layer,

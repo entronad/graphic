@@ -1,3 +1,11 @@
+## 0.10.0
+
+**2022-04-28**
+
+- Add tuple indexes in tooltip renderer: https://github.com/entronad/graphic/pull/80
+- Make modifier customizable: https://github.com/entronad/graphic/pull/88
+- Remove `CustomShape`. Custom shapes directly extend `Shape`.
+
 ## 0.9.4
 
 **2022-04-20**

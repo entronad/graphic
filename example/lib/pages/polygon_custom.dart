@@ -50,14 +50,15 @@ class TriangleShape extends IntervalShape {
 
 List<Figure> simpleTooltip(
   Offset anchor,
-  List<Tuple> selectedTuples,
+  Map<int, Tuple> selectedTuples,
 ) {
   List<Figure> figures;
 
   String textContent = '';
-  final fields = selectedTuples.first.keys.toList();
+  final selectedTupleList = selectedTuples.values;
+  final fields = selectedTupleList.first.keys.toList();
   if (selectedTuples.length == 1) {
-    final original = selectedTuples.single;
+    final original = selectedTupleList.single;
     var field = fields.first;
     textContent += '$field: ${original[field]}';
     for (var i = 1; i < fields.length; i++) {
@@ -65,7 +66,7 @@ List<Figure> simpleTooltip(
       textContent += '\n$field: ${original[field]}';
     }
   } else {
-    for (var original in selectedTuples) {
+    for (var original in selectedTupleList) {
       final domainField = fields.first;
       final measureField = fields.last;
       textContent += '\n${original[domainField]}: ${original[measureField]}';
@@ -129,9 +130,9 @@ List<Figure> simpleTooltip(
 
 List<Figure> centralPieLabel(
   Offset anchor,
-  List<Tuple> selectedTuples,
+  Map<int, Tuple> selectedTuples,
 ) {
-  final tuple = selectedTuples.last;
+  final tuple = selectedTuples.values.last;
 
   final titleSpan = TextSpan(
     text: tuple['genre'].toString() + '\n',

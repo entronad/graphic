@@ -29,40 +29,26 @@ class DodgeModifier extends Modifier {
   bool? symmetric;
 
   @override
-  bool operator ==(Object other) =>
+  bool equalTo(Object other) =>
       other is DodgeModifier &&
       super == other &&
       ratio == other.ratio &&
       symmetric == other.symmetric;
-}
-
-/// The dodge geometry modifier.
-class DodgeGeomModifier extends GeomModifier {
-  DodgeGeomModifier(
-    this.ratio,
-    this.symmetric,
-    this.band,
-  );
-
-  /// The dodge ratio to the discrete band for each group.
-  final double ratio;
-
-  /// Whether the dodge will go both sides around the original x or only positive
-  /// side.
-  final bool symmetric;
-
-  /// The band for each discrete x value.
-  ///
-  /// It is a ratio to the total coordinate width.
-  final double band;
 
   @override
-  void modify(AesGroups value) {
+  void modify(AesGroups aesGroups, Map<String, ScaleConv<dynamic, num>> scales,
+      AlgForm form, Offset origin) {
+    final xField = form.first[0];
+    final band = (scales[xField] as DiscreteScaleConv).band;
+
+    final ratio = this.ratio ?? 1 / (aesGroups.length);
+    final symmetric = this.symmetric ?? true;
+
     final bias = ratio * band;
     // If symmetric, negtively shifts half of the total bias.
-    var accumulated = symmetric ? -bias * (value.length - 1) / 2 : 0.0;
+    var accumulated = symmetric ? -bias * (aesGroups.length - 1) / 2 : 0.0;
 
-    for (var group in value) {
+    for (var group in aesGroups) {
       for (var aes in group) {
         final oldPosition = aes.position;
         aes.position = oldPosition
@@ -73,28 +59,5 @@ class DodgeGeomModifier extends GeomModifier {
       }
       accumulated += bias;
     }
-  }
-}
-
-/// The dodge geometry modifier operator.
-class DodgeGeomModifierOp extends GeomModifierOp<DodgeGeomModifier> {
-  DodgeGeomModifierOp(Map<String, dynamic> params) : super(params);
-
-  @override
-  DodgeGeomModifier evaluate() {
-    final ratio = params['ratio'] as double?;
-    final symmetric = params['symmetric'] as bool;
-    final form = params['form'] as AlgForm;
-    final scales = params['scales'] as Map<String, ScaleConv>;
-    final groups = params['groups'] as AesGroups;
-
-    final xField = form.first[0];
-    final band = (scales[xField] as DiscreteScaleConv).band;
-
-    return DodgeGeomModifier(
-      ratio ?? 1 / (groups.length),
-      symmetric,
-      band,
-    );
   }
 }

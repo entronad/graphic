@@ -4064,6 +4064,10 @@ scale的formatter（tick）也应该允许返回null，并在渲染tick时判断
 
 给形状加边框的还是继续用自定义形状吧，这哥们后来没有提PR：https://github.com/entronad/graphic/issues/57
 
+Custom Modifier
+
+类似shape，将它俩提取抽象为 CustomSpec，目前就是一个强制重写相等判断
+
 
 
 ## TODO

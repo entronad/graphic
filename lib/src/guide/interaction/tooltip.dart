@@ -16,10 +16,11 @@ import 'package:graphic/src/util/assert.dart';
 
 /// Gets the figures of a tooltip.
 ///
-/// The [anchor] is the result either set directly or calculated.
+/// The [anchor] is the result either set directly or calculated. The keys of [selectedTuples]
+/// are indexes of the tuples in the whole data set.
 typedef TooltipRenderer = List<Figure> Function(
   Offset anchor,
-  List<Tuple> selectedTuples,
+  Map<int, Tuple> selectedTuples,
 );
 
 /// The specification of a tooltip
@@ -230,9 +231,9 @@ class TooltipRenderOp extends Render<TooltipScene> {
     final multiTuplesRst = multiTuples ??
         (selector is IntervalSelector || selector.variable != null);
 
-    final selectedTuples = <Tuple>[];
+    final selectedTuples = <int, Tuple>{};
     for (var index in selects) {
-      selectedTuples.add(tuples[index]);
+      selectedTuples[index] = tuples[index];
     }
 
     Offset anchorRst;
@@ -273,9 +274,10 @@ class TooltipRenderOp extends Render<TooltipScene> {
       );
     } else {
       String textContent = '';
+      final selectedTupleList = selectedTuples.values;
       if (!multiTuplesRst) {
         final fields = variables ?? scales.keys.toList();
-        final tuple = selectedTuples.last;
+        final tuple = selectedTupleList.last;
         var field = fields.first;
         var scale = scales[field]!;
         var title = scale.title;
@@ -306,10 +308,10 @@ class TooltipRenderOp extends Render<TooltipScene> {
 
         if (groupField != null) {
           textContent +=
-              scales[groupField]!.format(selectedTuples.first[groupField]) ??
+              scales[groupField]!.format(selectedTupleList.first[groupField]) ??
                   '';
         }
-        for (var tuple in selectedTuples) {
+        for (var tuple in selectedTupleList) {
           final domainField = fields.first;
           final measureField = fields.last;
           final domainScale = scales[domainField]!;

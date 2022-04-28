@@ -1,7 +1,9 @@
 import 'dart:ui';
 import 'dart:math';
 
+import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/scale/scale.dart';
 
 import 'modifier.dart';
 
@@ -15,21 +17,18 @@ class SymmetricModifier extends Modifier {
   @override
   bool operator ==(Object other) =>
       other is SymmetricModifier && super == other;
-}
-
-/// The symmetric geometry modifier.
-class SymmetricGeomModifier extends GeomModifier {
-  SymmetricGeomModifier(this.normalZero);
-
-  /// The normal value of the stacked variable's zero.
-  final double normalZero;
 
   @override
-  void modify(AesGroups value) {
-    for (var i = 0; i < value.first.length; i++) {
+  bool equalTo(Object other) => other is SymmetricModifier && super == other;
+
+  void modify(AesGroups aesGroups, Map<String, ScaleConv<dynamic, num>> scales,
+      AlgForm form, Offset origin) {
+    final normalZero = origin.dy;
+
+    for (var i = 0; i < aesGroups.first.length; i++) {
       var minY = double.infinity;
       var maxY = double.negativeInfinity;
-      for (var group in value) {
+      for (var group in aesGroups) {
         final aes = group[i];
         for (var point in aes.position) {
           final y = point.dy;
@@ -41,7 +40,7 @@ class SymmetricGeomModifier extends GeomModifier {
       }
 
       final symmetricBias = normalZero - (minY + maxY) / 2;
-      for (var group in value) {
+      for (var group in aesGroups) {
         final aes = group[i];
         final oldPosition = aes.position;
         aes.position = oldPosition
@@ -51,17 +50,5 @@ class SymmetricGeomModifier extends GeomModifier {
             .toList();
       }
     }
-  }
-}
-
-/// The symmetric geometry modifier operator.
-class SymmetricGeomModifierOp extends GeomModifierOp<SymmetricGeomModifier> {
-  SymmetricGeomModifierOp(Map<String, dynamic> params) : super(params);
-
-  @override
-  SymmetricGeomModifier evaluate() {
-    final origin = params['origin'] as Offset;
-
-    return SymmetricGeomModifier(origin.dy);
   }
 }

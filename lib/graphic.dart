@@ -162,7 +162,7 @@ export 'src/shape/shape.dart' show Shape;
 export 'src/shape/function.dart' show FunctionShape;
 export 'src/shape/partition.dart' show PartitionShape;
 export 'src/shape/area.dart' show AreaShape, BasicAreaShape;
-export 'src/shape/custom.dart' show CustomShape, CandlestickShape;
+export 'src/shape/custom.dart' show CandlestickShape;
 export 'src/shape/interval.dart' show IntervalShape, RectShape, FunnelShape;
 export 'src/shape/line.dart' show LineShape, BasicLineShape;
 export 'src/shape/point.dart' show PointShape, CircleShape, SquareShape;

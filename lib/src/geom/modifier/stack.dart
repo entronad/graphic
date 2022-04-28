@@ -1,6 +1,8 @@
 import 'dart:ui';
 
+import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/scale/scale.dart';
 
 import 'modifier.dart';
 
@@ -15,21 +17,15 @@ import 'modifier.dart';
 /// - Y values must be all positive or all negtive.
 class StackModifier extends Modifier {
   @override
-  bool operator ==(Object other) => other is StackModifier && super == other;
-}
+  bool equalTo(Object other) => other is StackModifier && super == other;
 
-/// The stack geometry modifier.
-class StackGeomModifier extends GeomModifier {
-  StackGeomModifier(this.normalZero);
+  void modify(AesGroups aesGroups, Map<String, ScaleConv<dynamic, num>> scales,
+      AlgForm form, Offset origin) {
+    final normalZero = origin.dy;
 
-  /// The normal value of the stacked variable's zero.
-  final double normalZero;
-
-  @override
-  void modify(AesGroups value) {
-    for (var i = 1; i < value.length; i++) {
-      final group = value[i];
-      final preGroup = value[i - 1];
+    for (var i = 1; i < aesGroups.length; i++) {
+      final group = aesGroups[i];
+      final preGroup = aesGroups[i - 1];
       for (var j = 0; j < group.length; j++) {
         final position = group[j].position;
         final prePosition = preGroup[j].position;
@@ -52,17 +48,5 @@ class StackGeomModifier extends GeomModifier {
         }
       }
     }
-  }
-}
-
-/// The stack geometry modifier operator.
-class StackGeomModifierOp extends GeomModifierOp<StackGeomModifier> {
-  StackGeomModifierOp(Map<String, dynamic> params) : super(params);
-
-  @override
-  StackGeomModifier evaluate() {
-    final origin = params['origin'] as Offset;
-
-    return StackGeomModifier(origin.dy);
   }
 }

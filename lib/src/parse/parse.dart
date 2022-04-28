@@ -431,35 +431,12 @@ void parse<D>(
 
     if (elementSpec.modifiers != null) {
       for (var modifier in elementSpec.modifiers!) {
-        GeomModifierOp geomModifier;
-        if (modifier is DodgeModifier) {
-          geomModifier = view.add(DodgeGeomModifierOp({
-            'ratio': modifier.ratio,
-            'symmetric': modifier.symmetric ?? true,
-            'form': form,
-            'scales': scales,
-            'groups': groups,
-          }));
-        } else if (modifier is JitterModifier) {
-          geomModifier = view.add(JitterGeomModifierOp({
-            'ratio': modifier.ratio ?? 0.5,
-            'form': form,
-            'scales': scales,
-          }));
-        } else if (modifier is StackModifier) {
-          geomModifier = view.add(StackGeomModifierOp({
-            'origin': origin,
-          }));
-        } else if (modifier is SymmetricModifier) {
-          geomModifier = view.add(SymmetricGeomModifierOp({
-            'origin': origin,
-          }));
-        } else {
-          throw UnimplementedError('No such modifier type: $modifier.');
-        }
         groups = view.add(ModifyOp({
+          'modifier': modifier,
           'groups': groups,
-          'modifier': geomModifier,
+          'scales': scales,
+          'form': form,
+          'origin': origin,
         }));
       }
     }

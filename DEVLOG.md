@@ -4068,6 +4068,8 @@ Custom Modifier
 
 类似shape，将它俩提取抽象为 CustomSpec，目前就是一个强制重写相等判断
 
+scaleConv 等似乎是必须要暴露的，否则比如反转xy等都无法实现，虽然不太舒服，但是既然是高级应用多暴露点也没关系
+
 
 
 ## TODO

@@ -12,11 +12,13 @@ class TagAnnotation extends FigureAnnotation {
     List<String>? variables,
     List? values,
     Offset Function(Size)? anchor,
+    bool? clip,
     int? layer,
   }) : super(
           variables: variables,
           values: values,
           anchor: anchor,
+          clip: clip,
           layer: layer,
         );
 

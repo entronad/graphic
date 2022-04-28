@@ -19,6 +19,7 @@ abstract class FigureAnnotation extends Annotation {
     this.variables,
     this.values,
     this.anchor,
+    this.clip,
     int? layer,
   })  : assert(isSingle([variables, anchor], allowNone: true)),
         assert(isSingle([values, anchor])),
@@ -43,12 +44,18 @@ abstract class FigureAnnotation extends Annotation {
   /// and [values].
   Offset Function(Size)? anchor;
 
+  /// Whether this figure annotation should be cliped within the coordinate region.
+  ///
+  /// If null, a default false is set.
+  bool? clip;
+
   @override
   bool operator ==(Object other) =>
       other is FigureAnnotation &&
       super == other &&
       deepCollectionEquals(variables, other.variables) &&
-      deepCollectionEquals(values, values);
+      deepCollectionEquals(values, values) &&
+      clip == other.clip;
 }
 
 /// The operator to create figures of a figure annotation.
@@ -110,6 +117,12 @@ class FigureAnnotRenderOp extends AnnotRenderOp<FigureAnnotScene> {
   @override
   void render() {
     final figures = params['figures'] as List<Figure>?;
+    final clip = params['clip'] as bool;
+    final coord = params['coord'] as CoordConv;
+
+    if (clip) {
+      scene..setRegionClip(coord.region);
+    }
 
     scene..figures = figures;
   }

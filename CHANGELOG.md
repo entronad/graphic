@@ -1,3 +1,10 @@
+## 0.10.1
+
+**2022-04-28**
+
+- Add `clip` for `FigureAnnotation`s: https://github.com/entronad/graphic/issues/93
+- Export modifier argument classes.
+
 ## 0.10.0
 
 **2022-04-28**

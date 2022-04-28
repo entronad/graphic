@@ -620,6 +620,8 @@ void parse<D>(
             view.graffiti.add(FigureAnnotScene(annotSpec.layer ?? 0));
         view.add(FigureAnnotRenderOp({
           'figures': annot,
+          'clip': annotSpec.clip ?? false,
+          'coord': coord,
         }, annotScene, view));
       } else {
         throw UnimplementedError('No such annotation type $annotSpec.');

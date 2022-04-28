@@ -125,7 +125,7 @@ export 'src/variable/transform/map.dart' show MapTrans;
 export 'src/variable/transform/proportion.dart' show Proportion;
 export 'src/variable/transform/sort.dart' show Sort;
 
-export 'src/scale/scale.dart' show Scale;
+export 'src/scale/scale.dart' show Scale, ScaleConv;
 export 'src/scale/discrete.dart' show DiscreteScale;
 export 'src/scale/continuous.dart' show ContinuousScale;
 export 'src/scale/linear.dart' show LinearScale;
@@ -201,7 +201,7 @@ export 'src/common/label.dart'
 export 'src/common/defaults.dart' show Defaults;
 export 'src/common/dim.dart' show Dim;
 
-export 'src/dataflow/tuple.dart' show Tuple, Aes;
+export 'src/dataflow/tuple.dart' show Tuple, Aes, AesGroups;
 
 export 'src/util/path.dart' show Paths;
 export 'package:path_drawing/path_drawing.dart' show DashOffset;

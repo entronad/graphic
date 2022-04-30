@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:graphic/src/algebra/varset.dart';
+import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/scale/scale.dart';
 
@@ -19,13 +20,13 @@ class StackModifier extends Modifier {
   @override
   bool equalTo(Object other) => other is StackModifier && super == other;
 
-  void modify(AesGroups aesGroups, Map<String, ScaleConv<dynamic, num>> scales,
-      AlgForm form, Offset origin) {
+  void modify(AesGroups groups, Map<String, ScaleConv<dynamic, num>> scales,
+      AlgForm form, CoordConv coord, Offset origin) {
     final normalZero = origin.dy;
 
-    for (var i = 1; i < aesGroups.length; i++) {
-      final group = aesGroups[i];
-      final preGroup = aesGroups[i - 1];
+    for (var i = 1; i < groups.length; i++) {
+      final group = groups[i];
+      final preGroup = groups[i - 1];
       for (var j = 0; j < group.length; j++) {
         final position = group[j].position;
         final prePosition = preGroup[j].position;

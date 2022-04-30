@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'dart:math';
 
 import 'package:graphic/src/algebra/varset.dart';
+import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/scale/scale.dart';
 
@@ -21,14 +22,14 @@ class SymmetricModifier extends Modifier {
   @override
   bool equalTo(Object other) => other is SymmetricModifier && super == other;
 
-  void modify(AesGroups aesGroups, Map<String, ScaleConv<dynamic, num>> scales,
-      AlgForm form, Offset origin) {
+  void modify(AesGroups groups, Map<String, ScaleConv<dynamic, num>> scales,
+      AlgForm form, CoordConv coord, Offset origin) {
     final normalZero = origin.dy;
 
-    for (var i = 0; i < aesGroups.first.length; i++) {
+    for (var i = 0; i < groups.first.length; i++) {
       var minY = double.infinity;
       var maxY = double.negativeInfinity;
-      for (var group in aesGroups) {
+      for (var group in groups) {
         final aes = group[i];
         for (var point in aes.position) {
           final y = point.dy;
@@ -40,7 +41,7 @@ class SymmetricModifier extends Modifier {
       }
 
       final symmetricBias = normalZero - (minY + maxY) / 2;
-      for (var group in aesGroups) {
+      for (var group in groups) {
         final aes = group[i];
         final oldPosition = aes.position;
         aes.position = oldPosition

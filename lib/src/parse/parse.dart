@@ -26,11 +26,7 @@ import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/data/data_set.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/geom/element.dart';
-import 'package:graphic/src/geom/modifier/dodge.dart';
-import 'package:graphic/src/geom/modifier/jitter.dart';
 import 'package:graphic/src/geom/modifier/modifier.dart';
-import 'package:graphic/src/geom/modifier/stack.dart';
-import 'package:graphic/src/geom/modifier/symmetric.dart';
 import 'package:graphic/src/guide/annotation/custom.dart';
 import 'package:graphic/src/guide/annotation/figure.dart';
 import 'package:graphic/src/guide/annotation/line.dart';
@@ -436,6 +432,7 @@ void parse<D>(
           'groups': groups,
           'scales': scales,
           'form': form,
+          'coord': coord,
           'origin': origin,
         }));
       }

@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'dart:math';
 
+import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/scale/discrete.dart';
 import 'package:graphic/src/scale/scale.dart';
@@ -28,8 +29,8 @@ class JitterModifier extends Modifier {
       other is JitterModifier && super == other && ratio == other.ratio;
 
   @override
-  void modify(AesGroups aesGroups, Map<String, ScaleConv<dynamic, num>> scales,
-      AlgForm form, Offset origin) {
+  void modify(AesGroups groups, Map<String, ScaleConv<dynamic, num>> scales,
+      AlgForm form, CoordConv coord, Offset origin) {
     final xField = form.first[0];
     final band = (scales[xField] as DiscreteScaleConv).band;
 
@@ -37,7 +38,7 @@ class JitterModifier extends Modifier {
 
     final random = Random();
 
-    for (var group in aesGroups) {
+    for (var group in groups) {
       for (var aes in group) {
         final oldPosition = aes.position;
         final bias = ratio * band * (random.nextDouble() - 0.5);

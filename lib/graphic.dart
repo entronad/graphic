@@ -126,11 +126,11 @@ export 'src/variable/transform/proportion.dart' show Proportion;
 export 'src/variable/transform/sort.dart' show Sort;
 
 export 'src/scale/scale.dart' show Scale, ScaleConv;
-export 'src/scale/discrete.dart' show DiscreteScale;
-export 'src/scale/continuous.dart' show ContinuousScale;
-export 'src/scale/linear.dart' show LinearScale;
-export 'src/scale/ordinal.dart' show OrdinalScale;
-export 'src/scale/time.dart' show TimeScale;
+export 'src/scale/discrete.dart' show DiscreteScale, DiscreteScaleConv;
+export 'src/scale/continuous.dart' show ContinuousScale, ContinuousScaleConv;
+export 'src/scale/linear.dart' show LinearScale, LinearScaleConv;
+export 'src/scale/ordinal.dart' show OrdinalScale, OrdinalScaleConv;
+export 'src/scale/time.dart' show TimeScale, TimeScaleConv;
 
 export 'src/geom/element.dart' show GeomElement;
 export 'src/geom/function.dart' show FunctionElement;

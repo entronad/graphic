@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/common/customizable_spec.dart';
+import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/scale/scale.dart';
@@ -17,10 +18,13 @@ import 'package:graphic/src/shape/shape.dart';
 /// Rendering customization should be in the [Shape].
 abstract class Modifier extends CustomizableSpec {
   /// Modifies the position of element items.
+  /// 
+  /// The aesthetic attributes are in the [groups].
   void modify(
-    AesGroups aesGroups,
+    AesGroups groups,
     Map<String, ScaleConv> scales,
     AlgForm form,
+    CoordConv coord,
     Offset origin,
   );
 }
@@ -35,9 +39,10 @@ class ModifyOp extends Operator<AesGroups> {
     final groups = params['groups'] as AesGroups;
     final scales = params['scales'] as Map<String, ScaleConv>;
     final form = params['form'] as AlgForm;
+    final coord = params['coord'] as CoordConv;
     final origin = params['origin'] as Offset;
 
-    modifier.modify(groups, scales, form, origin);
+    modifier.modify(groups, scales, form, coord, origin);
 
     return groups;
   }

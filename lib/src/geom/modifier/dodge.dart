@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/scale/discrete.dart';
 import 'package:graphic/src/scale/scale.dart';
@@ -36,19 +37,19 @@ class DodgeModifier extends Modifier {
       symmetric == other.symmetric;
 
   @override
-  void modify(AesGroups aesGroups, Map<String, ScaleConv<dynamic, num>> scales,
-      AlgForm form, Offset origin) {
+  void modify(AesGroups groups, Map<String, ScaleConv<dynamic, num>> scales,
+      AlgForm form, CoordConv coord, Offset origin) {
     final xField = form.first[0];
     final band = (scales[xField] as DiscreteScaleConv).band;
 
-    final ratio = this.ratio ?? 1 / (aesGroups.length);
+    final ratio = this.ratio ?? 1 / (groups.length);
     final symmetric = this.symmetric ?? true;
 
     final bias = ratio * band;
     // If symmetric, negtively shifts half of the total bias.
-    var accumulated = symmetric ? -bias * (aesGroups.length - 1) / 2 : 0.0;
+    var accumulated = symmetric ? -bias * (groups.length - 1) / 2 : 0.0;
 
-    for (var group in aesGroups) {
+    for (var group in groups) {
       for (var aes in group) {
         final oldPosition = aes.position;
         aes.position = oldPosition

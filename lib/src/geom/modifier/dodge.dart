@@ -1,10 +1,10 @@
 import 'dart:ui';
 
+import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/scale/discrete.dart';
 import 'package:graphic/src/scale/scale.dart';
-import 'package:graphic/src/algebra/varset.dart';
 
 import 'modifier.dart';
 
@@ -32,7 +32,6 @@ class DodgeModifier extends Modifier {
   @override
   bool equalTo(Object other) =>
       other is DodgeModifier &&
-      super == other &&
       ratio == other.ratio &&
       symmetric == other.symmetric;
 

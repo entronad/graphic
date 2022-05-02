@@ -1,3 +1,9 @@
+## 0.10.3
+
+**2022-05-2**
+
+- Fix Stack Overflow when comparing modifiers: https://github.com/entronad/graphic/pull/96
+
 ## 0.10.2
 
 **2022-05-2**

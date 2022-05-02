@@ -1,5 +1,5 @@
-import 'dart:ui';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/coord/coord.dart';
@@ -16,8 +16,7 @@ import 'modifier.dart';
 /// It is mostly used in river chart, and funnel chart.
 class SymmetricModifier extends Modifier {
   @override
-  bool operator ==(Object other) =>
-      other is SymmetricModifier && super == other;
+  bool operator ==(Object other) => other is SymmetricModifier;
 
   @override
   bool equalTo(Object other) => other is SymmetricModifier && super == other;

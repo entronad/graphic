@@ -1,11 +1,11 @@
-import 'dart:ui';
 import 'dart:math';
+import 'dart:ui';
 
+import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/scale/discrete.dart';
 import 'package:graphic/src/scale/scale.dart';
-import 'package:graphic/src/algebra/varset.dart';
 
 import 'modifier.dart';
 
@@ -25,8 +25,7 @@ class JitterModifier extends Modifier {
   double? ratio;
 
   @override
-  bool equalTo(Object other) =>
-      other is JitterModifier && super == other && ratio == other.ratio;
+  bool equalTo(Object other) => other is JitterModifier && ratio == other.ratio;
 
   @override
   void modify(AesGroups groups, Map<String, ScaleConv<dynamic, num>> scales,

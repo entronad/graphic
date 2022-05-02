@@ -18,7 +18,7 @@ import 'modifier.dart';
 /// - Y values must be all positive or all negtive.
 class StackModifier extends Modifier {
   @override
-  bool equalTo(Object other) => other is StackModifier && super == other;
+  bool equalTo(Object other) => other is StackModifier;
 
   void modify(AesGroups groups, Map<String, ScaleConv<dynamic, num>> scales,
       AlgForm form, CoordConv coord, Offset origin) {

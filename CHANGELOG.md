@@ -1,3 +1,9 @@
+## 0.10.2
+
+**2022-05-2**
+
+- Add `coordConv` to `Modifier.modify`'s arguments.
+
 ## 0.10.1
 
 **2022-04-28**

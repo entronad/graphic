@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
@@ -41,11 +42,19 @@ class DodgeModifier extends Modifier {
     final xField = form.first[0];
     final band = (scales[xField] as DiscreteScaleConv).band;
 
+    performModification(groups: groups, band: band);
+  }
+
+  @visibleForTesting
+  void performModification({
+    required AesGroups groups,
+    required double band,
+  }) {
     final ratio = this.ratio ?? 1 / (groups.length);
     final symmetric = this.symmetric ?? true;
 
     final bias = ratio * band;
-    // If symmetric, negtively shifts half of the total bias.
+    // If symmetric, negatively shifts half of the total bias.
     var accumulated = symmetric ? -bias * (groups.length - 1) / 2 : 0.0;
 
     for (var group in groups) {

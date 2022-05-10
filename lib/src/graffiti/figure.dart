@@ -72,7 +72,10 @@ class TextFigure extends Figure {
   final Offset offset;
 
   @override
-  void paint(Canvas canvas) => painter.paint(canvas, offset);
+  void paint(Canvas canvas) {
+    painter.layout();
+    painter.paint(canvas, offset);
+  }
 }
 
 /// The figure to paint a rotated text.

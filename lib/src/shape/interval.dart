@@ -134,7 +134,16 @@ class RectShape extends IntervalShape {
 
           final start = coord.convert(item.position[0]);
           final end = coord.convert(item.position[1]);
-          final size = item.size ?? defaultSize;
+          // When item.size is between 0 and 1, we set it
+          // proportionally from the available space 
+          double size = item.size ?? defaultSize;
+          if( size > 0.0 && size < 1.0 ){
+            if( coord.transposed )
+              size = coord.region.height * size;
+            else 
+              size = coord.region.width * size;
+          }
+          
           Rect rect;
           if (coord.transposed) {
             rect = Rect.fromLTRB(
@@ -188,7 +197,15 @@ class RectShape extends IntervalShape {
           for (var item in group) {
             final position = item.position;
             final r = coord.convertRadius(position[0].dx);
-            final halfSize = (item.size ?? defaultSize) / 2;
+            
+            // When item.size is between 0 and 1, we set it
+            // proportionally from the available space 
+            double size = item.size ?? defaultSize;
+            if( size > 0.0 && size < 1.0 ){
+              size = coord.region.height * size;
+            }
+            final halfSize = size / 4;
+
             rst.addAll(_renderSector(
               item,
               r + halfSize,

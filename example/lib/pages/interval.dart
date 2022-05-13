@@ -20,6 +20,7 @@ class IntervalPage extends StatelessWidget {
         child: Center(
           child: Column(
             children: <Widget>[
+              // Interactive Bar Chart 
               Container(
                 child: const Text(
                   'Interactive Bar Chart',
@@ -89,6 +90,8 @@ class IntervalPage extends StatelessWidget {
                   crosshair: CrosshairGuide(),
                 ),
               ),
+              
+              // Transposed Bar Chart
               Container(
                 child: const Text(
                   'Transposed Bar Chart',
@@ -99,6 +102,15 @@ class IntervalPage extends StatelessWidget {
               Container(
                 child: const Text(
                   '- Uses gradient attribute instead of color.',
+                ),
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
+              ),
+              Container(
+                child: const Text(
+                  "- Size attributes between 0 and 1 is proportional to "
+                  " available space. In this case, size is 0.2 for each"
+                  " bar, filling the entire space",
                 ),
                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                 alignment: Alignment.centerLeft,
@@ -144,6 +156,9 @@ class IntervalPage extends StatelessWidget {
                                   ])
                             }
                           }),
+                      size: SizeAttr(
+                        encoder: (_)=>1.0 / basicData.length
+                      )
                     )
                   ],
                   coord: RectCoord(transposed: true),
@@ -158,6 +173,8 @@ class IntervalPage extends StatelessWidget {
                   selections: {'tap': PointSelection(dim: Dim.x)},
                 ),
               ),
+              
+              // Interval Bar Chart
               Container(
                 child: const Text(
                   'Interval Bar Chart',
@@ -212,6 +229,8 @@ class IntervalPage extends StatelessWidget {
                   ],
                 ),
               ),
+              
+              // Stacked Bar Chart
               Container(
                 child: const Text(
                   'Stacked Bar Chart',
@@ -293,6 +312,8 @@ class IntervalPage extends StatelessWidget {
                   crosshair: CrosshairGuide(),
                 ),
               ),
+              
+              // Funnel Chart
               Container(
                 child: const Text(
                   'Funnel Chart',
@@ -381,6 +402,8 @@ class IntervalPage extends StatelessWidget {
                   coord: PolarCoord(transposed: true, dimCount: 1),
                 ),
               ),
+              
+              // Rose Chart
               Container(
                 child: const Text(
                   'Rose Chart',
@@ -427,6 +450,8 @@ class IntervalPage extends StatelessWidget {
                   coord: PolarCoord(startRadius: 0.15),
                 ),
               ),
+              
+              // Stacked Rose Chart
               Container(
                 child: const Text(
                   'Stacked Rose Chart',
@@ -485,12 +510,21 @@ class IntervalPage extends StatelessWidget {
                   ),
                 ),
               ),
+              
+              // Race Chart
               Container(
                 child: const Text(
                   'Race Chart',
                   style: TextStyle(fontSize: 20),
                 ),
                 padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
+              ),
+              Container(
+                child: const Text(
+                  '- Proportional bar\'s width works as well.',
+                ),
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -515,6 +549,7 @@ class IntervalPage extends StatelessWidget {
                         variable: 'genre',
                         values: Defaults.colors10,
                       ),
+                      size: SizeAttr(encoder: (_)=> (1.0/basicData.length)-0.01 ),
                     )
                   ],
                   coord: PolarCoord(transposed: true),

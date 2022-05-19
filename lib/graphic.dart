@@ -131,6 +131,8 @@ export 'src/scale/continuous.dart' show ContinuousScale, ContinuousScaleConv;
 export 'src/scale/linear.dart' show LinearScale, LinearScaleConv;
 export 'src/scale/ordinal.dart' show OrdinalScale, OrdinalScaleConv;
 export 'src/scale/time.dart' show TimeScale, TimeScaleConv;
+export 'src/scale/util/nice_numbers.dart' show linearNiceNumbers;
+export 'src/scale/util/nice_range.dart' show linearNiceRange;
 
 export 'src/geom/element.dart' show GeomElement;
 export 'src/geom/function.dart' show FunctionElement;

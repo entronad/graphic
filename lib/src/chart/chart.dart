@@ -224,9 +224,9 @@ class _ChartState<D> extends State<Chart<D>> {
 
     // The mouse enter and exit implementation is the same as Flutter's tooltip:
     // https://github.com/flutter/flutter/blob/master/packages/flutter/lib/src/material/tooltip.dart#L354
-    _mouseIsConnected = RendererBinding.instance!.mouseTracker.mouseIsConnected;
+    _mouseIsConnected = RendererBinding.instance.mouseTracker.mouseIsConnected;
 
-    RendererBinding.instance!.mouseTracker
+    RendererBinding.instance.mouseTracker
         .addListener(_handleMouseTrackerChange);
   }
 
@@ -234,7 +234,7 @@ class _ChartState<D> extends State<Chart<D>> {
   void dispose() {
     super.dispose();
 
-    RendererBinding.instance!.mouseTracker
+    RendererBinding.instance.mouseTracker
         .removeListener(_handleMouseTrackerChange);
   }
 
@@ -263,7 +263,7 @@ class _ChartState<D> extends State<Chart<D>> {
     }
 
     final mouseIsConnected =
-        RendererBinding.instance!.mouseTracker.mouseIsConnected;
+        RendererBinding.instance.mouseTracker.mouseIsConnected;
     if (mouseIsConnected != _mouseIsConnected) {
       setState(() {
         _mouseIsConnected = mouseIsConnected;

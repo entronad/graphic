@@ -1,5 +1,8 @@
 import 'dart:math' as dart_math;
 
+import '../linear.dart';
+
+/// Calculates nice numbers for [LinearScaleConv].
 List<num> linearNiceNumbers(
   num min,
   num max,

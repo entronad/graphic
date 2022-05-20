@@ -66,6 +66,8 @@ class TextFigure extends Figure {
   TextFigure(this.painter, this.offset);
 
   /// The text painter.
+  ///
+  /// Make sure to execute [TextPainter.layout] before [paint].
   final TextPainter painter;
 
   /// The offset for [TextPainter.paint].

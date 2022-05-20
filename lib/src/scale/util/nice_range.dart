@@ -1,5 +1,7 @@
 import 'dart:math' as dart_math;
 
+import '../linear.dart';
+
 final _e10 = dart_math.sqrt(50);
 final _e5 = dart_math.sqrt(10);
 final _e2 = dart_math.sqrt(2);
@@ -32,6 +34,7 @@ num _tickIncrement(
                   : 1);
 }
 
+/// Calculates nice range for [LinearScaleConv].
 List<num> linearNiceRange(
   num min,
   num max,

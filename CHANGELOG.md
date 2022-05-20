@@ -1,12 +1,19 @@
+## 0.10.4
+
+**2022-05-20**
+
+- Remove `_mouseIsConnected` checking from chart widget state.
+- Expose linearNiceRange and linearNiceNumbers algorithms: https://github.com/entronad/graphic/pull/105
+
 ## 0.10.3
 
-**2022-05-2**
+**2022-05-02**
 
 - Fix Stack Overflow when comparing modifiers: https://github.com/entronad/graphic/pull/96
 
 ## 0.10.2
 
-**2022-05-2**
+**2022-05-02**
 
 - Add `coordConv` to `Modifier.modify`'s arguments.
 

@@ -4072,6 +4072,19 @@ scaleConv 等似乎是必须要暴露的，否则比如反转xy等都无法实�
 
 
 
+**animation**
+
+动画主要有三种方式：
+
+1. 类似CSS那种将动画指令直接接在代码后面（重点是定义是直接改变动画值）
+
+2. 定义某个变换transformation，它告诉如何将一个状态过渡到另一个状态（D3，重点是transformation是包含结束状态的）
+3. 定义初始和结束状态，以及其中的过渡transition，因此这个 transition 可以更简洁，不用像transformation那样包含结束状态，而且状态和过渡可以更好的分离
+
+data change 只作用于mark，它的机制基于 D3 data join
+
+
+
 ## TODO
 
 area gradient 超出coord region的问题

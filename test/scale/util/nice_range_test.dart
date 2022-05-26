@@ -15,4 +15,16 @@ main() {
 
     expect(linearNiceRange(0.4, 0.6, 5), [0.4, 0.6]);
   });
+
+  test('Linear Nice range with values that overflow ints', () {
+    expect(
+      linearNiceRange(0, 999999999999999999999999999999.0, 5),
+      [0.0, 1.9999999999999998e+30],
+    );
+
+    expect(
+      linearNiceRange(0, 9999999999999999999999999999999.0, 5),
+      [0.0, 1e31],
+    );
+  });
 }

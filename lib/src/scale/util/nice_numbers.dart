@@ -147,7 +147,7 @@ List<num> _wilkinsonExtended(
         int z = (dart_math.log(delta) / dart_math.ln10).ceil();
 
         while (z < _maxLoop) {
-          final step = j * q * dart_math.pow(10, z);
+          final step = j * q * dart_math.pow(10.0, z);
           final cm = _coverageMax(min, max, (step * (k - 1)));
 
           if (w[0] * sm + w[1] * cm + w[2] * dm + w[3] < bestScore) {

@@ -22,9 +22,9 @@ num _tickIncrement(
                 : error >= _e2
                     ? 2
                     : 1) *
-        dart_math.pow(10, power);
+        dart_math.pow(10.0, power);
   }
-  return -dart_math.pow(10, -power) /
+  return -dart_math.pow(10.0, -power) /
       (error >= _e10
           ? 10
           : error >= _e5

@@ -54,5 +54,11 @@ main() {
       expect(linearNiceNumbers(-1.02835066, 3.25839303, 5),
           [-1.2, 0, 1.2, 2.4, 3.6]);
     });
+
+    test('Nice numbers with values that overflow ints', () {
+      expect(linearNiceNumbers(0.0, 1e30, 5), [0, 3e29, 6e29, 9e29, 1.2e30]);
+
+      expect(linearNiceNumbers(0.0, 1e32, 5), [0, 3e31, 6e31, 9e31, 1.2e32]);
+    });
   });
 }

@@ -98,17 +98,14 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
     final styles = params['styles'] as List<StrokeStyle?>;
     final followPointer = params['followPointer'] as List<bool>;
 
-    final name = singleIntersection(selectors?.keys, selections);
-
-    final selector = name == null ? null : selectors?[name];
+    // The main indicator is selected, if no selector, takes selectedPoint for pointer.
+    final name = singleIntersection(selected?.keys, selections);
     final selects = name == null ? null : selected?[name];
 
-    if (selector == null || selects == null || selects.isEmpty) {
+    if (selects == null || selects.isEmpty) {
       scene.figures = null;
       return;
     }
-
-    final pointer = coord.invert(selector.points.last);
 
     Offset selectedPoint = Offset.zero;
     int count = 0;
@@ -127,6 +124,10 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
       selectedPoint += findPoint(index);
     }
     selectedPoint = selectedPoint / count.toDouble();
+
+    final selector = selectors?[name];
+    final pointer =
+        selector == null ? selectedPoint : coord.invert(selector.points.last);
 
     final cross = Offset(
       followPointer[0] ? pointer.dx : selectedPoint.dx,

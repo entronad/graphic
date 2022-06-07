@@ -4070,6 +4070,24 @@ Custom Modifier
 
 scaleConv 等似乎是必须要暴露的，否则比如反转xy等都无法实现，虽然不太舒服，但是既然是高级应用多暴露点也没关系
 
+element.selected 初始化问题
+
+由于头次运算时没有selector，会导致预设的value为null
+
+目前这种selected每一个状态完全由selector的状态控制，某一状态没有selector就代表此状态clear的设计是很好的
+
+selected初始化问题的处理是selected的特性问题，解决方法局限于selecteop中。现在的需求是强化“初始化中”这一状态，只有当某一次出现了selector才认为脱离了初始化状态，否则永远初始化中。
+
+Tooltip 和 crosshair的问题
+
+如果目前这样的话，无法处理初始化时“有selected无selector”的问题，
+
+这折射出它有selector和selected两个数据源的缺陷，现在改为以selected为主数据源，如果没有selector，位置从selected生成这种方式更好
+
+
+
+
+
 
 
 **animation**

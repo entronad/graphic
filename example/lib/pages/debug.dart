@@ -3,29 +3,43 @@ import 'package:graphic/graphic.dart';
 
 import '../data.dart';
 
-class Sector extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawPath(
-      Paths.rSector(
-        center: const Offset(175, 150),
-        r: 20,
-        r0: 90,
-        startAngle: 0,
-        endAngle: -1.6,
-        clockwise: true,
-        topLeft: const Radius.circular(5),
-        topRight: const Radius.circular(5),
-        bottomRight: const Radius.circular(5),
-        bottomLeft: const Radius.circular(5),
-      ),
-      Paint(),
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
-}
+const adjustData = [
+  {"type": "Email", "index": 0, "value": 120},
+  {"type": "Email", "index": 1, "value": 132},
+  {"type": "Email", "index": 2, "value": 101},
+  {"type": "Email", "index": 3, "value": 134},
+  {"type": "Email", "index": 4, "value": 90},
+  {"type": "Email", "index": 5, "value": 230},
+  {"type": "Email", "index": 6, "value": 210},
+  {"type": "Affiliate", "index": 0, "value": 220},
+  {"type": "Affiliate", "index": 1, "value": 182},
+  {"type": "Affiliate", "index": 2, "value": 191},
+  {"type": "Affiliate", "index": 3, "value": 234},
+  {"type": "Affiliate", "index": 4, "value": 290},
+  {"type": "Affiliate", "index": 5, "value": 330},
+  {"type": "Affiliate", "index": 6, "value": 310},
+  {"type": "Video", "index": 0, "value": 150},
+  {"type": "Video", "index": 1, "value": 232},
+  {"type": "Video", "index": 2, "value": 201},
+  {"type": "Video", "index": 3, "value": 154},
+  {"type": "Video", "index": 4, "value": 190},
+  {"type": "Video", "index": 5, "value": 330},
+  {"type": "Video", "index": 6, "value": 410},
+  {"type": "Direct", "index": 0, "value": 320},
+  {"type": "Direct", "index": 1, "value": 332},
+  {"type": "Direct", "index": 2, "value": 301},
+  {"type": "Direct", "index": 3, "value": 334},
+  {"type": "Direct", "index": 4, "value": 390},
+  {"type": "Direct", "index": 5, "value": 330},
+  {"type": "Direct", "index": 6, "value": 320},
+  {"type": "Search", "index": 0, "value1": 320},
+  {"type": "Search", "index": 1, "value1": 432},
+  {"type": "Search", "index": 2, "value1": 401},
+  {"type": "Search", "index": 3, "value1": 434},
+  {"type": "Search", "index": 4, "value1": 390},
+  {"type": "Search", "index": 5, "value1": 430},
+  {"type": "Search", "index": 6, "value1": 420},
+];
 
 class DebugPage extends StatelessWidget {
   const DebugPage({Key? key}) : super(key: key);
@@ -46,31 +60,31 @@ class DebugPage extends StatelessWidget {
               ),
               'sold': Variable(
                 accessor: (Map map) => map['sold'] as num,
-                scale: LinearScale(min: 0),
               ),
             },
             elements: [
               IntervalElement(
                 label: LabelAttr(
                     encoder: (tuple) => Label(tuple['sold'].toString())),
-                color: ColorAttr(
-                  variable: 'genre',
-                  values: Defaults.colors10,
-                ),
-                shape: ShapeAttr(
-                    value: RectShape(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(5)))),
-                size: SizeAttr(value: 10),
+                elevation: ElevationAttr(value: 0, updaters: {
+                  'tap': {true: (_) => 5}
+                }),
+                color: ColorAttr(value: Defaults.primaryColor, updaters: {
+                  'tap': {false: (color) => color.withAlpha(100)}
+                }),
+                selected: {
+                  'tap': {0}
+                },
               )
             ],
-            coord: PolarCoord(transposed: true),
             axes: [
-              Defaults.radialAxis..label = null,
-              Defaults.circularAxis,
+              Defaults.horizontalAxis,
+              Defaults.verticalAxis,
             ],
+            selections: {'tap': PointSelection(dim: Dim.x)},
+            tooltip: TooltipGuide(),
+            crosshair: CrosshairGuide(),
           ),
-          // child: CustomPaint(painter: Sector()),
         ),
       ),
     );

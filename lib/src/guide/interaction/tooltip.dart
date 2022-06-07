@@ -199,6 +199,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
     final selections = params['selections'] as Set<String>;
     final selectors = params['selectors'] as Map<String, Selector>?;
     final selected = params['selected'] as Selected?;
+    final selectionSpecs = params['selectionSpecs'] as Map<String, Selection>;
     final coord = params['coord'] as CoordConv;
     final groups = params['groups'] as AesGroups;
     final tuples = params['tuples'] as List<Tuple>;
@@ -218,18 +219,14 @@ class TooltipRenderOp extends Render<TooltipScene> {
     final constrained = params['constrained'] as bool;
     final scales = params['scales'] as Map<String, ScaleConv>;
 
-    final name = singleIntersection(selectors?.keys, selections);
-
-    final selector = name == null ? null : selectors?[name];
+    // The main indicator is selected, if no selector, takes selectedPoint for pointer.
+    final name = singleIntersection(selected?.keys, selections);
     final selects = name == null ? null : selected?[name];
 
-    if (selector == null || selects == null || selects.isEmpty) {
+    if (selects == null || selects.isEmpty) {
       scene.figures = null;
       return;
     }
-
-    final multiTuplesRst = multiTuples ??
-        (selector is IntervalSelector || selector.variable != null);
 
     final selectedTuples = <int, Tuple>{};
     for (var index in selects) {
@@ -240,8 +237,6 @@ class TooltipRenderOp extends Render<TooltipScene> {
     if (anchor != null) {
       anchorRst = anchor(size);
     } else {
-      final pointer = coord.invert(selector.points.last);
-
       Offset selectedPoint = Offset.zero;
       int count = 0;
       final findPoint = (int index) {
@@ -260,6 +255,10 @@ class TooltipRenderOp extends Render<TooltipScene> {
       }
       selectedPoint = selectedPoint / count.toDouble();
 
+      final selector = selectors?[name];
+      final pointer =
+          selector == null ? selectedPoint : coord.invert(selector.points.last);
+
       anchorRst = coord.convert(Offset(
         followPointer[0] ? pointer.dx : selectedPoint.dx,
         followPointer[1] ? pointer.dy : selectedPoint.dy,
@@ -275,6 +274,12 @@ class TooltipRenderOp extends Render<TooltipScene> {
     } else {
       String textContent = '';
       final selectedTupleList = selectedTuples.values;
+
+      final selectionSpec = selectionSpecs[name]!;
+      final multiTuplesRst = multiTuples ??
+          (selectionSpec is IntervalSelection ||
+              selectionSpec.variable != null);
+
       if (!multiTuplesRst) {
         final fields = variables ?? scales.keys.toList();
         final tuple = selectedTupleList.last;
@@ -289,7 +294,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
           textContent += '\n$title: ${scale.format(tuple[field])}';
         }
       } else {
-        final groupField = selector.variable;
+        final groupField = selectionSpec.variable;
 
         var fields = variables;
         if (fields == null) {

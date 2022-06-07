@@ -1,3 +1,10 @@
+## 0.10.5
+
+**2022-06-07**
+
+- Fix the bug that `GeomElement.selected` dosen't work.
+- Fix: handle big numbers when calculating nice range/numbers: https://github.com/entronad/graphic/pull/107
+
 ## 0.10.4
 
 **2022-05-20**

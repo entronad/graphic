@@ -661,6 +661,7 @@ void parse<D>(
       'selections': tooltipSpec.selections ?? spec.selections!.keys.toSet(),
       'selectors': selectors!,
       'selected': selectOpList[elementIndex],
+      'selectionSpecs': spec.selections!,
       'coord': coord,
       'groups': groupsList[elementIndex],
       'tuples': tuples,

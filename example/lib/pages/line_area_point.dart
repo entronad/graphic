@@ -33,6 +33,13 @@ class LineAreaPointPage extends StatelessWidget {
               ),
               Container(
                 child: const Text(
+                  '- Pre-select a point.',
+                ),
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
+              ),
+              Container(
+                child: const Text(
                   '- Dash line.',
                 ),
                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
@@ -78,7 +85,11 @@ class LineAreaPointPage extends StatelessWidget {
                   },
                   elements: [
                     LineElement(
-                        shape: ShapeAttr(value: BasicLineShape(dash: [5, 2])))
+                      shape: ShapeAttr(value: BasicLineShape(dash: [5, 2])),
+                      selected: {
+                        'touchMove': {1}
+                      },
+                    )
                   ],
                   coord: RectCoord(color: const Color(0xffdddddd)),
                   axes: [

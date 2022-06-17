@@ -66,8 +66,8 @@ class PositionEncoder extends Encoder<List<Offset>> {
 }
 
 /// The operator to create the position encoder.
-class PositionOp extends Operator<PositionEncoder> {
-  PositionOp(Map<String, dynamic> params) : super(params);
+class PositionEncoderOp extends Operator<PositionEncoder> {
+  PositionEncoderOp(Map<String, dynamic> params) : super(params);
 
   @override
   PositionEncoder evaluate() {

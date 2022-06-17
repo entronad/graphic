@@ -4086,6 +4086,34 @@ Tooltip 和 crosshair的问题
 
 
 
+哪些op需要initRun，哪些不需要？
+
+可以设置初始值的op及其之前的op，都必须不能runInit，这些可以设置初始值的op及其之前的op都应当被认为是dataflow的source，一般都是一个（比如 data、size）但特殊的是交互，交互本身是不可初始化的，但其最末端的 selected 是可以初始化的，因此它及其之前的都应当是 不能initRun的
+
+我们称起点和终点分别为 start 和 end。
+
+render原则上不作为start，由于consume之后它的target下次肯定重算，所以只有第一个op需要consume，后面的不用了，同时consume也只可能是start，目前只有signal是consume。
+
+第一次run的时候由runInit决定是否要run应当是最高优先级的。update之后touch targets是完全在dataflow中进行的，所以给了操作的空间。由于第一次run的时候widget等都已经好了，所以异步run的那套是必要的，只是evaluate不同。
+
+第一次evaluate确实不需要堆方式，因为你在parse的时候add的时候，已经确保了source op 都在target op之前，本身这个优先堆就是以add顺序作为优先级的。
+
+这样我们加入了一个重要概念，initialization、init：指dataflow第一次计算
+
+value到底需不需要可以nullable
+
+对于非start的op，确实存在创建时没有，runInit后才有的情况，因此 V?是合理的
+
+
+
+判断updated
+
+初始时一个op是否需要run 完全由这个op是不是start决定，所有非start都需要run一次，因此不用考虑初始那次不希望中间某个op不要run的情况
+
+在op中，对于初始状况可能出现value是不希望的null这种情况，通过value is V判断排除，当value是V?但不是V时即使初始状况，一律update，实际上值也确实是从null变成非null。
+
+
+
 
 
 

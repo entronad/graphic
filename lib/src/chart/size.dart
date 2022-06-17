@@ -24,7 +24,7 @@ class SizeOp extends Operator<Size> {
   ) : super(params, value);
 
   @override
-  bool get needInitialTouch => false;
+  bool get runInit => false;
 
   @override
   Size evaluate() {

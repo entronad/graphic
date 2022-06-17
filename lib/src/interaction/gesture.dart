@@ -573,10 +573,7 @@ class GestureOp extends Operator<Gesture?> {
   ) : super(params);
 
   @override
-  bool get needInitialTouch => false;
-
-  @override
-  bool get consume => true;
+  bool get runInit => false;
 
   @override
   Gesture? evaluate() {

@@ -33,7 +33,7 @@ class Dataflow {
   /// Add an operator to this dataflow.
   O add<O extends Operator>(O op) {
     _rank(op);
-    if (op.needInitialTouch) {
+    if (op.runInit) {
       _touch(op);
     }
 
@@ -74,15 +74,25 @@ class Dataflow {
     }
   }
 
+  /// Initially calculate this dataflow.
+  /// 
+  /// This is used by [run] in initialization.
+  @protected
+  Future<Dataflow> init() async {
+    // Which operators to run in initialization is only determined by Whether it's
+    // a start (runInit is false).
+    for (var op in _touched) {
+      op.run();
+    }
+
+    return this;
+  }
+
   /// Evaluates the touched operators.
   ///
   /// This is used by [run].
   @protected
   Future<Dataflow> evaluate() async {
-    if (_touched.isEmpty) {
-      return this;
-    }
-
     for (var op in _touched) {
       _enqueue(op);
     }
@@ -91,11 +101,11 @@ class Dataflow {
     while (_heap.isNotEmpty) {
       final op = _heap.removeFirst();
 
-      final modified = op.run();
+      final updated = op.run();
 
       _runed.add(op);
 
-      if (modified) {
+      if (updated) {
         for (var target in op.targets) {
           _enqueue(target);
         }
@@ -114,12 +124,16 @@ class Dataflow {
   }
 
   /// Evaluates this dataflow.
-  Future<void> run() async {
+  /// 
+  /// Call this method only when initialization or any operator is touched.
+  Future<void> run({bool init = false}) async {
     while (_running != null) {
       await _running;
     }
 
-    _running = evaluate().then(
+    final rst = init ? this.init() : evaluate();
+
+    _running = rst.then(
       (_) {
         _running = null;
         return this;

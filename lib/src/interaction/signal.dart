@@ -54,10 +54,7 @@ class SignalReducerOp<D> extends Operator<Signal?> {
   SignalReducerOp(Map<String, dynamic> params) : super(params);
 
   @override
-  bool get needInitialTouch => false;
-
-  @override
-  bool get consume => true;
+  bool get runInit => false;
 
   @override
   Signal? evaluate() {

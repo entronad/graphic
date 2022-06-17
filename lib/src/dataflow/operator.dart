@@ -42,10 +42,12 @@ abstract class Operator<V> {
   @protected
   V? value;
 
-  /// Whether this operator needs a initial touch when added.
+  /// Whether this operator needs to run in initialization.
   ///
-  /// Some operators have inital value or can't be touched.
-  bool get needInitialTouch => true;
+  /// If an operator's value can be initially set, its upstream and itself are called
+  /// starts of the dataflow. Starts should not run in initialization while other
+  /// operators should run in initialization.
+  bool get runInit => true;
 
   /// Parameter values set directly or pulled inderectly.
   @protected
@@ -68,7 +70,9 @@ abstract class Operator<V> {
 
   /// Whether the [value] should be consumed after this pulse.
   ///
-  /// It is usefull for transient values like [Signal]s.
+  /// It is usefull for transient values like [Signal]s. Only a very first operator
+  /// need to set this property. It's targets will always be touched when it is
+  /// set null and it is always a start.
   bool get consume => false;
 
   /// Whether this operator has evaluated in this pulse.
@@ -85,22 +89,22 @@ abstract class Operator<V> {
     }
   }
 
-  /// Runs this operator and returns whether the [value] is modified.
+  /// Runs this operator and returns whether the [value] is updated.
   bool run() {
     if (runed) {
       return false;
     }
 
     _marshall();
-    final modified = update(evaluate());
-    if (channel != null && modified) {
+    final updated = update(evaluate());
+    if (channel != null && updated) {
       // Only the updates caused by operator.run will emit to it's channel sink.
       // For now, singal channels are noticed by the view, while the selection channel
       // is noticed by it's binded operator.
       channel!.sink.add(value);
     }
     runed = true;
-    return modified;
+    return updated;
   }
 
   /// Evaluates the new [value].
@@ -119,7 +123,8 @@ abstract class Operator<V> {
   ///
   /// An operator can only updated by [run] or a Dataflow._update.
   bool update(V newValue) {
-    if (value != null && equalValue(value!, newValue)) {
+    // If value is not V, means the initial case, which always needs update.
+    if (value is V && equalValue(value as V, newValue)) {
       return false;
     }
     value = newValue;

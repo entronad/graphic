@@ -11,7 +11,6 @@ import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/geom/element.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/shape/shape.dart';
@@ -141,6 +140,9 @@ abstract class Selector {
 /// The value list is either null or not empty.
 class SelectorOp extends Operator<Map<String, Selector>?> {
   SelectorOp(Map<String, dynamic> params) : super(params);
+
+  @override
+  bool get runInit => false;
 
   @override
   Map<String, Selector>? evaluate() {
@@ -305,14 +307,8 @@ typedef Selected = Map<String, Set<int>>;
 class SelectOp extends Operator<Selected?> {
   SelectOp(Map<String, dynamic> params, Selected? value) : super(params, value);
 
-  /// Whether it is in initialization when [evaluate].
-  ///
-  /// It will keep true until the first selector occurs.
-  ///
-  /// The state of selected is totally determined by the state of selectors. So
-  /// the initial status when there is no selectors yet should be indicated by this
-  /// property to handle [GeomElement.selected].
-  bool inInit = true;
+  @override
+  bool get runInit => false;
 
   @override
   Selected? evaluate() {
@@ -322,13 +318,7 @@ class SelectOp extends Operator<Selected?> {
     final coord = params['coord'] as CoordConv;
 
     if (selectors == null) {
-      // Returns pre-selected in init.
-      return inInit ? value : null;
-    }
-
-    if (inInit) {
-      // Shifts when first selector executes.
-      inInit = false;
+      return null;
     }
 
     final rst = <String, Set<int>>{};

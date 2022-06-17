@@ -23,7 +23,8 @@ class View<D> extends Dataflow {
 
     graffiti.sort();
 
-    run();
+    // Initialization.
+    run(init: true);
   }
 
   /// Asks the chart state to trigger a repaint.
@@ -71,6 +72,17 @@ class View<D> extends Dataflow {
     await Future(() {
       changeDataChannel.sink.add(ChangeDataSignal<D>(data));
     });
+  }
+
+  @override
+  Future<Dataflow> init() async {
+    await super.init();
+
+    // There always needs painting after initialization.
+    repaint();
+    dirty = false;
+
+    return this;
   }
 
   @override

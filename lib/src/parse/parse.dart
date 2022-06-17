@@ -364,7 +364,7 @@ void parse<D>(
       'coord': coord,
     }));
 
-    final position = view.add(PositionOp({
+    final positionEncoder = view.add(PositionEncoderOp({
       'form': form,
       'scales': scales,
       'completer': getPositionCompleter(elementSpec),
@@ -374,7 +374,7 @@ void parse<D>(
     final aeses = view.add(AesOp({
       'scaleds': scaleds,
       'tuples': tuples,
-      'positionEncoder': position,
+      'positionEncoder': positionEncoder,
       'shapeEncoder': getChannelEncoder<Shape>(
         elementSpec.shape ?? ShapeAttr(value: getDefaultShape(elementSpec)),
         scaleSpecs,

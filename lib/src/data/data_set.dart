@@ -28,7 +28,7 @@ class DataOp<D> extends Operator<List<D>> {
   ) : super(params, value);
 
   @override
-  bool get needInitialTouch => false;
+  bool get runInit => false;
 
   @override
   List<D> evaluate() {

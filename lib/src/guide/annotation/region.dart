@@ -1,6 +1,6 @@
-import 'dart:ui';
-
+import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/dim.dart';
+import 'package:graphic/src/util/assert.dart';
 import 'package:graphic/src/util/collection.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/intrinsic_layers.dart';
@@ -21,8 +21,10 @@ class RegionAnnotation extends Annotation {
     this.variable,
     required this.values,
     this.color,
+    this.gradient,
     int? layer,
-  }) : super(
+  })  : assert(isSingle([color, gradient])),
+        super(
           layer: layer,
         );
 
@@ -42,7 +44,14 @@ class RegionAnnotation extends Annotation {
   List values;
 
   /// The color of this region.
+  ///
+  /// Only one in [color] and [gradient] can be set.
   Color? color;
+
+  /// The gradient of this region.
+  ///
+  /// Only one in [color] and [gradient] can be set.
+  Gradient? gradient;
 
   @override
   bool operator ==(Object other) =>
@@ -51,7 +60,8 @@ class RegionAnnotation extends Annotation {
       dim == other.dim &&
       variable == other.variable &&
       deepCollectionEquals(values, other.values) &&
-      color == color;
+      color == other.color &&
+      gradient == other.gradient;
 }
 
 /// The region annotation scene.
@@ -75,7 +85,8 @@ class RegionAnnotRenderOp extends AnnotRenderOp<RegionAnnotScene> {
     final dim = params['dim'] as Dim;
     final variable = params['variable'] as String;
     final values = params['values'] as List;
-    final color = params['color'] as Color;
+    final color = params['color'] as Color?;
+    final gradient = params['gradient'] as Gradient?;
     final scales = params['scales'] as Map<String, ScaleConv>;
     final coord = params['coord'] as CoordConv;
 
@@ -85,52 +96,50 @@ class RegionAnnotRenderOp extends AnnotRenderOp<RegionAnnotScene> {
     final start = scale.normalize(scale.convert(values.first));
     final end = scale.normalize(scale.convert(values.last));
 
+    final Path path;
     if (coord is RectCoordConv) {
-      scene.figures = [
-        PathFigure(
-          Path()
-            ..addRect(Rect.fromPoints(
-              coord.convert(
-                dim == Dim.x ? Offset(start, 0) : Offset(0, start),
-              ),
-              coord.convert(
-                dim == Dim.x ? Offset(end, 1) : Offset(1, end),
-              ),
-            )),
-          Paint()..color = color,
-        )
-      ];
+      path = Path()
+        ..addRect(Rect.fromPoints(
+          coord.convert(
+            dim == Dim.x ? Offset(start, 0) : Offset(0, start),
+          ),
+          coord.convert(
+            dim == Dim.x ? Offset(end, 1) : Offset(1, end),
+          ),
+        ));
     } else {
       coord as PolarCoordConv;
       if (coord.getCanvasDim(dim) == Dim.x) {
-        scene.figures = [
-          PathFigure(
-            Paths.sector(
-              center: coord.center,
-              r: coord.radiuses.last,
-              r0: coord.radiuses.first,
-              startAngle: coord.convertAngle(start),
-              endAngle: coord.convertAngle(end),
-              clockwise: true,
-            ),
-            Paint()..color = color,
-          )
-        ];
+        path = Paths.sector(
+          center: coord.center,
+          r: coord.radiuses.last,
+          r0: coord.radiuses.first,
+          startAngle: coord.convertAngle(start),
+          endAngle: coord.convertAngle(end),
+          clockwise: true,
+        );
       } else {
-        scene.figures = [
-          PathFigure(
-            Paths.sector(
-              center: coord.center,
-              r: coord.convertRadius(end),
-              r0: coord.convertRadius(start),
-              startAngle: coord.angles.first,
-              endAngle: coord.angles.last,
-              clockwise: true,
-            ),
-            Paint()..color = color,
-          )
-        ];
+        path = Paths.sector(
+          center: coord.center,
+          r: coord.convertRadius(end),
+          r0: coord.convertRadius(start),
+          startAngle: coord.angles.first,
+          endAngle: coord.angles.last,
+          clockwise: true,
+        );
       }
     }
+
+    final paint = Paint();
+    if (color != null) {
+      paint.color = color;
+    }
+    if (gradient != null) {
+      paint.shader = gradient.createShader(path.getBounds());
+    }
+
+    scene.figures = [
+      PathFigure(path, paint),
+    ];
   }
 }

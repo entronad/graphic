@@ -554,6 +554,7 @@ void parse<D>(
           'variable': variable,
           'values': annotSpec.values,
           'color': annotSpec.color,
+          'gradient': annotSpec.gradient,
           'scales': scales,
           'coord': coord,
         }, annotScene, view));

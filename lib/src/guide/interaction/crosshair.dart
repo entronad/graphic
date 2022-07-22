@@ -37,7 +37,7 @@ class CrosshairGuide {
   Set<String>? selections;
 
   /// The stroke styles of crosshair lines for each dimension.
-  /// 
+  ///
   /// The dimension means which a crosshair line stands on.
   ///
   /// If null a default `[StrokeStyle(color: Color(0xffbfbfbf)), StrokeStyle(color: Color(0xffbfbfbf))]`

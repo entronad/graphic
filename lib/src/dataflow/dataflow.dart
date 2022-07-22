@@ -75,7 +75,7 @@ class Dataflow {
   }
 
   /// Initially calculate this dataflow.
-  /// 
+  ///
   /// This is used by [run] in initialization.
   @protected
   Future<Dataflow> init() async {
@@ -124,7 +124,7 @@ class Dataflow {
   }
 
   /// Evaluates this dataflow.
-  /// 
+  ///
   /// Call this method only when initialization or any operator is touched.
   Future<void> run({bool init = false}) async {
     while (_running != null) {

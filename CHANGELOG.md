@@ -1,3 +1,9 @@
+## 0.10.6
+
+**2022-07-22**
+
+- Fill region annotations with a gradient: https://github.com/entronad/graphic/pull/132
+
 ## 0.10.5
 
 **2022-06-07**

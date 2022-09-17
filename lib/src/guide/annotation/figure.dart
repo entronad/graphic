@@ -121,9 +121,9 @@ class FigureAnnotRenderOp extends AnnotRenderOp<FigureAnnotScene> {
     final coord = params['coord'] as CoordConv;
 
     if (clip) {
-      scene..setRegionClip(coord.region);
+      scene.setRegionClip(coord.region);
     }
 
-    scene..figures = figures;
+    scene.figures = figures;
   }
 }

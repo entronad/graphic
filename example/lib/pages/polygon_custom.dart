@@ -137,7 +137,7 @@ List<Figure> centralPieLabel(
   final tuple = selectedTuples.values.last;
 
   final titleSpan = TextSpan(
-    text: tuple['genre'].toString() + '\n',
+    text: '${tuple['genre']}\n',
     style: const TextStyle(
       fontSize: 14,
       color: Colors.black87,
@@ -187,11 +187,11 @@ class PolygonCustomPage extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Heatmap',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -231,25 +231,25 @@ class PolygonCustomPage extends StatelessWidget {
                 ),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Heatmap fade',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- Tap to select one, and others will fade.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- With corner radius.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -294,18 +294,18 @@ class PolygonCustomPage extends StatelessWidget {
                 ),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Polar Heatmap of Polygon',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- Tap to select one for tooltip, and others will fade.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -348,18 +348,18 @@ class PolygonCustomPage extends StatelessWidget {
                 ),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Polar Heatmap of Sector',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- Tap to select one for tooltip, and others will fade.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -403,18 +403,18 @@ class PolygonCustomPage extends StatelessWidget {
                 ),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Custom Shape and Tooltip',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- A custom shape attribution should corresponds to the geometry elemnet type.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -453,11 +453,11 @@ class PolygonCustomPage extends StatelessWidget {
                 ),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Central Pie Label by Custom Tooltip',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -497,25 +497,25 @@ class PolygonCustomPage extends StatelessWidget {
                 ),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Custom Legend',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- Custom legend by mark and tag annotations.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- With dodge modifier.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -641,18 +641,18 @@ class PolygonCustomPage extends StatelessWidget {
                 ),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Custom Modifier',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- With dodge and size modifier that scales the interval element width to fit within its band',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -689,34 +689,36 @@ class PolygonCustomPage extends StatelessWidget {
                 ),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Candlestick Chart',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- A candlestick custom shape is provided.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- Shape must be designated explicitly for a custom element.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- Make sure to specify a same scale for all variables in a same dimension.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   'We insist that the price of a subject matter of investment is determined by its intrinsic value. Too much attention to the short-term fluctuations in prices is harmful. Thus a candlestick chart may misslead your investment decision.',
                   style: TextStyle(
@@ -724,8 +726,6 @@ class PolygonCustomPage extends StatelessWidget {
                     fontStyle: FontStyle.italic,
                   ),
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),

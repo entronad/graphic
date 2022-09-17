@@ -25,46 +25,46 @@ class LineAreaPointPage extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Time series line chart',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- Pre-select a point.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- Dash line.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- With time scale in domain dimension.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- Input data type is a custom class.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- With coordinate region background color.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -115,25 +115,25 @@ class LineAreaPointPage extends StatelessWidget {
                 ),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Smooth Line and Area chart',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- Line and area will break at NaN.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- A touch moving triggerd selection.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -185,32 +185,32 @@ class LineAreaPointPage extends StatelessWidget {
                 ),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Group interactions',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- Select and change color of a whole group',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- The group and tooltip selections are different but triggerd by same gesture.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- Different interactions for different devices',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -318,11 +318,11 @@ class LineAreaPointPage extends StatelessWidget {
                 ),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'River chart',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -381,18 +381,18 @@ class LineAreaPointPage extends StatelessWidget {
                 ),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Spider Net Chart',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- A loop connects the first and last point.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -446,32 +446,32 @@ class LineAreaPointPage extends StatelessWidget {
                 ),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Interactive Scatter Chart',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- Tuples in various shapes for different types.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- Tap to toggle a multiple selecton.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- Scalable coordinate ranges.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -528,32 +528,32 @@ class LineAreaPointPage extends StatelessWidget {
                 ),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Interval selection',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- Pan to trigger an interval selection.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- Note to pan horizontally first to avoid conflict with the scroll view.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- Axis lines set to middle of the coordinate region.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -614,18 +614,18 @@ class LineAreaPointPage extends StatelessWidget {
                 ),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Polar Scatter Chart',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- A red danger tag marks a position.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -704,11 +704,11 @@ class LineAreaPointPage extends StatelessWidget {
                 ),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   '1D Scatter Chart',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),

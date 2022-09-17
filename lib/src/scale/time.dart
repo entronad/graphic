@@ -59,7 +59,7 @@ class TimeScaleConv extends ContinuousScaleConv<DateTime> {
 
       // If all data are the same, the range is 1 second.
       final range =
-          maxTmp == minTmp ? Duration(seconds: 1) : maxTmp.difference(minTmp);
+          maxTmp == minTmp ? const Duration(seconds: 1) : maxTmp.difference(minTmp);
       final marginMin = range * (spec.marginMin ?? 0.1);
       final marginMax = range * (spec.marginMax ?? 0.1);
       min = min ?? minTmp.subtract(marginMin);

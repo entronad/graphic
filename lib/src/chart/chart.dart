@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:graphic/src/chart/size.dart';
 import 'package:graphic/src/coord/coord.dart';
@@ -37,7 +36,7 @@ import 'view.dart';
 /// [StatefulWidget], but other specifications can be modified.
 class Chart<D> extends StatefulWidget {
   /// Creates a chart widget.
-  Chart({
+  const Chart({
     Key? key,
     required this.data,
     this.changeData,

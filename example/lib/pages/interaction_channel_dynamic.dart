@@ -72,18 +72,18 @@ class _InteractionChannelDynamicPageState
           child: Column(
             children: <Widget>[
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Signal Channel coupling',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- The price chart and volume chart share the same gesture signal channel.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -183,18 +183,18 @@ class _InteractionChannelDynamicPageState
                 ),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Selection Channel coupling',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- The above and below heatmaps share the same selection channel. Tap either one to try.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -277,18 +277,18 @@ class _InteractionChannelDynamicPageState
                 ),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Auto update',
                   style: TextStyle(fontSize: 20),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
                 child: const Text(
                   '- Change data in every second.',
                 ),
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
               ),
               Container(
                 margin: const EdgeInsets.only(top: 10),

@@ -87,6 +87,6 @@ class SignalUpdateOp<V> extends Operator<V> {
       return initialValue;
     }
 
-    return update(initialValue, value!, signal);
+    return update(initialValue, value as V, signal);
   }
 }

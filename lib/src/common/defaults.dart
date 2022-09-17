@@ -39,7 +39,7 @@ SignalUpdater<List<double>> _getRangeUpdate(
             return [pre.first - delta, pre.last + delta];
           }
         } else if (gesture.type == GestureType.scroll) {
-          final step = 0.1;
+          const step = 0.1;
           final scrollDelta = gesture.details as Offset;
           final deltaRatio = scrollDelta.dy == 0
               ? 0.0
@@ -60,50 +60,50 @@ SignalUpdater<List<double>> _getRangeUpdate(
 /// Some useful default values for specifications.
 abstract class Defaults {
   /// A single primary color.
-  static Color primaryColor = Color(0xff1890ff);
+  static Color primaryColor = const Color(0xff1890ff);
 
   /// A color for auxiliary lines.
-  static Color strokeColor = Color(0xffe8e8e8);
+  static Color strokeColor = const Color(0xffe8e8e8);
 
   /// A color for text.
-  static Color textColor = Color(0xff808080);
+  static Color textColor = const Color(0xff808080);
 
   /// A color palette of 10 colors.
   static List<Color> get colors10 => [
-        Color(0xff5b8ff9),
-        Color(0xff5ad8a6),
-        Color(0xff5d7092),
-        Color(0xfff6bd16),
-        Color(0xff6f5ef9),
-        Color(0xff6dc8ec),
-        Color(0xff945fb9),
-        Color(0xffff9845),
-        Color(0xff1e9493),
-        Color(0xffff99c3),
+        const Color(0xff5b8ff9),
+        const Color(0xff5ad8a6),
+        const Color(0xff5d7092),
+        const Color(0xfff6bd16),
+        const Color(0xff6f5ef9),
+        const Color(0xff6dc8ec),
+        const Color(0xff945fb9),
+        const Color(0xffff9845),
+        const Color(0xff1e9493),
+        const Color(0xffff99c3),
       ];
 
   /// A color palette of 20 colors.
   static List<Color> get colors20 => [
-        Color(0xff5b8ff9),
-        Color(0xffcdddfd),
-        Color(0xff5ad8a6),
-        Color(0xffcdf3e4),
-        Color(0xff5d7092),
-        Color(0xffced4de),
-        Color(0xfff6bd16),
-        Color(0xfffcebb9),
-        Color(0xff6f5ef9),
-        Color(0xffd3cefd),
-        Color(0xff6dc8ec),
-        Color(0xffd3eef9),
-        Color(0xff945fb9),
-        Color(0xffdecfea),
-        Color(0xffff9845),
-        Color(0xffffe0c7),
-        Color(0xff1e9493),
-        Color(0xffbbdede),
-        Color(0xffff99c3),
-        Color(0xffffe0ed),
+        const Color(0xff5b8ff9),
+        const Color(0xffcdddfd),
+        const Color(0xff5ad8a6),
+        const Color(0xffcdf3e4),
+        const Color(0xff5d7092),
+        const Color(0xffced4de),
+        const Color(0xfff6bd16),
+        const Color(0xfffcebb9),
+        const Color(0xff6f5ef9),
+        const Color(0xffd3cefd),
+        const Color(0xff6dc8ec),
+        const Color(0xffd3eef9),
+        const Color(0xff945fb9),
+        const Color(0xffdecfea),
+        const Color(0xffff9845),
+        const Color(0xffffe0c7),
+        const Color(0xff1e9493),
+        const Color(0xffbbdede),
+        const Color(0xffff99c3),
+        const Color(0xffffe0ed),
       ];
 
   /// A stroke style for auxiliary lines.
@@ -118,7 +118,7 @@ abstract class Defaults {
       );
 
   /// A text style for labels curved in colored surfaces.
-  static TextStyle get runeStyle => TextStyle(
+  static TextStyle get runeStyle => const TextStyle(
         fontSize: 10,
         color: Color(0xe6ffffff),
       );
@@ -128,7 +128,7 @@ abstract class Defaults {
         line: strokeStyle,
         label: LabelStyle(
           style: textStyle,
-          offset: Offset(0, 7.5),
+          offset: const Offset(0, 7.5),
         ),
       );
 
@@ -136,7 +136,7 @@ abstract class Defaults {
   static AxisGuide get verticalAxis => AxisGuide(
         label: LabelStyle(
           style: textStyle,
-          offset: Offset(-7.5, 0),
+          offset: const Offset(-7.5, 0),
         ),
         grid: strokeStyle,
       );

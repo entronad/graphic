@@ -215,7 +215,7 @@ class SelectorOp extends Operator<Map<String, Selector>?> {
           } else {
             // scrolls to zoom.
 
-            final step = 0.1;
+            const step = 0.1;
             final scrollDelta = gesture.details as Offset;
             final deltaRatio = scrollDelta.dy == 0
                 ? 0.0
@@ -245,7 +245,7 @@ class SelectorOp extends Operator<Map<String, Selector>?> {
         }
 
         rst[name] = IntervalSelector(
-          spec.color ?? Color(0x10101010),
+          spec.color ?? const Color(0x10101010),
           spec.dim,
           spec.variable,
           points,
@@ -284,7 +284,7 @@ class SelectorRenderOp extends Render<SelectorScene> {
 
     if (selector is IntervalSelector) {
       scene
-        ..figures = renderIntervalSelector(
+        .figures = renderIntervalSelector(
           selector.points.first,
           selector.points.last,
           selector.color,

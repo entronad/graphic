@@ -171,7 +171,7 @@ class Label {
   Label(
     this.text, [
     LabelStyle? style,
-  ]) : this.style = style ?? LabelStyle(style: Defaults.textStyle);
+  ]) : style = style ?? LabelStyle(style: Defaults.textStyle);
 
   /// The label text.
   String? text;

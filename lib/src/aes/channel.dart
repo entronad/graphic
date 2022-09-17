@@ -165,7 +165,7 @@ Encoder<AV> getChannelEncoder<AV>(
   ContinuousChannelConv<AV> Function(List<AV>, List<double>)? getContinuousConv,
 ) {
   if (spec.value != null) {
-    return ValueAttrEncoder<AV>(spec.value!);
+    return ValueAttrEncoder<AV>(spec.value as AV);
   }
   if (spec.variable != null) {
     final variable = spec.variable!;

@@ -1,3 +1,15 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    avoid_print: true # Uncomment to disable the `avoid_print` rule
+    file_names: false
+    constant_identifier_names: false
+    non_constant_identifier_names: false
+    library_private_types_in_public_api: false
+    use_super_parameters: true
+    hash_and_equals: false
+
 analyzer:
   exclude:
     - "devdoc/**"

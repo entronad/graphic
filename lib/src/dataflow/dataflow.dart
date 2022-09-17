@@ -25,6 +25,8 @@ class Dataflow {
     (a, b) => a.rank - b.rank,
   );
 
+  StreamSubscription<dynamic>? streamSubscription;
+
   /// The [Future] instance when this dataflow is running.
   ///
   /// It is usefull to check whether this dataflow is running.
@@ -86,6 +88,11 @@ class Dataflow {
     }
 
     return this;
+  }
+
+  @protected
+  void dispose() {
+    streamSubscription?.cancel();
   }
 
   /// Evaluates the touched operators.
@@ -158,15 +165,19 @@ class Dataflow {
   ///
   /// The value changed to null will also trigger a communication. But the consume
   /// operator's value turning to null after running will not.
-  void bindChannel<V>(
+  StreamSubscription<V?> bindChannel<V>(
     StreamController<V?> channel,
     Operator<V> target,
   ) {
     assert(target.channel == null);
-    channel.stream.listen((value) {
+
+    final streamSubscription = channel.stream.listen((value) {
       _update(target, value);
       run();
     });
+    this.streamSubscription = streamSubscription;
     target.channel = channel;
+
+    return streamSubscription;
   }
 }

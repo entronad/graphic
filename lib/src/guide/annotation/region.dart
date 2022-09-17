@@ -90,7 +90,7 @@ class RegionAnnotRenderOp extends AnnotRenderOp<RegionAnnotScene> {
     final scales = params['scales'] as Map<String, ScaleConv>;
     final coord = params['coord'] as CoordConv;
 
-    scene..setRegionClip(coord.region);
+    scene.setRegionClip(coord.region);
 
     final scale = scales[variable]!;
     final start = scale.normalize(scale.convert(values.first));

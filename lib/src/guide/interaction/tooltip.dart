@@ -239,7 +239,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
     } else {
       Offset selectedPoint = Offset.zero;
       int count = 0;
-      final findPoint = (int index) {
+      findPoint(int index) {
         for (var group in groups) {
           for (var aes in group) {
             if (aes.index == index) {
@@ -249,7 +249,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
           }
         }
         return Offset.zero;
-      };
+      }
       for (var index in selects) {
         selectedPoint += findPoint(index);
       }
@@ -393,6 +393,6 @@ class TooltipRenderOp extends Render<TooltipScene> {
     }
 
     // Tooltip dosent't need to be cliped within the coordinate region.
-    scene..figures = figures.isEmpty ? null : figures;
+    scene.figures = figures.isEmpty ? null : figures;
   }
 }

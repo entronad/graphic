@@ -54,10 +54,10 @@ import 'package:graphic/src/variable/transform/sort.dart';
 import 'package:graphic/src/variable/variable.dart';
 
 /// The default padding function for rectangle coordinate.
-EdgeInsets _defaultRectPadding(Size _) => EdgeInsets.fromLTRB(40, 5, 10, 20);
+EdgeInsets _defaultRectPadding(Size _) => const EdgeInsets.fromLTRB(40, 5, 10, 20);
 
 /// The default padding function for polar coordinate.
-EdgeInsets _defaultPolarPadding(Size _) => EdgeInsets.all(10);
+EdgeInsets _defaultPolarPadding(Size _) => const EdgeInsets.all(10);
 
 /// Parses the specification for a view.
 void parse<D>(
@@ -354,9 +354,7 @@ void parse<D>(
 
     final nesters = elementSpec.position?.nesters ?? <AlgForm>[];
 
-    if (firstVariables == null) {
-      firstVariables = form.first;
-    }
+    firstVariables ??= form.first;
 
     final origin = view.add(OriginOp({
       'form': form,
@@ -573,7 +571,7 @@ void parse<D>(
           'coord': coord,
         }, annotScene, view));
       } else if (annotSpec is FigureAnnotation) {
-        var anchor;
+        Operator<Offset> anchor;
         if (annotSpec.anchor != null) {
           anchor = view.add(FigureAnnotSetAnchorOp({
             'anchor': annotSpec.anchor,
@@ -643,8 +641,8 @@ void parse<D>(
       'groups': groupsList[elementIndex],
       'styles': crosshairSpec.styles ??
           [
-            StrokeStyle(color: Color(0xffbfbfbf)),
-            StrokeStyle(color: Color(0xffbfbfbf)),
+            StrokeStyle(color: const Color(0xffbfbfbf)),
+            StrokeStyle(color: const Color(0xffbfbfbf)),
           ],
       'followPointer': crosshairSpec.followPointer ?? [false, false],
     }, crosshairScene, view));
@@ -668,12 +666,12 @@ void parse<D>(
       'tuples': tuples,
       'align': tooltipSpec.align ?? Alignment.center,
       'offset': tooltipSpec.offset,
-      'padding': tooltipSpec.padding ?? EdgeInsets.all(5),
-      'backgroundColor': tooltipSpec.backgroundColor ?? Color(0xf0ffffff),
-      'radius': tooltipSpec.radius ?? Radius.circular(3),
+      'padding': tooltipSpec.padding ?? const EdgeInsets.all(5),
+      'backgroundColor': tooltipSpec.backgroundColor ?? const Color(0xf0ffffff),
+      'radius': tooltipSpec.radius ?? const Radius.circular(3),
       'elevation': tooltipSpec.elevation ?? 3.0,
       'textStyle': tooltipSpec.textStyle ??
-          TextStyle(
+          const TextStyle(
             color: Color(0xff595959),
             fontSize: 12,
           ),

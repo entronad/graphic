@@ -13,5 +13,5 @@ abstract class CustomizableSpec {
   bool equalTo(Object other);
 
   @override
-  bool operator ==(Object other) => this.equalTo(other);
+  bool operator ==(Object other) => equalTo(other);
 }

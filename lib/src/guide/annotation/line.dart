@@ -76,7 +76,7 @@ class LineAnnotRenderOp extends AnnotRenderOp<LineAnnotScene> {
     final scales = params['scales'] as Map<String, ScaleConv>;
     final coord = params['coord'] as CoordConv;
 
-    scene..setRegionClip(coord.region);
+    scene.setRegionClip(coord.region);
 
     final scale = scales[variable]!;
     final position = scale.normalize(scale.convert(value));

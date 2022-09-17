@@ -144,14 +144,11 @@ class Varset {
 
   /// Creates a varset with properties.
   Varset._create(
-    AlgForm form, [
-    AlgForm? nested,
-    List<AlgForm> nesters = const [],
-  ])  : assert((nested == null && nesters.isEmpty) ||
-            (nested != null && nesters.isNotEmpty)),
-        this.form = form,
-        this.nested = nested,
-        this.nesters = nesters;
+    this.form, [
+    this.nested,
+    this.nesters = const [],
+  ]) : assert((nested == null && nesters.isEmpty) ||
+            (nested != null && nesters.isNotEmpty));
 
   /// The numerator part of the algebra expression.
   ///
@@ -185,7 +182,7 @@ class Varset {
 
     final formRst = form;
     final nestedRst = form;
-    final nestersRst = ([...nesters, other.form]..addAll(other.nesters));
+    final nestersRst = ([...nesters, other.form, ...other.nesters]);
     return Varset._create(
       formRst,
       nestedRst,
@@ -249,10 +246,7 @@ class Varset {
     // and uses that nesters, appends two nesteds, nomalizes and deduplicaates.
     // - [nesters], see in [nested].
 
-    final AlgForm formRst = (<AlgTerm>[]
-          ..addAll(form)
-          ..addAll(other.form)
-          .._normalize())
+    final AlgForm formRst = (<AlgTerm>[...form, ...other.form].._normalize())
         .collectionItemDeduplicate();
 
     AlgForm? nestedRst;

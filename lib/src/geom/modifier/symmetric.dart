@@ -21,6 +21,7 @@ class SymmetricModifier extends Modifier {
   @override
   bool equalTo(Object other) => other is SymmetricModifier && super == other;
 
+  @override
   void modify(AesGroups groups, Map<String, ScaleConv<dynamic, num>> scales,
       AlgForm form, CoordConv coord, Offset origin) {
     final normalZero = origin.dy;

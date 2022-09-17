@@ -26,6 +26,7 @@ class StrokeStyle {
   /// a 10 pixel dash, etc.
   List<double>? dash;
 
+  @override
   bool operator ==(Object other) =>
       other is StrokeStyle &&
       color == other.color &&

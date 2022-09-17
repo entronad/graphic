@@ -221,6 +221,7 @@ class _ChartState<D> extends State<Chart<D>> {
 
   @override
   void didUpdateWidget(covariant Chart<D> oldWidget) {
+    view?.dispose();
     super.didUpdateWidget(oldWidget);
 
     // Checke whether to rebuild or tirgger changeData.

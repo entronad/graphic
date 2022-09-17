@@ -25,7 +25,8 @@ class Dataflow {
     (a, b) => a.rank - b.rank,
   );
 
-  StreamSubscription<dynamic>? streamSubscription;
+  ///The list of subscriptions this Dataflow currently listens to.
+  final List<StreamSubscription<dynamic>> _streamSubscription = [];
 
   /// The [Future] instance when this dataflow is running.
   ///
@@ -90,9 +91,12 @@ class Dataflow {
     return this;
   }
 
-  @protected
-  void dispose() {
-    streamSubscription?.cancel();
+  /// Dispose of all the listeners.
+  /// This function should be called whenever the parent widget of this view rebuilds.
+  Future<void> dispose() async {
+    final futures = _streamSubscription.map((e) => e.cancel());
+    await Future.wait(futures);
+    _streamSubscription.clear();
   }
 
   /// Evaluates the touched operators.
@@ -165,19 +169,16 @@ class Dataflow {
   ///
   /// The value changed to null will also trigger a communication. But the consume
   /// operator's value turning to null after running will not.
-  StreamSubscription<V?> bindChannel<V>(
+  void bindChannel<V>(
     StreamController<V?> channel,
     Operator<V> target,
   ) {
     assert(target.channel == null);
-
-    final streamSubscription = channel.stream.listen((value) {
+    // adds streamSubscription to list, to dispose later.
+    _streamSubscription.add(channel.stream.listen((value) {
       _update(target, value);
       run();
-    });
-    this.streamSubscription = streamSubscription;
+    }));
     target.channel = channel;
-
-    return streamSubscription;
   }
 }

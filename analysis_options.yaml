@@ -2,12 +2,8 @@ include: package:flutter_lints/flutter.yaml
 
 linter:
   rules:
-    avoid_print: true # Uncomment to disable the `avoid_print` rule
-    file_names: false
-    constant_identifier_names: false
-    non_constant_identifier_names: false
-    library_private_types_in_public_api: false
-    use_super_parameters: true
+    # TODO: override the hashCode method each time you override the equals method. 
+    # If you set this line to true, you will see all the parts 
     hash_and_equals: false
 
 analyzer:

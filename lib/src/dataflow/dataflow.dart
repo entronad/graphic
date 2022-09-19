@@ -25,6 +25,9 @@ class Dataflow {
     (a, b) => a.rank - b.rank,
   );
 
+  ///The list of subscriptions this Dataflow currently listens to.
+  final List<StreamSubscription<dynamic>> _streamSubscription = [];
+
   /// The [Future] instance when this dataflow is running.
   ///
   /// It is usefull to check whether this dataflow is running.
@@ -86,6 +89,14 @@ class Dataflow {
     }
 
     return this;
+  }
+
+  /// Dispose of all the listeners.
+  /// This function should be called whenever the parent widget of this view rebuilds.
+  Future<void> dispose() async {
+    final futures = _streamSubscription.map((e) => e.cancel());
+    await Future.wait(futures);
+    _streamSubscription.clear();
   }
 
   /// Evaluates the touched operators.
@@ -163,10 +174,11 @@ class Dataflow {
     Operator<V> target,
   ) {
     assert(target.channel == null);
-    channel.stream.listen((value) {
+    // adds streamSubscription to list, to dispose later.
+    _streamSubscription.add(channel.stream.listen((value) {
       _update(target, value);
       run();
-    });
+    }));
     target.channel = channel;
   }
 }

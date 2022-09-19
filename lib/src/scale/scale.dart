@@ -167,7 +167,7 @@ class ScaleOp extends Operator<List<Scaled>> {
     final convs = params['convs'] as Map<String, ScaleConv>;
 
     return tuples.map((tuple) {
-      final scaled = Scaled();
+      final Map<String, num> scaled = {};
       for (var field in convs.keys) {
         scaled[field] = convs[field]!.convert(tuple[field]);
       }

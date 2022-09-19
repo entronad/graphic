@@ -102,7 +102,7 @@ class IntervalSelector extends Selector {
     }
 
     if (variable != null) {
-      final values = Set();
+      final values = <dynamic>{};
       for (var index in rst) {
         values.add(tuples[index][variable]);
       }

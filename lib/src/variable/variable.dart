@@ -60,7 +60,7 @@ class VariableOp<D> extends Operator<List<Tuple>> {
 
     final rst = <Tuple>[];
     for (var datum in data) {
-      final tuple = Tuple();
+      final Map<String, dynamic> tuple = {};
       for (var name in accessors.keys) {
         tuple[name] = accessors[name]!(datum);
       }

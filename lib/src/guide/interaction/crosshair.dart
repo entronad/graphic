@@ -111,7 +111,7 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
 
     Offset selectedPoint = Offset.zero;
     int count = 0;
-    final findPoint = (int index) {
+    findPoint(int index) {
       for (var group in groups) {
         for (var aes in group) {
           if (aes.index == index) {
@@ -121,7 +121,7 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
         }
       }
       return Offset.zero;
-    };
+    }
     for (var index in selects) {
       selectedPoint += findPoint(index);
     }

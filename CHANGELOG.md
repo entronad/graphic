@@ -1,3 +1,9 @@
+## 0.10.7
+
+**2022-09-20**
+
+- Fix memory leak of channels: https://github.com/entronad/graphic/issues/143
+
 ## 0.10.6
 
 **2022-07-22**

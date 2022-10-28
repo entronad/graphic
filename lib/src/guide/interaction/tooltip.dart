@@ -19,6 +19,7 @@ import 'package:graphic/src/util/assert.dart';
 /// The [anchor] is the result either set directly or calculated. The keys of [selectedTuples]
 /// are indexes of the tuples in the whole data set.
 typedef TooltipRenderer = List<Figure> Function(
+  Size size,
   Offset anchor,
   Map<int, Tuple> selectedTuples,
 );
@@ -268,6 +269,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
     List<Figure> figures;
     if (renderer != null) {
       figures = renderer(
+        size,
         anchorRst,
         selectedTuples,
       );

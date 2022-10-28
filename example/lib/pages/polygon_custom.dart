@@ -51,6 +51,7 @@ class TriangleShape extends IntervalShape {
 }
 
 List<Figure> simpleTooltip(
+  Size size,
   Offset anchor,
   Map<int, Tuple> selectedTuples,
 ) {
@@ -131,6 +132,7 @@ List<Figure> simpleTooltip(
 }
 
 List<Figure> centralPieLabel(
+  Size size,
   Offset anchor,
   Map<int, Tuple> selectedTuples,
 ) {

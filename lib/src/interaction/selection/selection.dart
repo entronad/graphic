@@ -283,12 +283,11 @@ class SelectorRenderOp extends Render<SelectorScene> {
     final selector = selectors?[name];
 
     if (selector is IntervalSelector) {
-      scene
-        .figures = renderIntervalSelector(
-          selector.points.first,
-          selector.points.last,
-          selector.color,
-        );
+      scene.figures = renderIntervalSelector(
+        selector.points.first,
+        selector.points.last,
+        selector.color,
+      );
     } else {
       // The point selector has no mark for now.
 

@@ -4147,15 +4147,32 @@ animation
 
 
 
-信
 
-介绍：
 
-声明式
+感觉针对数组的可定制回调函数参数还是应该带上index，这个需求挺实际的，不要信了dart的鬼
 
-可交互
+原则：减少概念，增加flexibility，无论从理论到实践，都应该把flexibility、extensive作为首要目标
 
-问题
+思考declaration和transformation的关系，D3认为专注transformation有助于提升性能。D3在底层的transformation上还有declarative的helper
 
-1. 对nest的理解，group by
-2. elevation作为一个 aes attr
+d3这种称为 embedded domain-specifific language
+
+从实践的角度讲，ticks很重要，特别是在缩放情况下
+
+
+
+是不是可以把 shape提取出来，和geom合并？
+
+
+
+似乎 selection updater 也应该改为和signal updater类似的多参数的
+
+
+
+## 论文
+
+与gg的区别：shape
+
+interaction 和 animation
+
+flutter的图形系统是成立的基础（见d3论文）

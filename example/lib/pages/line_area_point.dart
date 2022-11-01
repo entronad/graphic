@@ -221,7 +221,7 @@ class LineAreaPointPage extends StatelessWidget {
                   variables: {
                     'date': Variable(
                       accessor: (Map map) => map['date'] as String,
-                      scale: OrdinalScale(tickCount: 5),
+                      scale: OrdinalScale(tickCount: 5, inflate: true),
                     ),
                     'points': Variable(
                       accessor: (Map map) => map['points'] as num,
@@ -230,6 +230,7 @@ class LineAreaPointPage extends StatelessWidget {
                       accessor: (Map map) => map['name'] as String,
                     ),
                   },
+                  coord: RectCoord(horizontalRange: [0.01, 0.99]),
                   elements: [
                     LineElement(
                       position:

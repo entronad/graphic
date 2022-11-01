@@ -251,6 +251,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
         }
         return Offset.zero;
       }
+
       for (var index in selects) {
         selectedPoint += findPoint(index);
       }

@@ -122,6 +122,7 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
       }
       return Offset.zero;
     }
+
     for (var index in selects) {
       selectedPoint += findPoint(index);
     }

@@ -29,15 +29,11 @@ Example of charts can be seen in the [Example App](https://github.com/entronad/g
 
 ![examples](https://github.com/entronad/graphic/raw/main/devdoc/examples.jpg)
 
-## Used by
-
-Graphic is used by these companies:
-
-[![rows](https://github.com/entronad/graphic/raw/main/devdoc/logo_rows.svg)](https://rows.com/)
-
 ## Tutorials
 
 [The Versatility of the Grammar of Graphics](https://medium.com/@entronad/the-versatility-of-the-grammar-of-graphics-d1366760424d)
+
+[How to Build Interactive Charts in Flutter](https://medium.com/@entronad/how-to-build-interactive-charts-in-flutter-e317492d5ba1)
 
 ## Reference
 

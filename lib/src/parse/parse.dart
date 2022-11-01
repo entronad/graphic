@@ -54,7 +54,8 @@ import 'package:graphic/src/variable/transform/sort.dart';
 import 'package:graphic/src/variable/variable.dart';
 
 /// The default padding function for rectangle coordinate.
-EdgeInsets _defaultRectPadding(Size _) => const EdgeInsets.fromLTRB(40, 5, 10, 20);
+EdgeInsets _defaultRectPadding(Size _) =>
+    const EdgeInsets.fromLTRB(40, 5, 10, 20);
 
 /// The default padding function for polar coordinate.
 EdgeInsets _defaultPolarPadding(Size _) => const EdgeInsets.all(10);

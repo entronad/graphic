@@ -58,9 +58,9 @@ SignalUpdater<List<double>> _getRangeUpdate(
           } else {
             double mousePos;
             if (isHorizontal) {
-              mousePos = gesture.localPosition.dx / gesture.chartSize.width / 0.94 - 0.052527;
+              mousePos = (gesture.localPosition.dx - 39.5) / (gesture.chartSize.width - 51);
             } else {
-              mousePos = 1 - (gesture.localPosition.dy / gesture.chartSize.height / 0.975 - 0.006410);
+              mousePos = 1 - (gesture.localPosition.dy - 5) / (gesture.chartSize.height - 25);
             }
             mousePos = (mousePos - pre.first) / (pre.last - pre.first);
             return [

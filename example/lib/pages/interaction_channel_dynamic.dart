@@ -323,7 +323,7 @@ class _InteractionChannelDynamicPageState
                     backgroundColor: Colors.black,
                     elevation: 5,
                     textStyle: Defaults.textStyle,
-                    variables: ['genre', 'sold'],
+                    getTooltipText: (vars) => "genre: ${vars['genre']}, sold: ${vars['sold']}",
                   ),
                   crosshair: CrosshairGuide(),
                 ),

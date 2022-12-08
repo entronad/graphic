@@ -676,12 +676,11 @@ void parse<D>(
             color: Color(0xff595959),
             fontSize: 12,
           ),
-      'multiTuples': tooltipSpec.multiTuples,
       'renderer': tooltipSpec.renderer,
       'followPointer': tooltipSpec.followPointer ?? [false, false],
       'anchor': tooltipSpec.anchor,
       'size': size,
-      'variables': tooltipSpec.variables,
+      'getTooltipText': tooltipSpec.getTooltipText,
       'constrained': tooltipSpec.constrained ?? true,
       'scales': scales,
     }, tooltipScene, view));

@@ -219,7 +219,7 @@ class EchartsPage extends StatelessWidget {
                   tooltip: TooltipGuide(
                     followPointer: [true, true],
                     align: Alignment.topLeft,
-                    variables: ['group', 'value'],
+                    getTooltipText: (vars) => "group: ${vars['group']}, value: ${vars['value']}",
                   ),
                   crosshair: CrosshairGuide(
                     followPointer: [false, true],

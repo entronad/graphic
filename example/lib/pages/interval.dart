@@ -283,7 +283,7 @@ class IntervalPage extends StatelessWidget {
                       variable: 'index',
                     )
                   },
-                  tooltip: TooltipGuide(multiTuples: true),
+                  tooltip: TooltipGuide(),
                   crosshair: CrosshairGuide(),
                 ),
               ),
@@ -473,7 +473,6 @@ class IntervalPage extends StatelessWidget {
                     )
                   },
                   tooltip: TooltipGuide(
-                    multiTuples: true,
                     anchor: (_) => Offset.zero,
                     align: Alignment.bottomRight,
                   ),

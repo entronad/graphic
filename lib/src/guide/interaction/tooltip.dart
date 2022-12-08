@@ -43,8 +43,7 @@ class TooltipGuide {
     this.radius,
     this.elevation,
     this.textStyle,
-    this.multiTuples,
-    this.variables,
+    this.getTooltipText,
     this.constrained,
     this.renderer,
   })  : assert(isSingle([renderer, align], allowNone: true)),
@@ -54,9 +53,8 @@ class TooltipGuide {
         assert(isSingle([renderer, radius], allowNone: true)),
         assert(isSingle([renderer, elevation], allowNone: true)),
         assert(isSingle([renderer, textStyle], allowNone: true)),
-        assert(isSingle([renderer, multiTuples], allowNone: true)),
         assert(isSingle([renderer, constrained], allowNone: true)),
-        assert(isSingle([renderer, variables], allowNone: true));
+        assert(isSingle([renderer, getTooltipText], allowNone: true));
 
   /// The selections this crosshair reacts to.
   ///
@@ -127,23 +125,10 @@ class TooltipGuide {
   /// set.
   TextStyle? textStyle;
 
-  /// Whether to show multiple tuples or only single tuple in this tooltip.
+  /// This function will return the tooltip text based on the element data.
   ///
-  /// For single tuple, [variables] are layed in rows showing title and value. For
-  /// multiple tuples, tuples are layed in rows showing the 2 [variables] values.
-  ///
-  /// If null, it will varies according to triggering selector, that true for an
-  /// [IntervalSelection] or [Selection.variable] is set, and false otherwise.
-  bool? multiTuples;
-
-  /// The variable values of tuples to show on in this tooltip.
-  ///
-  /// The layout of variable displaying is determined by [multiTuples]. For multiple
-  /// tuples, the varable counts must be 2.
-  ///
-  /// If null, It will be set to all variables for single tuple and first 2 variables
-  /// except [Selection.variable] for multiple tuples.
-  List<String>? variables;
+  /// If null, the value of all information for the element is displayed by default
+  String Function(Map<String, dynamic> vars)? getTooltipText;
 
   /// Whether the tooltip should be constrained within the chart widget border.
   ///
@@ -174,8 +159,6 @@ class TooltipGuide {
       radius == other.radius &&
       elevation == other.elevation &&
       textStyle == other.textStyle &&
-      multiTuples == other.multiTuples &&
-      deepCollectionEquals(variables, other.variables) &&
       constrained == other.constrained;
 }
 
@@ -211,12 +194,12 @@ class TooltipRenderOp extends Render<TooltipScene> {
     final radius = params['radius'] as Radius?;
     final elevation = params['elevation'] as double?;
     final textStyle = params['textStyle'] as TextStyle;
-    final multiTuples = params['multiTuples'] as bool?;
     final renderer = params['renderer'] as TooltipRenderer?;
     final followPointer = params['followPointer'] as List<bool>;
     final anchor = params['anchor'] as Offset Function(Size)?;
     final size = params['size'] as Size;
-    final variables = params['variables'] as List<String>?;
+    final getTooltipText =
+        params['getTooltipText'] as String Function(Map<String, dynamic> vars)?;
     final constrained = params['constrained'] as bool;
     final scales = params['scales'] as Map<String, ScaleConv>;
 
@@ -278,55 +261,14 @@ class TooltipRenderOp extends Render<TooltipScene> {
       String textContent = '';
       final selectedTupleList = selectedTuples.values;
 
-      final selectionSpec = selectionSpecs[name]!;
-      final multiTuplesRst = multiTuples ??
-          (selectionSpec is IntervalSelection ||
-              selectionSpec.variable != null);
-
-      if (!multiTuplesRst) {
-        final fields = variables ?? scales.keys.toList();
-        final tuple = selectedTupleList.last;
-        var field = fields.first;
-        var scale = scales[field]!;
-        var title = scale.title;
-        textContent += '$title: ${scale.format(tuple[field])}';
-        for (var i = 1; i < fields.length; i++) {
-          field = fields[i];
-          scale = scales[field]!;
-          title = scale.title;
-          textContent += '\n$title: ${scale.format(tuple[field])}';
-        }
-      } else {
-        final groupField = selectionSpec.variable;
-
-        var fields = variables;
-        if (fields == null) {
-          fields = [];
-          for (var variable in scales.keys) {
-            if (variable != groupField) {
-              fields.add(variable);
-            }
-            if (fields.length == 2) {
-              break;
-            }
-          }
-        }
-
-        assert(fields.length == 2);
-
-        if (groupField != null) {
-          textContent +=
-              scales[groupField]!.format(selectedTupleList.first[groupField]) ??
-                  '';
-        }
-        for (var tuple in selectedTupleList) {
-          final domainField = fields.first;
-          final measureField = fields.last;
-          final domainScale = scales[domainField]!;
-          final measureScale = scales[measureField]!;
-          textContent +=
-              '\n${domainScale.format(tuple[domainField])}: ${measureScale.format(tuple[measureField])}';
-        }
+      var fields = scales.keys.toList();
+      var fmtTooltip =
+          getTooltipText ?? (vars) => "${vars.values.toList().join(", ")}";
+      bool firstLine = true;
+      for (var tuple in selectedTuples.values) {
+        if (!firstLine) textContent += '\n';
+        firstLine = false;
+        textContent += fmtTooltip(tuple);
       }
 
       final painter = TextPainter(

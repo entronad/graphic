@@ -556,7 +556,7 @@ class PolygonCustomPage extends StatelessWidget {
                       variable: 'index',
                     )
                   },
-                  tooltip: TooltipGuide(multiTuples: true),
+                  tooltip: TooltipGuide(),
                   crosshair: CrosshairGuide(),
                   annotations: [
                     MarkAnnotation(

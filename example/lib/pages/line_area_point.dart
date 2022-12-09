@@ -302,11 +302,7 @@ class LineAreaPointPage extends StatelessWidget {
                     followPointer: [true, true],
                     align: Alignment.topLeft,
                     element: 0,
-                    variables: [
-                      'date',
-                      'name',
-                      'points',
-                    ],
+                    getTooltipText: (vars) => "date: ${vars['date']}, name: ${vars['name']}, points: ${vars['points']}",
                   ),
                   crosshair: CrosshairGuide(
                     selections: {'tooltipTouch', 'tooltipMouse'},
@@ -375,8 +371,7 @@ class LineAreaPointPage extends StatelessWidget {
                     followPointer: [false, true],
                     align: Alignment.topLeft,
                     offset: const Offset(-20, -20),
-                    multiTuples: true,
-                    variables: ['type', 'value'],
+                    getTooltipText: (vars) => "type: ${vars['type']}, value: ${vars['value']}",
                   ),
                   crosshair: CrosshairGuide(followPointer: [false, true]),
                 ),
@@ -440,8 +435,7 @@ class LineAreaPointPage extends StatelessWidget {
                   tooltip: TooltipGuide(
                     anchor: (_) => Offset.zero,
                     align: Alignment.bottomRight,
-                    multiTuples: true,
-                    variables: ['type', 'value'],
+                    getTooltipText: (vars) => "type: ${vars['type']}, value: ${vars['value']}",
                   ),
                   crosshair: CrosshairGuide(followPointer: [false, true]),
                 ),
@@ -524,7 +518,6 @@ class LineAreaPointPage extends StatelessWidget {
                   tooltip: TooltipGuide(
                     anchor: (_) => Offset.zero,
                     align: Alignment.bottomRight,
-                    multiTuples: true,
                   ),
                 ),
               ),
@@ -610,7 +603,6 @@ class LineAreaPointPage extends StatelessWidget {
                   tooltip: TooltipGuide(
                     anchor: (_) => Offset.zero,
                     align: Alignment.bottomRight,
-                    multiTuples: true,
                   ),
                 ),
               ),
@@ -688,7 +680,6 @@ class LineAreaPointPage extends StatelessWidget {
                   tooltip: TooltipGuide(
                     anchor: (_) => Offset.zero,
                     align: Alignment.bottomRight,
-                    multiTuples: true,
                   ),
                   annotations: [
                     TagAnnotation(

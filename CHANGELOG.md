@@ -1,3 +1,9 @@
+## 1.0.1
+
+**2022-12-18**
+
+- Add mouse-focus scaling signal: https://github.com/entronad/graphic/pull/173
+
 ## 1.0.0
 
 **2022-11-01**

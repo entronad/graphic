@@ -107,6 +107,20 @@ Echarts式的encoding似乎挺需求的。
 
 
 
+region => viewport ?
+
+signal ? event ? 在vega中它们有着不同的含义
+
+自变量范围称为domain，因变量范围称为range
+
+曲线称为easing
+
+
+
+
+
+
+
 ## 论文
 
 与gg的区别：shape
@@ -138,3 +152,27 @@ tidy data 论文中有对数据名词的解释，以及常分为number和string
 avl 中将动画分为功能更强大的stream和更简洁的encode，分开应对不同需求，值得借鉴
 
 vega的selection也是用的转换坐标在数据空间搜索的方法
+
+
+
+## Transition
+
+两段贝塞尔曲线结合，如果前者的后控制点与后者的前控制点关于结合点对称，则是光滑的
+
+
+
+命名可适当使用多音节词，原则上不过早优化，先用简单的词，直到遇到冲突了再决定改哪个
+
+PathSegment -> PathMark -> Mark -> Serise(Shape)
+
+
+
+现在图形设置的原则，先以实用为主，反正这个也不是最终的。
+
+两种arc定义方法，一个适合mark，一个适合segment
+
+以path的分类为准，添加 line， cricle，sector，（polyline就是polygon没有close）
+
+rXX 和 XX 合并
+
+除了text和image的称为primitive

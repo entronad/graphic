@@ -176,3 +176,23 @@ PathSegment -> PathMark -> Mark -> Serise(Shape)
 rXX 和 XX 合并
 
 除了text和image的称为primitive
+
+两个大原则，一是不过早优化
+
+二是自行根据需要设计，不以参考dart本身API为原则，因为它本身就是很自用的，而且dart api本身很乱不一定好。
+
+由于需要使图元具有shadow 和 dash，以及之前的graffiti机制已经论证了每个图元一个path还行，因此图元采用基于path的。
+
+oval还是需要的，因为你必须保证path的addXX都能实现，基本图形的设置原则保证path的所有功能都能实现
+
+polygon 和 polyline 还是不区分吧，因为强调一个必须性和简洁性结合，同理rect和rrect。
+
+shadow 的 transparentOccluder （都是true就行了，防止是透明的）和 dash 的offset感觉没什么用，为简洁先不要了，特别是dash那个还要定义个类。以后要了再加
+
+选择分支，优先将简单的写在前面，标识值也尽量以此原则设置
+
+绘制时实际path的边数与toBezier等计算无关
+
+sector的参数，还是要用start-end的形式（end和sweep就是一个简单的加减关系），与我们整个体系相统一，不受dart约束。不应该设置clockwise，它永远为true，同时为统一，arc也采用这种定义
+
+由于现在radius的start和end也是对等的了，所以no inner也不用特殊处理了，也不用过度优化这种情况。

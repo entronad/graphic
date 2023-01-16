@@ -134,7 +134,7 @@ void _drawSector({
   }
 }
 
-class SectorMark extends Primitive {
+class SectorMark extends ShapeMark {
   SectorMark({
     required this.center,
     required this.startRadius,
@@ -143,13 +143,13 @@ class SectorMark extends Primitive {
     required this.endAngle,
     this.borderRadius,
 
-    required Paint style,
-    Shadow? shadow,
-    List<double>? dash,
+    required ShapeStyle style,
+    double? rotation,
+    Offset? rotationAxis,
   }) : super(
     style: style,
-    shadow: shadow,
-    dash: dash,
+    rotation: rotation,
+    rotationAxis: rotationAxis,
   );
 
   final Offset center;
@@ -165,6 +165,6 @@ class SectorMark extends Primitive {
   final BorderRadius? borderRadius;
   
   @override
-  void createPath(Path path) =>
+  void drawPath(Path path) =>
     _drawSector(path: path, center: center, startRadius: startRadius, endRadius: endRadius, startAngle: startAngle, endAngle: endAngle, borderRadius: borderRadius);
 }

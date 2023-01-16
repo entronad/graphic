@@ -2,19 +2,19 @@ import 'dart:ui';
 
 import 'mark.dart';
 
-class ArcMark extends Primitive {
+class ArcMark extends ShapeMark {
   ArcMark({
     required this.oval,
     required this.startAngle,
     required this.endAngle,
 
-    required Paint style,
-    Shadow? shadow,
-    List<double>? dash,
+    required ShapeStyle style,
+    double? rotation,
+    Offset? rotationAxis,
   }) : super(
     style: style,
-    shadow: shadow,
-    dash: dash,
+    rotation: rotation,
+    rotationAxis: rotationAxis,
   );
 
   final Rect oval;
@@ -24,6 +24,6 @@ class ArcMark extends Primitive {
   final double endAngle;
   
   @override
-  void createPath(Path path) =>
+  void drawPath(Path path) =>
     path.addArc(oval, startAngle, endAngle - startAngle);
 }

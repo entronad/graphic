@@ -2,18 +2,18 @@ import 'dart:ui';
 
 import 'mark.dart';
 
-class LineMark extends Primitive {
+class LineMark extends ShapeMark {
   LineMark({
     required this.start,
     required this.end,
 
-    required Paint style,
-    Shadow? shadow,
-    List<double>? dash,
+    required ShapeStyle style,
+    double? rotation,
+    Offset? rotationAxis,
   }) : super(
     style: style,
-    shadow: shadow,
-    dash: dash,
+    rotation: rotation,
+    rotationAxis: rotationAxis,
   );
 
   final Offset start;
@@ -21,7 +21,7 @@ class LineMark extends Primitive {
   final Offset end;
   
   @override
-  void createPath(Path path) {
+  void drawPath(Path path) {
     path.moveTo(start.dx, start.dy);
     path.lineTo(end.dx, end.dy);
   }

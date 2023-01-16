@@ -2,18 +2,18 @@ import 'dart:ui';
 
 import 'mark.dart';
 
-class CircleMark extends Primitive {
+class CircleMark extends ShapeMark {
   CircleMark({
     required this.center,
     required this.radius,
 
-    required Paint style,
-    Shadow? shadow,
-    List<double>? dash,
+    required ShapeStyle style,
+    double? rotation,
+    Offset? rotationAxis,
   }) : super(
     style: style,
-    shadow: shadow,
-    dash: dash,
+    rotation: rotation,
+    rotationAxis: rotationAxis,
   );
 
   final Offset center;
@@ -21,6 +21,6 @@ class CircleMark extends Primitive {
   final double radius;
   
   @override
-  void createPath(Path path) =>
+  void drawPath(Path path) =>
     path.addOval(Rect.fromCircle(center: center, radius: radius));
 }

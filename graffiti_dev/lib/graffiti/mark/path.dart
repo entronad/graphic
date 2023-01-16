@@ -3,23 +3,23 @@ import 'dart:ui';
 import 'mark.dart';
 import 'segment/segment.dart';
 
-class PathMark extends Primitive {
+class PathMark extends ShapeMark {
   PathMark({
     required this.segments,
 
-    required Paint style,
-    Shadow? shadow,
-    List<double>? dash,
+    required ShapeStyle style,
+    double? rotation,
+    Offset? rotationAxis,
   }) : super(
     style: style,
-    shadow: shadow,
-    dash: dash,
+    rotation: rotation,
+    rotationAxis: rotationAxis,
   );
 
   final List<Segment> segments;
   
   @override
-  void createPath(Path path) {
+  void drawPath(Path path) {
     for (var segment in segments) {
       segment.drawPath(path);
     }

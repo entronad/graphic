@@ -196,3 +196,44 @@ shadow 的 transparentOccluder （都是true就行了，防止是透明的）和
 sector的参数，还是要用start-end的形式（end和sweep就是一个简单的加减关系），与我们整个体系相统一，不受dart约束。不应该设置clockwise，它永远为true，同时为统一，arc也采用这种定义
 
 由于现在radius的start和end也是对等的了，所以no inner也不用特殊处理了，也不用过度优化这种情况。
+
+现在text已经满足不了动画的需求了，需要类似label的功能
+
+从issues来看，自动shadow颜色还是比较成功的，border倒是有需求
+
+我们现在需要一个功能很强大的图形引擎，将现在总结的一些经验固话下来，因此相对渐变定义、边框等都需要放到mark中了，
+
+功能全部往强大了整，比如shadowColor不设置就自动计算，也可设置，dashOffset也可设置，borderGradient也可设置，gradientBounds也可设置
+
+添加自定义的MarkStyle，文字还是搞一套text层级的东西，text和label不是一个层级的，最大的区别是label要和anchor和align合起来才能绘制
+
+ShapeStyle中，由于是简单图形，那一大堆渲染的东西都不需要了，都默认，不过描线相关的还是要的
+
+由于叫shape了，相当于默认是fill，是否有stroke的标识是strokeColor或strokeGradient，是否有shadow的标识是elevation，是否要dash的标识是dash。
+
+Mark及相关属性的差值方法都是为动画准备的，也叫lerp，它的特点一是不接受null，而是以后一个为准
+
+图形的形变保留一个rotation，因为其它的不需要，可通过位置或长宽来定义，旋转在一些场合比如极坐标里还是挺有用的。因为shape里可能有其他轴，所以这里叫rotationAxis
+
+paint 一般表示被调用的，draw一般表示实现，是保护类型
+
+mark的style还是采用继承加泛型的这种体系，文字用label，采用较高层级的这种形式，更实用一些，没必要再分两层
+
+由于mark体系都是final的，text的layout可以放在构造函数里，避免每次paint都要layout
+
+rotation到底是否是style比较复杂，既可以理解为是也可以理解为不是，但是 rotation axis 与绝对位置有关，不能直接放在style里。如果统一rotation放style里，axis放mark里，有点蠢不便于理解。如果都放在外面，lebel的设定就白费了。这本质上是高级api和低级api的矛盾，高级api是采用achor, offset, center, align的体系。
+
+我们原则上尽量采用高级api，兼顾功能全面性和简明性。
+
+实事求是的将，对于图形，rotation和axis放在外面又简洁又灵活，对于label，将rotation的设置并入style最好，就采用这种方案了。image模型和label一样(主要指与左上角offset相关，采用anchor体系)，它俩合称box
+
+style的参数尽量采用可选加默认值的方式
+
+paintPoint需要复杂的初始化，在构造函数中初始化，设置成late
+
+boxstyle的align可以为空，mark需要可设置defaultAlign
+
+boxmark 永远有rotation axis，它是anchor + offset，它表示实际偏移后的anchor，不仅用于旋转。
+
+image长宽像素比那先做个放着后面做实验
+

@@ -2,18 +2,18 @@ import 'package:flutter/painting.dart';
 
 import 'mark.dart';
 
-class RectMark extends Primitive {
+class RectMark extends ShapeMark {
   RectMark({
     required this.rect,
     this.borderRadius,
 
-    required Paint style,
-    Shadow? shadow,
-    List<double>? dash,
+    required ShapeStyle style,
+    double? rotation,
+    Offset? rotationAxis,
   }) : super(
     style: style,
-    shadow: shadow,
-    dash: dash,
+    rotation: rotation,
+    rotationAxis: rotationAxis,
   );
 
   final Rect rect;
@@ -21,7 +21,7 @@ class RectMark extends Primitive {
   final BorderRadius? borderRadius;
   
   @override
-  void createPath(Path path) {
+  void drawPath(Path path) {
     if (borderRadius == null || borderRadius == BorderRadius.zero) {
       path.addRect(rect);
     } else {

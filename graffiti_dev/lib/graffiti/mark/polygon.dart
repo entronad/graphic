@@ -2,18 +2,18 @@ import 'dart:ui';
 
 import 'mark.dart';
 
-class PolygonMark extends Primitive {
+class PolygonMark extends ShapeMark {
   PolygonMark({
     required this.points,
     required this.close,
 
-    required Paint style,
-    Shadow? shadow,
-    List<double>? dash,
+    required ShapeStyle style,
+    double? rotation,
+    Offset? rotationAxis,
   }) : super(
     style: style,
-    shadow: shadow,
-    dash: dash,
+    rotation: rotation,
+    rotationAxis: rotationAxis,
   );
 
   final List<Offset> points;
@@ -21,7 +21,7 @@ class PolygonMark extends Primitive {
   final bool close;
   
   @override
-  void createPath(Path path) {
+  void drawPath(Path path) {
     path.moveTo(points[0].dx, points[0].dy);
 
     for (var i = 1; i < points.length; i++) {

@@ -2,22 +2,22 @@ import 'dart:ui';
 
 import 'mark.dart';
 
-class OvalMark extends Primitive {
+class OvalMark extends ShapeMark {
   OvalMark({
     required this.oval,
 
-    required Paint style,
-    Shadow? shadow,
-    List<double>? dash,
+    required ShapeStyle style,
+    double? rotation,
+    Offset? rotationAxis,
   }) : super(
     style: style,
-    shadow: shadow,
-    dash: dash,
+    rotation: rotation,
+    rotationAxis: rotationAxis,
   );
 
   final Rect oval;
   
   @override
-  void createPath(Path path) =>
+  void drawPath(Path path) =>
     path.addOval(oval);
 }

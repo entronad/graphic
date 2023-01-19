@@ -26,4 +26,12 @@ class ImageMark extends BoxMark<BoxStyle> {
   @override
   void draw(Canvas canvas) =>
     canvas.drawImage(image, paintPoint, Paint());
+  
+  @override
+  ImageMark lerpFrom(covariant ImageMark from, double t) => ImageMark(
+    image: image,
+    anchor: Offset.lerp(from.anchor, anchor, t)!,
+    defaultAlign: Alignment.lerp(from.defaultAlign, defaultAlign, t)!,
+    style: style.lerpFrom(from.style, t),
+  );
 }

@@ -237,3 +237,34 @@ boxmark 永远有rotation axis，它是anchor + offset，它表示实际偏移�
 
 image长宽像素比那先做个放着后面做实验
 
+scene 的clip先只支持rect
+
+scene 似乎完全不要子类，只要将sublayer 作为参数传入就行了
+
+---
+
+**Dart 新 feature**
+
+需要缩小实现函数参数的范围，用covariant 关键字，它既可以放在父类也可以放在子类或都写，最好父类写了子类自动有，都有。还可以修饰访问器
+
+枚举类可以带参数了
+
+late关键字还能起到懒加载的作用，在定义式前面加个late，只有在用到时才会初始化
+
+用 [0, ...?list] 处理可能为null的情况
+
+集合添加现在可以用 if 和 for了：
+
+```dart
+var nav = ['Home', 'Furniture', 'Plants', if (promoActive) 'Outlet'];
+```
+
+```dart
+var listOfStrings = ['#0', for (var i in listOfInts) '#$i'];
+```
+
+Symbol：#bar
+
+同一个个实例的成员方法相等，不同实例的成员方法不相等。函数、静态方法相等
+
+对于二元运算符，符号调用的是左边那个的

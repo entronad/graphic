@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/painting.dart';
 
 import 'package:graphic/src/util/assert.dart';
@@ -125,6 +127,23 @@ class LabelStyle extends BoxStyle {
   ///
   /// It defaults to [double.infinity].
   final double? maxWidth;
+
+  @override
+  LabelStyle lerpFrom(covariant LabelStyle from, double t) => LabelStyle(
+    textStyle: TextStyle.lerp(from.textStyle, textStyle, t),
+    span: span,
+    textAlign: textAlign,
+    textDirection: textDirection,
+    textScaleFactor: lerpDouble(from.textScaleFactor, textScaleFactor, t),
+    maxLines: lerpDouble(from.maxLines, maxLines, t)?.toInt(),
+    ellipsis: ellipsis,
+    locale: locale,
+    strutStyle: strutStyle,
+    textWidthBasis: textWidthBasis,
+    textHeightBehavior: textHeightBehavior,
+    minWidth: lerpDouble(from.minWidth, minWidth, t),
+    maxWidth: lerpDouble(from.maxWidth, maxWidth, t)
+  );
 }
 
 class LabelMark extends BoxMark<LabelStyle> {
@@ -168,4 +187,12 @@ class LabelMark extends BoxMark<LabelStyle> {
   @override
   void draw(Canvas canvas) =>
     _painter.paint(canvas, paintPoint);
+    
+  @override
+  LabelMark lerpFrom(covariant LabelMark from, double t) => LabelMark(
+    text: text,
+    anchor: Offset.lerp(from.anchor, anchor, t)!,
+    defaultAlign: Alignment.lerp(from.defaultAlign, defaultAlign, t)!,
+    style: style.lerpFrom(from.style, t),
+  );
 }

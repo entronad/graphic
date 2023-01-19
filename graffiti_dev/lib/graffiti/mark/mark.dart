@@ -6,8 +6,11 @@ import 'package:path_drawing/path_drawing.dart';
 import 'package:graphic/src/util/assert.dart';
 
 import '../util/gradient.dart';
+import 'path.dart';
 
-abstract class MarkStyle {}
+abstract class MarkStyle {
+  MarkStyle lerpFrom(covariant MarkStyle from, double t);
+}
 
 abstract class Mark<S extends MarkStyle> {
   Mark({
@@ -16,6 +19,15 @@ abstract class Mark<S extends MarkStyle> {
     this.rotation,
     this.rotationAxis,
   }) : assert(rotation == null || rotationAxis != null);
+
+  final S style;
+
+  final double? rotation;
+
+  final Offset? rotationAxis;
+
+  @protected
+  void draw(Canvas canvas);
 
   void paint(Canvas canvas) {
     if (rotation == null) {
@@ -33,14 +45,7 @@ abstract class Mark<S extends MarkStyle> {
     }
   }
 
-  @protected
-  void draw(Canvas canvas);
-
-  final S style;
-
-  final double? rotation;
-
-  final Offset? rotationAxis;
+  Mark<S> lerpFrom(covariant Mark<S> from, double t);
 }
 
 List<double>? _lerpDash(List<double>? a, List<double>? b, double t) {
@@ -106,20 +111,21 @@ class ShapeStyle extends MarkStyle {
 
   final DashOffset? dashOffset;
 
-  static ShapeStyle lerp(ShapeStyle a, ShapeStyle b, double t) => ShapeStyle(
-    fillColor: Color.lerp(a.fillColor, b.fillColor, t),
-    fillGradient: painting.Gradient.lerp(a.fillGradient, b.fillGradient, t),
-    strokeColor: Color.lerp(a.strokeColor, b.strokeColor, t),
-    strokeGradient: painting.Gradient.lerp(a.strokeGradient, b.strokeGradient, t),
-    gradientBounds: Rect.lerp(a.gradientBounds, b.gradientBounds, t),
-    strokeWidth: lerpDouble(a.strokeWidth, b.strokeWidth, t),
-    strokeCap: b.strokeCap,
-    strokeJoin: b.strokeJoin,
-    strokeMiterLimit: lerpDouble(a.strokeMiterLimit, b.strokeMiterLimit, t),
-    elevation: lerpDouble(a.elevation, b.elevation, t),
-    shadowColor: Color.lerp(a.shadowColor, b.shadowColor, t),
-    dash: _lerpDash(a.dash, b.dash, t),
-    dashOffset: b.dashOffset,
+  @override
+  ShapeStyle lerpFrom(covariant ShapeStyle from, double t) => ShapeStyle(
+    fillColor: Color.lerp(from.fillColor, fillColor, t),
+    fillGradient: painting.Gradient.lerp(from.fillGradient, fillGradient, t),
+    strokeColor: Color.lerp(from.strokeColor, strokeColor, t),
+    strokeGradient: painting.Gradient.lerp(from.strokeGradient, strokeGradient, t),
+    gradientBounds: Rect.lerp(from.gradientBounds, gradientBounds, t),
+    strokeWidth: lerpDouble(from.strokeWidth, strokeWidth, t),
+    strokeCap: strokeCap,
+    strokeJoin: strokeJoin,
+    strokeMiterLimit: lerpDouble(from.strokeMiterLimit, strokeMiterLimit, t),
+    elevation: lerpDouble(from.elevation, elevation, t),
+    shadowColor: Color.lerp(from.shadowColor, shadowColor, t),
+    dash: _lerpDash(from.dash, dash, t),
+    dashOffset: dashOffset,
   );
 }
 
@@ -134,12 +140,12 @@ abstract class ShapeMark extends Mark<ShapeStyle> {
     rotation: rotation,
     rotationAxis: rotationAxis,
   ) {
-    drawPath(_path);
+    drawPath(path);
 
     if (style.fillColor != null || style.fillGradient != null) {
       _fillPaint = Paint();
       if (style.fillGradient != null) {
-        _fillPaint!.shader = toUiGradient(style.fillGradient!, style.gradientBounds ?? _path.getBounds());
+        _fillPaint!.shader = toUiGradient(style.fillGradient!, style.gradientBounds ?? path.getBounds());
       } else {
         _fillPaint!.color = style.fillColor!;
       }
@@ -148,7 +154,7 @@ abstract class ShapeMark extends Mark<ShapeStyle> {
     if (style.strokeColor != null || style.strokeGradient != null) {
       _strokePaint = Paint();
       if (style.strokeGradient != null) {
-        _strokePaint!.shader = toUiGradient(style.strokeGradient!, style.gradientBounds ?? _path.getBounds());
+        _strokePaint!.shader = toUiGradient(style.strokeGradient!, style.gradientBounds ?? path.getBounds());
       } else {
         _strokePaint!.color = style.strokeColor!;
       }
@@ -168,11 +174,11 @@ abstract class ShapeMark extends Mark<ShapeStyle> {
     }
 
     if (style.dash != null) {
-      _dathPath = dashPath(_path, dashArray: CircularIntervalList(style.dash!), dashOffset: style.dashOffset);
+      _dathPath = dashPath(path, dashArray: CircularIntervalList(style.dash!), dashOffset: style.dashOffset);
     }
   }
 
-  final _path = Path();
+  final path = Path();
 
   Paint? _fillPaint;
 
@@ -185,17 +191,19 @@ abstract class ShapeMark extends Mark<ShapeStyle> {
   @override
   void draw(Canvas canvas) {
     if (style.elevation != null) {
-      canvas.drawShadow(_path, style.shadowColor!, style.elevation!, true);
+      canvas.drawShadow(path, style.shadowColor!, style.elevation!, true);
     }
 
     if (_fillPaint != null) {
-      canvas.drawPath(_path, _fillPaint!);
+      canvas.drawPath(path, _fillPaint!);
     }
 
     if (_strokePaint != null) {
-      canvas.drawPath(_dathPath ?? _path, _strokePaint!);
+      canvas.drawPath(_dathPath ?? path, _strokePaint!);
     }
   }
+
+  PathMark toBezier();
 }
 
 class BoxStyle extends MarkStyle {
@@ -215,6 +223,13 @@ class BoxStyle extends MarkStyle {
 
   /// How the box align to the anchor point.
   final painting.Alignment? align;
+  
+  @override
+  BoxStyle lerpFrom(covariant BoxStyle from, double t) => BoxStyle(
+    offset: Offset.lerp(from.offset, offset, t),
+    rotation: lerpDouble(from.rotation, rotation, t),
+    align: painting.Alignment.lerp(from.align, align, t),
+  );
 }
 
 /// Calculates the real painting offset point for [BoxMark].

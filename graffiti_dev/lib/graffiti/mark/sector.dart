@@ -1,5 +1,7 @@
 import 'dart:math';
+import 'dart:ui';
 import 'package:flutter/painting.dart';
+import 'package:graffiti_dev/graffiti/mark/path.dart';
 
 import 'package:graphic/src/util/math.dart';
 
@@ -167,4 +169,23 @@ class SectorMark extends ShapeMark {
   @override
   void drawPath(Path path) =>
     _drawSector(path: path, center: center, startRadius: startRadius, endRadius: endRadius, startAngle: startAngle, endAngle: endAngle, borderRadius: borderRadius);
+
+  @override
+  SectorMark lerpFrom(covariant SectorMark from, double t) => SectorMark(
+    center: Offset.lerp(from.center, center, t)!,
+    startRadius: lerpDouble(from.startRadius, startRadius, t)!,
+    endRadius: lerpDouble(from.endRadius, endRadius, t)!,
+    startAngle: lerpDouble(from.startAngle, startAngle, t)!,
+    endAngle: lerpDouble(from.endAngle, endAngle, t)!,
+    borderRadius: BorderRadius.lerp(from.borderRadius, borderRadius, t),
+    style: style.lerpFrom(from.style, t),
+    rotation: lerpDouble(from.rotation, rotation, t),
+    rotationAxis: Offset.lerp(from.rotationAxis, rotationAxis, t),
+  );
+
+  @override
+  PathMark toBezier() {
+    // TODO: implement toBezier
+    throw UnimplementedError();
+  }
 }

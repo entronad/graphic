@@ -1,8 +1,11 @@
 import 'dart:ui';
-
-import 'package:graffiti_dev/graffiti/mark/path.dart';
+import 'dart:math';
 
 import 'mark.dart';
+import 'segment/segment.dart';
+import 'segment/move.dart';
+import 'segment/cubic.dart';
+import 'segment/close.dart';
 
 class OvalMark extends ShapeMark {
   OvalMark({
@@ -32,8 +35,22 @@ class OvalMark extends ShapeMark {
   );
 
   @override
-  PathMark toBezier() {
-    // TODO: implement toBezier
-    throw UnimplementedError();
+  List<Segment> toSegments() {
+    final rx = oval.width / 2;
+    final ry = oval.height / 2;
+    final cx = oval.center.dx;
+    final cy = oval.center.dy;
+    const factor = ((-1 + sqrt2) / 3) * 4;
+    final dx = rx * factor;
+    final dy = ry * factor;
+    
+    return [
+      MoveSegment(end: oval.centerLeft),
+      CubicSegment(control1: Offset(oval.left, cy - dy), control2: Offset(cx - dx, oval.top), end: oval.topCenter),
+      CubicSegment(control1: Offset(cx + dx, oval.top), control2: Offset(oval.right, cy - dy), end: oval.centerRight),
+      CubicSegment(control1: Offset(oval.right, cy + dy), control2: Offset(cx + dx, oval.bottom), end: oval.bottomCenter),
+      CubicSegment(control1: Offset(cx - dx, oval.bottom), control2: Offset(oval.left, cy + dy), end: oval.centerLeft),
+      CloseSegment(),
+    ];
   }
 }

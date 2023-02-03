@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'segment.dart';
+import 'quadratic.dart';
+import 'cubic.dart';
 
 class ConicSegment extends Segment {
   ConicSegment({
@@ -8,9 +10,9 @@ class ConicSegment extends Segment {
     required this.end,
     required this.weight,
   
-    bool relative = false,
+    String? id,
   }) : super(
-    relative: relative,
+    id: id,
   );
 
   final Offset control;
@@ -20,10 +22,27 @@ class ConicSegment extends Segment {
   final double weight;
   
   @override
-  void absoluteDrawPath(Path path) =>
+  void drawPath(Path path) =>
     path.conicTo(control.dx, control.dy, end.dx, end.dy, weight);
-  
+
   @override
-  void relativeDrawPath(Path path) =>
-    path.relativeConicTo(control.dx, control.dy, end.dx, end.dy, weight);
+  ConicSegment lerpFrom(covariant ConicSegment from, double t) => ConicSegment(
+    control: Offset.lerp(from.control, control, t)!,
+    end: Offset.lerp(from.end, end, t)!,
+    weight: lerpDouble(from.weight, weight, t)!,
+    id: id,
+  );
+
+  @override
+  CubicSegment toCubic(Offset start) {
+    final middleBase = (start + end) / 2;
+    final quadraticControl = Offset.lerp(middleBase, control, weight);
+    final controls = quadraticToCubicControls(start, quadraticControl!, end);
+    return CubicSegment(
+      control1: controls.first,
+      control2: controls.last,
+      end: end,
+      id: id,
+    );
+  }
 }

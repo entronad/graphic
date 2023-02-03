@@ -1,35 +1,49 @@
 import 'dart:ui';
+import 'dart:math';
 
 import 'segment.dart';
+import 'cubic.dart';
+import 'arc_to_point.dart';
+import '../arc.dart';
 
 class ArcSegment extends Segment {
   ArcSegment({
-    required this.end,
-    this.radius = Radius.zero,
-    this.rotation = 0,
-    this.largeArc = false,
-    this.clockwise = true,
+    required this.oval,
+    required this.startAngle,
+    required this.endAngle,
 
-    bool relative = false,
+    String? id,
   }) : super(
-    relative: relative,
+    id: id,
   );
 
-  final Offset end;
+  final Rect oval;
 
-  final Radius radius;
+  final double startAngle;
 
-  final double rotation;
+  final double endAngle;
 
-  final bool largeArc;
-
-  final bool clockwise;
-  
   @override
-  void absoluteDrawPath(Path path) =>
-    path.arcToPoint(end, radius: radius, rotation: rotation, largeArc: largeArc, clockwise: clockwise);
-  
+  void drawPath(Path path) =>
+    path.arcTo(oval, startAngle, endAngle - startAngle, false);
+
   @override
-  void relativeDrawPath(Path path) =>
-    path.relativeArcToPoint(end, radius: radius, rotation: rotation, largeArc: largeArc, clockwise: clockwise);
+  ArcSegment lerpFrom(covariant ArcSegment from, double t) => ArcSegment(
+    oval: Rect.lerp(from.oval, oval, t)!,
+    startAngle: lerpDouble(from.startAngle, startAngle, t)!,
+    endAngle: lerpDouble(from.endAngle, endAngle, t)!,
+    id: id,
+  );
+
+  @override
+  CubicSegment toCubic(Offset start) {
+    final sweepAngle = endAngle - startAngle;
+    return ArcToPointSegment(
+      end: getArcPoint(oval, endAngle),
+      radius: Radius.elliptical(oval.width / 2, oval.height / 2),
+      largeArc: sweepAngle.abs() % (pi * 2) > pi,
+      clockwise: sweepAngle >= 0,
+      id: id,
+    ).toCubic(start);
+  }
 }

@@ -1,8 +1,9 @@
 import 'dart:ui';
 
-import 'package:graffiti_dev/graffiti/mark/path.dart';
-
 import 'mark.dart';
+import 'segment/segment.dart';
+import 'segment/move.dart';
+import 'segment/line.dart';
 
 class LineMark extends ShapeMark {
   LineMark({
@@ -38,8 +39,8 @@ class LineMark extends ShapeMark {
   );
 
   @override
-  PathMark toBezier() {
-    // TODO: implement toBezier
-    throw UnimplementedError();
-  }
+  List<Segment> toSegments() => [
+    MoveSegment(end: start),
+    LineSegment(end: end),
+  ];
 }

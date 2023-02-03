@@ -1,14 +1,19 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/painting.dart';
-import 'package:graffiti_dev/graffiti/mark/path.dart';
+import 'package:graffiti_dev/graffiti/mark/segment/arc.dart';
 
 import 'package:graphic/src/util/math.dart';
 
 import 'mark.dart';
+import 'path.dart';
+import 'segment/segment.dart';
+import 'segment/close.dart';
+import 'segment/line.dart';
+import 'segment/move.dart';
+import 'segment/quadratic.dart';
 
-void _drawSector({
-  required Path path,
+List<Segment> _getSectorSegments({
   required Offset center,
   required double startRadius,
   required double endRadius,
@@ -20,39 +25,29 @@ void _drawSector({
   final radialInterval = endRadius - startRadius;
   
   if (sweepAngle.equalTo(0) || radialInterval.equalTo(0)) {
-    return;
+    return [];
   }
 
   final sweepAngleAbs = sweepAngle.abs();
 
   // The canvas can not fill a ring, so it is devided to two semi rings.
   if (sweepAngleAbs.equalTo(pi * 2)) {
-    _drawSector(path: path, center: center, startRadius: startRadius, endRadius: endRadius, startAngle: 0, endAngle: pi);
-    _drawSector(path: path, center: center, startRadius: startRadius, endRadius: endRadius, startAngle: pi, endAngle: pi * 2);
-    return;
+    return [
+      ..._getSectorSegments(center: center, startRadius: startRadius, endRadius: endRadius, startAngle: 0, endAngle: pi),
+      ..._getSectorSegments(center: center, startRadius: startRadius, endRadius: endRadius, startAngle: pi, endAngle: pi * 2),
+    ];
   }
 
+  final rst = <Segment>[];
   if (borderRadius == null || borderRadius == BorderRadius.zero) {
-    path.moveTo(
-        cos(startAngle) * endRadius + center.dx, sin(startAngle) * endRadius + center.dy);
-    path.arcTo(
-      Rect.fromCircle(center: center, radius: endRadius),
-      startAngle,
-      sweepAngle,
-      false,
-    );
-    path.lineTo(cos(endAngle) * startRadius + center.dx, sin(endAngle) * startRadius + center.dy);
-    path.arcTo(
-      Rect.fromCircle(center: center, radius: startRadius),
-      endAngle,
-      -sweepAngle,
-      false,
-    );
-    path.close();
+    rst.add(MoveSegment(end: Offset(cos(startAngle) * endRadius + center.dx, sin(startAngle) * endRadius + center.dy)));
+    rst.add(ArcSegment(oval: Rect.fromCircle(center: center, radius: endRadius), startAngle: startAngle, endAngle: endAngle));
+    rst.add(LineSegment(end: Offset(cos(endAngle) * startRadius + center.dx, sin(endAngle) * startRadius + center.dy)));
+    rst.add(ArcSegment(oval: Rect.fromCircle(center: center, radius: startRadius), startAngle: endAngle, endAngle: startAngle));
+    rst.add(CloseSegment());
   } else {
     double arcStart;
     double arcEnd;
-    double arcSweep;
 
     // Makes sure the corners correct when radiuses or angles are reversed.
 
@@ -63,80 +58,50 @@ void _drawSector({
 
     arcStart = startAngle + cornerCircularSign * (borderRadius.topLeft.x / endRadius);
     arcEnd = endAngle - cornerCircularSign * (borderRadius.topRight.x / endRadius);
-    arcSweep = arcEnd - arcStart;
 
     // The top left corner.
 
-    path.moveTo(
+    rst.add(MoveSegment(end: Offset(
       cos(startAngle) * (endRadius - cornerRadialSign * borderRadius.topLeft.y) + center.dx,
       sin(startAngle) * (endRadius - cornerRadialSign * borderRadius.topLeft.y) + center.dy,
-    );
-    path.quadraticBezierTo(
-      cos(startAngle) * endRadius + center.dx,
-      sin(startAngle) * endRadius + center.dy,
-      cos(arcStart) * endRadius + center.dx,
-      sin(arcStart) * endRadius + center.dy,
-    );
+    )));
+    rst.add(QuadraticSegment(control: Offset(cos(startAngle) * endRadius + center.dx, sin(startAngle) * endRadius + center.dy), end: Offset(cos(arcStart) * endRadius + center.dx, sin(arcStart) * endRadius + center.dy)));
 
     // The top arc.
 
-    path.arcTo(
-      Rect.fromCircle(center: center, radius: endRadius),
-      arcStart,
-      arcSweep,
-      false,
-    );
+    rst.add(ArcSegment(oval: Rect.fromCircle(center: center, radius: endRadius), startAngle: arcStart, endAngle: arcEnd));
 
     // The top right corner.
 
-    path.quadraticBezierTo(
-      cos(endAngle) * endRadius + center.dx,
-      sin(endAngle) * endRadius + center.dy,
-      cos(endAngle) * (endRadius - cornerRadialSign * borderRadius.topRight.y) + center.dx,
-      sin(endAngle) * (endRadius - cornerRadialSign * borderRadius.topRight.y) + center.dy,
-    );
-    path.lineTo(
+    rst.add(QuadraticSegment(control: Offset(cos(endAngle) * endRadius + center.dx, sin(endAngle) * endRadius + center.dy), end: Offset(cos(endAngle) * (endRadius - cornerRadialSign * borderRadius.topRight.y) + center.dx, sin(endAngle) * (endRadius - cornerRadialSign * borderRadius.topRight.y) + center.dy)));
+    rst.add(LineSegment(end: Offset(
       cos(endAngle) * (startRadius + cornerRadialSign * borderRadius.bottomRight.y) + center.dx,
       sin(endAngle) * (startRadius + cornerRadialSign * borderRadius.bottomRight.y) + center.dy,
-    );
+    )));
 
     // Calculates the bottom angles.
 
     arcStart = startAngle + cornerCircularSign * (borderRadius.bottomLeft.x / startRadius);
     arcEnd = endAngle - cornerCircularSign * (borderRadius.bottomRight.x / startRadius);
-    arcSweep = arcEnd - arcStart;
 
     // The bottom right corner.
 
-    path.quadraticBezierTo(
-      cos(endAngle) * startRadius + center.dx,
-      sin(endAngle) * startRadius + center.dy,
-      cos(arcEnd) * startRadius + center.dx,
-      sin(arcEnd) * startRadius + center.dy,
-    );
+    rst.add(QuadraticSegment(control: Offset(cos(endAngle) * startRadius + center.dx, sin(endAngle) * startRadius + center.dy), end: Offset(cos(arcEnd) * startRadius + center.dx, sin(arcEnd) * startRadius + center.dy)));
 
     // The bottom arc.
 
-    path.arcTo(
-      Rect.fromCircle(center: center, radius: startRadius),
-      arcEnd,
-      -arcSweep,
-      false,
-    );
+    rst.add(ArcSegment(oval: Rect.fromCircle(center: center, radius: startRadius), startAngle: arcEnd, endAngle: arcStart));
 
     // The bottom left corner.
-    path.quadraticBezierTo(
-      cos(startAngle) * startRadius + center.dx,
-      sin(startAngle) * startRadius + center.dy,
-      cos(startAngle) * (startRadius + cornerRadialSign * borderRadius.bottomLeft.y) + center.dx,
-      sin(startAngle) * (startRadius + cornerRadialSign * borderRadius.bottomLeft.y) + center.dy,
-    );
 
-    path.close();
+    rst.add(QuadraticSegment(control: Offset(cos(startAngle) * startRadius + center.dx, sin(startAngle) * startRadius + center.dy), end: Offset(cos(startAngle) * (startRadius + cornerRadialSign * borderRadius.bottomLeft.y) + center.dx, sin(startAngle) * (startRadius + cornerRadialSign * borderRadius.bottomLeft.y) + center.dy)));
+
+    rst.add(CloseSegment());
   }
+  return rst;
 }
 
-class SectorMark extends ShapeMark {
+class SectorMark extends PathMark {
   SectorMark({
     required this.center,
     required this.startRadius,
@@ -149,6 +114,7 @@ class SectorMark extends ShapeMark {
     double? rotation,
     Offset? rotationAxis,
   }) : super(
+    segments: _getSectorSegments(center: center, startRadius: startRadius, endRadius: endRadius, startAngle: startAngle, endAngle: endAngle),
     style: style,
     rotation: rotation,
     rotationAxis: rotationAxis,
@@ -165,10 +131,6 @@ class SectorMark extends ShapeMark {
   final double endAngle;
 
   final BorderRadius? borderRadius;
-  
-  @override
-  void drawPath(Path path) =>
-    _drawSector(path: path, center: center, startRadius: startRadius, endRadius: endRadius, startAngle: startAngle, endAngle: endAngle, borderRadius: borderRadius);
 
   @override
   SectorMark lerpFrom(covariant SectorMark from, double t) => SectorMark(
@@ -182,10 +144,4 @@ class SectorMark extends ShapeMark {
     rotation: lerpDouble(from.rotation, rotation, t),
     rotationAxis: Offset.lerp(from.rotationAxis, rotationAxis, t),
   );
-
-  @override
-  PathMark toBezier() {
-    // TODO: implement toBezier
-    throw UnimplementedError();
-  }
 }

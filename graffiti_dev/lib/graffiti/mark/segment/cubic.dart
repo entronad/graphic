@@ -8,9 +8,9 @@ class CubicSegment extends Segment {
     required this.control2,
     required this.end,
   
-    bool relative = false,
+    String? id,
   }) : super(
-    relative: relative,
+    id: id,
   );
 
   final Offset control1;
@@ -20,10 +20,17 @@ class CubicSegment extends Segment {
   final Offset end;
   
   @override
-  void absoluteDrawPath(Path path) =>
+  void drawPath(Path path) =>
     path.cubicTo(control1.dx, control1.dy, control2.dx, control2.dy, end.dx, end.dy);
-  
+    
   @override
-  void relativeDrawPath(Path path) =>
-    path.relativeCubicTo(control1.dx, control1.dy, control2.dx, control2.dy, end.dx, end.dy);
+  CubicSegment lerpFrom(covariant CubicSegment from, double t) => CubicSegment(
+    control1: Offset.lerp(from.control1, control1, t)!,
+    control2: Offset.lerp(from.control2, control2, t)!,
+    end: Offset.lerp(from.end, end, t)!,
+    id: id,
+  );
+    
+  @override
+  CubicSegment toCubic(Offset start) => this;
 }

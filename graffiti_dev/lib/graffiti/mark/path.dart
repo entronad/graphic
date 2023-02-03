@@ -24,4 +24,7 @@ class PathMark extends ShapeMark {
       segment.drawPath(path);
     }
   }
+
+  @override
+  List<Segment> toSegments() => segments;
 }

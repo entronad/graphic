@@ -6,7 +6,7 @@ import 'package:path_drawing/path_drawing.dart';
 import 'package:graphic/src/util/assert.dart';
 
 import '../util/gradient.dart';
-import 'path.dart';
+import 'segment/segment.dart';
 
 abstract class MarkStyle {
   MarkStyle lerpFrom(covariant MarkStyle from, double t);
@@ -203,7 +203,7 @@ abstract class ShapeMark extends Mark<ShapeStyle> {
     }
   }
 
-  PathMark toBezier();
+  List<Segment> toSegments();
 }
 
 class BoxStyle extends MarkStyle {

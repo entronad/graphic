@@ -1,8 +1,22 @@
 import 'dart:ui';
-
-import 'package:graffiti_dev/graffiti/mark/path.dart';
+import 'dart:math';
 
 import 'mark.dart';
+import 'segment/segment.dart';
+import 'segment/move.dart';
+import 'segment/arc.dart';
+
+Offset getArcPoint(Rect oval, double angle) {
+  // https://blog.csdn.net/chenlu5201314/article/details/99678398
+
+  final a = oval.width / 2;
+  final b = oval.height / 2;
+  final yc = sin(angle);
+  final xc = cos(angle);
+  final radio = (a * b) / sqrt(pow(yc * a, 2) + pow(xc * b, 2));
+
+  return oval.center.translate(radio * xc, radio * yc);
+}
 
 class ArcMark extends ShapeMark {
   ArcMark({
@@ -40,8 +54,8 @@ class ArcMark extends ShapeMark {
   );
 
   @override
-  PathMark toBezier() {
-    // TODO: implement toBezier
-    throw UnimplementedError();
-  }
+  List<Segment> toSegments() => [
+    MoveSegment(end: getArcPoint(oval, startAngle)),
+    ArcSegment(oval: oval, startAngle: startAngle, endAngle: endAngle),
+  ];
 }

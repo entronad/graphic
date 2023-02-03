@@ -1,23 +1,31 @@
 import 'dart:ui';
 
 import 'segment.dart';
+import 'cubic.dart';
 
 class MoveSegment extends Segment {
   MoveSegment({
     required this.end,
   
-    bool relative = false,
+    String? id,
   }) : super(
-    relative: relative,
+    id: id,
   );
   
   final Offset end;
 
   @override
-  void absoluteDrawPath(Path path) =>
+  void drawPath(Path path) =>
     path.moveTo(end.dx, end.dy);
-  
+
   @override
-  void relativeDrawPath(Path path) =>
-    path.relativeMoveTo(end.dx, end.dy);
+  MoveSegment lerpFrom(covariant MoveSegment from, double t) => MoveSegment(
+    end: Offset.lerp(from.end, end, t)!,
+    id: id,
+  );
+
+  @override
+  CubicSegment toCubic(Offset start) {
+    throw UnsupportedError('Move segment can not be converted to cubic.');
+  }
 }

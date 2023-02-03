@@ -1,8 +1,11 @@
 import 'dart:ui';
-
-import 'package:graffiti_dev/graffiti/mark/path.dart';
+import 'dart:math';
 
 import 'mark.dart';
+import 'segment/segment.dart';
+import 'segment/move.dart';
+import 'segment/cubic.dart';
+import 'segment/close.dart';
 
 class CircleMark extends ShapeMark {
   CircleMark({
@@ -36,8 +39,17 @@ class CircleMark extends ShapeMark {
   );
 
   @override
-  PathMark toBezier() {
-    // TODO: implement toBezier
-    throw UnimplementedError();
+  List<Segment> toSegments() {
+    const factor = ((-1 + sqrt2) / 3) * 4;
+    final d = radius * factor;
+
+    return [
+      MoveSegment(end: center.translate(-radius, 0)),
+      CubicSegment(control1: center.translate(-radius, -d), control2: center.translate(-d, -radius), end: center.translate(0, -radius)),
+      CubicSegment(control1: center.translate(d, -radius), control2: center.translate(radius, -d), end: center.translate(radius, 0)),
+      CubicSegment(control1: center.translate(radius, d), control2: center.translate(d, radius), end: center.translate(0, radius)),
+      CubicSegment(control1: center.translate(-d, radius), control2: center.translate(-radius, d), end: center.translate(-radius, 0)),
+      CloseSegment(),
+    ];
   }
 }

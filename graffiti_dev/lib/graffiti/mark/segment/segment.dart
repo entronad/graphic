@@ -1,17 +1,17 @@
 import 'dart:ui';
 
+import 'cubic.dart';
+
 abstract class Segment {
   Segment({
-    required this.relative,
+    this.id,
   });
 
-  final bool relative;
+  final String? id;
 
-  void absoluteDrawPath(Path path);
+  void drawPath(Path path);
 
-  void relativeDrawPath(Path path);
+  Segment lerpFrom(covariant Segment from, double t);
 
-  void drawPath(Path path) => relative
-    ? relativeDrawPath(path)
-    : absoluteDrawPath(path);
+  CubicSegment toCubic(Offset start);
 }

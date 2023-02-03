@@ -1,9 +1,13 @@
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
-import 'package:graffiti_dev/graffiti/mark/path.dart';
 
 import 'mark.dart';
+import 'segment/segment.dart';
+import 'segment/move.dart';
+import 'segment/line.dart';
+import 'segment/arc_to_point.dart';
+import 'segment/close.dart';
 
 class RectMark extends ShapeMark {
   RectMark({
@@ -42,8 +46,35 @@ class RectMark extends ShapeMark {
   );
 
   @override
-  PathMark toBezier() {
-    // TODO: implement toBezier
-    throw UnimplementedError();
+  List<Segment> toSegments() {
+    if (borderRadius == null) {
+      return [
+        MoveSegment(end: rect.topLeft),
+        LineSegment(end: rect.topRight),
+        LineSegment(end: rect.bottomRight),
+        LineSegment(end: rect.bottomLeft),
+        CloseSegment(),
+      ];
+    } else {
+      final tlr = borderRadius!.topLeft;
+      final trr = borderRadius!.topRight;
+      final brr = borderRadius!.bottomRight;
+      final blr = borderRadius!.bottomLeft;
+      final signX = rect.width > 0 ? 1 : -1;
+      final signY = rect.height > 0 ? 1 : -1;
+      final clockwise = signX + signY != 0;
+
+      return [
+        MoveSegment(end: rect.topLeft.translate(0, signY * tlr.y)),
+        ArcToPointSegment(end: rect.topLeft.translate(signX * tlr.x, 0), radius: tlr, clockwise: clockwise),
+        LineSegment(end: rect.topRight.translate(-signX * trr.x, 0)),
+        ArcToPointSegment(end: rect.topRight.translate(0, signY * trr.y), radius: trr, clockwise: clockwise),
+        LineSegment(end: rect.bottomRight.translate(0, -signY * brr.y)),
+        ArcToPointSegment(end: rect.bottomRight.translate(-signX * brr.x, 0), radius: brr, clockwise: clockwise),
+        LineSegment(end: rect.bottomLeft.translate(signX * blr.x, 0)),
+        ArcToPointSegment(end: rect.bottomLeft.translate(0, -signY * blr.y), radius: blr, clockwise: clockwise),
+        CloseSegment(),
+      ];
+    }
   }
 }

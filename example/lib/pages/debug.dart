@@ -53,6 +53,7 @@ class DebugPage extends StatelessWidget {
           width: 350,
           height: 300,
           child: Chart(
+            rebuild: true,
             data: basicData,
             variables: {
               'genre': Variable(

@@ -117,6 +117,10 @@ signal ? event ? 在vega中它们有着不同的含义
 
 
 
+为图形（annotation等）增加事件挂载，它独立于selection的数据检测体系
+
+
+
 
 
 
@@ -284,3 +288,53 @@ close命令是关闭到最后一个subpath
 conic 有理贝塞尔曲线的近似，别管是不是，用端点连线的中点与控制点来确定权重移动点，转换为二阶贝塞尔曲线
 
 一种号称最高效的浮点数精度问题处理：() * 10 ** 9) >> 0) / 10 ** 9) 右移0是去除小数
+
+动画：
+
+~~line和area的图形也分item似乎是关键~~
+
+~~出现消失单独处理~~
+
+~~采用树状的 group-child似乎是关键，可以采用类似custompaint, textspan那种的嵌套？~~
+
+~~考虑用树的目的是避免用id检索时的算法复杂度，可以直接递归，但是不够的还是要补全的。~~
+
+
+
+~~规则：~~
+
+1. ~~采用类似textspan的那种树，考虑用树的目的是避免用id检索时的算法复杂度，可以直接递归~~
+2. ~~区分出现、消失、过渡动画，引擎仅负责处理过渡，出现消失在外面数据层面处理，根据“x, y, xy, size, alpha”的规则创建影子~~
+3. ~~过渡补齐，给定画布坐标系的x、y、xy，alpha，size变换方法，其中size的限制比较大~~
+
+
+
+感觉初始化和消失放在aes里处理比较好
+
+树状结构，但是不混用，group是单独的
+
+lerp的原则是必须都不为null，数组长度一样，所有补全工作都在aes里做
+
+复杂图形，到底是一个group里多个mark还是pathmark中多个segment，一个重要的依据是style是否相同
+
+group lerp的时候，必须保证子元素也同构，转换的过程在toFrame中。这样toFrame似乎应当对集合的以便递归。
+
+实在难匹配的就直接到to或者中间插个透明帧
+
+目前scene的mark和clip都是出现在同一个地方的，可以在update中要求一起更新
+
+可以animate的前提是view不能rebuild，所以只有事件会触发动画（changeData，resize，gesture）
+
+有原来的view向上通知widget repaint，改为view通知graffiti，graffiti 通知各个scene开始动画，scnene中的函数调用 widget 进行animate
+
+flutter setState之后并不会调用didUpdateWidget，因此不用区分animate，直接都是repaint
+
+上下游动作术语：修改scene叫set，因为它并不会触发任何动作，update会误解。算完之后view通知graffiti再通知scene的函数叫update，scene执行update进行更新或执行动画之后调用上层传入的函数叫repaint
+
+async 函数返回值 Future<void> 和void的区别是void不能跟在await后面，所以尽量用Future<void>。
+
+animationController的stop好像是暂停，重置要用reset，一般只add一次listener
+
+不需要delay了，interval能起到这个作用
+
+setState 在一次同步中多次调用好像是没事的，所以每个scene里都没有动画时都调用repaint是可以的。

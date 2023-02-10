@@ -48,6 +48,10 @@ abstract class Mark<S extends MarkStyle> {
   Mark<S> lerpFrom(covariant Mark<S> from, double t);
 }
 
+List<Mark> nomalizeMarks(Mark from, Mark to) {
+
+}
+
 List<double>? _lerpDash(List<double>? a, List<double>? b, double t) {
   if (a == null || b == null || a.length != b.length) {
     return b;
@@ -202,6 +206,9 @@ abstract class ShapeMark extends Mark<ShapeStyle> {
       canvas.drawPath(_dathPath ?? path, _strokePaint!);
     }
   }
+
+  @override
+  ShapeMark lerpFrom(covariant ShapeMark from, double t);
 
   List<Segment> toSegments();
 }

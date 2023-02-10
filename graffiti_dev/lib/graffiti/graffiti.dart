@@ -35,6 +35,12 @@ class Graffiti {
     });
   }
 
+  void update() {
+    for (var scene in _scenes) {
+      scene.update();
+    }
+  }
+
   /// Used for CustomPainter's paint method.
   ///
   /// Paints the scenes.
@@ -43,6 +49,12 @@ class Graffiti {
   void paint(Canvas canvas) {
     for (var scene in _scenes) {
       scene.paint(canvas);
+    }
+  }
+
+  void dispose() {
+    for (var scene in _scenes) {
+      scene.dispose();
     }
   }
 }

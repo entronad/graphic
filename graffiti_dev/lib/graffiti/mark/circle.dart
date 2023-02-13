@@ -45,10 +45,10 @@ class CircleMark extends ShapeMark {
 
     return [
       MoveSegment(end: center.translate(-radius, 0)),
-      CubicSegment(control1: center.translate(-radius, -d), control2: center.translate(-d, -radius), end: center.translate(0, -radius)),
-      CubicSegment(control1: center.translate(d, -radius), control2: center.translate(radius, -d), end: center.translate(radius, 0)),
-      CubicSegment(control1: center.translate(radius, d), control2: center.translate(d, radius), end: center.translate(0, radius)),
-      CubicSegment(control1: center.translate(-d, radius), control2: center.translate(-radius, d), end: center.translate(-radius, 0)),
+      CubicSegment(control1: center.translate(-radius, -d), control2: center.translate(-d, -radius), end: center.translate(0, -radius), tag: SegmentTags.top),
+      CubicSegment(control1: center.translate(d, -radius), control2: center.translate(radius, -d), end: center.translate(radius, 0), tag: SegmentTags.right),
+      CubicSegment(control1: center.translate(radius, d), control2: center.translate(d, radius), end: center.translate(0, radius), tag: SegmentTags.bottom),
+      CubicSegment(control1: center.translate(-d, radius), control2: center.translate(-radius, d), end: center.translate(-radius, 0), tag: SegmentTags.left),
       CloseSegment(),
     ];
   }

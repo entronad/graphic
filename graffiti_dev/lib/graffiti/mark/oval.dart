@@ -46,10 +46,10 @@ class OvalMark extends ShapeMark {
     
     return [
       MoveSegment(end: oval.centerLeft),
-      CubicSegment(control1: Offset(oval.left, cy - dy), control2: Offset(cx - dx, oval.top), end: oval.topCenter),
-      CubicSegment(control1: Offset(cx + dx, oval.top), control2: Offset(oval.right, cy - dy), end: oval.centerRight),
-      CubicSegment(control1: Offset(oval.right, cy + dy), control2: Offset(cx + dx, oval.bottom), end: oval.bottomCenter),
-      CubicSegment(control1: Offset(cx - dx, oval.bottom), control2: Offset(oval.left, cy + dy), end: oval.centerLeft),
+      CubicSegment(control1: Offset(oval.left, cy - dy), control2: Offset(cx - dx, oval.top), end: oval.topCenter, tag: SegmentTags.top),
+      CubicSegment(control1: Offset(cx + dx, oval.top), control2: Offset(oval.right, cy - dy), end: oval.centerRight, tag: SegmentTags.right),
+      CubicSegment(control1: Offset(oval.right, cy + dy), control2: Offset(cx + dx, oval.bottom), end: oval.bottomCenter, tag: SegmentTags.bottom),
+      CubicSegment(control1: Offset(cx - dx, oval.bottom), control2: Offset(oval.left, cy + dy), end: oval.centerLeft, tag: SegmentTags.left),
       CloseSegment(),
     ];
   }

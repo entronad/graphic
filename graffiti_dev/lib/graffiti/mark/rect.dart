@@ -50,9 +50,10 @@ class RectMark extends ShapeMark {
     if (borderRadius == null) {
       return [
         MoveSegment(end: rect.topLeft),
-        LineSegment(end: rect.topRight),
-        LineSegment(end: rect.bottomRight),
-        LineSegment(end: rect.bottomLeft),
+        LineSegment(end: rect.topRight, tag: SegmentTags.top),
+        LineSegment(end: rect.bottomRight, tag: SegmentTags.right),
+        LineSegment(end: rect.bottomLeft, tag: SegmentTags.bottom),
+        LineSegment(end: rect.topLeft, tag: SegmentTags.left),
         CloseSegment(),
       ];
     } else {
@@ -66,13 +67,14 @@ class RectMark extends ShapeMark {
 
       return [
         MoveSegment(end: rect.topLeft.translate(0, signY * tlr.y)),
-        ArcToPointSegment(end: rect.topLeft.translate(signX * tlr.x, 0), radius: tlr, clockwise: clockwise),
-        LineSegment(end: rect.topRight.translate(-signX * trr.x, 0)),
-        ArcToPointSegment(end: rect.topRight.translate(0, signY * trr.y), radius: trr, clockwise: clockwise),
-        LineSegment(end: rect.bottomRight.translate(0, -signY * brr.y)),
-        ArcToPointSegment(end: rect.bottomRight.translate(-signX * brr.x, 0), radius: brr, clockwise: clockwise),
-        LineSegment(end: rect.bottomLeft.translate(signX * blr.x, 0)),
-        ArcToPointSegment(end: rect.bottomLeft.translate(0, -signY * blr.y), radius: blr, clockwise: clockwise),
+        ArcToPointSegment(end: rect.topLeft.translate(signX * tlr.x, 0), radius: tlr, clockwise: clockwise, tag: SegmentTags.topLeft),
+        LineSegment(end: rect.topRight.translate(-signX * trr.x, 0), tag: SegmentTags.top),
+        ArcToPointSegment(end: rect.topRight.translate(0, signY * trr.y), radius: trr, clockwise: clockwise, tag: SegmentTags.topRight),
+        LineSegment(end: rect.bottomRight.translate(0, -signY * brr.y), tag: SegmentTags.right),
+        ArcToPointSegment(end: rect.bottomRight.translate(-signX * brr.x, 0), radius: brr, clockwise: clockwise, tag: SegmentTags.bottomRight),
+        LineSegment(end: rect.bottomLeft.translate(signX * blr.x, 0), tag: SegmentTags.bottom),
+        ArcToPointSegment(end: rect.bottomLeft.translate(0, -signY * blr.y), radius: blr, clockwise: clockwise, tag: SegmentTags.bottomLeft),
+        LineSegment(end: rect.topLeft.translate(0, signY * tlr.y), tag: SegmentTags.left),
         CloseSegment(),
       ];
     }

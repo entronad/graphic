@@ -8,9 +8,9 @@ class CubicSegment extends Segment {
     required this.control2,
     required this.end,
   
-    String? id,
+    String? tag,
   }) : super(
-    id: id,
+    tag: tag,
   );
 
   final Offset control1;
@@ -28,9 +28,20 @@ class CubicSegment extends Segment {
     control1: Offset.lerp(from.control1, control1, t)!,
     control2: Offset.lerp(from.control2, control2, t)!,
     end: Offset.lerp(from.end, end, t)!,
-    id: id,
+    tag: tag,
   );
     
   @override
   CubicSegment toCubic(Offset start) => this;
+  
+  @override
+  CubicSegment sow(Offset position) => CubicSegment(
+    control1: position,
+    control2: position,
+    end: position,
+    tag: tag,
+  );
+
+  @override
+  Offset getEnd() => end;
 }

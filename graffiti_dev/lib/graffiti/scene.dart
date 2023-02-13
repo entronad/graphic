@@ -86,16 +86,11 @@ class Scene {
     if (_controller == null) {
       repaint();
     } else {
-      _startMarks = [];
-      _endMarks = [];
-      assert(_preMarks!.length == _currentMarks!.length);
-      for (var i = 0; i < _currentMarks!.length; i++) {
-        final markPair = nomalizeMarks(_preMarks![i], _endMarks![i]);
-        _startMarks!.add(markPair.first);
-        _endMarks!.add(markPair.last);
-      }
+      final marksPair = nomalizeMarkList(_preMarks!, _currentMarks!);
+      _startMarks = marksPair.first;
+      _endMarks = marksPair.last;
 
-      final clipPair = nomalizeMarks(_preClip!, _currentClip!);
+      final clipPair = nomalizeMark(_preClip!, _currentClip!);
       _startClip = clipPair.first as ShapeMark;
       _endClip = clipPair.last as ShapeMark;
 

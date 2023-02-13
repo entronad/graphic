@@ -10,9 +10,9 @@ class ConicSegment extends Segment {
     required this.end,
     required this.weight,
   
-    String? id,
+    String? tag,
   }) : super(
-    id: id,
+    tag: tag,
   );
 
   final Offset control;
@@ -30,7 +30,7 @@ class ConicSegment extends Segment {
     control: Offset.lerp(from.control, control, t)!,
     end: Offset.lerp(from.end, end, t)!,
     weight: lerpDouble(from.weight, weight, t)!,
-    id: id,
+    tag: tag,
   );
 
   @override
@@ -42,7 +42,18 @@ class ConicSegment extends Segment {
       control1: controls.first,
       control2: controls.last,
       end: end,
-      id: id,
+      tag: tag,
     );
   }
+  
+  @override
+  ConicSegment sow(Offset position) => ConicSegment(
+    control: position,
+    end: position,
+    weight: weight,
+    tag: tag,
+  );
+
+  @override
+  Offset getEnd() => end;
 }

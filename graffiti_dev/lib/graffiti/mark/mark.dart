@@ -7,6 +7,8 @@ import 'package:graphic/src/util/assert.dart';
 
 import '../util/gradient.dart';
 import 'segment/segment.dart';
+import 'group.dart';
+import 'path.dart';
 
 abstract class MarkStyle {
   MarkStyle lerpFrom(covariant MarkStyle from, double t);
@@ -46,10 +48,6 @@ abstract class Mark<S extends MarkStyle> {
   }
 
   Mark<S> lerpFrom(covariant Mark<S> from, double t);
-}
-
-List<Mark> nomalizeMarks(Mark from, Mark to) {
-
 }
 
 List<double>? _lerpDash(List<double>? a, List<double>? b, double t) {
@@ -271,4 +269,49 @@ abstract class BoxMark<S extends BoxStyle> extends Mark<S> {
 
   @protected
   late final Offset paintPoint;
+}
+
+// No predicate, call only when needed.
+List<PathMark> _nomalizeShape(ShapeMark from, ShapeMark to) {
+  final segmentsPair = nomalizeSegments(from.toSegments(), to.toSegments());
+  return [
+    PathMark(segments: segmentsPair.first, style: from.style, rotation: from.rotation, rotationAxis: from.rotationAxis),
+    PathMark(segments: segmentsPair.last, style: to.style, rotation: to.rotation, rotationAxis: to.rotationAxis),
+  ];
+}
+
+List<Mark> nomalizeMark(Mark from, Mark to) {
+  if (from is GroupMark && to is GroupMark) {
+    final marksPair = nomalizeMarkList(from.marks, to.marks);
+    return [
+      GroupMark(marks: marksPair.first, rotation: from.rotation, rotationAxis: from.rotationAxis),
+      GroupMark(marks: marksPair.last, rotation: to.rotation, rotationAxis: to.rotationAxis),
+    ];
+  }
+
+  if (from is PathMark && to is PathMark) {
+    return _nomalizeShape(from, to);
+  }
+
+  if (from.runtimeType == to.runtimeType) {
+    return [from, to];
+  }
+
+  if (from is ShapeMark && to is ShapeMark) {
+    return _nomalizeShape(from, to);
+  }
+
+  return [to, to];
+}
+
+List<List<Mark>> nomalizeMarkList(List<Mark> from, List<Mark> to) {
+  final fromRst = <Mark>[];
+  final toRst = <Mark>[];
+  assert(from.length == to.length);
+  for (var i = 0; i < to.length; i++) {
+    final markPair = nomalizeMark(from[i], to[i]);
+    fromRst.add(markPair.first);
+    toRst.add(markPair.last);
+  }
+  return [fromRst, toRst];
 }

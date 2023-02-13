@@ -56,6 +56,6 @@ class ArcMark extends ShapeMark {
   @override
   List<Segment> toSegments() => [
     MoveSegment(end: getArcPoint(oval, startAngle)),
-    ArcSegment(oval: oval, startAngle: startAngle, endAngle: endAngle),
+    ArcSegment(oval: oval, startAngle: startAngle, endAngle: endAngle, tag: SegmentTags.top),
   ];
 }

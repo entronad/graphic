@@ -13,9 +13,9 @@ class QuadraticSegment extends Segment {
     required this.control,
     required this.end,
 
-    String? id,
+    String? tag,
   }) : super(
-    id: id,
+    tag: tag,
   );
 
   final Offset control;
@@ -30,7 +30,7 @@ class QuadraticSegment extends Segment {
   QuadraticSegment lerpFrom(covariant QuadraticSegment from, double t) => QuadraticSegment(
     control: Offset.lerp(from.control, control, t)!,
     end: Offset.lerp(from.end, end, t)!,
-    id: id,
+    tag: tag,
   );
 
   @override
@@ -40,7 +40,17 @@ class QuadraticSegment extends Segment {
       control1: controls.first,
       control2: controls.last,
       end: end,
-      id: id,
+      tag: tag,
     );
   }
+  
+  @override
+  QuadraticSegment sow(Offset position) => QuadraticSegment(
+    control: position,
+    end: position,
+    tag: tag,
+  );
+
+  @override
+  Offset getEnd() => end;
 }

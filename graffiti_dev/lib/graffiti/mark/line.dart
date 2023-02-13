@@ -41,6 +41,6 @@ class LineMark extends ShapeMark {
   @override
   List<Segment> toSegments() => [
     MoveSegment(end: start),
-    LineSegment(end: end),
+    LineSegment(end: end, tag: SegmentTags.top),
   ];
 }

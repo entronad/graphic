@@ -38,13 +38,16 @@ List<Segment> _getSectorSegments({
     ];
   }
 
-  final rst = <Segment>[];
+  late final List<Segment> rst;
   if (borderRadius == null || borderRadius == BorderRadius.zero) {
-    rst.add(MoveSegment(end: Offset(cos(startAngle) * endRadius + center.dx, sin(startAngle) * endRadius + center.dy)));
-    rst.add(ArcSegment(oval: Rect.fromCircle(center: center, radius: endRadius), startAngle: startAngle, endAngle: endAngle));
-    rst.add(LineSegment(end: Offset(cos(endAngle) * startRadius + center.dx, sin(endAngle) * startRadius + center.dy)));
-    rst.add(ArcSegment(oval: Rect.fromCircle(center: center, radius: startRadius), startAngle: endAngle, endAngle: startAngle));
-    rst.add(CloseSegment());
+    rst = [
+      MoveSegment(end: Offset(cos(startAngle) * endRadius + center.dx, sin(startAngle) * endRadius + center.dy)),
+      ArcSegment(oval: Rect.fromCircle(center: center, radius: endRadius), startAngle: startAngle, endAngle: endAngle, tag: SegmentTags.top),
+      LineSegment(end: Offset(cos(endAngle) * startRadius + center.dx, sin(endAngle) * startRadius + center.dy), tag: SegmentTags.right),
+      ArcSegment(oval: Rect.fromCircle(center: center, radius: startRadius), startAngle: endAngle, endAngle: startAngle, tag: SegmentTags.bottom),
+      LineSegment(end: Offset(cos(startAngle) * endRadius + center.dx, sin(startAngle) * endRadius + center.dy), tag: SegmentTags.left),
+      CloseSegment(),
+    ];
   } else {
     double arcStart;
     double arcEnd;
@@ -59,25 +62,27 @@ List<Segment> _getSectorSegments({
     arcStart = startAngle + cornerCircularSign * (borderRadius.topLeft.x / endRadius);
     arcEnd = endAngle - cornerCircularSign * (borderRadius.topRight.x / endRadius);
 
+    rst = <Segment>[];
+
     // The top left corner.
 
     rst.add(MoveSegment(end: Offset(
       cos(startAngle) * (endRadius - cornerRadialSign * borderRadius.topLeft.y) + center.dx,
       sin(startAngle) * (endRadius - cornerRadialSign * borderRadius.topLeft.y) + center.dy,
     )));
-    rst.add(QuadraticSegment(control: Offset(cos(startAngle) * endRadius + center.dx, sin(startAngle) * endRadius + center.dy), end: Offset(cos(arcStart) * endRadius + center.dx, sin(arcStart) * endRadius + center.dy)));
+    rst.add(QuadraticSegment(control: Offset(cos(startAngle) * endRadius + center.dx, sin(startAngle) * endRadius + center.dy), end: Offset(cos(arcStart) * endRadius + center.dx, sin(arcStart) * endRadius + center.dy), tag: SegmentTags.topLeft));
 
     // The top arc.
 
-    rst.add(ArcSegment(oval: Rect.fromCircle(center: center, radius: endRadius), startAngle: arcStart, endAngle: arcEnd));
+    rst.add(ArcSegment(oval: Rect.fromCircle(center: center, radius: endRadius), startAngle: arcStart, endAngle: arcEnd, tag: SegmentTags.top));
 
     // The top right corner.
 
-    rst.add(QuadraticSegment(control: Offset(cos(endAngle) * endRadius + center.dx, sin(endAngle) * endRadius + center.dy), end: Offset(cos(endAngle) * (endRadius - cornerRadialSign * borderRadius.topRight.y) + center.dx, sin(endAngle) * (endRadius - cornerRadialSign * borderRadius.topRight.y) + center.dy)));
+    rst.add(QuadraticSegment(control: Offset(cos(endAngle) * endRadius + center.dx, sin(endAngle) * endRadius + center.dy), end: Offset(cos(endAngle) * (endRadius - cornerRadialSign * borderRadius.topRight.y) + center.dx, sin(endAngle) * (endRadius - cornerRadialSign * borderRadius.topRight.y) + center.dy), tag: SegmentTags.topRight));
     rst.add(LineSegment(end: Offset(
       cos(endAngle) * (startRadius + cornerRadialSign * borderRadius.bottomRight.y) + center.dx,
       sin(endAngle) * (startRadius + cornerRadialSign * borderRadius.bottomRight.y) + center.dy,
-    )));
+    ), tag: SegmentTags.right));
 
     // Calculates the bottom angles.
 
@@ -86,16 +91,20 @@ List<Segment> _getSectorSegments({
 
     // The bottom right corner.
 
-    rst.add(QuadraticSegment(control: Offset(cos(endAngle) * startRadius + center.dx, sin(endAngle) * startRadius + center.dy), end: Offset(cos(arcEnd) * startRadius + center.dx, sin(arcEnd) * startRadius + center.dy)));
+    rst.add(QuadraticSegment(control: Offset(cos(endAngle) * startRadius + center.dx, sin(endAngle) * startRadius + center.dy), end: Offset(cos(arcEnd) * startRadius + center.dx, sin(arcEnd) * startRadius + center.dy), tag: SegmentTags.bottomRight));
 
     // The bottom arc.
 
-    rst.add(ArcSegment(oval: Rect.fromCircle(center: center, radius: startRadius), startAngle: arcEnd, endAngle: arcStart));
+    rst.add(ArcSegment(oval: Rect.fromCircle(center: center, radius: startRadius), startAngle: arcEnd, endAngle: arcStart, tag: SegmentTags.bottom));
 
     // The bottom left corner.
 
-    rst.add(QuadraticSegment(control: Offset(cos(startAngle) * startRadius + center.dx, sin(startAngle) * startRadius + center.dy), end: Offset(cos(startAngle) * (startRadius + cornerRadialSign * borderRadius.bottomLeft.y) + center.dx, sin(startAngle) * (startRadius + cornerRadialSign * borderRadius.bottomLeft.y) + center.dy)));
+    rst.add(QuadraticSegment(control: Offset(cos(startAngle) * startRadius + center.dx, sin(startAngle) * startRadius + center.dy), end: Offset(cos(startAngle) * (startRadius + cornerRadialSign * borderRadius.bottomLeft.y) + center.dx, sin(startAngle) * (startRadius + cornerRadialSign * borderRadius.bottomLeft.y) + center.dy), tag: SegmentTags.bottomLeft));
 
+    rst.add(LineSegment(end: Offset(
+      cos(startAngle) * (endRadius - cornerRadialSign * borderRadius.topLeft.y) + center.dx,
+      sin(startAngle) * (endRadius - cornerRadialSign * borderRadius.topLeft.y) + center.dy,
+    ), tag: SegmentTags.left));
     rst.add(CloseSegment());
   }
   return rst;

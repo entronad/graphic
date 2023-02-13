@@ -7,9 +7,9 @@ class MoveSegment extends Segment {
   MoveSegment({
     required this.end,
   
-    String? id,
+    String? tag,
   }) : super(
-    id: id,
+    tag: tag,
   );
   
   final Offset end;
@@ -21,11 +21,20 @@ class MoveSegment extends Segment {
   @override
   MoveSegment lerpFrom(covariant MoveSegment from, double t) => MoveSegment(
     end: Offset.lerp(from.end, end, t)!,
-    id: id,
+    tag: tag,
   );
 
   @override
   CubicSegment toCubic(Offset start) {
     throw UnsupportedError('Move segment can not be converted to cubic.');
   }
+  
+  @override
+  MoveSegment sow(Offset position) => MoveSegment(
+    end: position,
+    tag: tag,
+  );
+
+  @override
+  Offset getEnd() => end;
 }

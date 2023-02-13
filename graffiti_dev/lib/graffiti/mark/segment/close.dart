@@ -5,9 +5,9 @@ import 'cubic.dart';
 
 class CloseSegment extends Segment {
   CloseSegment({
-    String? id,
+    String? tag,
   }) : super(
-    id: id,
+    tag: tag,
   );
 
   @override
@@ -19,6 +19,14 @@ class CloseSegment extends Segment {
 
   @override
   CubicSegment toCubic(Offset start) {
-    throw UnsupportedError('Close segment should convert to line before to cubic.');
+    throw UnsupportedError('Close segment should not call this method.');
+  }
+  
+  @override
+  CloseSegment sow(Offset position) => this;
+  
+  @override
+  Offset getEnd() {
+    throw UnsupportedError('Close segment should not call this method.');
   }
 }

@@ -12,9 +12,9 @@ class ArcSegment extends Segment {
     required this.startAngle,
     required this.endAngle,
 
-    String? id,
+    String? tag,
   }) : super(
-    id: id,
+    tag: tag,
   );
 
   final Rect oval;
@@ -32,7 +32,7 @@ class ArcSegment extends Segment {
     oval: Rect.lerp(from.oval, oval, t)!,
     startAngle: lerpDouble(from.startAngle, startAngle, t)!,
     endAngle: lerpDouble(from.endAngle, endAngle, t)!,
-    id: id,
+    tag: tag,
   );
 
   @override
@@ -43,7 +43,18 @@ class ArcSegment extends Segment {
       radius: Radius.elliptical(oval.width / 2, oval.height / 2),
       largeArc: sweepAngle.abs() % (pi * 2) > pi,
       clockwise: sweepAngle >= 0,
-      id: id,
+      tag: tag,
     ).toCubic(start);
   }
+  
+  @override
+  ArcSegment sow(Offset position) => ArcSegment(
+    oval: Rect.fromCircle(center: position, radius: 0),
+    startAngle: startAngle,
+    endAngle: endAngle,
+    tag: tag,
+  );
+  
+  @override
+  Offset getEnd() => getArcPoint(oval, endAngle);
 }

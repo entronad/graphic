@@ -7,9 +7,9 @@ class LineSegment extends Segment {
   LineSegment({
     required this.end,
   
-    String? id,
+    String? tag,
   }) : super(
-    id: id,
+    tag: tag,
   );
 
   final Offset end;
@@ -21,7 +21,7 @@ class LineSegment extends Segment {
   @override
   LineSegment lerpFrom(covariant LineSegment from, double t) => LineSegment(
     end: Offset.lerp(from.end, end, t)!,
-    id: id,
+    tag: tag,
   );
 
   @override
@@ -37,7 +37,16 @@ class LineSegment extends Segment {
       control1: Offset.lerp(start, p2, p4!.dx / ((start - p2!).distance))!,
       control2: Offset.lerp(p6, p5, p3!.dx / ((p6! - p5!).distance))!,
       end: end,
-      id: id,
+      tag: tag,
     );
   }
+  
+  @override
+  LineSegment sow(Offset position) => LineSegment(
+    end: position,
+    tag: tag,
+  );
+
+  @override
+  Offset getEnd() => end;
 }

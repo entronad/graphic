@@ -338,3 +338,24 @@ animationController的stop好像是暂停，重置要用reset，一般只add一�
 不需要delay了，interval能起到这个作用
 
 setState 在一次同步中多次调用好像是没事的，所以每个scene里都没有动画时都调用repaint是可以的。
+
+pathMark lerp的时候必须是已经nomalize过的。
+
+segments 统一化的规则：
+
+1. 目的是尽可能多的tag对上
+2. 先按move分成多组，组的补充是在后面简单的加
+3. segments的规则是少的补到多的，以多的按序索引，类型相同
+
+segments 必须以mov开头
+
+还是不要把end作为segments的统一属性吧，因为close这里会存在误导，正确性大于优雅性，搞个getEnd()方法，正好arc的也不需要在构造函数里每次算。
+
+complement: 1 shorter 本来就少，所以每个都要用上，必须确保shoter的tag集合是longger的子集，且没有重复，且顺序一致，
+
+画path且能正常动画的规则（否则动作可能诡异）：
+
+1. 第一个是move
+2. tag 不能重复，顺序一致，shorter是longer的子集
+3. 需保证对应的tag在对应的contour（指move分隔的gegment组）中，
+4. close的出现位置要对应好，否则那一笔直接变为to的，close尽量只负责收尾（没有实际长度）否则容易出问题。

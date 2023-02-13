@@ -119,9 +119,9 @@ class ArcToPointSegment extends Segment {
     this.largeArc = false,
     this.clockwise = true,
 
-    String? id,
+    String? tag,
   }) : super(
-    id: id,
+    tag: tag,
   );
 
   final Offset end;
@@ -145,7 +145,7 @@ class ArcToPointSegment extends Segment {
     rotation: lerpDouble(from.rotation, rotation, t)!,
     largeArc: largeArc,
     clockwise: clockwise,
-    id: id,
+    tag: tag,
   );
 
   @override
@@ -155,7 +155,19 @@ class ArcToPointSegment extends Segment {
       control1: Offset(rst[0], rst[1]),
       control2: Offset(rst[2], rst[3]),
       end: end,
-      id: id,
+      tag: tag,
     );
   }
+  
+  @override
+  ArcToPointSegment sow(Offset position) => ArcToPointSegment(
+    end: position,
+    rotation: rotation,
+    largeArc: largeArc,
+    clockwise: clockwise,
+    tag: tag,
+  );
+  
+  @override
+  Offset getEnd() => end;
 }

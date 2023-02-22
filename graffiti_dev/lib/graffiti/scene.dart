@@ -9,13 +9,13 @@ import 'transition.dart';
 class Scene {
   Scene({
     required this.layer,
-    required this.subLayer,
+    required this.chartLayer,
     this.transition,
-    required TickerProvider vsync,
+    required TickerProvider tickerProvider,
     required this.repaint,
   }) {
     if (transition != null) {
-      _controller = AnimationController(vsync: vsync, duration: transition!.duration);
+      _controller = AnimationController(vsync: tickerProvider, duration: transition!.duration);
       final animation = transition!.curve == null ? _controller! : CurvedAnimation(parent: _controller!, curve: transition!.curve!);
       animation.addListener(() {
         _marks = [];
@@ -40,7 +40,7 @@ class Scene {
 
   final int layer;
 
-  final int subLayer;
+  final int chartLayer;
 
   final Transition? transition;
 

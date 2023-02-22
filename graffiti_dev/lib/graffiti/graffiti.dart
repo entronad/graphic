@@ -1,14 +1,29 @@
 import 'package:flutter/widgets.dart';
 
 import 'scene.dart';
+import 'transition.dart';
 
 /// The rendering engine.
 class Graffiti {
+  Graffiti({
+    required this.tickerProvider,
+    required this.repaint,
+  });
+
+  final TickerProvider tickerProvider;
+
+  final void Function() repaint;
+
   /// The scenes to paint.
   final _scenes = <Scene>[];
 
   /// Adds a scene to this graffiti.
-  S add<S extends Scene>(S scene) {
+  Scene createScene({
+    int layer = 0,
+    int chartLayer = 0,
+    Transition? transition,
+  }) {
+    final scene = Scene(layer: layer, chartLayer: chartLayer, transition: transition, tickerProvider: tickerProvider, repaint: repaint);
     _scenes.add(scene);
     return scene;
   }
@@ -25,9 +40,9 @@ class Graffiti {
       if (layerRst != 0) {
         return layerRst;
       } else {
-        final subLayerRst = a.subLayer - b.subLayer;
-        if (subLayerRst != 0) {
-          return subLayerRst;
+        final chartLayerRst = a.chartLayer - b.chartLayer;
+        if (chartLayerRst != 0) {
+          return chartLayerRst;
         } else {
           return a.preIndex - b.preIndex;
         }

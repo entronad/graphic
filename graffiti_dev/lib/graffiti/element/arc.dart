@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'dart:math';
 
-import 'mark.dart';
+import 'element.dart';
 import 'segment/segment.dart';
 import 'segment/move.dart';
 import 'segment/arc.dart';
@@ -18,17 +18,17 @@ Offset getArcPoint(Rect oval, double angle) {
   return oval.center.translate(radio * xc, radio * yc);
 }
 
-class ArcMark extends ShapeMark {
-  ArcMark({
+class ArcElement extends ShapeElement {
+  ArcElement({
     required this.oval,
     required this.startAngle,
     required this.endAngle,
 
-    required ShapeStyle style,
+    ShapeStyle? style,
     double? rotation,
     Offset? rotationAxis,
   }) : super(
-    style: style,
+    style: style ?? defaultShapeStyle,
     rotation: rotation,
     rotationAxis: rotationAxis,
   );
@@ -44,7 +44,7 @@ class ArcMark extends ShapeMark {
     path.addArc(oval, startAngle, endAngle - startAngle);
 
   @override
-  ArcMark lerpFrom(covariant ArcMark from, double t) => ArcMark(
+  ArcElement lerpFrom(covariant ArcElement from, double t) => ArcElement(
     oval: Rect.lerp(from.oval, oval, t)!,
     startAngle: lerpDouble(from.startAngle, startAngle, t)!,
     endAngle: lerpDouble(from.endAngle, endAngle, t)!,

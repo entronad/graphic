@@ -26,6 +26,7 @@ abstract class Segment {
 
   Segment lerpFrom(covariant Segment from, double t);
 
+  // toCubic algrithom is from https://github.com/thednp/svg-path-commander 2.0.2
   CubicSegment toCubic(Offset start);
 
   Segment sow(Offset position);
@@ -53,6 +54,7 @@ List<List<Segment>> _spliteContours(List<Segment> segments) {
       currentContour.add(segment);
     }
   }
+  contours.add(currentContour);
   return contours;
 }
 
@@ -90,14 +92,26 @@ List<SegmentInfo> _complementInfos(List<SegmentInfo> shorter, List<SegmentInfo> 
   int shorterIndex = 0;
   int longerIndex = 0;
   while(longerIndex < longer.length) {
-    final shorterInfo = shorter[shorterIndex];
-    final longerInfo = longer[longerIndex];
-    if (shorterInfo.segment.tag == longerInfo.segment.tag || needCount == 0) {
-      rst.add(shorterInfo);
-      shorterIndex ++;
-      longerIndex ++;
+    if (shorterIndex < shorter.length) {
+      // complement in prev.
+
+      final shorterInfo = shorter[shorterIndex];
+      final longerInfo = longer[longerIndex];
+      if (shorterInfo.segment.tag == longerInfo.segment.tag || needCount == 0) {
+        rst.add(shorterInfo);
+        shorterIndex ++;
+        longerIndex ++;
+      } else {
+        rst.add(SegmentInfo(shorterInfo.start, longerInfo.segment.sow(shorterInfo.start)));
+        longerIndex ++;
+        needCount --;
+      }
     } else {
-      rst.add(SegmentInfo(shorterInfo.start, longerInfo.segment.sow(shorterInfo.start)));
+      // complement in next.
+
+      final shorterEnd = shorter[shorterIndex - 1].segment.getEnd();
+      final longerInfo = longer[longerIndex];
+      rst.add(SegmentInfo(shorterEnd, longerInfo.segment.sow(shorterEnd)));
       longerIndex ++;
       needCount --;
     }

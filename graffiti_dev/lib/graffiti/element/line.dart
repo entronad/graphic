@@ -1,20 +1,20 @@
 import 'dart:ui';
 
-import 'mark.dart';
+import 'element.dart';
 import 'segment/segment.dart';
 import 'segment/move.dart';
 import 'segment/line.dart';
 
-class LineMark extends ShapeMark {
-  LineMark({
+class LineElement extends ShapeElement {
+  LineElement({
     required this.start,
     required this.end,
 
-    required ShapeStyle style,
+    ShapeStyle? style,
     double? rotation,
     Offset? rotationAxis,
   }) : super(
-    style: style,
+    style: style ?? defaultShapeStyle,
     rotation: rotation,
     rotationAxis: rotationAxis,
   );
@@ -30,7 +30,7 @@ class LineMark extends ShapeMark {
   }
 
   @override
-  LineMark lerpFrom(covariant LineMark from, double t) => LineMark(
+  LineElement lerpFrom(covariant LineElement from, double t) => LineElement(
     start: Offset.lerp(from.start, start, t)!,
     end: Offset.lerp(from.end, end, t)!,
     style: style.lerpFrom(from.style, t),

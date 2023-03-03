@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/animation.dart';
 
-import 'mark/mark.dart';
+import 'element/element.dart';
 import 'graffiti.dart';
 import 'transition.dart';
 
@@ -14,23 +14,33 @@ class Scene {
     required TickerProvider tickerProvider,
     required this.repaint,
   }) {
-    if (transition != null) {
+    if (transition == null) {
+      _controller = null;
+    } else {
       _controller = AnimationController(vsync: tickerProvider, duration: transition!.duration);
       final animation = transition!.curve == null ? _controller! : CurvedAnimation(parent: _controller!, curve: transition!.curve!);
       animation.addListener(() {
-        _marks = [];
-        for (var i = 0; i < _endMarks!.length; i++) {
-          _marks!.add(_endMarks![i].lerpFrom(_startMarks![i], animation.value));
+        if (_animateElements) {
+          _elements = [];
+          for (var i = 0; i < _endElements!.length; i++) {
+            _elements!.add(_endElements![i].lerpFrom(_startElements![i], animation.value));
+          }
         }
 
-        _clip = _endClip!.lerpFrom(_startClip!, animation.value);
+        if (_animateClip) {
+          _clip = _endClip!.lerpFrom(_startClip!, animation.value);
+        }
 
         repaint();
       });
       animation.addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          _marks = _currentMarks;
-          _clip = _currentClip;
+          if (_animateElements) {
+            _elements = _currentElements;
+          }
+          if (_animateClip) {
+            _clip = _currentClip;
+          }
 
           repaint();
         }
@@ -46,65 +56,78 @@ class Scene {
 
   late int preIndex;
 
-  List<Mark>? _currentMarks;
+  List<MarkElement>? _currentElements;
 
-  List<Mark>? _preMarks;
+  List<MarkElement>? _preElements;
 
-  List<Mark>? _startMarks;
+  List<MarkElement>? _startElements;
 
-  List<Mark>? _endMarks;
+  List<MarkElement>? _endElements;
 
-  List<Mark>? _marks;
+  List<MarkElement>? _elements;
 
-  ShapeMark? _currentClip;
+  ShapeElement? _currentClip;
 
-  ShapeMark? _preClip;
+  ShapeElement? _preClip;
 
-  ShapeMark? _startClip;
+  ShapeElement? _startClip;
 
-  ShapeMark? _endClip;
+  ShapeElement? _endClip;
 
-  ShapeMark? _clip;
+  ShapeElement? _clip;
 
   final void Function() repaint;
 
   late final AnimationController? _controller;
 
-  void set(List<Mark>? marks, ShapeMark? clip) {
-    if (_controller == null) {
-      _marks = marks;
+  late bool _animateElements;
+
+  late bool _animateClip;
+
+  void set(List<MarkElement>? elements, [ShapeElement? clip]) {
+    _animateElements = _controller != null && _currentElements != null && elements != null;
+    _animateClip = _controller != null && _currentClip != null && clip != null;
+
+    _preElements = _currentElements;
+    _currentElements = elements;
+    if (!_animateElements) {
+      _elements = elements;
+    }
+
+    _preClip = _currentClip;
+    _currentClip = clip;
+    if (!_animateClip) {
       _clip = clip;
-    } else {
-      _preMarks = _currentMarks;
-      _currentMarks = marks;
-      _preClip = _currentClip;
-      _currentClip = clip;
     }
   }
 
   void update() {
-    if (_controller == null) {
-      repaint();
-    } else {
-      final marksPair = nomalizeMarkList(_preMarks!, _currentMarks!);
-      _startMarks = marksPair.first;
-      _endMarks = marksPair.last;
+    if (_animateElements) {
+      final elementsPair = nomalizeElementList(_preElements!, _currentElements!);
+      _startElements = elementsPair.first;
+      _endElements = elementsPair.last;
+    }
 
-      final clipPair = nomalizeMark(_preClip!, _currentClip!);
-      _startClip = clipPair.first as ShapeMark;
-      _endClip = clipPair.last as ShapeMark;
+    if (_animateClip) {
+      final clipPair = nomalizeElement(_preClip!, _currentClip!);
+      _startClip = clipPair.first as ShapeElement;
+      _endClip = clipPair.last as ShapeElement;
+    }
 
+    if (_animateElements || _animateClip) {
       _controller!.reset();
       if (transition!.repeat) {
-        _controller!.forward();
-      } else {
         _controller!.repeat(reverse: transition!.repeatReverse);
+      } else {
+        _controller!.forward();
       }
+    } else {
+      repaint();
     }
   }
 
   void paint(Canvas canvas) {
-    if (_marks != null) {
+    if (_elements != null) {
       canvas.save();
       
       if (_clip != null) {
@@ -123,8 +146,8 @@ class Scene {
         }
       }
 
-      for (var mark in _marks!) {
-        mark.paint(canvas);
+      for (var element in _elements!) {
+        element.paint(canvas);
       }
 
       canvas.restore();

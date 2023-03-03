@@ -54,23 +54,3 @@ ui.Gradient toUiGradient(
   }
   throw ArgumentError('Iillegal gradient type.');
 }
-
-/// Calculates shadow color of a graphic with gradient.
-Color getShadowColor(Gradient gradient) {
-  if (gradient is LinearGradient) {
-    return Color.lerp(
-      gradient.colors.first,
-      gradient.colors.last,
-      0.5,
-    )!;
-  } else if (gradient is RadialGradient) {
-    return gradient.colors.last;
-  } else if (gradient is SweepGradient) {
-    return Color.lerp(
-      gradient.colors.first,
-      gradient.colors.last,
-      0.5,
-    )!;
-  }
-  throw ArgumentError('Iillegal gradient type.');
-}

@@ -1,21 +1,21 @@
 import 'dart:ui';
 import 'dart:math';
 
-import 'mark.dart';
+import 'element.dart';
 import 'segment/segment.dart';
 import 'segment/move.dart';
 import 'segment/cubic.dart';
 import 'segment/close.dart';
 
-class OvalMark extends ShapeMark {
-  OvalMark({
+class OvalElement extends ShapeElement {
+  OvalElement({
     required this.oval,
 
-    required ShapeStyle style,
+    ShapeStyle? style,
     double? rotation,
     Offset? rotationAxis,
   }) : super(
-    style: style,
+    style: style ?? defaultShapeStyle,
     rotation: rotation,
     rotationAxis: rotationAxis,
   );
@@ -27,7 +27,7 @@ class OvalMark extends ShapeMark {
     path.addOval(oval);
 
   @override
-  OvalMark lerpFrom(covariant OvalMark from, double t) => OvalMark(
+  OvalElement lerpFrom(covariant OvalElement from, double t) => OvalElement(
     oval: Rect.lerp(from.oval, oval, t)!,
     style: style.lerpFrom(from.style, t),
     rotation: lerpDouble(from.rotation, rotation, t),

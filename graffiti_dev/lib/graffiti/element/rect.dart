@@ -2,23 +2,23 @@ import 'dart:ui';
 
 import 'package:flutter/painting.dart';
 
-import 'mark.dart';
+import 'element.dart';
 import 'segment/segment.dart';
 import 'segment/move.dart';
 import 'segment/line.dart';
 import 'segment/arc_to_point.dart';
 import 'segment/close.dart';
 
-class RectMark extends ShapeMark {
-  RectMark({
+class RectElement extends ShapeElement {
+  RectElement({
     required this.rect,
     this.borderRadius,
 
-    required ShapeStyle style,
+    ShapeStyle? style,
     double? rotation,
     Offset? rotationAxis,
   }) : super(
-    style: style,
+    style: style ?? defaultShapeStyle,
     rotation: rotation,
     rotationAxis: rotationAxis,
   );
@@ -37,7 +37,7 @@ class RectMark extends ShapeMark {
   }
 
   @override
-  RectMark lerpFrom(covariant RectMark from, double t) => RectMark(
+  RectElement lerpFrom(covariant RectElement from, double t) => RectElement(
     rect: Rect.lerp(from.rect, rect, t)!,
     borderRadius: BorderRadius.lerp(from.borderRadius, borderRadius, t),
     style: style.lerpFrom(from.style, t),

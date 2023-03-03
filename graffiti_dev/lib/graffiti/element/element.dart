@@ -10,12 +10,12 @@ import 'segment/segment.dart';
 import 'group.dart';
 import 'path.dart';
 
-abstract class MarkStyle {
-  MarkStyle lerpFrom(covariant MarkStyle from, double t);
+abstract class ElementStyle {
+  ElementStyle lerpFrom(covariant ElementStyle from, double t);
 }
 
-abstract class Mark<S extends MarkStyle> {
-  Mark({
+abstract class MarkElement<S extends ElementStyle> {
+  MarkElement({
     required this.style,
 
     this.rotation,
@@ -47,7 +47,7 @@ abstract class Mark<S extends MarkStyle> {
     }
   }
 
-  Mark<S> lerpFrom(covariant Mark<S> from, double t);
+  MarkElement<S> lerpFrom(covariant MarkElement<S> from, double t);
 }
 
 List<double>? _lerpDash(List<double>? a, List<double>? b, double t) {
@@ -61,13 +61,16 @@ List<double>? _lerpDash(List<double>? a, List<double>? b, double t) {
   return rst;
 }
 
-class ShapeStyle extends MarkStyle {
+class ShapeStyle extends ElementStyle {
   ShapeStyle({
     this.fillColor,
     this.fillGradient,
+    this.fillShader,
     this.strokeColor,
     this.strokeGradient,
+    this.strokeShader,
     this.gradientBounds,
+    this.blendMode,
     this.strokeWidth,
     this.strokeCap,
     this.strokeJoin,
@@ -76,26 +79,30 @@ class ShapeStyle extends MarkStyle {
     Color? shadowColor,
     this.dash,
     this.dashOffset,
-  }) : assert(isSingle([fillColor, fillGradient], allowNone: true)),
-       assert(isSingle([strokeColor, strokeGradient], allowNone: true)),
-       assert(strokeColor != null || strokeGradient != null || (strokeWidth == null || strokeCap == null || strokeJoin == null || strokeMiterLimit == null)),
-       assert(elevation == null || shadowColor == null),
-       assert(dash == null || dashOffset == null),
+  }) : assert(isSingle([fillColor, fillGradient, fillShader], allowNone: true)),
+       assert(isSingle([strokeColor, strokeGradient, strokeShader], allowNone: true)),
+       assert(strokeColor != null || strokeGradient != null || strokeShader != null || (strokeWidth == null || strokeCap == null || strokeJoin == null || strokeMiterLimit == null)),
+       assert(elevation != null || shadowColor == null),
+       assert(dash != null || dashOffset == null),
        shadowColor = elevation == null
         ? null
-        : fillGradient != null
-          ? getShadowColor(fillGradient)
-          : fillColor ?? (strokeGradient != null ? getShadowColor(strokeGradient) : (strokeColor ?? const Color(0xFF000000)));
+        : fillColor ?? (strokeColor ?? const Color(0xFF000000));
 
   final Color? fillColor;
 
   final painting.Gradient? fillGradient;
 
+  final Shader? fillShader; // won't lerp
+
   final Color? strokeColor;
 
   final painting.Gradient? strokeGradient;
 
+  final Shader? strokeShader; // won't lerp
+
   final Rect? gradientBounds;
+
+  final BlendMode? blendMode;
 
   final double? strokeWidth;
 
@@ -117,9 +124,12 @@ class ShapeStyle extends MarkStyle {
   ShapeStyle lerpFrom(covariant ShapeStyle from, double t) => ShapeStyle(
     fillColor: Color.lerp(from.fillColor, fillColor, t),
     fillGradient: painting.Gradient.lerp(from.fillGradient, fillGradient, t),
+    fillShader: fillShader,
     strokeColor: Color.lerp(from.strokeColor, strokeColor, t),
     strokeGradient: painting.Gradient.lerp(from.strokeGradient, strokeGradient, t),
+    strokeShader: strokeShader,
     gradientBounds: Rect.lerp(from.gradientBounds, gradientBounds, t),
+    blendMode: blendMode,
     strokeWidth: lerpDouble(from.strokeWidth, strokeWidth, t),
     strokeCap: strokeCap,
     strokeJoin: strokeJoin,
@@ -131,8 +141,10 @@ class ShapeStyle extends MarkStyle {
   );
 }
 
-abstract class ShapeMark extends Mark<ShapeStyle> {
-  ShapeMark({
+final defaultShapeStyle = ShapeStyle(strokeColor: const Color(0xff000000));
+
+abstract class ShapeElement extends MarkElement<ShapeStyle> {
+  ShapeElement({
     required ShapeStyle style,
 
     double? rotation,
@@ -144,23 +156,36 @@ abstract class ShapeMark extends Mark<ShapeStyle> {
   ) {
     drawPath(path);
 
-    if (style.fillColor != null || style.fillGradient != null) {
+    if (style.fillColor != null || style.fillGradient != null || style.fillShader != null) {
       _fillPaint = Paint();
-      if (style.fillGradient != null) {
+
+      if (style.fillShader != null) {
+        _fillPaint!.shader = style.fillShader;
+      } else if (style.fillGradient != null) {
         _fillPaint!.shader = toUiGradient(style.fillGradient!, style.gradientBounds ?? path.getBounds());
       } else {
         _fillPaint!.color = style.fillColor!;
+      }
+      if (style.blendMode != null) {
+        _fillPaint!.blendMode = style.blendMode!;
       }
     }
 
     if (style.strokeColor != null || style.strokeGradient != null) {
       _strokePaint = Paint();
-      if (style.strokeGradient != null) {
+      _strokePaint!.style = PaintingStyle.stroke;
+
+      if (style.strokeShader != null) {
+        _strokePaint!.shader = style.strokeShader;
+      } else if (style.strokeGradient != null) {
         _strokePaint!.shader = toUiGradient(style.strokeGradient!, style.gradientBounds ?? path.getBounds());
       } else {
         _strokePaint!.color = style.strokeColor!;
       }
-      _strokePaint!.style = PaintingStyle.stroke;
+
+      if (style.blendMode != null) {
+        _strokePaint!.blendMode = style.blendMode!;
+      }
       if (style.strokeWidth != null) {
         _strokePaint!.strokeWidth = style.strokeWidth!;
       }
@@ -206,13 +231,13 @@ abstract class ShapeMark extends Mark<ShapeStyle> {
   }
 
   @override
-  ShapeMark lerpFrom(covariant ShapeMark from, double t);
+  ShapeElement lerpFrom(covariant ShapeElement from, double t);
 
   List<Segment> toSegments();
 }
 
-class BoxStyle extends MarkStyle {
-  BoxStyle({
+abstract class BlockStyle extends ElementStyle {
+  BlockStyle({
     this.offset,
     this.rotation,
     this.align,
@@ -228,18 +253,11 @@ class BoxStyle extends MarkStyle {
 
   /// How the box align to the anchor point.
   final painting.Alignment? align;
-  
-  @override
-  BoxStyle lerpFrom(covariant BoxStyle from, double t) => BoxStyle(
-    offset: Offset.lerp(from.offset, offset, t),
-    rotation: lerpDouble(from.rotation, rotation, t),
-    align: painting.Alignment.lerp(from.align, align, t),
-  );
 }
 
-/// Calculates the real painting offset point for [BoxMark].
+/// Calculates the real painting offset point for [BlockElement].
 ///
-/// The [axis] is the anchor point with the [BoxMark]'s offset.
+/// The [axis] is the anchor point with the [BlockElement]'s offset.
 Offset getPaintPoint(
   Offset axis,
   double width,
@@ -251,8 +269,8 @@ Offset getPaintPoint(
       axis.dy - (height / 2) + ((height / 2) * align.y),
     );
 
-abstract class BoxMark<S extends BoxStyle> extends Mark<S> {
-  BoxMark({
+abstract class BlockElement<S extends BlockStyle> extends MarkElement<S> {
+  BlockElement({
     required this.anchor,
     required this.defaultAlign,
 
@@ -272,46 +290,47 @@ abstract class BoxMark<S extends BoxStyle> extends Mark<S> {
 }
 
 // No predicate, call only when needed.
-List<PathMark> _nomalizeShape(ShapeMark from, ShapeMark to) {
+List<PathElement> _nomalizeShape(ShapeElement from, ShapeElement to) {
   final segmentsPair = nomalizeSegments(from.toSegments(), to.toSegments());
   return [
-    PathMark(segments: segmentsPair.first, style: from.style, rotation: from.rotation, rotationAxis: from.rotationAxis),
-    PathMark(segments: segmentsPair.last, style: to.style, rotation: to.rotation, rotationAxis: to.rotationAxis),
+    PathElement(segments: segmentsPair.first, style: from.style, rotation: from.rotation, rotationAxis: from.rotationAxis),
+    PathElement(segments: segmentsPair.last, style: to.style, rotation: to.rotation, rotationAxis: to.rotationAxis),
   ];
 }
 
-List<Mark> nomalizeMark(Mark from, Mark to) {
-  if (from is GroupMark && to is GroupMark) {
-    final marksPair = nomalizeMarkList(from.marks, to.marks);
+List<MarkElement> nomalizeElement(MarkElement from, MarkElement to) {
+  if (from is GroupElement && to is GroupElement) {
+    final elementsPair = nomalizeElementList(from.elements, to.elements);
     return [
-      GroupMark(marks: marksPair.first, rotation: from.rotation, rotationAxis: from.rotationAxis),
-      GroupMark(marks: marksPair.last, rotation: to.rotation, rotationAxis: to.rotationAxis),
+      GroupElement(elements: elementsPair.first, rotation: from.rotation, rotationAxis: from.rotationAxis),
+      GroupElement(elements: elementsPair.last, rotation: to.rotation, rotationAxis: to.rotationAxis),
     ];
   }
 
-  if (from is PathMark && to is PathMark) {
-    return _nomalizeShape(from, to);
+  // use runtimeType because of PathElemnet's sub classes.
+  if (from.runtimeType == PathElement && to.runtimeType == PathElement) {
+    return _nomalizeShape(from as PathElement, to as PathElement);
   }
 
   if (from.runtimeType == to.runtimeType) {
     return [from, to];
   }
 
-  if (from is ShapeMark && to is ShapeMark) {
+  if (from is ShapeElement && to is ShapeElement) {
     return _nomalizeShape(from, to);
   }
 
   return [to, to];
 }
 
-List<List<Mark>> nomalizeMarkList(List<Mark> from, List<Mark> to) {
-  final fromRst = <Mark>[];
-  final toRst = <Mark>[];
+List<List<MarkElement>> nomalizeElementList(List<MarkElement> from, List<MarkElement> to) {
+  final fromRst = <MarkElement>[];
+  final toRst = <MarkElement>[];
   assert(from.length == to.length);
   for (var i = 0; i < to.length; i++) {
-    final markPair = nomalizeMark(from[i], to[i]);
-    fromRst.add(markPair.first);
-    toRst.add(markPair.last);
+    final elementPair = nomalizeElement(from[i], to[i]);
+    fromRst.add(elementPair.first);
+    toRst.add(elementPair.last);
   }
   return [fromRst, toRst];
 }

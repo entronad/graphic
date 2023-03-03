@@ -1,30 +1,27 @@
 import 'dart:ui';
 
-import 'package:graffiti_dev/graffiti/mark/segment/close.dart';
-
-import 'mark.dart';
+import 'element.dart';
+import 'polyline.dart';
 import 'segment/segment.dart';
 import 'segment/move.dart';
 import 'segment/line.dart';
+import 'segment/close.dart';
 
-class PolygonMark extends ShapeMark {
-  PolygonMark({
+class PolygonElement extends ShapeElement {
+  PolygonElement({
     required this.points,
-    required this.close,
 
-    required ShapeStyle style,
+    ShapeStyle? style,
     double? rotation,
     Offset? rotationAxis,
   }) : assert(points.length >= 2),
        super(
-         style: style,
+         style: style ?? defaultShapeStyle,
          rotation: rotation,
          rotationAxis: rotationAxis,
        );
 
   final List<Offset> points;
-
-  final bool close;
   
   @override
   void drawPath(Path path) {
@@ -34,32 +31,15 @@ class PolygonMark extends ShapeMark {
       path.lineTo(points[i].dx, points[i].dy);
     }
 
-    if (close) {
-      path.close();
-    }
+    path.close();
   }
 
   @override
-  PolygonMark lerpFrom(covariant PolygonMark from, double t) {
-    final rst = <Offset>[];
+  PolygonElement lerpFrom(covariant PolygonElement from, double t) {
+    final pointsRst = lerpPointList(from.points, points, t);
 
-    var fromPoints = from.points;
-    var toPoints = points;
-
-    final dl = toPoints.length - fromPoints.length;
-    if (dl > 0) {
-      fromPoints = [...fromPoints, ...List.filled(dl, fromPoints.last)];
-    } else if (dl < 0) {
-      toPoints = [...toPoints, ...List.filled(-dl, toPoints.last)];
-    }
-
-    for (var i = 0; i < points.length; i++) {
-      rst.add(Offset.lerp(from.points[i], points[i], t)!);
-    }
-
-    return PolygonMark(
-      points: rst,
-      close: close,
+    return PolygonElement(
+      points: pointsRst,
       style: style.lerpFrom(from.style, t),
       rotation: lerpDouble(from.rotation, rotation, t),
       rotationAxis: Offset.lerp(from.rotationAxis, rotationAxis, t),
@@ -76,9 +56,7 @@ class PolygonMark extends ShapeMark {
       rst.add(LineSegment(end: Offset(points[i].dx, points[i].dy)));
     }
 
-    if (close) {
-      rst.add(CloseSegment());
-    }
+    rst.add(CloseSegment());
 
     return rst;
   }

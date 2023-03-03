@@ -4,9 +4,9 @@ import 'package:flutter/painting.dart';
 
 import 'package:graphic/src/util/assert.dart';
 
-import 'mark.dart';
+import 'element.dart';
 
-class LabelStyle extends BoxStyle {
+class LabelStyle extends BlockStyle {
   /// Creates a label style.
   LabelStyle({
     this.textStyle,
@@ -146,38 +146,40 @@ class LabelStyle extends BoxStyle {
   );
 }
 
-class LabelMark extends BoxMark<LabelStyle> {
-  LabelMark({
+final _defaultLabelStyle = LabelStyle();
+
+class LabelElement extends BlockElement<LabelStyle> {
+  LabelElement({
     required this.text,
 
     required Offset anchor,
-    required Alignment defaultAlign,
-    required LabelStyle style,
+    Alignment? defaultAlign,
+    LabelStyle? style,
   }) : super(
     anchor: anchor,
-    defaultAlign: defaultAlign,
-    style: style,
+    defaultAlign: defaultAlign ?? Alignment.center,
+    style: style ?? _defaultLabelStyle,
   ) {
     _painter = TextPainter(
-      text: style.textStyle != null
-          ? TextSpan(text: text, style: style.textStyle)
-          : style.span!(text),
-      textAlign: style.textAlign ?? TextAlign.start,
-      textDirection: style.textDirection ?? TextDirection.ltr,
-      textScaleFactor: style.textScaleFactor ?? 1.0,
-      maxLines: style.maxLines,
-      ellipsis: style.ellipsis,
-      locale: style.locale,
-      strutStyle: style.strutStyle,
-      textWidthBasis: style.textWidthBasis ?? TextWidthBasis.parent,
-      textHeightBehavior: style.textHeightBehavior,
+      text: this.style.textStyle != null
+          ? TextSpan(text: text, style: this.style.textStyle)
+          : this.style.span!(text),
+      textAlign: this.style.textAlign ?? TextAlign.start,
+      textDirection: this.style.textDirection ?? TextDirection.ltr,
+      textScaleFactor: this.style.textScaleFactor ?? 1.0,
+      maxLines: this.style.maxLines,
+      ellipsis: this.style.ellipsis,
+      locale: this.style.locale,
+      strutStyle: this.style.strutStyle,
+      textWidthBasis: this.style.textWidthBasis ?? TextWidthBasis.parent,
+      textHeightBehavior: this.style.textHeightBehavior,
     );
     _painter.layout(
-      minWidth: style.minWidth ?? 0.0,
-      maxWidth: style.maxWidth ?? double.infinity,
+      minWidth: this.style.minWidth ?? 0.0,
+      maxWidth: this.style.maxWidth ?? double.infinity,
     );
 
-    paintPoint = getPaintPoint(rotationAxis!, _painter.width, _painter.height, style.align ?? defaultAlign);
+    paintPoint = getPaintPoint(rotationAxis!, _painter.width, _painter.height, this.style.align ?? this.defaultAlign);
   }
 
   final String text;
@@ -189,7 +191,7 @@ class LabelMark extends BoxMark<LabelStyle> {
     _painter.paint(canvas, paintPoint);
     
   @override
-  LabelMark lerpFrom(covariant LabelMark from, double t) => LabelMark(
+  LabelElement lerpFrom(covariant LabelElement from, double t) => LabelElement(
     text: text,
     anchor: Offset.lerp(from.anchor, anchor, t)!,
     defaultAlign: Alignment.lerp(from.defaultAlign, defaultAlign, t)!,

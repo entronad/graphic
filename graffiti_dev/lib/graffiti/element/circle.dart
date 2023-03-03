@@ -1,22 +1,22 @@
 import 'dart:ui';
 import 'dart:math';
 
-import 'mark.dart';
+import 'element.dart';
 import 'segment/segment.dart';
 import 'segment/move.dart';
 import 'segment/cubic.dart';
 import 'segment/close.dart';
 
-class CircleMark extends ShapeMark {
-  CircleMark({
+class CircleElement extends ShapeElement {
+  CircleElement({
     required this.center,
     required this.radius,
 
-    required ShapeStyle style,
+    ShapeStyle? style,
     double? rotation,
     Offset? rotationAxis,
   }) : super(
-    style: style,
+    style: style ?? defaultShapeStyle,
     rotation: rotation,
     rotationAxis: rotationAxis,
   );
@@ -30,7 +30,7 @@ class CircleMark extends ShapeMark {
     path.addOval(Rect.fromCircle(center: center, radius: radius));
 
   @override
-  CircleMark lerpFrom(covariant CircleMark from, double t) => CircleMark(
+  CircleElement lerpFrom(covariant CircleElement from, double t) => CircleElement(
     center: Offset.lerp(from.center, center, t)!,
     radius: lerpDouble(from.radius, radius, t)!,
     style: style.lerpFrom(from.style, t),

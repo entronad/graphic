@@ -3,13 +3,14 @@ import 'dart:math';
 
 import 'segment.dart';
 import 'cubic.dart';
+import 'line.dart';
 
 Offset _rotateVector(double x, double y, double angle) => Offset(
   x * cos(angle) - y * sin(angle),
   x * sin(angle) + y * cos(angle),
 );
 
-List<double> _arcToCubic(
+List<double> _arcToCubicControls(
   double x1,
   double y1,
   double rx,
@@ -51,10 +52,10 @@ List<double> _arcToCubic(
 
     final k = (largeArc == clockwise ? -1 : 1) * sqrt(((rx2 * ry2 - rx2 * y * y - ry2 * x * x) / (rx2 * y * y + ry2 * x * x)).abs());
 
-    final cx = (k * rx * y) / ry + (x1 + x2) / 2;
-    final cy = (k * -ry * x) / rx + (y1 + y2) / 2;
-    var f1 = asin(((((y1 - cy) / ry) * 1000000000).toInt()) / 1000000000);
-    var f2 = asin(((((y2 - cy) / ry) * 1000000000).toInt()) / 1000000000);
+    cx = (k * rx * y) / ry + (x1 + x2) / 2;
+    cy = (k * -ry * x) / rx + (y1 + y2) / 2;
+    f1 = asin(((((y1 - cy) / ry) * 1000000000).toInt()) / 1000000000);
+    f2 = asin(((((y2 - cy) / ry) * 1000000000).toInt()) / 1000000000);
 
     f1 = x1 < cx ? pi - f1 : f1;
     f2 = x2 < cx ? pi - f2 : f2;
@@ -84,7 +85,7 @@ List<double> _arcToCubic(
     f2 = f1 + d120 * (clockwise && f2 > f1 ? 1 : -1);
     x2 = cx + rx * cos(f2);
     y2 = cy + rx * sin(f2);
-    rst = _arcToCubic(x2, y2, rx, ry, angle, false, clockwise, preX2, preY2, [f2, preF2, cx, cy]);
+    rst = _arcToCubicControls(x2, y2, rx, ry, angle, false, clockwise, preX2, preY2, [f2, preF2, cx, cy]);
   }
   final c1 = cos(f1);
   final s1 = sin(f1);
@@ -100,13 +101,13 @@ List<double> _arcToCubic(
   m2[0] = 2 * m1[0] - m2[0];
   m2[1] = 2 * m1[1] - m2[1];
   if (recursive != null) {
-    return m2..addAll(m3)..addAll(m4)..addAll(rst);
+    return [...m2, ...m3, ...m4, ...rst];
   }
 
-  rst = m2..addAll(m3)..addAll(m4)..addAll(rst);
+  rst = [...m2, ...m3, ...m4, ...rst];
   final newRst = <double>[];
   for (var i = 0, ii = rst.length; i < ii; i += 1) {
-    newRst[i] = (i % 2 != 0) ? _rotateVector(rst[i - 1], rst[i], angle).dy : _rotateVector(rst[i], rst[i + 1], angle).dx;
+    newRst.add((i % 2 != 0) ? _rotateVector(rst[i - 1], rst[i], angle).dy : _rotateVector(rst[i], rst[i + 1], angle).dx);
   }
   return newRst;
 }
@@ -150,10 +151,21 @@ class ArcToPointSegment extends Segment {
 
   @override
   CubicSegment toCubic(Offset start) {
-    final rst = _arcToCubic(start.dx, start.dy, radius.x, radius.y, rotation, largeArc, clockwise, end.dx, end.dy, null);
+    late final List<Offset> controlsRst;
+
+    if (radius.x == 0 || radius.y == 0) {
+      controlsRst = lineToCubicControls(start, end);
+    } else {
+      final xyRst = _arcToCubicControls(start.dx, start.dy, radius.x, radius.y, rotation, largeArc, clockwise, end.dx, end.dy, null);
+      controlsRst = [
+        Offset(xyRst[0], xyRst[1]),
+        Offset(xyRst[2], xyRst[3]),
+      ];
+    }
+
     return CubicSegment(
-      control1: Offset(rst[0], rst[1]),
-      control2: Offset(rst[2], rst[3]),
+      control1: controlsRst.first,
+      control2: controlsRst.last,
       end: end,
       tag: tag,
     );

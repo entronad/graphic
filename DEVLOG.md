@@ -119,11 +119,29 @@ signal ? event ? 在vega中它们有着不同的含义
 
 为图形（annotation等）增加事件挂载，它独立于selection的数据检测体系
 
+marks和shape到底哪个叫哪个似乎应该再斟酌一下，参考 observable plot，似乎现代库都很喜欢用marks代表图表图形
+
+svg的支持应该再考虑一下
+
+参考库：vega/vega-lite, d3, echarts, plot, tableau,
+
+术语：
+
+GeomElement -> Series：表示抽象的一个系列，今后将不再做区分
+
+Shape -> Mark：表示图形渲染器，
+
+Figure -> MarkElement(ElementStyle)    基类的前缀Mark表示它的作用，使得引擎和图表更融为一体
+
+​         BlockElement(BlockStyle)                                                           ShapeElement(ShapeStyle)
+
+​     LabelElement(LabelStyle)    ImageElement(ImageStyle)           
 
 
 
+**当发生命名冲突时，第一解决方法是给基类加前缀，因为基类不会被用到，且不影响变量名、子类、相关类用简单的词根，这也是Dart最常用的方式**
 
-
+**命名原则常见性第一位，避免使用生僻字，长度第二位，除非非常常见短写尽量写全**
 
 ## 论文
 
@@ -353,9 +371,46 @@ segments 必须以mov开头
 
 complement: 1 shorter 本来就少，所以每个都要用上，必须确保shoter的tag集合是longger的子集，且没有重复，且顺序一致，
 
+现在算法的原则是优先在前面加，但确实会出现用完了的情况（表现为shorterIndex溢出）此时需在后面加
+
 画path且能正常动画的规则（否则动作可能诡异）：
 
 1. 第一个是move
 2. tag 不能重复，顺序一致，shorter是longer的子集
 3. 需保证对应的tag在对应的contour（指move分隔的gegment组）中，
 4. close的出现位置要对应好，否则那一笔直接变为to的，close尽量只负责收尾（没有实际长度）否则容易出问题。
+
+并没有每个segment应用不同style的需求
+
+visualMap用clip实现，这就要求element可以clip。scene和element的clip就用shapeelement，不过当shape element被当做clip时，clip、style无效
+
+blendmode是需要的，在某些图形重叠时
+
+canvas的分段着色，是通过同一点的不同color实现的。
+
+哪怕是做颜色分界线，也是用 paintingGradient 配合 gradientBoundary 方便
+
+shape 的 stroke和fill再提供上shader，以便图片背景，shader不能lerp
+
+再给shape和image加上个blendMode，因为确实实用，其他的就不加了，影响lerp效率，确实太多了且没用
+
+图表对图形引擎的需求有其特殊性：
+
+1. line 和 smooth line 是大数据的常见图形，可以单独拎出来避免大量segment从而提升性能
+2. 由于断点的存在，不会要polyline直接close，line和area都不是这么实现的
+
+因此分出 polygon polyline curve 三种图形，不用close开关将他们合并
+
+盒装约束一律称为bounds，是学的google/charts的
+
+late赋值真香，能避免隐晦的变量覆盖问题
+
+ArcSegment 必须手动保证它的起始点正确
+
+scene.set的函数可以不用命名参数，因为实际使用时都是传入的变量，含义已经体现在变量名上了：
+
+```
+scene.set(shapes, coordRegion);
+```
+
+由于element有做clip这样的作用，所以还是设个默认的黑线style，所有图形都能看见，image等一般也可不设，所以都加上default的。

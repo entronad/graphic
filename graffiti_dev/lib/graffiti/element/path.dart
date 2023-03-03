@@ -1,19 +1,19 @@
 import 'dart:ui';
 
-import 'mark.dart';
+import 'element.dart';
 import 'segment/segment.dart';
 import 'segment/move.dart';
 
-class PathMark extends ShapeMark {
-  PathMark({
+class PathElement extends ShapeElement {
+  PathElement({
     required this.segments,
 
-    required ShapeStyle style,
+    ShapeStyle? style,
     double? rotation,
     Offset? rotationAxis,
   }) : assert(segments.first is MoveSegment),
   super(
-    style: style,
+    style: style ?? defaultShapeStyle,
     rotation: rotation,
     rotationAxis: rotationAxis,
   );
@@ -31,7 +31,7 @@ class PathMark extends ShapeMark {
   List<Segment> toSegments() => segments;
   
   @override
-  PathMark lerpFrom(covariant PathMark from, double t) => PathMark(
+  PathElement lerpFrom(covariant PathElement from, double t) => PathElement(
     segments: lerpSegments(from.segments, segments, t),
     style: style.lerpFrom(from.style, t),
     rotation: lerpDouble(from.rotation, rotation, t),

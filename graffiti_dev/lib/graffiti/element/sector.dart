@@ -1,11 +1,11 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/painting.dart';
-import 'package:graffiti_dev/graffiti/mark/segment/arc.dart';
+import 'package:graffiti_dev/graffiti/element/segment/arc.dart';
 
 import 'package:graphic/src/util/math.dart';
 
-import 'mark.dart';
+import 'element.dart';
 import 'path.dart';
 import 'segment/segment.dart';
 import 'segment/close.dart';
@@ -110,8 +110,8 @@ List<Segment> _getSectorSegments({
   return rst;
 }
 
-class SectorMark extends PathMark {
-  SectorMark({
+class SectorElement extends PathElement {
+  SectorElement({
     required this.center,
     required this.startRadius,
     required this.endRadius,
@@ -119,11 +119,11 @@ class SectorMark extends PathMark {
     required this.endAngle,
     this.borderRadius,
 
-    required ShapeStyle style,
+    ShapeStyle? style,
     double? rotation,
     Offset? rotationAxis,
   }) : super(
-    segments: _getSectorSegments(center: center, startRadius: startRadius, endRadius: endRadius, startAngle: startAngle, endAngle: endAngle),
+    segments: _getSectorSegments(center: center, startRadius: startRadius, endRadius: endRadius, startAngle: startAngle, endAngle: endAngle, borderRadius: borderRadius),
     style: style,
     rotation: rotation,
     rotationAxis: rotationAxis,
@@ -142,7 +142,7 @@ class SectorMark extends PathMark {
   final BorderRadius? borderRadius;
 
   @override
-  SectorMark lerpFrom(covariant SectorMark from, double t) => SectorMark(
+  SectorElement lerpFrom(covariant SectorElement from, double t) => SectorElement(
     center: Offset.lerp(from.center, center, t)!,
     startRadius: lerpDouble(from.startRadius, startRadius, t)!,
     endRadius: lerpDouble(from.endRadius, endRadius, t)!,

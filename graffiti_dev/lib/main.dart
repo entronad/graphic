@@ -5,7 +5,7 @@ import 'pages/shape.dart';
 
 final routes = {
   '/': (context) => const HomePage(),
-  '/examples/Shapes': (context) => ShapePage(),
+  '/examples/Shapes': (context) => const ShapePage(),
 };
 
 class MyApp extends StatelessWidget {

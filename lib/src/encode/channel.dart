@@ -6,15 +6,15 @@ import 'package:graphic/src/scale/scale.dart';
 import 'package:flutter/foundation.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 
-import 'aes.dart';
+import 'encode.dart';
 
-/// The specification of a channel aesthetic attribute.
+/// The specification of a channel aesthetic encode.
 ///
 /// It encodes a single variable to a value. The encoding will be lerping for continous
 /// [variable] scale, and lookup table for discrete scale.
-abstract class ChannelAttr<AV> extends Attr<AV> {
-  /// Creates a channel aesthetic attribute.
-  ChannelAttr({
+abstract class ChannelEncode<AV> extends Encode<AV> {
+  /// Creates a channel aesthetic encode.
+  ChannelEncode({
     this.variable,
     this.values,
     this.stops,
@@ -28,10 +28,10 @@ abstract class ChannelAttr<AV> extends Attr<AV> {
           updaters: updaters,
         );
 
-  /// The variable this attribute encodes from.
+  /// The variable this encode encodes from.
   String? variable;
 
-  /// Target attribute values.
+  /// Target encode values.
   List<AV>? values;
 
   /// Stops corresponding to [values].
@@ -41,19 +41,19 @@ abstract class ChannelAttr<AV> extends Attr<AV> {
 
   @override
   bool operator ==(Object other) =>
-      other is ChannelAttr &&
+      other is ChannelEncode &&
       super == other &&
       variable == other.variable &&
       deepCollectionEquals(values, other.values) &&
       deepCollectionEquals(stops, other.stops);
 }
 
-/// The converter for channel attributes.
+/// The converter for channel encodes.
 ///
-/// A channel attribute encodes values by this converter. it is held by a channel
-/// attribute's encoder.
+/// A channel encode encodes values by this converter. it is held by a channel
+/// encode's encoder.
 ///
-/// Whether a channel attribute's converter is continuous or discrete is determined
+/// Whether a channel encode's converter is continuous or discrete is determined
 /// by its corrsponding variable's scale type.
 abstract class ChannelConv<SV extends num, AV> extends Converter<SV, AV> {
   @override
@@ -62,15 +62,15 @@ abstract class ChannelConv<SV extends num, AV> extends Converter<SV, AV> {
   }
 }
 
-/// The continuous channel attribute converter.
+/// The continuous channel encode converter.
 ///
-/// Channel attribute subtypes need to extend a subclass to implement the [lerp]
+/// Channel encode subtypes need to extend a subclass to implement the [lerp]
 /// for their own [AV] types.
 abstract class ContinuousChannelConv<AV> extends ChannelConv<double, AV> {
   ContinuousChannelConv(this.values, this.stops)
       : assert(values.length == stops.length);
 
-  /// Target attribute values.
+  /// Target encode values.
   final List<AV> values;
 
   /// Stops corresponding to [values].
@@ -114,30 +114,30 @@ abstract class ContinuousChannelConv<AV> extends ChannelConv<double, AV> {
   AV lerp(AV a, AV b, double t);
 }
 
-/// The discrete channel attribute converter.
+/// The discrete channel encode converter.
 ///
-/// All channel attribute subtypes share the same [DiscreteChannelConv].
+/// All channel encode subtypes share the same [DiscreteChannelConv].
 class DiscreteChannelConv<AV> extends ChannelConv<int, AV> {
   DiscreteChannelConv(this.values);
 
-  /// Target attribute values.
+  /// Target encode values.
   final List<AV> values;
 
   @override
   AV convert(int input) => values[input];
 }
 
-/// The encoder for channel attributes whose [ChannelAttr.variable] is set.
+/// The encoder for channel encodes whose [ChannelEncode.variable] is set.
 ///
 /// It holds a [ChannelConv] to encode.
 ///
-/// If a channel attribute has [Attr.value] or [Attr.encode] property instead of
-/// [ChannelAttr.variable], it will have other corresponding encoder instead of
+/// If a channel encode has [Encode.value] or [Encode.encode] property instead of
+/// [ChannelEncode.variable], it will have other corresponding encoder instead of
 /// this type.
 class ChannelEncoder<AV> extends Encoder<AV> {
   ChannelEncoder(this.variable, this.conv);
 
-  /// The variable this attribute encodes from.
+  /// The variable this encode encodes from.
   final String variable;
 
   /// The channel converter.
@@ -158,14 +158,14 @@ List<double> _defaultStops(int length) {
   return rst;
 }
 
-/// Gets the encoder of an channel attribute.
+/// Gets the encoder of an channel encode.
 Encoder<AV> getChannelEncoder<AV>(
-  ChannelAttr<AV> spec,
+  ChannelEncode<AV> spec,
   Map<String, Scale> scaleSpecs,
   ContinuousChannelConv<AV> Function(List<AV>, List<double>)? getContinuousConv,
 ) {
   if (spec.value != null) {
-    return ValueAttrEncoder<AV>(spec.value as AV);
+    return ValueEncodeEncoder<AV>(spec.value as AV);
   }
   if (spec.variable != null) {
     final variable = spec.variable!;

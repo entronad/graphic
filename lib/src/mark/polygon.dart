@@ -1,20 +1,20 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:graphic/src/aes/color.dart';
-import 'package:graphic/src/aes/elevation.dart';
-import 'package:graphic/src/aes/gradient.dart';
-import 'package:graphic/src/aes/label.dart';
+import 'package:graphic/src/encode/color.dart';
+import 'package:graphic/src/encode/elevation.dart';
+import 'package:graphic/src/encode/gradient.dart';
+import 'package:graphic/src/encode/label.dart';
 import 'package:graphic/src/algebra/varset.dart';
-import 'package:graphic/src/aes/shape.dart';
-import 'package:graphic/src/aes/size.dart';
+import 'package:graphic/src/encode/shape.dart';
+import 'package:graphic/src/encode/size.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/shape/polygon.dart';
 
 import 'partition.dart';
 import 'modifier/modifier.dart';
 
-/// The specification of a polygon element.
+/// The specification of a polygon mark.
 ///
 /// A polygon graphing can tile a surface or space, filling the space with mutually
 /// exclusive polygons.
@@ -24,20 +24,20 @@ import 'modifier/modifier.dart';
 /// ```
 /// [point] => [point]
 /// ```
-class PolygonElement extends PartitionElement<PolygonShape> {
-  /// Creates a polygon element.
-  PolygonElement({
-    ColorAttr? color,
-    ElevationAttr? elevation,
-    GradientAttr? gradient,
-    LabelAttr? label,
+class PolygonMark extends PartitionMark<PolygonShape> {
+  /// Creates a polygon mark.
+  PolygonMark({
+    ColorEncode? color,
+    ElevationEncode? elevation,
+    GradientEncode? gradient,
+    LabelEncode? label,
     Varset? position,
-    ShapeAttr<PolygonShape>? shape,
-    SizeAttr? size,
+    ShapeEncode<PolygonShape>? shape,
+    SizeEncode? size,
     List<Modifier>? modifiers,
     int? layer,
     Selected? selected,
-    StreamController<Selected?>? selectionChannel,
+    StreamController<Selected?>? selectionStream,
   }) : super(
           color: color,
           elevation: elevation,
@@ -49,11 +49,11 @@ class PolygonElement extends PartitionElement<PolygonShape> {
           modifiers: modifiers,
           layer: layer,
           selected: selected,
-          selectionChannel: selectionChannel,
+          selectionStream: selectionStream,
         );
 }
 
-/// The position completer of the polygon element.
+/// The position completer of the polygon mark.
 ///
 /// It will check and complete position points by the rule of:
 ///

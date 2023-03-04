@@ -18,17 +18,17 @@ Offset getArcPoint(Rect oval, double angle) {
   return oval.center.translate(radio * xc, radio * yc);
 }
 
-class ArcElement extends ShapeElement {
+class ArcElement extends PrimitiveElement {
   ArcElement({
     required this.oval,
     required this.startAngle,
     required this.endAngle,
 
-    ShapeStyle? style,
+    PaintStyle? style,
     double? rotation,
     Offset? rotationAxis,
   }) : super(
-    style: style ?? defaultShapeStyle,
+    style: style ?? defaultPaintStyle,
     rotation: rotation,
     rotationAxis: rotationAxis,
   );

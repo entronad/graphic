@@ -1,20 +1,20 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:graphic/src/aes/color.dart';
-import 'package:graphic/src/aes/elevation.dart';
-import 'package:graphic/src/aes/gradient.dart';
-import 'package:graphic/src/aes/label.dart';
+import 'package:graphic/src/encode/color.dart';
+import 'package:graphic/src/encode/elevation.dart';
+import 'package:graphic/src/encode/gradient.dart';
+import 'package:graphic/src/encode/label.dart';
 import 'package:graphic/src/algebra/varset.dart';
-import 'package:graphic/src/aes/shape.dart';
-import 'package:graphic/src/aes/size.dart';
+import 'package:graphic/src/encode/shape.dart';
+import 'package:graphic/src/encode/size.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/shape/point.dart';
 
 import 'function.dart';
 import 'modifier/modifier.dart';
 
-/// The specification of a point element.
+/// The specification of a point mark.
 ///
 /// A point graphing produces a set of geometric points.
 ///
@@ -23,20 +23,20 @@ import 'modifier/modifier.dart';
 /// ```
 /// [point] => [point]
 /// ```
-class PointElement extends FunctionElement<PointShape> {
-  /// Creates a point element.
-  PointElement({
-    ColorAttr? color,
-    ElevationAttr? elevation,
-    GradientAttr? gradient,
-    LabelAttr? label,
+class PointMark extends FunctionMark<PointShape> {
+  /// Creates a point mark.
+  PointMark({
+    ColorEncode? color,
+    ElevationEncode? elevation,
+    GradientEncode? gradient,
+    LabelEncode? label,
     Varset? position,
-    ShapeAttr<PointShape>? shape,
-    SizeAttr? size,
+    ShapeEncode<PointShape>? shape,
+    SizeEncode? size,
     List<Modifier>? modifiers,
     int? layer,
     Selected? selected,
-    StreamController<Selected?>? selectionChannel,
+    StreamController<Selected?>? selectionStream,
   }) : super(
           color: color,
           elevation: elevation,
@@ -48,11 +48,11 @@ class PointElement extends FunctionElement<PointShape> {
           modifiers: modifiers,
           layer: layer,
           selected: selected,
-          selectionChannel: selectionChannel,
+          selectionStream: selectionStream,
         );
 }
 
-/// The position completer of the point element.
+/// The position completer of the point mark.
 ///
 /// It will check and complete position points by the rule of:
 ///

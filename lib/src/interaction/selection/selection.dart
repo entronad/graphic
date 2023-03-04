@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/aes/aes.dart';
+import 'package:graphic/src/encode/encode.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/common/label.dart';
@@ -23,14 +23,14 @@ import 'point.dart';
 ///
 /// A selection is a data query driven by [Gesture]s. When a selection is triggered,
 /// data tuples become either selected or unselected states(At least one tuple is
-/// selected), thus may causing their aesthetic attributes change if [Attr.onSelection]
+/// selected), thus may causing their aesthetic encodes change if [Encode.onSelection]
 /// is defined.
 ///
 /// See also:
 ///
-/// - [SelectionUpdater], updates an aesthetic attribute value when the selection
+/// - [SelectionUpdater], updates an aesthetic encode value when the selection
 /// state changes.
-/// - [Attr.onSelection], where selection updates are defined.
+/// - [Encode.onSelection], where selection updates are defined.
 abstract class Selection {
   /// Creates a selection.
   Selection({
@@ -90,24 +90,24 @@ abstract class Selection {
       layer == other.layer;
 }
 
-/// Updates an easthetic attribute value when the selection state of an element
+/// Updates an easthetic encode value when the selection state of an mark
 /// item changes.
 ///
 /// You can define different selection updates for different selections and selection
-/// states (See details in [Attr.onSelection]).
+/// states (See details in [Encode.onSelection]).
 ///
-/// The [initialValue] is the original item attribute value (Set or calculated.).
+/// The [initialValue] is the original item encode value (Set or calculated.).
 ///
 /// Make sure the return value is a different instance from initialValue.
 ///
 /// See also:
 ///
-/// - [Attr.onSelection], where selection updates are defined.
+/// - [Encode.onSelection], where selection updates are defined.
 typedef SelectionUpdater<V> = V Function(V initialValue);
 
 /// The base class of selectors.
 ///
-/// A selector is defined by a [Selection] and triggerd by [GestureSignal]s. It
+/// A selector is defined by a [Selection] and triggerd by [GestureEvent]s. It
 /// selects tuples in the select operator.
 abstract class Selector {
   Selector(
@@ -296,7 +296,7 @@ class SelectorRenderOp extends Render<SelectorScene> {
   }
 }
 
-/// The result of selections of an element.
+/// The result of selections of an mark.
 ///
 /// The keys are selection names, and the values are selected datum indexes sets
 /// of each selection.
@@ -352,7 +352,7 @@ V? _update<V>(
   return value;
 }
 
-/// The operator to update aesthetic attributes by selectors.
+/// The operator to update aesthetic encodes by selectors.
 class SelectionUpdateOp extends Operator<AesGroups> {
   SelectionUpdateOp(Map<String, dynamic> params) : super(params);
 
@@ -402,21 +402,21 @@ class SelectionUpdateOp extends Operator<AesGroups> {
       return groups.map((group) => [...group]).toList();
     }
 
-    final rst = <List<Aes>>[];
+    final rst = <List<Attributes>>[];
     for (var group in groups) {
-      final groupRst = <Aes>[];
+      final groupRst = <Attributes>[];
       for (var i = 0; i < group.length; i++) {
-        final aes = group[i];
-        final isSelected = selects.contains(aes.index);
-        groupRst.add(Aes(
-          index: aes.index,
-          position: [...aes.position],
-          shape: _update(aes.shape, isSelected, shapeUpdater)!,
-          color: _update(aes.color, isSelected, colorUpdater),
-          gradient: _update(aes.gradient, isSelected, gradientUpdater),
-          elevation: _update(aes.elevation, isSelected, elevationUpdater),
-          label: _update(aes.label, isSelected, labelUpdater),
-          size: _update(aes.size, isSelected, sizeUpdater),
+        final attributes = group[i];
+        final isSelected = selects.contains(attributes.index);
+        groupRst.add(Attributes(
+          index: attributes.index,
+          position: [...attributes.position],
+          shape: _update(attributes.shape, isSelected, shapeUpdater)!,
+          color: _update(attributes.color, isSelected, colorUpdater),
+          gradient: _update(attributes.gradient, isSelected, gradientUpdater),
+          elevation: _update(attributes.elevation, isSelected, elevationUpdater),
+          label: _update(attributes.label, isSelected, labelUpdater),
+          size: _update(attributes.size, isSelected, sizeUpdater),
         ));
       }
       rst.add(groupRst);

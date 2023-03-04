@@ -6,10 +6,10 @@ import 'package:graphic/src/util/assert.dart';
 
 import 'channel.dart';
 
-/// The specification of a color attribute.
-class ColorAttr extends ChannelAttr<Color> {
-  /// Creates a color attribute.
-  ColorAttr({
+/// The specification of a color encode.
+class ColorEncode extends ChannelEncode<Color> {
+  /// Creates a color encode.
+  ColorEncode({
     Color? value,
     String? variable,
     List<Color>? values,
@@ -27,7 +27,7 @@ class ColorAttr extends ChannelAttr<Color> {
         );
 }
 
-/// The continuous color attribute converter.
+/// The continuous color encode converter.
 class ContinuousColorConv extends ContinuousChannelConv<Color> {
   ContinuousColorConv(List<Color> values, List<double> stops)
       : super(values, stops);

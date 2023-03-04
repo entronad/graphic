@@ -63,14 +63,14 @@ class DebugPage extends StatelessWidget {
                 accessor: (Map map) => map['sold'] as num,
               ),
             },
-            elements: [
-              IntervalElement(
-                label: LabelAttr(
+            marks: [
+              IntervalMark(
+                label: LabelEncode(
                     encoder: (tuple) => Label(tuple['sold'].toString())),
-                elevation: ElevationAttr(value: 0, updaters: {
+                elevation: ElevationEncode(value: 0, updaters: {
                   'tap': {true: (_) => 5}
                 }),
-                color: ColorAttr(value: Defaults.primaryColor, updaters: {
+                color: ColorEncode(value: Defaults.primaryColor, updaters: {
                   'tap': {false: (color) => color.withAlpha(100)}
                 }),
                 selected: {

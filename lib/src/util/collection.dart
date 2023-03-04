@@ -5,7 +5,7 @@ E? singleIntersection<E>(Iterable<E>? a, Iterable<E>? b) {
     return null;
   }
 
-  final rst = a.where((element) => b.contains(element));
+  final rst = a.where((mark) => b.contains(mark));
   if (rst.isEmpty) {
     return null;
   } else {

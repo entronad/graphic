@@ -4,7 +4,7 @@ import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/geom/interval.dart';
+import 'package:graphic/src/mark/interval.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/guide/axis/radial.dart';
 import 'package:graphic/src/util/math.dart';
@@ -13,11 +13,11 @@ import 'package:graphic/src/util/path.dart';
 import 'util/render_basic_item.dart';
 import 'function.dart';
 
-/// The shape for the interval element.
+/// The shape for the interval mark.
 ///
 /// See also:
 ///
-/// - [IntervalElement], which this shape is for.
+/// - [IntervalMark], which this shape is for.
 abstract class IntervalShape extends FunctionShape {
   @override
   double get defaultSize => 15;
@@ -57,7 +57,7 @@ class RectShape extends IntervalShape {
 
   @override
   List<Figure> renderGroup(
-    List<Aes> group,
+    List<Attributes> group,
     CoordConv coord,
     Offset origin,
   ) {
@@ -68,7 +68,7 @@ class RectShape extends IntervalShape {
         // Histogram shape dosen't allow NaN value.
 
         // First item.
-        Aes item = group.first;
+        Attributes item = group.first;
         List<Offset> position = item.position;
         double bandStart = 0;
         double bandEnd = (group[1].position.first.dx + position.first.dx) / 2;
@@ -235,7 +235,7 @@ class RectShape extends IntervalShape {
           // Rose.
 
           // First item.
-          Aes item = group.first;
+          Attributes item = group.first;
           List<Offset> position = group.first.position;
           double bandStart = 0;
           double bandEnd = (group[1].position.first.dx + position.first.dx) / 2;
@@ -301,7 +301,7 @@ class RectShape extends IntervalShape {
   ///
   /// It relaced [renderItem].
   List<Figure> _renderRect(
-    Aes item,
+    Attributes item,
     Rect rect,
     Offset labelAnchor,
     CoordConv coord,
@@ -348,7 +348,7 @@ class RectShape extends IntervalShape {
   ///
   /// It relaced [renderItem].
   List<Figure> _renderSector(
-    Aes item,
+    Attributes item,
     double r,
     double r0,
     double startAngle,
@@ -422,7 +422,7 @@ class RectShape extends IntervalShape {
 
   @override
   List<Figure> renderItem(
-    Aes item,
+    Attributes item,
     CoordConv coord,
     Offset origin,
   ) =>
@@ -431,7 +431,7 @@ class RectShape extends IntervalShape {
 
 /// A funnel or pyramid shape.
 ///
-/// Note that the shape will not sort the element items. Sort the input data if
+/// Note that the shape will not sort the mark items. Sort the input data if
 /// you want the intervals monotone.
 class FunnelShape extends IntervalShape {
   /// Creates a funnel shape.
@@ -457,7 +457,7 @@ class FunnelShape extends IntervalShape {
 
   @override
   List<Figure> renderGroup(
-    List<Aes> group,
+    List<Attributes> group,
     CoordConv coord,
     Offset origin,
   ) {
@@ -466,7 +466,7 @@ class FunnelShape extends IntervalShape {
     final rst = <Figure>[];
 
     // First item.
-    Aes item = group.first;
+    Attributes item = group.first;
     List<Offset> position = item.position;
     double bandStart = 0;
     double bandEnd = (group[1].position.first.dx + position.first.dx) / 2;
@@ -533,7 +533,7 @@ class FunnelShape extends IntervalShape {
   ///
   /// It relaced [renderItem].
   List<Figure> _renderSlope(
-    Aes item,
+    Attributes item,
     List<Offset> corners,
     Offset labelAnchor,
     CoordConv coord,
@@ -572,7 +572,7 @@ class FunnelShape extends IntervalShape {
 
   @override
   List<Figure> renderItem(
-    Aes item,
+    Attributes item,
     CoordConv coord,
     Offset origin,
   ) =>

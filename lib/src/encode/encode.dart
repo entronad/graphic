@@ -1,5 +1,5 @@
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/aes/position.dart';
+import 'package:graphic/src/encode/position.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
@@ -7,30 +7,30 @@ import 'package:graphic/src/shape/shape.dart';
 import 'package:graphic/src/util/assert.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 
-// Attr
+// Encode
 
-/// The specification of an aesthetic attribute.
+/// The specification of an aesthetic encode.
 ///
-/// Aesthetic attributes determin how an element item is perceived. An attribute
+/// Aesthetic encodes determin how an mark item is perceived. An encode
 /// value usually represent an variable value of a tuple. the encoding rules form
-/// data to attribute value can be defined in various ways (See details in the properties).
+/// data to encode value can be defined in various ways (See details in the properties).
 ///
-/// The generic [AV] is the type of attribute value.
-abstract class Attr<AV> {
-  /// Creates an aesthetic attribute.
-  Attr({
+/// The generic [AV] is the type of encode value.
+abstract class Encode<AV> {
+  /// Creates an aesthetic encode.
+  Encode({
     this.value,
     this.encoder,
     this.updaters,
   });
 
-  /// Indicates a attribute value for all tuples directly.
+  /// Indicates a encode value for all tuples directly.
   AV? value;
 
-  /// Indicates how to get attribute form a tuple directly.
+  /// Indicates how to get encode form a tuple directly.
   AV Function(Tuple)? encoder;
 
-  /// Attribute updaters when a selection occurs.
+  /// Encodeibute updaters when a selection occurs.
   ///
   /// The keys of outer map are names of selections defined, and Corresponding definitions
   /// will only react to their on selections.
@@ -44,24 +44,24 @@ abstract class Attr<AV> {
   Map<String, Map<bool, SelectionUpdater<AV>>>? updaters;
 
   @override
-  bool operator ==(Object other) => other is Attr<AV> && value == other.value;
+  bool operator ==(Object other) => other is Encode<AV> && value == other.value;
 }
 
-/// The base class of attribute encoders.
+/// The base class of encode encoders.
 ///
-/// It gets attribute values in different ways according to [Attr] types and their
+/// It gets encode values in different ways according to [Encode] types and their
 /// indicating properties.
 abstract class Encoder<AV> {
-  /// Gets an attribute value.
+  /// Gets an encode value.
   ///
   /// Usually it needs a [scaled] input, while [tuple] is for [CustomEncoder]s and
-  /// [ValueAttrEncoder]s don't need any input.
+  /// [ValueEncodeEncoder]s don't need any input.
   AV encode(Scaled scaled, Tuple tuple);
 }
 
-/// The encoder for which [Attr.value] is set.
-class ValueAttrEncoder<AV> extends Encoder<AV> {
-  ValueAttrEncoder(this.value);
+/// The encoder for which [Encode.value] is set.
+class ValueEncodeEncoder<AV> extends Encoder<AV> {
+  ValueEncodeEncoder(this.value);
 
   /// The indicated value for all cases.
   final AV value;
@@ -70,7 +70,7 @@ class ValueAttrEncoder<AV> extends Encoder<AV> {
   AV encode(Scaled scaled, Tuple tuple) => value;
 }
 
-/// The encoder for which [Attr.encode] is set.
+/// The encoder for which [Encode.encode] is set.
 class CustomEncoder<AV> extends Encoder<AV> {
   CustomEncoder(this.customEncoder);
 
@@ -81,12 +81,12 @@ class CustomEncoder<AV> extends Encoder<AV> {
   AV encode(Scaled scaled, Tuple tuple) => customEncoder(tuple);
 }
 
-/// The operator to encode all attributes and create [Aes]s.
-class AesOp extends Operator<List<Aes>> {
+/// The operator to encode all encodes and create [Aes]s.
+class AesOp extends Operator<List<Attributes>> {
   AesOp(Map<String, dynamic> params) : super(params);
 
   @override
-  List<Aes> evaluate() {
+  List<Attributes> evaluate() {
     final scaleds = params['scaleds'] as List<Scaled>;
     final tuples = params['tuples'] as List<Tuple>;
     final positionEncoder = params['positionEncoder'] as PositionEncoder;
@@ -99,11 +99,11 @@ class AesOp extends Operator<List<Aes>> {
 
     assert(isSingle([colorEncoder, gradientEncoder]));
 
-    final rst = <Aes>[];
+    final rst = <Attributes>[];
     for (var i = 0; i < scaleds.length; i++) {
       final scaled = scaleds[i];
       final tuple = tuples[i];
-      rst.add(Aes(
+      rst.add(Attributes(
         index: i,
         position: positionEncoder.encode(scaled, tuple),
         shape: shapeEncoder.encode(scaled, tuple),

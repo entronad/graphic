@@ -5,12 +5,12 @@ import 'package:graphic/src/util/assert.dart';
 
 import 'channel.dart';
 
-/// The specification of a shape attribute.
+/// The specification of a shape encode.
 ///
-/// Type [S] of the values must belong to the element's geometry type.
-class ShapeAttr<S extends Shape> extends ChannelAttr<S> {
-  /// Creates a shape attribute.
-  ShapeAttr({
+/// Type [S] of the values must belong to the mark's geometry type.
+class ShapeEncode<S extends Shape> extends ChannelEncode<S> {
+  /// Creates a shape encode.
+  ShapeEncode({
     S? value,
     String? variable,
     List<S>? values, // Only discrete.

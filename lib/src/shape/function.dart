@@ -1,10 +1,10 @@
-import 'package:graphic/src/geom/function.dart';
+import 'package:graphic/src/mark/function.dart';
 
 import 'shape.dart';
 
-/// The shape for the function element.
+/// The shape for the function mark.
 ///
 /// See also:
 ///
-/// - [FunctionElement], which this shape is for.
+/// - [FunctionMark], which this shape is for.
 abstract class FunctionShape extends Shape {}

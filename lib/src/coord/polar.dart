@@ -6,7 +6,7 @@ import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/shape/util/gradient.dart';
 import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/interaction/signal.dart';
+import 'package:graphic/src/interaction/event.dart';
 import 'package:graphic/src/util/transform.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:graphic/src/util/math.dart';
@@ -82,8 +82,8 @@ class PolarCoord extends Coord {
   /// If null, a default `[0, 1]` is set, meaning the same with plane angle.
   List<double>? angleRange;
 
-  /// Signal updater of [angleRange].
-  SignalUpdater<List<double>>? angleRangeUpdater;
+  /// Event updater of [angleRange].
+  EventUpdater<List<double>>? angleRangeUpdater;
 
   /// Range ratio of coordinate radius to plane radius.
   ///
@@ -94,8 +94,8 @@ class PolarCoord extends Coord {
   /// If null, a default `[0, 1]` is set, meaning the same with plane radius.
   List<double>? radiusRange;
 
-  /// Signal updater of [radiusRange].
-  SignalUpdater<List<double>>? radiusRangeUpdater;
+  /// Event updater of [radiusRange].
+  EventUpdater<List<double>>? radiusRangeUpdater;
 
   @override
   bool operator ==(Object other) =>

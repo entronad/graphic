@@ -7,16 +7,16 @@ import 'segment/move.dart';
 import 'segment/cubic.dart';
 import 'segment/close.dart';
 
-class CircleElement extends ShapeElement {
+class CircleElement extends PrimitiveElement {
   CircleElement({
     required this.center,
     required this.radius,
 
-    ShapeStyle? style,
+    PaintStyle? style,
     double? rotation,
     Offset? rotationAxis,
   }) : super(
-    style: style ?? defaultShapeStyle,
+    style: style ?? defaultPaintStyle,
     rotation: rotation,
     rotationAxis: rotationAxis,
   );

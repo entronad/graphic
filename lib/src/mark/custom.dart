@@ -1,39 +1,39 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:graphic/src/aes/color.dart';
-import 'package:graphic/src/aes/elevation.dart';
-import 'package:graphic/src/aes/gradient.dart';
-import 'package:graphic/src/aes/label.dart';
+import 'package:graphic/src/encode/color.dart';
+import 'package:graphic/src/encode/elevation.dart';
+import 'package:graphic/src/encode/gradient.dart';
+import 'package:graphic/src/encode/label.dart';
 import 'package:graphic/src/algebra/varset.dart';
-import 'package:graphic/src/aes/shape.dart';
-import 'package:graphic/src/aes/size.dart';
+import 'package:graphic/src/encode/shape.dart';
+import 'package:graphic/src/encode/size.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/shape/shape.dart';
 
-import 'element.dart';
+import 'mark.dart';
 import 'modifier/modifier.dart';
 
-/// The specification of a custom element.
+/// The specification of a custom mark.
 ///
-/// A custom element has no special graphing rule. It accepts any built-in or custom
+/// A custom mark has no special graphing rule. It accepts any built-in or custom
 /// [Shape]s.
 ///
 /// It will not check or complete the position points.
-class CustomElement extends GeomElement<Shape> {
-  /// Creates a custom element.
-  CustomElement({
-    ColorAttr? color,
-    ElevationAttr? elevation,
-    GradientAttr? gradient,
-    LabelAttr? label,
+class CustomMark extends Mark<Shape> {
+  /// Creates a custom mark.
+  CustomMark({
+    ColorEncode? color,
+    ElevationEncode? elevation,
+    GradientEncode? gradient,
+    LabelEncode? label,
     Varset? position,
-    ShapeAttr<Shape>? shape,
-    SizeAttr? size,
+    ShapeEncode<Shape>? shape,
+    SizeEncode? size,
     List<Modifier>? modifiers,
     int? layer,
     Selected? selected,
-    StreamController<Selected?>? selectionChannel,
+    StreamController<Selected?>? selectionStream,
   }) : super(
           color: color,
           elevation: elevation,
@@ -45,11 +45,11 @@ class CustomElement extends GeomElement<Shape> {
           modifiers: modifiers,
           layer: layer,
           selected: selected,
-          selectionChannel: selectionChannel,
+          selectionStream: selectionStream,
         );
 }
 
-/// The position completer of the custom element.
+/// The position completer of the custom mark.
 ///
 /// It will return the [position] directly.
 List<Offset> customCompleter(List<Offset> position, Offset origin) => position;

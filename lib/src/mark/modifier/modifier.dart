@@ -10,16 +10,16 @@ import 'package:graphic/src/shape/shape.dart';
 
 /// The specification of a collision modifier.
 ///
-/// A collision modifier defines a method to modify the position of element items,
+/// A collision modifier defines a method to modify the position of mark items,
 /// avoiding visual overlapping.
 ///
 /// Modifiers could be customized by extending this class. Although all aesthetic
-/// attributes can be modified in a modifier, only the position is recommended.
+/// encodes can be modified in a modifier, only the position is recommended.
 /// Rendering customization should be in the [Shape].
 abstract class Modifier extends CustomizableSpec {
-  /// Modifies the position of element items.
+  /// Modifies the position of mark items.
   ///
-  /// The aesthetic attributes are in the [groups].
+  /// The aesthetic encodes are in the [groups].
   void modify(
     AesGroups groups,
     Map<String, ScaleConv> scales,

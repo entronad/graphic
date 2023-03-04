@@ -1,11 +1,11 @@
 import 'dart:ui';
 
-import 'package:graphic/src/aes/aes.dart';
+import 'package:graphic/src/encode/encode.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/algebra/varset.dart';
-import 'package:graphic/src/geom/element.dart';
+import 'package:graphic/src/mark/mark.dart';
 import 'package:graphic/src/scale/scale.dart';
 
 /// For each tuple:
@@ -13,7 +13,7 @@ import 'package:graphic/src/scale/scale.dart';
 /// Secondly convert values of points from scaled value to normal value.
 /// Thirdly complete abstract position points by geom.
 ///
-/// The position attribute encoder.
+/// The position encode encoder.
 ///
 /// The process of encoding for each tuple is:
 /// 1. Composes points by the algebracal form.
@@ -35,7 +35,7 @@ class PositionEncoder extends Encoder<List<Offset>> {
 
   /// The position points completer.
   ///
-  /// It is determined by the geometry element type.
+  /// It is determined by the geometry mark type.
   final PositionCompleter completer;
 
   /// The origin point's position.

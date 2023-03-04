@@ -5,13 +5,13 @@ import 'package:graphic/src/util/assert.dart';
 
 import 'channel.dart';
 
-/// The specification of a gradient attribute.
+/// The specification of a gradient encode.
 ///
-/// The definition of the [Gradient] value is relative to measurement of the element
+/// The definition of the [Gradient] value is relative to measurement of the mark
 /// item.
-class GradientAttr extends ChannelAttr<Gradient> {
-  /// Creates a gradient attribute.
-  GradientAttr({
+class GradientEncode extends ChannelEncode<Gradient> {
+  /// Creates a gradient encode.
+  GradientEncode({
     Gradient? value,
     String? variable,
     List<Gradient>? values,
@@ -29,7 +29,7 @@ class GradientAttr extends ChannelAttr<Gradient> {
         );
 }
 
-/// The continuous gradient attribute converter.
+/// The continuous gradient encode converter.
 class ContinuousGradientConv extends ContinuousChannelConv<Gradient> {
   ContinuousGradientConv(List<Gradient> values, List<double> stops)
       : super(values, stops);

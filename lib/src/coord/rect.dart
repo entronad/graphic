@@ -4,7 +4,7 @@ import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/shape/util/gradient.dart';
 import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/interaction/signal.dart';
+import 'package:graphic/src/interaction/event.dart';
 
 import 'coord.dart';
 
@@ -46,8 +46,8 @@ class RectCoord extends Coord {
   /// If null, a default `[0, 1]` is set, meaning the same with coordinate region width.
   List<double>? horizontalRange;
 
-  /// Signal updater of [horizontalRange].
-  SignalUpdater<List<double>>? horizontalRangeUpdater;
+  /// Event updater of [horizontalRange].
+  EventUpdater<List<double>>? horizontalRangeUpdater;
 
   /// Range ratio of coordinate height to coordinate region height.
   ///
@@ -58,8 +58,8 @@ class RectCoord extends Coord {
   /// If null, a default `[0, 1]` is set, meaning the same with coordinate region height.
   List<double>? verticalRange;
 
-  /// Signal updater of [verticalRange].
-  SignalUpdater<List<double>>? verticalRangeUpdater;
+  /// Event updater of [verticalRange].
+  EventUpdater<List<double>>? verticalRangeUpdater;
 
   @override
   bool operator ==(Object other) =>

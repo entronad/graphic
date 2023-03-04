@@ -4,13 +4,13 @@ import 'dart:ui';
 import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/aes/color.dart';
-import 'package:graphic/src/aes/elevation.dart';
-import 'package:graphic/src/aes/gradient.dart';
-import 'package:graphic/src/aes/label.dart';
+import 'package:graphic/src/encode/color.dart';
+import 'package:graphic/src/encode/elevation.dart';
+import 'package:graphic/src/encode/gradient.dart';
+import 'package:graphic/src/encode/label.dart';
 import 'package:graphic/src/algebra/varset.dart';
-import 'package:graphic/src/aes/shape.dart';
-import 'package:graphic/src/aes/size.dart';
+import 'package:graphic/src/encode/shape.dart';
+import 'package:graphic/src/encode/size.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/intrinsic_layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
@@ -37,16 +37,16 @@ import 'line.dart';
 import 'point.dart';
 import 'polygon.dart';
 
-/// The specification of a geometry element.
+/// The specification of a geometry mark.
 ///
-/// A geometry element applies a certain graphing rule to get a graph from the
+/// A geometry mark applies a certain graphing rule to get a graph from the
 /// tuples.
 ///
-/// A *geometry element* corresponds to a set of all tuples, while an *element
+/// A *geometry mark* corresponds to a set of all tuples, while an *mark
 /// item* corresponds to a single tuple.
-abstract class GeomElement<S extends Shape> {
-  /// Creates a geometry element.
-  GeomElement({
+abstract class Mark<S extends Shape> {
+  /// Creates a geometry mark.
+  Mark({
     this.color,
     this.elevation,
     this.gradient,
@@ -57,33 +57,33 @@ abstract class GeomElement<S extends Shape> {
     this.modifiers,
     this.layer,
     this.selected,
-    this.selectionChannel,
+    this.selectionStream,
   })  : assert(isSingle([color, gradient], allowNone: true)),
         assert(selected == null || selected.keys.length == 1);
 
-  /// The color attribute of this element.
+  /// The color encode of this mark.
   ///
   /// Only one in [color] and [gradient] can be set.
   ///
-  /// If null and [gradient] is also null, a default `ColorAttr(value: Defaults.primaryColor)`
+  /// If null and [gradient] is also null, a default `ColorEncode(value: Defaults.primaryColor)`
   /// is set.
-  ColorAttr? color;
+  ColorEncode? color;
 
-  /// The shadow elevation attribute of this element.
-  ElevationAttr? elevation;
+  /// The shadow elevation encode of this mark.
+  ElevationEncode? elevation;
 
-  /// The gradient attribute of this element.
+  /// The gradient encode of this mark.
   ///
   /// Only one in [color] and [gradient] can be set.
-  GradientAttr? gradient;
+  GradientEncode? gradient;
 
-  /// The label attribute of this element.
+  /// The label encode of this mark.
   ///
-  /// For an element, labels are always painted above item graphics, no matter how
+  /// For an mark, labels are always painted above item graphics, no matter how
   /// their [Figure]s are rendered in [Shape]s.
-  LabelAttr? label;
+  LabelEncode? label;
 
-  /// Algebra expression of the element position.
+  /// Algebra expression of the mark position.
   ///
   /// See details about graphics algebra in [Varset].
   ///
@@ -94,13 +94,13 @@ abstract class GeomElement<S extends Shape> {
   /// If null, a crossing of first two variables is set by default.
   Varset? position;
 
-  /// The shape attribute of this element.
+  /// The shape encode of this mark.
   ///
   /// If null, a default shape is set according to the geometry type. See details
   /// in subclasses.
-  ShapeAttr<S>? shape;
+  ShapeEncode<S>? shape;
 
-  /// The size attribute of this element.
+  /// The size encode of this mark.
   ///
   /// If null, a default size is set according to the shape definition (See details
   /// in [Shape.defaultSize]).
@@ -108,37 +108,37 @@ abstract class GeomElement<S extends Shape> {
   /// See also:
   ///
   /// - [Shape.defaultSize], the default size setting of each shape.
-  SizeAttr? size;
+  SizeEncode? size;
 
-  /// The collision modifiers applied to this element.
+  /// The collision modifiers applied to this mark.
   ///
   /// They are applied in order of the list index.
   ///
   /// If set, a nesting in the algebra for grouping is requied. See details in [Varset].
   List<Modifier>? modifiers;
 
-  /// The layer of this element.
+  /// The layer of this mark.
   ///
   /// If null, a default 0 is set.
   int? layer;
 
   /// The selection name and selected tuple indexes triggered initially.
   ///
-  /// This initial selection will not trigger [selectionChannel].
+  /// This initial selection will not trigger [selectionStream].
   Selected? selected;
 
-  /// The interaction channel of selections.
+  /// The interaction stream of selections.
   ///
   /// You can either get selection results by listening to it's stream, or mannually
-  /// emit selections into this element by add to it's sink.
+  /// emit selections into this mark by add to it's sink.
   ///
   /// You can also share it with other charts for sharing selections, in witch case
   /// make sure it is broadcast.
-  StreamController<Selected?>? selectionChannel;
+  StreamController<Selected?>? selectionStream;
 
   @override
   bool operator ==(Object other) =>
-      other is GeomElement &&
+      other is Mark &&
       color == other.color &&
       elevation == other.elevation &&
       gradient == other.gradient &&
@@ -149,7 +149,7 @@ abstract class GeomElement<S extends Shape> {
       deepCollectionEquals(modifiers, other.modifiers) &&
       layer == other.layer &&
       selected == other.selected &&
-      selectionChannel == other.selectionChannel;
+      selectionStream == other.selectionStream;
 }
 
 /// The operator to group aeses.
@@ -169,7 +169,7 @@ class GroupOp extends Operator<AesGroups> {
 
   @override
   AesGroups evaluate() {
-    final aeses = params['aeses'] as List<Aes>;
+    final aeses = params['aeses'] as List<Attributes>;
     final tuples = params['tuples'] as List<Tuple>;
     final nesters = params['nesters'] as List<AlgForm>;
     final scales = params['scales'] as Map<String, ScaleConv>;
@@ -184,16 +184,16 @@ class GroupOp extends Operator<AesGroups> {
     var rst = [aeses];
 
     for (var nester in nesterVariables) {
-      final tmpRst = <List<Aes>>[];
+      final tmpRst = <List<Attributes>>[];
       for (var group in rst) {
         final nesterValues = (scales[nester] as DiscreteScaleConv).values;
-        final tmpGroup = <dynamic, List<Aes>>{};
+        final tmpGroup = <dynamic, List<Attributes>>{};
         for (var nesterValue in nesterValues) {
-          tmpGroup[nesterValue] = <Aes>[];
+          tmpGroup[nesterValue] = <Attributes>[];
         }
-        for (var aes in group) {
-          final tuple = tuples[aes.index];
-          tmpGroup[tuple[nester]]!.add(aes);
+        for (var attributes in group) {
+          final tuple = tuples[attributes.index];
+          tmpGroup[tuple[nester]]!.add(attributes);
         }
         tmpRst.addAll(tmpGroup.values.where((g) => g.isNotEmpty));
       }
@@ -204,21 +204,21 @@ class GroupOp extends Operator<AesGroups> {
   }
 }
 
-/// The geometry element scene.
+/// The geometry mark scene.
 ///
-/// All items of a geometry element are in a same scene, and their order is immutable.
-class ElementScene extends Scene {
-  ElementScene(int layer) : super(layer);
+/// All items of a geometry mark are in a same scene, and their order is immutable.
+class MarkScene extends Scene {
+  MarkScene(int layer) : super(layer);
 
   @override
-  int get intrinsicLayer => IntrinsicLayers.element;
+  int get intrinsicLayer => IntrinsicLayers.mark;
 }
 
-/// The geometry element render operator.
-class ElementRenderOp extends Render<ElementScene> {
-  ElementRenderOp(
+/// The geometry mark render operator.
+class MarkRenderOp extends Render<MarkScene> {
+  MarkRenderOp(
     Map<String, dynamic> params,
-    ElementScene scene,
+    MarkScene scene,
     View view,
   ) : super(params, scene, view);
 
@@ -259,32 +259,32 @@ class ElementRenderOp extends Render<ElementScene> {
 typedef PositionCompleter = List<Offset> Function(
     List<Offset> position, Offset origin);
 
-/// Gets the position completer of the geometry element type.
-PositionCompleter getPositionCompleter(GeomElement spec) => spec is AreaElement
+/// Gets the position completer of the geometry mark type.
+PositionCompleter getPositionCompleter(Mark spec) => spec is AreaMark
     ? areaCompleter
-    : spec is CustomElement
+    : spec is CustomMark
         ? customCompleter
-        : spec is IntervalElement
+        : spec is IntervalMark
             ? intervalCompleter
-            : spec is LineElement
+            : spec is LineMark
                 ? lineCompleter
-                : spec is PointElement
+                : spec is PointMark
                     ? pointCompleter
-                    : spec is PolygonElement
+                    : spec is PolygonMark
                         ? polygonCompleter
                         : throw UnimplementedError('No such geom $spec.');
 
-/// Gets the default shape of the geometry element type.
-Shape getDefaultShape(GeomElement spec) => spec is AreaElement
+/// Gets the default shape of the geometry mark type.
+Shape getDefaultShape(Mark spec) => spec is AreaMark
     ? BasicAreaShape()
-    : spec is CustomElement
+    : spec is CustomMark
         ? throw ArgumentError('Custom geom must designate shape.')
-        : spec is IntervalElement
+        : spec is IntervalMark
             ? RectShape()
-            : spec is LineElement
+            : spec is LineMark
                 ? BasicLineShape()
-                : spec is PointElement
+                : spec is PointMark
                     ? CircleShape()
-                    : spec is PolygonElement
+                    : spec is PolygonMark
                         ? HeatmapShape()
                         : throw UnimplementedError('No such geom $spec.');

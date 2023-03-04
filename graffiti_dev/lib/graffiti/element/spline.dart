@@ -5,16 +5,16 @@ import 'segment/segment.dart';
 import 'segment/move.dart';
 import 'segment/cubic.dart';
 
-class SplineElement extends ShapeElement {
+class SplineElement extends PrimitiveElement {
   SplineElement({
     required this.start,
     required this.cubics,
 
-    ShapeStyle? style,
+    PaintStyle? style,
     double? rotation,
     Offset? rotationAxis,
   }) : super(
-         style: style ?? defaultShapeStyle,
+         style: style ?? defaultPaintStyle,
          rotation: rotation,
          rotationAxis: rotationAxis,
        );

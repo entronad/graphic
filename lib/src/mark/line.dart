@@ -1,20 +1,20 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:graphic/src/aes/color.dart';
-import 'package:graphic/src/aes/elevation.dart';
-import 'package:graphic/src/aes/gradient.dart';
-import 'package:graphic/src/aes/label.dart';
+import 'package:graphic/src/encode/color.dart';
+import 'package:graphic/src/encode/elevation.dart';
+import 'package:graphic/src/encode/gradient.dart';
+import 'package:graphic/src/encode/label.dart';
 import 'package:graphic/src/algebra/varset.dart';
-import 'package:graphic/src/aes/shape.dart';
-import 'package:graphic/src/aes/size.dart';
+import 'package:graphic/src/encode/shape.dart';
+import 'package:graphic/src/encode/size.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/shape/line.dart';
 
 import 'function.dart';
 import 'modifier/modifier.dart';
 
-/// The specification of a line element.
+/// The specification of a line mark.
 ///
 /// A line graphing visits all points and connets all points with a line. Note this
 /// definition is more like the *path* in the Grammer of Graphics.
@@ -24,20 +24,20 @@ import 'modifier/modifier.dart';
 /// ```
 /// [point] => [point]
 /// ```
-class LineElement extends FunctionElement<LineShape> {
-  /// Creates a line element.
-  LineElement({
-    ColorAttr? color,
-    ElevationAttr? elevation,
-    GradientAttr? gradient,
-    LabelAttr? label,
+class LineMark extends FunctionMark<LineShape> {
+  /// Creates a line mark.
+  LineMark({
+    ColorEncode? color,
+    ElevationEncode? elevation,
+    GradientEncode? gradient,
+    LabelEncode? label,
     Varset? position,
-    ShapeAttr<LineShape>? shape,
-    SizeAttr? size,
+    ShapeEncode<LineShape>? shape,
+    SizeEncode? size,
     List<Modifier>? modifiers,
     int? layer,
     Selected? selected,
-    StreamController<Selected?>? selectionChannel,
+    StreamController<Selected?>? selectionStream,
   }) : super(
           color: color,
           elevation: elevation,
@@ -49,11 +49,11 @@ class LineElement extends FunctionElement<LineShape> {
           modifiers: modifiers,
           layer: layer,
           selected: selected,
-          selectionChannel: selectionChannel,
+          selectionStream: selectionStream,
         );
 }
 
-/// The position completer of the line element.
+/// The position completer of the line mark.
 ///
 /// It will check and complete position points by the rule of:
 ///

@@ -6,18 +6,18 @@ import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/geom/polygon.dart';
+import 'package:graphic/src/mark/polygon.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/util/path.dart';
 
 import 'util/render_basic_item.dart';
 import 'partition.dart';
 
-/// The shape for the polygon element.
+/// The shape for the polygon mark.
 ///
 /// See also:
 ///
-/// - [PolygonElement], which this shape is for.
+/// - [PolygonMark], which this shape is for.
 abstract class PolygonShape extends PartitionShape {}
 
 /// A heatmap shape.
@@ -47,7 +47,7 @@ class HeatmapShape extends PolygonShape {
 
   @override
   List<Figure> renderGroup(
-    List<Aes> group,
+    List<Attributes> group,
     CoordConv coord,
     Offset origin,
   ) {

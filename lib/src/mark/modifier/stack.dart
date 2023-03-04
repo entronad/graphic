@@ -9,7 +9,7 @@ import 'modifier.dart';
 
 /// The specification of a stack modifier.
 ///
-/// The stack method cummulates elements in order of the values on a splitter.
+/// The stack method cummulates marks in order of the values on a splitter.
 /// It makes every point in a position adds the top point y of corresponding position
 /// of the previous group.
 ///

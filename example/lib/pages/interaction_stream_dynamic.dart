@@ -6,16 +6,16 @@ import 'package:graphic/graphic.dart';
 
 import '../data.dart';
 
-class InteractionChannelDynamicPage extends StatefulWidget {
-  const InteractionChannelDynamicPage({Key? key}) : super(key: key);
+class InteractionStreamDynamicPage extends StatefulWidget {
+  const InteractionStreamDynamicPage({Key? key}) : super(key: key);
 
   @override
-  _InteractionChannelDynamicPageState createState() =>
-      _InteractionChannelDynamicPageState();
+  _InteractionStreamDynamicPageState createState() =>
+      _InteractionStreamDynamicPageState();
 }
 
-class _InteractionChannelDynamicPageState
-    extends State<InteractionChannelDynamicPage> {
+class _InteractionStreamDynamicPageState
+    extends State<InteractionStreamDynamicPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final rdm = Random();
@@ -24,9 +24,9 @@ class _InteractionChannelDynamicPageState
 
   late Timer timer;
 
-  final priceVolumeChannel = StreamController<GestureSignal>.broadcast();
+  final priceVolumeStream = StreamController<GestureEvent>.broadcast();
 
-  final heatmapChannel = StreamController<Selected?>.broadcast();
+  final heatmapStream = StreamController<Selected?>.broadcast();
 
   @override
   void initState() {
@@ -74,7 +74,7 @@ class _InteractionChannelDynamicPageState
               Container(
                 padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
-                  'Signal Channel coupling',
+                  'Event Stream coupling',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
@@ -82,7 +82,7 @@ class _InteractionChannelDynamicPageState
                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                 alignment: Alignment.centerLeft,
                 child: const Text(
-                  '- The price chart and volume chart share the same gesture signal channel.',
+                  '- The price chart and volume chart share the same gesture event stream.',
                 ),
               ),
               Container(
@@ -103,9 +103,9 @@ class _InteractionChannelDynamicPageState
                       scale: LinearScale(min: 5, tickCount: 5),
                     ),
                   },
-                  elements: [
-                    LineElement(
-                      size: SizeAttr(value: 1),
+                  marks: [
+                    LineMark(
+                      size: SizeEncode(value: 1),
                     )
                   ],
                   axes: [
@@ -133,7 +133,7 @@ class _InteractionChannelDynamicPageState
                       StrokeStyle(color: const Color(0xffbfbfbf), dash: [4, 2]),
                     ],
                   ),
-                  gestureChannel: priceVolumeChannel,
+                  gestureStream: priceVolumeStream,
                 ),
               ),
               Container(
@@ -154,9 +154,9 @@ class _InteractionChannelDynamicPageState
                       scale: LinearScale(min: 0),
                     ),
                   },
-                  elements: [
-                    IntervalElement(
-                      size: SizeAttr(value: 1),
+                  marks: [
+                    IntervalMark(
+                      size: SizeEncode(value: 1),
                     )
                   ],
                   axes: [
@@ -179,13 +179,13 @@ class _InteractionChannelDynamicPageState
                       StrokeStyle(color: const Color(0xffbfbfbf), dash: [4, 2]),
                     ],
                   ),
-                  gestureChannel: priceVolumeChannel,
+                  gestureStream: priceVolumeStream,
                 ),
               ),
               Container(
                 padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
-                  'Selection Channel coupling',
+                  'Selection Stream coupling',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
@@ -193,7 +193,7 @@ class _InteractionChannelDynamicPageState
                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                 alignment: Alignment.centerLeft,
                 child: const Text(
-                  '- The above and below heatmaps share the same selection channel. Tap either one to try.',
+                  '- The above and below heatmaps share the same selection stream. Tap either one to try.',
                 ),
               ),
               Container(
@@ -214,10 +214,10 @@ class _InteractionChannelDynamicPageState
                       accessor: (List datum) => datum[2] as num,
                     ),
                   },
-                  elements: [
-                    PolygonElement(
-                      shape: ShapeAttr(value: HeatmapShape(sector: true)),
-                      color: ColorAttr(
+                  marks: [
+                    PolygonMark(
+                      shape: ShapeEncode(value: HeatmapShape(sector: true)),
+                      color: ColorEncode(
                         variable: 'sales',
                         values: [
                           const Color(0xffbae7ff),
@@ -228,7 +228,7 @@ class _InteractionChannelDynamicPageState
                           'tap': {false: (color) => color.withAlpha(70)}
                         },
                       ),
-                      selectionChannel: heatmapChannel,
+                      selectionStream: heatmapStream,
                     )
                   ],
                   coord: PolarCoord(),
@@ -257,9 +257,9 @@ class _InteractionChannelDynamicPageState
                       accessor: (List datum) => datum[2] as num,
                     ),
                   },
-                  elements: [
-                    PolygonElement(
-                      color: ColorAttr(
+                  marks: [
+                    PolygonMark(
+                      color: ColorEncode(
                         variable: 'sales',
                         values: [
                           const Color(0xffbae7ff),
@@ -270,7 +270,7 @@ class _InteractionChannelDynamicPageState
                           'tap': {false: (color) => color.withAlpha(70)}
                         },
                       ),
-                      selectionChannel: heatmapChannel,
+                      selectionStream: heatmapStream,
                     )
                   ],
                   selections: {'tap': PointSelection()},
@@ -305,7 +305,7 @@ class _InteractionChannelDynamicPageState
                       accessor: (Map map) => map['sold'] as num,
                     ),
                   },
-                  elements: [IntervalElement()],
+                  marks: [IntervalMark()],
                   axes: [
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,

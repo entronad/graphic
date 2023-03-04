@@ -4,10 +4,10 @@ import 'package:graphic/src/util/assert.dart';
 
 import 'channel.dart';
 
-/// The specification of a size attribute.
-class SizeAttr extends ChannelAttr<double> {
-  /// Creates a size attribute.
-  SizeAttr({
+/// The specification of a size encode.
+class SizeEncode extends ChannelEncode<double> {
+  /// Creates a size encode.
+  SizeEncode({
     double? value,
     String? variable,
     List<double>? values,
@@ -25,7 +25,7 @@ class SizeAttr extends ChannelAttr<double> {
         );
 }
 
-/// The continuous size attribute converter.
+/// The continuous size encode converter.
 class ContinuousSizeConv extends ContinuousChannelConv<double> {
   ContinuousSizeConv(List<double> values, List<double> stops)
       : super(values, stops);

@@ -26,7 +26,7 @@ class CrosshairGuide {
     this.styles,
     this.followPointer,
     this.layer,
-    this.element,
+    this.mark,
   });
 
   /// The selections this crosshair reacts to.
@@ -55,14 +55,14 @@ class CrosshairGuide {
   /// If null, a default 0 is set.
   int? layer;
 
-  /// Which element series this crosshair reacts to.
+  /// Which mark series this crosshair reacts to.
   ///
-  /// This is an index in [Chart.elements].
+  /// This is an index in [Chart.marks].
   ///
-  /// The crosshair can only reacts to one element series.
+  /// The crosshair can only reacts to one mark series.
   ///
-  /// If null, the first element series is set by default.
-  int? element;
+  /// If null, the first mark series is set by default.
+  int? mark;
 
   @override
   bool operator ==(Object other) =>
@@ -71,7 +71,7 @@ class CrosshairGuide {
       deepCollectionEquals(styles, other.styles) &&
       deepCollectionEquals(followPointer, other.followPointer) &&
       layer == other.layer &&
-      element == other.element;
+      mark == other.mark;
 }
 
 /// The crosshair scene.
@@ -113,10 +113,10 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
     int count = 0;
     findPoint(int index) {
       for (var group in groups) {
-        for (var aes in group) {
-          if (aes.index == index) {
+        for (var attributes in group) {
+          if (attributes.index == index) {
             count += 1;
-            return aes.representPoint;
+            return attributes.representPoint;
           }
         }
       }

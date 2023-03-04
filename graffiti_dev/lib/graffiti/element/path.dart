@@ -4,16 +4,16 @@ import 'element.dart';
 import 'segment/segment.dart';
 import 'segment/move.dart';
 
-class PathElement extends ShapeElement {
+class PathElement extends PrimitiveElement {
   PathElement({
     required this.segments,
 
-    ShapeStyle? style,
+    PaintStyle? style,
     double? rotation,
     Offset? rotationAxis,
   }) : assert(segments.first is MoveSegment),
   super(
-    style: style ?? defaultShapeStyle,
+    style: style ?? defaultPaintStyle,
     rotation: rotation,
     rotationAxis: rotationAxis,
   );

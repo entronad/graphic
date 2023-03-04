@@ -30,8 +30,8 @@ class SymmetricModifier extends Modifier {
       var minY = double.infinity;
       var maxY = double.negativeInfinity;
       for (var group in groups) {
-        final aes = group[i];
-        for (var point in aes.position) {
+        final attributes = group[i];
+        for (var point in attributes.position) {
           final y = point.dy;
           if (y.isFinite) {
             minY = min(minY, y);
@@ -42,9 +42,9 @@ class SymmetricModifier extends Modifier {
 
       final symmetricBias = normalZero - (minY + maxY) / 2;
       for (var group in groups) {
-        final aes = group[i];
-        final oldPosition = aes.position;
-        aes.position = oldPosition
+        final attributes = group[i];
+        final oldPosition = attributes.position;
+        attributes.position = oldPosition
             .map(
               (point) => Offset(point.dx, point.dy + symmetricBias),
             )

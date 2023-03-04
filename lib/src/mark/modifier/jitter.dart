@@ -38,10 +38,10 @@ class JitterModifier extends Modifier {
     final random = Random();
 
     for (var group in groups) {
-      for (var aes in group) {
-        final oldPosition = aes.position;
+      for (var attributes in group) {
+        final oldPosition = attributes.position;
         final bias = ratio * band * (random.nextDouble() - 0.5);
-        aes.position = oldPosition
+        attributes.position = oldPosition
             .map(
               (point) => Offset(point.dx + bias, point.dy),
             )

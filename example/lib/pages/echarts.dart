@@ -42,12 +42,12 @@ class EchartsPage extends StatelessWidget {
                       accessor: (Map datum) => datum['group'].toString(),
                     ),
                   },
-                  elements: [
-                    AreaElement(
+                  marks: [
+                    AreaMark(
                       position:
                           Varset('day') * Varset('value') / Varset('group'),
-                      shape: ShapeAttr(value: BasicAreaShape(smooth: true)),
-                      gradient: GradientAttr(
+                      shape: ShapeEncode(value: BasicAreaShape(smooth: true)),
+                      gradient: GradientEncode(
                         variable: 'group',
                         values: [
                           const LinearGradient(
@@ -185,11 +185,11 @@ class EchartsPage extends StatelessWidget {
                       accessor: (Map datum) => datum['group'] as String,
                     ),
                   },
-                  elements: [
-                    LineElement(
+                  marks: [
+                    LineMark(
                       position:
                           Varset('day') * Varset('value') / Varset('group'),
-                      color: ColorAttr(
+                      color: ColorEncode(
                         variable: 'group',
                         values: [
                           const Color(0xff5470c6),
@@ -325,9 +325,9 @@ class EchartsPage extends StatelessWidget {
                       ),
                     ),
                   },
-                  elements: [
-                    LineElement(
-                      shape: ShapeAttr(value: BasicLineShape(smooth: true)),
+                  marks: [
+                    LineMark(
+                      shape: ShapeEncode(value: BasicLineShape(smooth: true)),
                     )
                   ],
                   axes: [

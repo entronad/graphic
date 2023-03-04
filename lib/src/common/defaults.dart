@@ -3,19 +3,19 @@ import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/guide/axis/axis.dart';
-import 'package:graphic/src/interaction/signal.dart';
+import 'package:graphic/src/interaction/event.dart';
 import 'package:graphic/src/interaction/gesture.dart';
 
-/// Gets signal update for different dimensions.
-SignalUpdater<List<double>> _getRangeUpdate(
+/// Gets event update for different dimensions.
+EventUpdater<List<double>> _getRangeUpdate(
         bool isHorizontal, bool focusMouseScale) =>
     (
       List<double> init,
       List<double> pre,
-      Signal signal,
+      Event event,
     ) {
-      if (signal is GestureSignal) {
-        final gesture = signal.gesture;
+      if (event is GestureEvent) {
+        final gesture = event.gesture;
 
         if (gesture.type == GestureType.scaleUpdate) {
           final detail = gesture.details as ScaleUpdateDetails;
@@ -175,19 +175,19 @@ abstract class Defaults {
         grid: strokeStyle,
       );
 
-  /// A signal update for scaling and panning horizontal coordinate range.
-  static SignalUpdater<List<double>> get horizontalRangeSignal =>
+  /// A event update for scaling and panning horizontal coordinate range.
+  static EventUpdater<List<double>> get horizontalRangeEvent =>
       _getRangeUpdate(true, false);
 
-  /// A signal update for scaling and panning vertical coordinate range.
-  static SignalUpdater<List<double>> get verticalRangeSignal =>
+  /// A event update for scaling and panning vertical coordinate range.
+  static EventUpdater<List<double>> get verticalRangeEvent =>
       _getRangeUpdate(false, false);
 
-  /// A signal update for scaling and panning horizontal coordinate range by cursor focus.
-  static SignalUpdater<List<double>> get horizontalRangeFocusSignal =>
+  /// A event update for scaling and panning horizontal coordinate range by cursor focus.
+  static EventUpdater<List<double>> get horizontalRangeFocusEvent =>
       _getRangeUpdate(true, true);
 
-  /// A signal update for scaling and panning vertical coordinate range by cursor focus.
-  static SignalUpdater<List<double>> get verticalRangeFocusSignal =>
+  /// A event update for scaling and panning vertical coordinate range by cursor focus.
+  static EventUpdater<List<double>> get verticalRangeFocusEvent =>
       _getRangeUpdate(false, true);
 }

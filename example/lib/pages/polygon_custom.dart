@@ -8,7 +8,7 @@ import '../data.dart';
 class TriangleShape extends IntervalShape {
   @override
   List<Figure> renderGroup(
-    List<Aes> group,
+    List<Attributes> group,
     CoordConv coord,
     Offset origin,
   ) {
@@ -26,7 +26,7 @@ class TriangleShape extends IntervalShape {
 
   @override
   List<Figure> renderItem(
-    Aes item,
+    Attributes item,
     CoordConv coord,
     Offset origin,
   ) {
@@ -212,9 +212,9 @@ class PolygonCustomPage extends StatelessWidget {
                       accessor: (List datum) => datum[2] as num,
                     ),
                   },
-                  elements: [
-                    PolygonElement(
-                      color: ColorAttr(
+                  marks: [
+                    PolygonMark(
+                      color: ColorEncode(
                         variable: 'sales',
                         values: [
                           const Color(0xffbae7ff),
@@ -270,12 +270,12 @@ class PolygonCustomPage extends StatelessWidget {
                       accessor: (List datum) => datum[2] as num,
                     ),
                   },
-                  elements: [
-                    PolygonElement(
-                      shape: ShapeAttr(
+                  marks: [
+                    PolygonMark(
+                      shape: ShapeEncode(
                           value: HeatmapShape(
                               borderRadius: BorderRadius.circular(4))),
-                      color: ColorAttr(
+                      color: ColorEncode(
                         variable: 'sales',
                         values: [
                           const Color(0xffbae7ff),
@@ -326,9 +326,9 @@ class PolygonCustomPage extends StatelessWidget {
                       accessor: (List datum) => datum[2] as num,
                     ),
                   },
-                  elements: [
-                    PolygonElement(
-                      color: ColorAttr(
+                  marks: [
+                    PolygonMark(
+                      color: ColorEncode(
                         variable: 'sales',
                         values: [
                           const Color(0xffbae7ff),
@@ -380,10 +380,10 @@ class PolygonCustomPage extends StatelessWidget {
                       accessor: (List datum) => datum[2] as num,
                     ),
                   },
-                  elements: [
-                    PolygonElement(
-                      shape: ShapeAttr(value: HeatmapShape(sector: true)),
-                      color: ColorAttr(
+                  marks: [
+                    PolygonMark(
+                      shape: ShapeEncode(value: HeatmapShape(sector: true)),
+                      color: ColorEncode(
                         variable: 'sales',
                         values: [
                           const Color(0xffbae7ff),
@@ -432,15 +432,15 @@ class PolygonCustomPage extends StatelessWidget {
                         accessor: (Map map) => map['sold'] as num,
                         scale: LinearScale(min: 0)),
                   },
-                  elements: [
-                    IntervalElement(
-                      shape: ShapeAttr(value: TriangleShape()),
-                      label: LabelAttr(
+                  marks: [
+                    IntervalMark(
+                      shape: ShapeEncode(value: TriangleShape()),
+                      label: LabelEncode(
                           encoder: (tuple) => Label(tuple['sold'].toString())),
-                      elevation: ElevationAttr(value: 0, updaters: {
+                      elevation: ElevationEncode(value: 0, updaters: {
                         'tap': {true: (_) => 5}
                       }),
-                      color: ColorAttr(value: Defaults.primaryColor, updaters: {
+                      color: ColorEncode(value: Defaults.primaryColor, updaters: {
                         'tap': {false: (color) => color.withAlpha(100)}
                       }),
                     )
@@ -481,10 +481,10 @@ class PolygonCustomPage extends StatelessWidget {
                       as: 'percent',
                     )
                   ],
-                  elements: [
-                    IntervalElement(
+                  marks: [
+                    IntervalMark(
                       position: Varset('percent') / Varset('genre'),
-                      color: ColorAttr(
+                      color: ColorEncode(
                           variable: 'genre', values: Defaults.colors10),
                       modifiers: [StackModifier()],
                     )
@@ -537,13 +537,13 @@ class PolygonCustomPage extends StatelessWidget {
                       accessor: (Map map) => map['value'] as num,
                     ),
                   },
-                  elements: [
-                    IntervalElement(
+                  marks: [
+                    IntervalMark(
                       position:
                           Varset('index') * Varset('value') / Varset('type'),
-                      color: ColorAttr(
+                      color: ColorEncode(
                           variable: 'type', values: Defaults.colors10),
-                      size: SizeAttr(value: 2),
+                      size: SizeEncode(value: 2),
                       modifiers: [DodgeModifier(ratio: 0.1)],
                     )
                   ],
@@ -653,7 +653,7 @@ class PolygonCustomPage extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                 alignment: Alignment.centerLeft,
                 child: const Text(
-                  '- With dodge and size modifier that scales the interval element width to fit within its band',
+                  '- With dodge and size modifier that scales the interval mark width to fit within its band',
                 ),
               ),
               Container(
@@ -674,13 +674,13 @@ class PolygonCustomPage extends StatelessWidget {
                       accessor: (Map map) => map['value'] as num,
                     ),
                   },
-                  elements: [
-                    IntervalElement(
+                  marks: [
+                    IntervalMark(
                       position:
                           Varset('index') * Varset('value') / Varset('type'),
-                      color: ColorAttr(
+                      color: ColorEncode(
                           variable: 'type', values: Defaults.colors10),
-                      size: SizeAttr(value: 2),
+                      size: SizeEncode(value: 2),
                       modifiers: [DodgeSizeModifier()],
                     )
                   ],
@@ -708,7 +708,7 @@ class PolygonCustomPage extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                 alignment: Alignment.centerLeft,
                 child: const Text(
-                  '- Shape must be designated explicitly for a custom element.',
+                  '- Shape must be designated explicitly for a custom mark.',
                 ),
               ),
               Container(
@@ -757,15 +757,15 @@ class PolygonCustomPage extends StatelessWidget {
                       scale: LinearScale(min: 6, max: 9),
                     ),
                   },
-                  elements: [
-                    CustomElement(
-                      shape: ShapeAttr(value: CandlestickShape()),
+                  marks: [
+                    CustomMark(
+                      shape: ShapeEncode(value: CandlestickShape()),
                       position: Varset('time') *
                           (Varset('start') +
                               Varset('max') +
                               Varset('min') +
                               Varset('end')),
-                      color: ColorAttr(
+                      color: ColorEncode(
                           encoder: (tuple) => tuple['end'] >= tuple['start']
                               ? Colors.red
                               : Colors.green),
@@ -776,7 +776,7 @@ class PolygonCustomPage extends StatelessWidget {
                     Defaults.verticalAxis,
                   ],
                   coord: RectCoord(
-                      horizontalRangeUpdater: Defaults.horizontalRangeSignal),
+                      horizontalRangeUpdater: Defaults.horizontalRangeEvent),
                 ),
               ),
             ],
@@ -790,8 +790,8 @@ class PolygonCustomPage extends StatelessWidget {
 const _kBaseGroupPaddingHorizontal = 32.0;
 const _kMinBarSize = 4.0;
 
-/// Changes the position of elements while also updating their width to match
-/// the number of elements in a single band. Useful for bar charts when the
+/// Changes the position of marks while also updating their width to match
+/// the number of marks in a single band. Useful for bar charts when the
 /// width of the bars can be dynamic.
 @immutable
 class DodgeSizeModifier extends Modifier {
@@ -811,9 +811,9 @@ class DodgeSizeModifier extends Modifier {
 
     final maxWidth = coord.convert(const Offset(1, 0)).dx;
     final maxWidthInBand = effectiveBand * maxWidth;
-    final maxWidthPerAes = maxWidthInBand / numGroups;
+    final maxWidthPerAttributes = maxWidthInBand / numGroups;
     final barHorizontalPadding = groupHorizontalPadding / 2;
-    final size = max(maxWidthPerAes - barHorizontalPadding, _kMinBarSize);
+    final size = max(maxWidthPerAttributes - barHorizontalPadding, _kMinBarSize);
 
     final bias = ratio * effectiveBand;
 
@@ -821,15 +821,15 @@ class DodgeSizeModifier extends Modifier {
     var accumulated = -bias * (numGroups + 1) / 2;
 
     for (final group in groups) {
-      for (final aes in group) {
-        final oldPosition = aes.position;
-        aes.position = oldPosition
+      for (final attributes in group) {
+        final oldPosition = attributes.position;
+        attributes.position = oldPosition
             .map(
               (point) => Offset(point.dx + accumulated + bias, point.dy),
             )
             .toList();
 
-        aes.size = size;
+        attributes.size = size;
       }
       accumulated += bias;
     }

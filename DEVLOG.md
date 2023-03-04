@@ -123,13 +123,13 @@ marks和shape到底哪个叫哪个似乎应该再斟酌一下，参考 observabl
 
 svg的支持应该再考虑一下
 
-参考库：vega/vega-lite, d3, echarts, plot, tableau,
+参考库：vega/vega-lite, d3, echarts, plot, tableau, G2
 
 术语：
 
-GeomElement -> Series：表示抽象的一个系列，今后将不再做区分
+GeomElement -> Mark：表示抽象的一个系列，今后将不再做区分，不再引入Series的概念
 
-Shape -> Mark：表示图形渲染器，
+Shape -> Shape：表示图形渲染器，不变，该词常见，放在这里也合适，且保留一些GG的味道
 
 Figure -> MarkElement(ElementStyle)    基类的前缀Mark表示它的作用，使得引擎和图表更融为一体
 
@@ -137,11 +137,25 @@ Figure -> MarkElement(ElementStyle)    基类的前缀Mark表示它的作用，�
 
 ​     LabelElement(LabelStyle)    ImageElement(ImageStyle)           
 
+Aesthetic -> Encode
 
+signal -> event
+
+channel -> stream，controller太泛，先这样，把stream替换channel的观念换掉，细节后面处理
+
+Variable 这一块先不动
+
+figure相关的改造时再考虑，annot系列属于辅助，现在原则上不动
 
 **当发生命名冲突时，第一解决方法是给基类加前缀，因为基类不会被用到，且不影响变量名、子类、相关类用简单的词根，这也是Dart最常用的方式**
 
 **命名原则常见性第一位，避免使用生僻字，长度第二位，除非非常常见短写尽量写全**
+
+**不同层级的不同概念不使用同一个词**
+
+**配套类之间可以不用一样的关键词，比如 PrimitiveElement 配套PaintStyle**
+
+**尽量不用缩写，宁可换用简单的词，同时遵循越常用用越简单的词**
 
 ## 论文
 

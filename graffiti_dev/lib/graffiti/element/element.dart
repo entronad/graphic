@@ -61,8 +61,8 @@ List<double>? _lerpDash(List<double>? a, List<double>? b, double t) {
   return rst;
 }
 
-class ShapeStyle extends ElementStyle {
-  ShapeStyle({
+class PaintStyle extends ElementStyle {
+  PaintStyle({
     this.fillColor,
     this.fillGradient,
     this.fillShader,
@@ -121,7 +121,7 @@ class ShapeStyle extends ElementStyle {
   final DashOffset? dashOffset;
 
   @override
-  ShapeStyle lerpFrom(covariant ShapeStyle from, double t) => ShapeStyle(
+  PaintStyle lerpFrom(covariant PaintStyle from, double t) => PaintStyle(
     fillColor: Color.lerp(from.fillColor, fillColor, t),
     fillGradient: painting.Gradient.lerp(from.fillGradient, fillGradient, t),
     fillShader: fillShader,
@@ -141,11 +141,11 @@ class ShapeStyle extends ElementStyle {
   );
 }
 
-final defaultShapeStyle = ShapeStyle(strokeColor: const Color(0xff000000));
+final defaultPaintStyle = PaintStyle(strokeColor: const Color(0xff000000));
 
-abstract class ShapeElement extends MarkElement<ShapeStyle> {
-  ShapeElement({
-    required ShapeStyle style,
+abstract class PrimitiveElement extends MarkElement<PaintStyle> {
+  PrimitiveElement({
+    required PaintStyle style,
 
     double? rotation,
     Offset? rotationAxis,
@@ -231,7 +231,7 @@ abstract class ShapeElement extends MarkElement<ShapeStyle> {
   }
 
   @override
-  ShapeElement lerpFrom(covariant ShapeElement from, double t);
+  PrimitiveElement lerpFrom(covariant PrimitiveElement from, double t);
 
   List<Segment> toSegments();
 }
@@ -290,7 +290,7 @@ abstract class BlockElement<S extends BlockStyle> extends MarkElement<S> {
 }
 
 // No predicate, call only when needed.
-List<PathElement> _nomalizeShape(ShapeElement from, ShapeElement to) {
+List<PathElement> _nomalizeShape(PrimitiveElement from, PrimitiveElement to) {
   final segmentsPair = nomalizeSegments(from.toSegments(), to.toSegments());
   return [
     PathElement(segments: segmentsPair.first, style: from.style, rotation: from.rotation, rotationAxis: from.rotationAxis),
@@ -316,7 +316,7 @@ List<MarkElement> nomalizeElement(MarkElement from, MarkElement to) {
     return [from, to];
   }
 
-  if (from is ShapeElement && to is ShapeElement) {
+  if (from is PrimitiveElement && to is PrimitiveElement) {
     return _nomalizeShape(from, to);
   }
 

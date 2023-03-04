@@ -25,16 +25,16 @@ List<Offset> lerpPointList(List<Offset> from, List<Offset> to, double t) {
   return rst;
 }
 
-class PolylineElement extends ShapeElement {
+class PolylineElement extends PrimitiveElement {
   PolylineElement({
     required this.points,
 
-    ShapeStyle? style,
+    PaintStyle? style,
     double? rotation,
     Offset? rotationAxis,
   }) : assert(points.length >= 2),
        super(
-         style: style ?? defaultShapeStyle,
+         style: style ?? defaultPaintStyle,
          rotation: rotation,
          rotationAxis: rotationAxis,
        );

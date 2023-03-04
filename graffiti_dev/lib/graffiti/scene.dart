@@ -66,15 +66,15 @@ class Scene {
 
   List<MarkElement>? _elements;
 
-  ShapeElement? _currentClip;
+  PrimitiveElement? _currentClip;
 
-  ShapeElement? _preClip;
+  PrimitiveElement? _preClip;
 
-  ShapeElement? _startClip;
+  PrimitiveElement? _startClip;
 
-  ShapeElement? _endClip;
+  PrimitiveElement? _endClip;
 
-  ShapeElement? _clip;
+  PrimitiveElement? _clip;
 
   final void Function() repaint;
 
@@ -84,7 +84,7 @@ class Scene {
 
   late bool _animateClip;
 
-  void set(List<MarkElement>? elements, [ShapeElement? clip]) {
+  void set(List<MarkElement>? elements, [PrimitiveElement? clip]) {
     _animateElements = _controller != null && _currentElements != null && elements != null;
     _animateClip = _controller != null && _currentClip != null && clip != null;
 
@@ -110,8 +110,8 @@ class Scene {
 
     if (_animateClip) {
       final clipPair = nomalizeElement(_preClip!, _currentClip!);
-      _startClip = clipPair.first as ShapeElement;
-      _endClip = clipPair.last as ShapeElement;
+      _startClip = clipPair.first as PrimitiveElement;
+      _endClip = clipPair.last as PrimitiveElement;
     }
 
     if (_animateElements || _animateClip) {

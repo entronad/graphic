@@ -27,9 +27,9 @@ typedef Tuple = Map<String, dynamic>;
 typedef Scaled = Map<String, num>;
 
 /// The aesthetic attribute values of a tuple.
-class Aes {
-  /// Creates a aes.
-  Aes({
+class Attributes {
+  /// Creates a attributes.
+  Attributes({
     required this.index,
     required this.position,
     required this.shape,
@@ -45,7 +45,7 @@ class Aes {
 
   /// Position points of the tuple.
   ///
-  /// The count of points is determined by the geometry element type. The values
+  /// The count of points is determined by the geometry mark type. The values
   /// of each point dimension is scaled and normalized value of `[0, 1]`. the position
   /// points can be converted to canvas points by [CoordConv].
   List<Offset> position;
@@ -72,19 +72,19 @@ class Aes {
   Offset get representPoint => shape.representPoint(position);
 }
 
-/// Aes lists for groups.
-typedef AesGroups = List<List<Aes>>;
+/// Attributes lists for groups.
+typedef AesGroups = List<List<Attributes>>;
 
 extension AesGroupsExt on AesGroups {
-  /// Gets an aes form aes groups by [Aes.index].
-  Aes getAes(int index) {
+  /// Gets an attributes form attributes groups by [Aes.index].
+  Attributes getAttributes(int index) {
     for (var group in this) {
-      for (var aes in group) {
-        if (aes.index == index) {
-          return aes;
+      for (var attributes in group) {
+        if (attributes.index == index) {
+          return attributes;
         }
       }
     }
-    throw ArgumentError('No aes of index $index.');
+    throw ArgumentError('No attributes of index $index.');
   }
 }

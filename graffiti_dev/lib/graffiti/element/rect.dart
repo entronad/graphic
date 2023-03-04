@@ -9,16 +9,16 @@ import 'segment/line.dart';
 import 'segment/arc_to_point.dart';
 import 'segment/close.dart';
 
-class RectElement extends ShapeElement {
+class RectElement extends PrimitiveElement {
   RectElement({
     required this.rect,
     this.borderRadius,
 
-    ShapeStyle? style,
+    PaintStyle? style,
     double? rotation,
     Offset? rotationAxis,
   }) : super(
-    style: style ?? defaultShapeStyle,
+    style: style ?? defaultPaintStyle,
     rotation: rotation,
     rotationAxis: rotationAxis,
   );

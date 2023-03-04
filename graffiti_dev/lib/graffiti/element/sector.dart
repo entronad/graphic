@@ -119,7 +119,7 @@ class SectorElement extends PathElement {
     required this.endAngle,
     this.borderRadius,
 
-    ShapeStyle? style,
+    PaintStyle? style,
     double? rotation,
     Offset? rotationAxis,
   }) : super(

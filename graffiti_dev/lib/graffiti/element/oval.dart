@@ -7,15 +7,15 @@ import 'segment/move.dart';
 import 'segment/cubic.dart';
 import 'segment/close.dart';
 
-class OvalElement extends ShapeElement {
+class OvalElement extends PrimitiveElement {
   OvalElement({
     required this.oval,
 
-    ShapeStyle? style,
+    PaintStyle? style,
     double? rotation,
     Offset? rotationAxis,
   }) : super(
-    style: style ?? defaultShapeStyle,
+    style: style ?? defaultPaintStyle,
     rotation: rotation,
     rotationAxis: rotationAxis,
   );

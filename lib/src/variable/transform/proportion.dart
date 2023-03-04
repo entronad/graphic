@@ -1,6 +1,6 @@
 import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/geom/element.dart';
+import 'package:graphic/src/mark/mark.dart';
 import 'package:graphic/src/scale/scale.dart';
 
 import 'transform.dart';

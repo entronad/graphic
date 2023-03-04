@@ -7,16 +7,16 @@ import 'segment/move.dart';
 import 'segment/line.dart';
 import 'segment/close.dart';
 
-class PolygonElement extends ShapeElement {
+class PolygonElement extends PrimitiveElement {
   PolygonElement({
     required this.points,
 
-    ShapeStyle? style,
+    PaintStyle? style,
     double? rotation,
     Offset? rotationAxis,
   }) : assert(points.length >= 2),
        super(
-         style: style ?? defaultShapeStyle,
+         style: style ?? defaultPaintStyle,
          rotation: rotation,
          rotationAxis: rotationAxis,
        );

@@ -55,8 +55,8 @@ class ShapePage extends StatefulWidget {
   State<ShapePage> createState() => _ShapePageState();
 }
 
-// final style = ShapeStyle(strokeColor: Colors.black);
-final style = ShapeStyle(fillColor: Colors.black);
+// final style = PaintStyle(strokeColor: Colors.black);
+final style = PaintStyle(fillColor: Colors.black);
 
 class _ShapePageState extends State<ShapePage> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -101,20 +101,20 @@ class _ShapePageState extends State<ShapePage> with SingleTickerProviderStateMix
     // final c = s.toCubic(start);
 
     // scene.set([
-      // LineElement(start: Offset(0, 0), end: Offset(50, 50), style: ShapeStyle(strokeColor: Colors.black)),
-      // ArcElement(oval: Rect.fromCircle(center: Offset(100, 100), radius: 50), startAngle: 0, endAngle: pi, style: ShapeStyle(strokeColor: Colors.black)),
+      // LineElement(start: Offset(0, 0), end: Offset(50, 50), style: PaintStyle(strokeColor: Colors.black)),
+      // ArcElement(oval: Rect.fromCircle(center: Offset(100, 100), radius: 50), startAngle: 0, endAngle: pi, style: PaintStyle(strokeColor: Colors.black)),
       // CircleElement(center: Offset(50, 50), radius: 30, style: style),
-      // GroupElement(elements: [LineElement(start: Offset(0, 0), end: Offset(50, 50), style: ShapeStyle(strokeColor: Colors.black)),CircleElement(center: Offset(50, 50), radius: 30, style: style)]),
+      // GroupElement(elements: [LineElement(start: Offset(0, 0), end: Offset(50, 50), style: PaintStyle(strokeColor: Colors.black)),CircleElement(center: Offset(50, 50), radius: 30, style: style)]),
       // LabelElement(text: 'text', anchor: Offset(50, 50), defaultAlign: Alignment.center, style: LabelStyle(textStyle: TextStyle())),
       // OvalElement(oval: Rect.fromCircle(center: Offset(100, 100), radius: 50), style: style),
       // PolygonElement(points: [Offset(0, 0), Offset(10, 10), Offset(30, 60)], close: true, style: style),
       // RectElement(rect: Rect.fromPoints(Offset(0, 0), Offset(100, 100)), borderRadius: BorderRadius.all(Radius.circular(5)), style: style),
       // SectorElement(center: Offset(100, 100), startRadius: 20, endRadius: 80, startAngle: 0, endAngle: 3, borderRadius: BorderRadius.all(Radius.circular(10)), style: style)
       // GroupElement(elements: [
-      //   LineElement(start: Offset(0, 0), end: Offset(50, 50), style: ShapeStyle(strokeColor: Colors.black)),
-      //   ArcElement(oval: Rect.fromCircle(center: Offset(100, 100), radius: 50), startAngle: 0, endAngle: pi, style: ShapeStyle(strokeColor: Colors.black)),
+      //   LineElement(start: Offset(0, 0), end: Offset(50, 50), style: PaintStyle(strokeColor: Colors.black)),
+      //   ArcElement(oval: Rect.fromCircle(center: Offset(100, 100), radius: 50), startAngle: 0, endAngle: pi, style: PaintStyle(strokeColor: Colors.black)),
       //   CircleElement(center: Offset(50, 50), radius: 30, style: style),
-      //   GroupElement(elements: [LineElement(start: Offset(0, 0), end: Offset(50, 50), style: ShapeStyle(strokeColor: Colors.black)),CircleElement(center: Offset(50, 50), radius: 30, style: style)]),
+      //   GroupElement(elements: [LineElement(start: Offset(0, 0), end: Offset(50, 50), style: PaintStyle(strokeColor: Colors.black)),CircleElement(center: Offset(50, 50), radius: 30, style: style)]),
       //   LabelElement(text: 'text', anchor: Offset(50, 50), defaultAlign: Alignment.center, style: LabelStyle(textStyle: TextStyle())),
       //   OvalElement(oval: Rect.fromCircle(center: Offset(100, 100), radius: 50), style: style),
       //   PolygonElement(points: [Offset(0, 0), Offset(10, 10), Offset(30, 60)], close: true, style: style),
@@ -157,14 +157,14 @@ class _ShapePageState extends State<ShapePage> with SingleTickerProviderStateMix
   }
 
   void _update() {
-    // scene.set([LineElement(start: Offset(300, 300), end: Offset(350, 350), style: ShapeStyle(strokeColor: Colors.black))]);
+    // scene.set([LineElement(start: Offset(300, 300), end: Offset(350, 350), style: PaintStyle(strokeColor: Colors.black))]);
     // scene.set([CircleElement(center: Offset(150, 150), radius: 70, style: style)]);
     // scene.set([
     //   GroupElement(elements: [
-    //     LineElement(start: Offset(0, 0), end: Offset(50, 50), style: ShapeStyle(strokeColor: Colors.black)),
-    //     ArcElement(oval: Rect.fromCircle(center: Offset(100, 100), radius: 50), startAngle: 0, endAngle: pi, style: ShapeStyle(strokeColor: Colors.black)),
+    //     LineElement(start: Offset(0, 0), end: Offset(50, 50), style: PaintStyle(strokeColor: Colors.black)),
+    //     ArcElement(oval: Rect.fromCircle(center: Offset(100, 100), radius: 50), startAngle: 0, endAngle: pi, style: PaintStyle(strokeColor: Colors.black)),
     //     CircleElement(center: Offset(50, 50), radius: 30, style: style),
-    //     GroupElement(elements: [LineElement(start: Offset(0, 0), end: Offset(50, 50), style: ShapeStyle(strokeColor: Colors.black)),CircleElement(center: Offset(50, 50), radius: 30, style: style)]),
+    //     GroupElement(elements: [LineElement(start: Offset(0, 0), end: Offset(50, 50), style: PaintStyle(strokeColor: Colors.black)),CircleElement(center: Offset(50, 50), radius: 30, style: style)]),
     //     LabelElement(text: 'text', anchor: Offset(50, 50), defaultAlign: Alignment.center, style: LabelStyle(textStyle: TextStyle())),
     //     OvalElement(oval: Rect.fromCircle(center: Offset(100, 100), radius: 50), style: style),
     //     PolygonElement(points: [Offset(0, 0), Offset(10, 10), Offset(30, 60)], style: style),

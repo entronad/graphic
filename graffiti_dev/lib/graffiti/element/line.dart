@@ -5,16 +5,16 @@ import 'segment/segment.dart';
 import 'segment/move.dart';
 import 'segment/line.dart';
 
-class LineElement extends ShapeElement {
+class LineElement extends PrimitiveElement {
   LineElement({
     required this.start,
     required this.end,
 
-    ShapeStyle? style,
+    PaintStyle? style,
     double? rotation,
     Offset? rotationAxis,
   }) : super(
-    style: style ?? defaultShapeStyle,
+    style: style ?? defaultPaintStyle,
     rotation: rotation,
     rotationAxis: rotationAxis,
   );

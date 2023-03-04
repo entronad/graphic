@@ -49,9 +49,9 @@ class DodgeModifier extends Modifier {
     var accumulated = symmetric ? -bias * (groups.length - 1) / 2 : 0.0;
 
     for (var group in groups) {
-      for (var aes in group) {
-        final oldPosition = aes.position;
-        aes.position = oldPosition
+      for (var attributes in group) {
+        final oldPosition = attributes.position;
+        attributes.position = oldPosition
             .map(
               (point) => Offset(point.dx + accumulated, point.dy),
             )

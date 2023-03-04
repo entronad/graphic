@@ -2,15 +2,15 @@ import 'dart:ui';
 
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/dataflow/operator.dart';
-import 'package:graphic/src/interaction/signal.dart';
+import 'package:graphic/src/interaction/event.dart';
 
-/// The signal emitted when chart size changes.
-class ResizeSignal extends Signal {
-  /// Creates a resize signal.
-  ResizeSignal(this.size);
+/// The event emitted when chart size changes.
+class ResizeEvent extends Event {
+  /// Creates a resize event.
+  ResizeEvent(this.size);
 
   @override
-  SignalType get type => SignalType.resize;
+  EventType get type => EventType.resize;
 
   /// New size of chart.
   final Size size;
@@ -28,7 +28,7 @@ class SizeOp extends Operator<Size> {
 
   @override
   Size evaluate() {
-    final signal = params['signal'] as ResizeSignal;
-    return signal.size;
+    final event = params['event'] as ResizeEvent;
+    return event.size;
   }
 }

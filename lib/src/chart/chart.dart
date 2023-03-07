@@ -19,7 +19,7 @@ import 'package:graphic/src/util/collection.dart';
 import 'package:graphic/src/variable/transform/transform.dart';
 import 'package:graphic/src/variable/variable.dart';
 
-import 'view.dart';
+import 'view.dart' as chart;
 
 /// A widget to display the chart.
 ///
@@ -186,7 +186,7 @@ class _ChartState<D> extends State<Chart<D>> {
   /// The view that controlls the data visualization.
   ///
   /// For a chart widget, to "rebuild" means to create a new [view].
-  View<D>? view;
+  chart.View<D>? view;
 
   /// Size of the chart widget.
   ///
@@ -739,7 +739,7 @@ class _ChartLayoutDelegate<D> extends SingleChildLayoutDelegate {
       // to create a new view. A view is and only is created in _ChartLayoutDelegate.getPositionForChild
       // because it needs the current size.
 
-      state.view = View<D>(
+      state.view = chart.View<D>(
         state.widget,
         size,
         state.repaint,

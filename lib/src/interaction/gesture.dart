@@ -511,14 +511,18 @@ class Gesture {
     this.localPosition,
     this.chartSize,
     this.details, {
+    this.key,
     this.localMoveStart,
     this.preScaleDetail,
   });
 
+  /// The key of the chart which created the gesture.
+  final Key? key;
+
   /// The gesture type.
   final GestureType type;
 
-  /// the kind of device that triggers the pointer event.
+  /// The kind of device that triggers the pointer event.
   final PointerDeviceKind device;
 
   /// The local position of the pointer event that triggers this gesture.

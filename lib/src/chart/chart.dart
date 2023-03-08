@@ -252,6 +252,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onDoubleTapCancel: () {
@@ -261,6 +262,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onDoubleTapDown: (detail) {
@@ -271,6 +273,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onForcePressEnd: (detail) {
@@ -281,6 +284,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onForcePressPeak: (detail) {
@@ -291,6 +295,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onForcePressStart: (detail) {
@@ -301,6 +306,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onForcePressUpdate: (detail) {
@@ -311,6 +317,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onLongPress: () {
@@ -320,6 +327,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onLongPressCancel: () {
@@ -329,6 +337,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onLongPressDown: (detail) {
@@ -339,6 +348,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onLongPressEnd: (detail) {
@@ -350,6 +360,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onLongPressMoveUpdate: (detail) {
@@ -361,6 +372,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 size,
                 detail,
                 localMoveStart: gestureLocalMoveStart,
+                key: widget.key,
               ));
             },
             onLongPressStart: (detail) {
@@ -372,6 +384,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onLongPressUp: () {
@@ -381,6 +394,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onScaleEnd: (detail) {
@@ -392,6 +406,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onScaleStart: (detail) {
@@ -410,6 +425,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onScaleUpdate: (detail) {
@@ -422,6 +438,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 detail,
                 localMoveStart: gestureLocalMoveStart,
                 preScaleDetail: gestureScaleDetail,
+                key: widget.key,
               ));
               gestureScaleDetail = detail;
             },
@@ -432,6 +449,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onSecondaryLongPressCancel: () {
@@ -441,6 +459,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onSecondaryLongPressDown: (detail) {
@@ -451,6 +470,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onSecondaryLongPressEnd: (detail) {
@@ -462,6 +482,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onSecondaryLongPressMoveUpdate: (detail) {
@@ -473,6 +494,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 size,
                 detail,
                 localMoveStart: gestureLocalMoveStart,
+                key: widget.key,
               ));
             },
             onSecondaryLongPressStart: (detail) {
@@ -484,6 +506,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onSecondaryLongPressUp: () {
@@ -493,6 +516,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onSecondaryTap: () {
@@ -502,6 +526,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onSecondaryTapCancel: () {
@@ -511,6 +536,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onSecondaryTapDown: (detail) {
@@ -521,6 +547,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onSecondaryTapUp: (detail) {
@@ -531,6 +558,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onTap: () {
@@ -540,6 +568,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onTapCancel: () {
@@ -549,6 +578,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onTapDown: (detail) {
@@ -559,6 +589,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onTapUp: (detail) {
@@ -569,6 +600,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onTertiaryLongPress: () {
@@ -578,6 +610,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onTertiaryLongPressCancel: () {
@@ -587,6 +620,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onTertiaryLongPressDown: (detail) {
@@ -597,6 +631,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onTertiaryLongPressEnd: (detail) {
@@ -608,6 +643,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onTertiaryLongPressMoveUpdate: (detail) {
@@ -619,6 +655,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 size,
                 detail,
                 localMoveStart: gestureLocalMoveStart,
+                key: widget.key,
               ));
             },
             onTertiaryLongPressStart: (detail) {
@@ -630,6 +667,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onTertiaryLongPressUp: () {
@@ -639,6 +677,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onTertiaryTapCancel: () {
@@ -648,6 +687,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onTertiaryTapDown: (detail) {
@@ -658,6 +698,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onTertiaryTapUp: (detail) {
@@ -668,6 +709,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
           ),
@@ -680,6 +722,7 @@ class _ChartState<D> extends State<Chart<D>> {
               gestureLocalPosition,
               size,
               null,
+              key: widget.key,
             ));
           },
           onPointerSignal: (event) {
@@ -691,6 +734,7 @@ class _ChartState<D> extends State<Chart<D>> {
                 gestureLocalPosition,
                 size,
                 event.scrollDelta,
+                key: widget.key,
               ));
             }
           },
@@ -704,6 +748,7 @@ class _ChartState<D> extends State<Chart<D>> {
             gestureLocalPosition,
             size,
             null,
+            key: widget.key,
           ));
         },
         onExit: (event) {
@@ -715,6 +760,7 @@ class _ChartState<D> extends State<Chart<D>> {
             gestureLocalPosition,
             size,
             null,
+            key: widget.key,
           ));
         },
       ),
@@ -735,7 +781,7 @@ class _ChartLayoutDelegate<D> extends SingleChildLayoutDelegate {
   @override
   Offset getPositionForChild(Size size, Size childSize) {
     if (state.view == null) {
-      // When rebuild is required, the state.view is set null. To rebuild meanse
+      // When rebuild is required, the state.view is set null. To rebuild means
       // to create a new view. A view is and only is created in _ChartLayoutDelegate.getPositionForChild
       // because it needs the current size.
 

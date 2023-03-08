@@ -3,25 +3,25 @@ import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/geom/area.dart';
+import 'package:graphic/src/mark/area.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/util/path.dart';
 
 import 'util/render_basic_item.dart';
 import 'function.dart';
 
-/// The shape for the area element.
+/// The shape for the area mark.
 ///
 /// See also:
 ///
-/// - [AreaElement], which this shape is for.
+/// - [AreaMark], which this shape is for.
 abstract class AreaShape extends FunctionShape {
   @override
   double get defaultSize => throw UnimplementedError('Area needs no size.');
 
   @override
   List<Figure> renderItem(
-    Aes item,
+    Attributes item,
     CoordConv coord,
     Offset origin,
   ) =>
@@ -50,14 +50,14 @@ class BasicAreaShape extends AreaShape {
 
   @override
   List<Figure> renderGroup(
-    List<Aes> group,
+    List<Attributes> group,
     CoordConv coord,
     Offset origin,
   ) {
     assert(!(coord is PolarCoordConv && coord.transposed));
 
     final segments = <List<List<Offset>>>[];
-    final labels = <Aes, Offset>{};
+    final labels = <Attributes, Offset>{};
 
     var currentSegment = <List<Offset>>[];
     for (var item in group) {

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:graphic/src/interaction/signal.dart';
+import 'package:graphic/src/interaction/event.dart';
 
 import 'dataflow.dart';
 
@@ -70,7 +70,7 @@ abstract class Operator<V> {
 
   /// Whether the [value] should be consumed after this pulse.
   ///
-  /// It is usefull for transient values like [Signal]s. Only a very first operator
+  /// It is usefull for transient values like [Event]s. Only a very first operator
   /// need to set this property. It's targets will always be touched when it is
   /// set null and it is always a start.
   bool get consume => false;
@@ -78,8 +78,8 @@ abstract class Operator<V> {
   /// Whether this operator has evaluated in this pulse.
   bool runed = false;
 
-  /// The channel binded to this operator.
-  StreamController<V?>? channel;
+  /// The stream binded to this operator.
+  StreamController<V?>? stream;
 
   /// Pulls parameter values from source operators.
   void _marshall() {
@@ -97,11 +97,11 @@ abstract class Operator<V> {
 
     _marshall();
     final updated = update(evaluate());
-    if (channel != null && updated) {
-      // Only the updates caused by operator.run will emit to it's channel sink.
-      // For now, singal channels are noticed by the view, while the selection channel
+    if (stream != null && updated) {
+      // Only the updates caused by operator.run will emit to it's stream sink.
+      // For now, singal streams are noticed by the view, while the selection stream
       // is noticed by it's binded operator.
-      channel!.sink.add(value);
+      stream!.sink.add(value);
     }
     runed = true;
     return updated;

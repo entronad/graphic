@@ -2,16 +2,16 @@ import 'dart:ui';
 
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/geom/partition.dart';
+import 'package:graphic/src/mark/partition.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 
 import 'shape.dart';
 
-/// The shape for the partition element.
+/// The shape for the partition mark.
 ///
 /// See also:
 ///
-/// - [PartitionElement], which this shape is for.
+/// - [PartitionMark], which this shape is for.
 abstract class PartitionShape extends Shape {
   @override
   double get defaultSize =>
@@ -19,7 +19,7 @@ abstract class PartitionShape extends Shape {
 
   @override
   List<Figure> renderItem(
-    Aes item,
+    Attributes item,
     CoordConv coord,
     Offset origin,
   ) =>

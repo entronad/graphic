@@ -29,19 +29,17 @@ Example of charts can be seen in the [Example App](https://github.com/entronad/g
 
 ![examples](https://github.com/entronad/graphic/raw/main/devdoc/examples.jpg)
 
-## Used by
-
-Graphic is used by these companies:
-
-[![rows](https://github.com/entronad/graphic/raw/main/devdoc/logo_rows.svg)](https://rows.com/)
-
 ## Tutorials
 
 [The Versatility of the Grammar of Graphics](https://medium.com/@entronad/the-versatility-of-the-grammar-of-graphics-d1366760424d)
 
-## Reference
+[How to Build Interactive Charts in Flutter](https://medium.com/@entronad/how-to-build-interactive-charts-in-flutter-e317492d5ba1)
 
-Besides *The Grammar of Graphics*, the API terminology also referes to [AntV](https://antv.vision/en) and [Vega](https://vega.github.io/). The dataflow structure is inspired by [Vega](https://vega.github.io/).
+## Share this Lib
+
+[![Twitter](https://img.shields.io/badge/share%20on-twitter-03A9F4?style=flat-square&logo=twitter)](https://twitter.com/share?url=https://github.com/entronad/graphic&text=Graphic:%20A%20grammar%20of%20data%20visualization%20and%20Flutter%20charting%20library.)
+[![HackerNews](https://img.shields.io/badge/share%20on-hacker%20news-orange?style=flat-square&logo=ycombinator)](https://news.ycombinator.com/submitlink?u=https://github.com/entronad/graphic)
+[![Reddit](https://img.shields.io/badge/share%20on-reddit-red?style=flat-square&logo=reddit)](https://reddit.com/submit?url=https://github.com/Kanaries/pygwalker&title=Graphic:%20A%20grammar%20of%20data%20visualization%20and%20Flutter%20charting%20library.)
 
 ## License
 

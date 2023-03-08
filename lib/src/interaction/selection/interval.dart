@@ -67,22 +67,22 @@ class IntervalSelector extends Selector {
     final start = coord.invert(points.first);
     final end = coord.invert(points.last);
 
-    bool Function(Aes) test;
+    bool Function(Attributes) test;
     if (dim == null) {
       final testRegion = Rect.fromPoints(start, end);
-      test = (aes) {
-        final p = aes.representPoint;
+      test = (attributes) {
+        final p = attributes.representPoint;
         return testRegion.contains(p);
       };
     } else {
       if (dim == Dim.x) {
-        test = (aes) {
-          final p = aes.representPoint;
+        test = (attributes) {
+          final p = attributes.representPoint;
           return p.dx.between(start.dx, end.dx);
         };
       } else {
-        test = (aes) {
-          final p = aes.representPoint;
+        test = (attributes) {
+          final p = attributes.representPoint;
           return p.dx.between(start.dy, end.dy);
         };
       }
@@ -90,9 +90,9 @@ class IntervalSelector extends Selector {
 
     final rst = <int>{};
     for (var group in groups) {
-      for (var aes in group) {
-        if (test(aes)) {
-          rst.add(aes.index);
+      for (var attributes in group) {
+        if (test(attributes)) {
+          rst.add(attributes.index);
         }
       }
     }

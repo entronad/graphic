@@ -1,5 +1,5 @@
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/aes/label.dart';
+import 'package:graphic/src/encode/label.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/guide/annotation/tag.dart';
 import 'package:graphic/src/util/assert.dart';
@@ -162,7 +162,7 @@ class LabelStyle {
 
 /// Specification of a label.
 ///
-/// A label is a span of text with styles. In is used for [LabelAttr], [TagAnnotation],
+/// A label is a span of text with styles. In is used for [LabelEncode], [TagAnnotation],
 /// etc in the chart.
 ///
 /// If the [text] is null or empty, the label will render nothing.

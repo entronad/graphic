@@ -63,7 +63,7 @@ class Dataflow {
 
   /// Update an operator's value directly.
   ///
-  /// An operator can only be updated by it's channel.
+  /// An operator can only be updated by it's stream.
   void _update<V>(
     Operator<V> op,
     V value,
@@ -161,24 +161,24 @@ class Dataflow {
     _heap.add(op);
   }
 
-  /// Binds a channel to an operator.
+  /// Binds a stream to an operator.
   ///
-  /// The channels are the only way to communicate with outside for this dataflow.
+  /// The streams are the only way to communicate with outside for this dataflow.
   ///
-  /// An operator can only be binded to one channel.
+  /// An operator can only be binded to one stream.
   ///
   /// The value changed to null will also trigger a communication. But the consume
   /// operator's value turning to null after running will not.
-  void bindChannel<V>(
-    StreamController<V?> channel,
+  void bindStream<V>(
+    StreamController<V?> stream,
     Operator<V> target,
   ) {
-    assert(target.channel == null);
+    assert(target.stream == null);
     // adds streamSubscription to list, to dispose later.
-    _streamSubscription.add(channel.stream.listen((value) {
+    _streamSubscription.add(stream.stream.listen((value) {
       _update(target, value);
       run();
     }));
-    target.channel = channel;
+    target.stream = stream;
   }
 }

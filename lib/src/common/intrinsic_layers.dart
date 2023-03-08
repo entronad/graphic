@@ -4,7 +4,7 @@ abstract class IntrinsicLayers {
   static const grid = 1;
   static const regionAnnot = 2;
   static const axis = 3;
-  static const element = 4;
+  static const mark = 4;
   static const lineAnnot = 5;
   static const figureAnnot = 6;
   static const selector = 7;

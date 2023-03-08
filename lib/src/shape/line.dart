@@ -3,25 +3,25 @@ import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/geom/line.dart';
+import 'package:graphic/src/mark/line.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/util/path.dart';
 
 import 'util/render_basic_item.dart';
 import 'function.dart';
 
-/// The shape for the line element.
+/// The shape for the line mark.
 ///
 /// See also:
 ///
-/// - [LineElement], which this shape is for.
+/// - [LineMark], which this shape is for.
 abstract class LineShape extends FunctionShape {
   @override
   double get defaultSize => 2;
 
   @override
   List<Figure> renderItem(
-    Aes item,
+    Attributes item,
     CoordConv coord,
     Offset origin,
   ) =>
@@ -62,12 +62,12 @@ class BasicLineShape extends LineShape {
 
   @override
   List<Figure> renderGroup(
-    List<Aes> group,
+    List<Attributes> group,
     CoordConv coord,
     Offset origin,
   ) {
     final segments = <List<Offset>>[];
-    final labels = <Aes, Offset>{};
+    final labels = <Attributes, Offset>{};
 
     var currentSegment = <Offset>[];
     for (var item in group) {

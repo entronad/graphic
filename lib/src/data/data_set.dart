@@ -1,20 +1,20 @@
 import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/dataflow/operator.dart';
-import 'package:graphic/src/interaction/signal.dart';
+import 'package:graphic/src/interaction/event.dart';
 
-/// The signal that may be emitted when data changes.
+/// The event that may be emitted when data changes.
 ///
-/// Whether to emit a change data signal is also affected by [Chart.changeData].
+/// Whether to emit a change data event is also affected by [Chart.changeData].
 ///
 /// See also:
 ///
-/// - [Chart.changeData], The behavior of whether to emit this signal when data changes.
-class ChangeDataSignal<D> extends Signal {
-  /// Creates a change data signal.
-  ChangeDataSignal(this.data);
+/// - [Chart.changeData], The behavior of whether to emit this event when data changes.
+class ChangeDataEvent<D> extends Event {
+  /// Creates a change data event.
+  ChangeDataEvent(this.data);
 
   @override
-  SignalType get type => SignalType.changeData;
+  EventType get type => EventType.changeData;
 
   /// The new data.
   final List<D> data;
@@ -32,11 +32,11 @@ class DataOp<D> extends Operator<List<D>> {
 
   @override
   List<D> evaluate() {
-    final signal = params['signal'] as ChangeDataSignal<D>;
-    return signal.data;
+    final event = params['event'] as ChangeDataEvent<D>;
+    return event.data;
   }
 
-  // In case the change data signal is triggerd by modifying the same data list
+  // In case the change data event is triggerd by modifying the same data list
   // instance and force Chart.changeData to true, the data operator value is always
   // regarded different when updated.
   @override

@@ -1,3 +1,16 @@
+## 1.0.1
+
+**2022-12-18**
+
+- Add mouse-focus scaling signal: https://github.com/entronad/graphic/pull/173
+
+## 1.0.0
+
+**2022-11-01**
+
+- Graphic has finished initial development and ready for production from this version. The API will be stable while a new major version begins in the design.
+- Add size to tooltip renderer function: https://github.com/entronad/graphic/pull/159
+
 ## 0.10.7
 
 **2022-09-20**

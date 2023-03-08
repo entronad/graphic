@@ -8,7 +8,7 @@ import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/data/data_set.dart';
-import 'package:graphic/src/geom/element.dart';
+import 'package:graphic/src/mark/mark.dart';
 import 'package:graphic/src/guide/annotation/annotation.dart';
 import 'package:graphic/src/guide/axis/axis.dart';
 import 'package:graphic/src/guide/interaction/crosshair.dart';
@@ -42,7 +42,7 @@ class Chart<D> extends StatefulWidget {
     this.changeData,
     required this.variables,
     this.transforms,
-    required this.elements,
+    required this.marks,
     this.coord,
     this.padding,
     this.axes,
@@ -51,9 +51,9 @@ class Chart<D> extends StatefulWidget {
     this.annotations,
     this.selections,
     this.rebuild,
-    this.gestureChannel,
-    this.resizeChannel,
-    this.changeDataChannel,
+    this.gestureStream,
+    this.resizeStream,
+    this.changeDataStream,
   }) : super(key: key);
 
   /// The data list to visualize.
@@ -67,8 +67,8 @@ class Chart<D> extends StatefulWidget {
   /// Specifications of transforms applied to variable data.
   final List<VariableTransform>? transforms;
 
-  /// Specifications of geometry elements.
-  final List<GeomElement> elements;
+  /// Specifications of geometry marks.
+  final List<Mark> marks;
 
   /// Specification of the coordinate.
   ///
@@ -116,43 +116,43 @@ class Chart<D> extends StatefulWidget {
 
   /// The behavior of data reevaluation when widget is updated.
   ///
-  /// If null, new [data] will be compared with the old one, a [ChangeDataSignal]
+  /// If null, new [data] will be compared with the old one, a [ChangeDataEvent]
   /// will be emitted and the chart will be reevaluated only when they are not the
   /// same instance.
   ///
-  /// If true, a [ChangeDataSignal] will always be emitted and the chart will always
+  /// If true, a [ChangeDataEvent] will always be emitted and the chart will always
   /// be reevaluated. **So be cautious to set true**.
   ///
-  /// If false, a [ChangeDataSignal] will never be emitted and the chart will never
+  /// If false, a [ChangeDataEvent] will never be emitted and the chart will never
   /// be reevaluated.
   final bool? changeData;
 
-  /// The interaction channel of gesture signals.
+  /// The interaction stream of gesture events.
   ///
-  /// You can either get gesture signals by listening to it's stream, or mannually
-  /// emit gesture signals into this chart by adding to it's sink.
+  /// You can either get gesture events by listening to it's stream, or mannually
+  /// emit gesture events into this chart by adding to it's sink.
   ///
-  /// You can also share it with other charts for sharing gesture signals, in which
+  /// You can also share it with other charts for sharing gesture events, in which
   /// case make sure it is broadcast.
-  final StreamController<GestureSignal>? gestureChannel;
+  final StreamController<GestureEvent>? gestureStream;
 
-  /// The interaction channel of resize signals.
+  /// The interaction stream of resize events.
   ///
-  /// You can either get resize signals by listening to it's stream, or mannually
-  /// emit resize signals into this chart by adding to it's sink.
+  /// You can either get resize events by listening to it's stream, or mannually
+  /// emit resize events into this chart by adding to it's sink.
   ///
-  /// You can also share it with other charts for sharing resize signals, in which
+  /// You can also share it with other charts for sharing resize events, in which
   /// case make sure it is broadcast.
-  final StreamController<ResizeSignal>? resizeChannel;
+  final StreamController<ResizeEvent>? resizeStream;
 
-  /// The interaction channel of change data signals.
+  /// The interaction stream of change data events.
   ///
-  /// You can either get change data signals by listening to it's stream, or mannually
-  /// emit change data signals into this chart by adding to it's sink.
+  /// You can either get change data events by listening to it's stream, or mannually
+  /// emit change data events into this chart by adding to it's sink.
   ///
-  /// You can also share it with other charts for sharing change data signals, in which
+  /// You can also share it with other charts for sharing change data events, in which
   /// case make sure it is broadcast.
-  final StreamController<ChangeDataSignal<D>>? changeDataChannel;
+  final StreamController<ChangeDataEvent<D>>? changeDataStream;
 
   /// Checks the equlity of two chart specifications.
   bool equalSpecTo(Object other) =>
@@ -160,7 +160,7 @@ class Chart<D> extends StatefulWidget {
       // data are checked by changeData.
       deepCollectionEquals(variables, other.variables) &&
       deepCollectionEquals(transforms, other.transforms) &&
-      deepCollectionEquals(elements, other.elements) &&
+      deepCollectionEquals(marks, other.marks) &&
       coord == other.coord &&
       deepCollectionEquals(axes, other.axes) &&
       tooltip == other.tooltip &&
@@ -169,9 +169,9 @@ class Chart<D> extends StatefulWidget {
       deepCollectionEquals(selections, other.selections) &&
       rebuild == other.rebuild &&
       changeData == other.changeData &&
-      gestureChannel == other.gestureChannel &&
-      resizeChannel == other.resizeChannel &&
-      changeDataChannel == other.changeDataChannel;
+      gestureStream == other.gestureStream &&
+      resizeStream == other.resizeStream &&
+      changeDataStream == other.changeDataStream;
 
   @override
   _ChartState<D> createState() => _ChartState<D>();

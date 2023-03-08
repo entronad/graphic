@@ -4,18 +4,18 @@ import 'home.dart';
 import 'pages/bigdata.dart';
 import 'pages/debug.dart';
 import 'pages/echarts.dart';
-import 'pages/interaction_channel_dynamic.dart';
+import 'pages/interaction_stream_dynamic.dart';
 import 'pages/interval.dart';
 import 'pages/line_area_point.dart';
 import 'pages/polygon_custom.dart';
 
 final routes = {
   '/': (context) => const HomePage(),
-  '/examples/Interval Element': (context) => IntervalPage(),
-  '/examples/Line,Area,Point Element': (context) => LineAreaPointPage(),
-  '/examples/Polygon,Custom Element': (context) => PolygonCustomPage(),
-  '/examples/Interaction Channel, Dynamic': (context) =>
-      const InteractionChannelDynamicPage(),
+  '/examples/Interval Mark': (context) => IntervalPage(),
+  '/examples/Line,Area,Point Mark': (context) => LineAreaPointPage(),
+  '/examples/Polygon,Custom Mark': (context) => PolygonCustomPage(),
+  '/examples/Interaction Stream, Dynamic': (context) =>
+      const InteractionStreamDynamicPage(),
   '/examples/Bigdata': (context) => BigdataPage(),
   '/examples/Echarts': (context) => EchartsPage(),
   '/examples/Debug': (context) => const DebugPage(),

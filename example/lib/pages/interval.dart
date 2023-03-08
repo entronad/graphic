@@ -13,7 +13,7 @@ class IntervalPage extends StatelessWidget {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: const Text('Rectangle Interval Element'),
+        title: const Text('Rectangle Interval Mark'),
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -62,14 +62,14 @@ class IntervalPage extends StatelessWidget {
                       accessor: (Map map) => map['sold'] as num,
                     ),
                   },
-                  elements: [
-                    IntervalElement(
-                      label: LabelAttr(
+                  marks: [
+                    IntervalMark(
+                      label: LabelEncode(
                           encoder: (tuple) => Label(tuple['sold'].toString())),
-                      elevation: ElevationAttr(value: 0, updaters: {
+                      elevation: ElevationEncode(value: 0, updaters: {
                         'tap': {true: (_) => 5}
                       }),
-                      color: ColorAttr(value: Defaults.primaryColor, updaters: {
+                      color: ColorEncode(value: Defaults.primaryColor, updaters: {
                         'tap': {false: (color) => color.withAlpha(100)}
                       }),
                     )
@@ -94,7 +94,7 @@ class IntervalPage extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                 alignment: Alignment.centerLeft,
                 child: const Text(
-                  '- Uses gradient attribute instead of color.',
+                  '- Uses gradient encode instead of color.',
                 ),
               ),
               Container(
@@ -111,11 +111,11 @@ class IntervalPage extends StatelessWidget {
                       accessor: (Map map) => map['sold'] as num,
                     ),
                   },
-                  elements: [
-                    IntervalElement(
-                      label: LabelAttr(
+                  marks: [
+                    IntervalMark(
+                      label: LabelEncode(
                           encoder: (tuple) => Label(tuple['sold'].toString())),
-                      gradient: GradientAttr(
+                      gradient: GradientEncode(
                           value: const LinearGradient(colors: [
                             Color(0x8883bff6),
                             Color(0x88188df0),
@@ -192,10 +192,10 @@ class IntervalPage extends StatelessWidget {
                       scale: LinearScale(min: 0, max: 160),
                     ),
                   },
-                  elements: [
-                    IntervalElement(
+                  marks: [
+                    IntervalMark(
                       position: Varset('id') * (Varset('min') + Varset('max')),
-                      shape: ShapeAttr(
+                      shape: ShapeEncode(
                           value: RectShape(
                               borderRadius: BorderRadius.circular(2))),
                     )
@@ -259,14 +259,14 @@ class IntervalPage extends StatelessWidget {
                       scale: LinearScale(min: 0, max: 1800),
                     ),
                   },
-                  elements: [
-                    IntervalElement(
+                  marks: [
+                    IntervalMark(
                       position:
                           Varset('index') * Varset('value') / Varset('type'),
-                      shape: ShapeAttr(value: RectShape(labelPosition: 0.5)),
-                      color: ColorAttr(
+                      shape: ShapeEncode(value: RectShape(labelPosition: 0.5)),
+                      color: ColorEncode(
                           variable: 'type', values: Defaults.colors10),
-                      label: LabelAttr(
+                      label: LabelEncode(
                           encoder: (tuple) => Label(
                                 tuple['value'].toString(),
                                 LabelStyle(style: const TextStyle(fontSize: 6)),
@@ -316,15 +316,15 @@ class IntervalPage extends StatelessWidget {
                           ((b['sold'] as num) - (a['sold'] as num)).toInt(),
                     )
                   ],
-                  elements: [
-                    IntervalElement(
-                      label: LabelAttr(
+                  marks: [
+                    IntervalMark(
+                      label: LabelEncode(
                           encoder: (tuple) => Label(
                                 tuple['sold'].toString(),
                                 LabelStyle(style: Defaults.runeStyle),
                               )),
-                      shape: ShapeAttr(value: FunnelShape()),
-                      color: ColorAttr(
+                      shape: ShapeEncode(value: FunnelShape()),
+                      color: ColorEncode(
                           variable: 'genre', values: Defaults.colors10),
                       modifiers: [SymmetricModifier()],
                     )
@@ -359,15 +359,15 @@ class IntervalPage extends StatelessWidget {
                       as: 'percent',
                     )
                   ],
-                  elements: [
-                    IntervalElement(
+                  marks: [
+                    IntervalMark(
                       position: Varset('percent') / Varset('genre'),
-                      label: LabelAttr(
+                      label: LabelEncode(
                           encoder: (tuple) => Label(
                                 tuple['sold'].toString(),
                                 LabelStyle(style: Defaults.runeStyle),
                               )),
-                      color: ColorAttr(
+                      color: ColorEncode(
                           variable: 'genre', values: Defaults.colors10),
                       modifiers: [StackModifier()],
                     )
@@ -404,18 +404,18 @@ class IntervalPage extends StatelessWidget {
                       scale: LinearScale(min: 0, marginMax: 0.1),
                     ),
                   },
-                  elements: [
-                    IntervalElement(
-                      label: LabelAttr(
+                  marks: [
+                    IntervalMark(
+                      label: LabelEncode(
                           encoder: (tuple) => Label(tuple['name'].toString())),
-                      shape: ShapeAttr(
+                      shape: ShapeEncode(
                           value: RectShape(
                         borderRadius:
                             const BorderRadius.all(Radius.circular(10)),
                       )),
-                      color: ColorAttr(
+                      color: ColorEncode(
                           variable: 'name', values: Defaults.colors10),
-                      elevation: ElevationAttr(value: 5),
+                      elevation: ElevationEncode(value: 5),
                     )
                   ],
                   coord: PolarCoord(startRadius: 0.15),
@@ -453,11 +453,11 @@ class IntervalPage extends StatelessWidget {
                       scale: LinearScale(min: 0, max: 1800),
                     ),
                   },
-                  elements: [
-                    IntervalElement(
+                  marks: [
+                    IntervalMark(
                       position:
                           Varset('index') * Varset('value') / Varset('type'),
-                      color: ColorAttr(
+                      color: ColorEncode(
                           variable: 'type', values: Defaults.colors10),
                       modifiers: [StackModifier()],
                     )
@@ -501,11 +501,11 @@ class IntervalPage extends StatelessWidget {
                       scale: LinearScale(min: 0),
                     ),
                   },
-                  elements: [
-                    IntervalElement(
-                      label: LabelAttr(
+                  marks: [
+                    IntervalMark(
+                      label: LabelEncode(
                           encoder: (tuple) => Label(tuple['sold'].toString())),
-                      color: ColorAttr(
+                      color: ColorEncode(
                         variable: 'genre',
                         values: Defaults.colors10,
                       ),

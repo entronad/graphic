@@ -3,21 +3,19 @@ import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/guide/axis/axis.dart';
-import 'package:graphic/src/interaction/signal.dart';
+import 'package:graphic/src/interaction/event.dart';
 import 'package:graphic/src/interaction/gesture.dart';
 
-/// Gets signal update for different dimensions.
-SignalUpdater<List<double>> _getRangeUpdate(
-        double Function(ScaleUpdateDetails) getDeltaDim,
-        double Function(ScaleUpdateDetails) getScaleDim,
-        double Function(Size) getSizeDim) =>
+/// Gets event update for different dimensions.
+EventUpdater<List<double>> _getRangeUpdate(
+        bool isHorizontal, bool focusMouseScale) =>
     (
       List<double> init,
       List<double> pre,
-      Signal signal,
+      Event event,
     ) {
-      if (signal is GestureSignal) {
-        final gesture = signal.gesture;
+      if (event is GestureEvent) {
+        final gesture = event.gesture;
 
         if (gesture.type == GestureType.scaleUpdate) {
           final detail = gesture.details as ScaleUpdateDetails;
@@ -25,12 +23,19 @@ SignalUpdater<List<double>> _getRangeUpdate(
           if (detail.pointerCount == 1) {
             // Panning.
 
-            final deltaRatio = getDeltaDim(gesture.preScaleDetail!);
-            final delta = deltaRatio / getSizeDim(gesture.chartSize);
+            final deltaRatio = isHorizontal
+                ? gesture.preScaleDetail!.focalPointDelta.dx
+                : -gesture.preScaleDetail!.focalPointDelta.dy;
+            final delta = deltaRatio /
+                (isHorizontal
+                    ? gesture.chartSize.width
+                    : gesture.chartSize.height);
             return [pre.first + delta, pre.last + delta];
           } else {
             // Scaling.
 
+            double Function(ScaleUpdateDetails) getScaleDim =
+                (p0) => isHorizontal ? p0.horizontalScale : p0.verticalScale;
             final preScale = getScaleDim(gesture.preScaleDetail!);
             final scale = getScaleDim(detail);
             final deltaRatio = (scale - preScale) / preScale / 2;
@@ -39,7 +44,7 @@ SignalUpdater<List<double>> _getRangeUpdate(
             return [pre.first - delta, pre.last + delta];
           }
         } else if (gesture.type == GestureType.scroll) {
-          const step = 0.1;
+          const step = -0.1;
           final scrollDelta = gesture.details as Offset;
           final deltaRatio = scrollDelta.dy == 0
               ? 0.0
@@ -48,7 +53,21 @@ SignalUpdater<List<double>> _getRangeUpdate(
                   : (-step / 2);
           final preRange = pre.last - pre.first;
           final delta = deltaRatio * preRange;
-          return [pre.first - delta, pre.last + delta];
+          if (!focusMouseScale) {
+            return [pre.first - delta, pre.last + delta];
+          } else {
+            double mousePos;
+            if (isHorizontal) {
+              mousePos = (gesture.localPosition.dx - 39.5) / (gesture.chartSize.width - 51);
+            } else {
+              mousePos = 1 - (gesture.localPosition.dy - 5) / (gesture.chartSize.height - 25);
+            }
+            mousePos = (mousePos - pre.first) / (pre.last - pre.first);
+            return [
+              pre.first - delta * 2 * mousePos,
+              pre.last + delta * 2 * (1 - mousePos)
+            ];
+          }
         } else if (gesture.type == GestureType.doubleTap) {
           return init;
         }
@@ -156,18 +175,19 @@ abstract class Defaults {
         grid: strokeStyle,
       );
 
-  /// A signal update for scaling and panning horizontal coordinate range.
-  static SignalUpdater<List<double>> get horizontalRangeSignal =>
-      _getRangeUpdate(
-        (detail) => detail.focalPointDelta.dx,
-        (detail) => detail.horizontalScale,
-        (size) => size.width,
-      );
+  /// A event update for scaling and panning horizontal coordinate range.
+  static EventUpdater<List<double>> get horizontalRangeEvent =>
+      _getRangeUpdate(true, false);
 
-  /// A signal update for scaling and panning vertical coordinate range.
-  static SignalUpdater<List<double>> get verticalRangeSignal => _getRangeUpdate(
-        (detail) => -detail.focalPointDelta.dy,
-        (detail) => detail.verticalScale,
-        (size) => size.height,
-      );
+  /// A event update for scaling and panning vertical coordinate range.
+  static EventUpdater<List<double>> get verticalRangeEvent =>
+      _getRangeUpdate(false, false);
+
+  /// A event update for scaling and panning horizontal coordinate range by cursor focus.
+  static EventUpdater<List<double>> get horizontalRangeFocusEvent =>
+      _getRangeUpdate(true, true);
+
+  /// A event update for scaling and panning vertical coordinate range by cursor focus.
+  static EventUpdater<List<double>> get verticalRangeFocusEvent =>
+      _getRangeUpdate(false, true);
 }

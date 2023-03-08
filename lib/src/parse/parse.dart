@@ -2,14 +2,14 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/aes/aes.dart';
-import 'package:graphic/src/aes/channel.dart';
-import 'package:graphic/src/aes/color.dart';
-import 'package:graphic/src/aes/gradient.dart';
-import 'package:graphic/src/aes/position.dart';
-import 'package:graphic/src/aes/shape.dart';
-import 'package:graphic/src/aes/elevation.dart';
-import 'package:graphic/src/aes/size.dart';
+import 'package:graphic/src/encode/encode.dart';
+import 'package:graphic/src/encode/channel.dart';
+import 'package:graphic/src/encode/color.dart';
+import 'package:graphic/src/encode/gradient.dart';
+import 'package:graphic/src/encode/position.dart';
+import 'package:graphic/src/encode/shape.dart';
+import 'package:graphic/src/encode/elevation.dart';
+import 'package:graphic/src/encode/size.dart';
 import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/size.dart';
@@ -25,8 +25,8 @@ import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/data/data_set.dart';
 import 'package:graphic/src/dataflow/operator.dart';
-import 'package:graphic/src/geom/element.dart';
-import 'package:graphic/src/geom/modifier/modifier.dart';
+import 'package:graphic/src/mark/mark.dart';
+import 'package:graphic/src/mark/modifier/modifier.dart';
 import 'package:graphic/src/guide/annotation/custom.dart';
 import 'package:graphic/src/guide/annotation/figure.dart';
 import 'package:graphic/src/guide/annotation/line.dart';
@@ -40,7 +40,7 @@ import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/interaction/selection/interval.dart';
 import 'package:graphic/src/interaction/selection/point.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
-import 'package:graphic/src/interaction/signal.dart';
+import 'package:graphic/src/interaction/event.dart';
 import 'package:graphic/src/scale/linear.dart';
 import 'package:graphic/src/scale/ordinal.dart';
 import 'package:graphic/src/scale/scale.dart';
@@ -54,7 +54,8 @@ import 'package:graphic/src/variable/transform/sort.dart';
 import 'package:graphic/src/variable/variable.dart';
 
 /// The default padding function for rectangle coordinate.
-EdgeInsets _defaultRectPadding(Size _) => const EdgeInsets.fromLTRB(40, 5, 10, 20);
+EdgeInsets _defaultRectPadding(Size _) =>
+    const EdgeInsets.fromLTRB(40, 5, 10, 20);
 
 /// The default padding function for polar coordinate.
 EdgeInsets _defaultPolarPadding(Size _) => const EdgeInsets.all(10);
@@ -65,38 +66,38 @@ void parse<D>(
   View<D> view,
   Size chartSize,
 ) {
-  // Signal
+  // Event
 
-  final gestureSignal = view.add(SignalOp<GestureSignal>());
+  final gestureEvent = view.add(EventOp<GestureEvent>());
 
-  final gestureChannel =
-      spec.gestureChannel ?? StreamController<GestureSignal>();
-  view.bindChannel(gestureChannel, gestureSignal);
-  view.gestureChannel = gestureChannel;
+  final gestureStream =
+      spec.gestureStream ?? StreamController<GestureEvent>();
+  view.bindStream(gestureStream, gestureEvent);
+  view.gestureStream = gestureStream;
 
-  final resizeSignal = view.add(SignalOp<ResizeSignal>());
+  final resizeEvent = view.add(EventOp<ResizeEvent>());
 
-  final resizeChannel = spec.resizeChannel ?? StreamController<ResizeSignal>();
-  view.bindChannel(resizeChannel, resizeSignal);
-  view.resizeChannel = resizeChannel;
+  final resizeStream = spec.resizeStream ?? StreamController<ResizeEvent>();
+  view.bindStream(resizeStream, resizeEvent);
+  view.resizeStream = resizeStream;
 
-  final changeDataSignal = view.add(SignalOp<ChangeDataSignal<D>>());
+  final changeDataEvent = view.add(EventOp<ChangeDataEvent<D>>());
 
-  final changeDataChannel =
-      spec.changeDataChannel ?? StreamController<ChangeDataSignal<D>>();
-  view.bindChannel(changeDataChannel, changeDataSignal);
-  view.changeDataChannel = changeDataChannel;
+  final changeDataStream =
+      spec.changeDataStream ?? StreamController<ChangeDataEvent<D>>();
+  view.bindStream(changeDataStream, changeDataEvent);
+  view.changeDataStream = changeDataStream;
 
-  final signal = view.add(SignalReducerOp<D>({
-    'gesture': gestureSignal,
-    'resize': resizeSignal,
-    'changeData': changeDataSignal,
+  final event = view.add(EventReducerOp<D>({
+    'gesture': gestureEvent,
+    'resize': resizeEvent,
+    'changeData': changeDataEvent,
   }));
 
   // Coord.
 
   final size = view.add(SizeOp({
-    'signal': resizeSignal,
+    'event': resizeEvent,
   }, chartSize));
 
   final coordSpec = spec.coord ?? RectCoord();
@@ -143,20 +144,20 @@ void parse<D>(
       coordSpec.horizontalRange ?? [0, 1],
     ));
     if (coordSpec.horizontalRangeUpdater != null) {
-      horizontalRange = view.add(SignalUpdateOp({
+      horizontalRange = view.add(EventUpdateOp({
         'update': coordSpec.horizontalRangeUpdater,
         'initialValue': horizontalRange,
-        'signal': signal,
+        'event': event,
       }));
     }
     Operator<List<double>> verticalRange = view.add(Value<List<double>>(
       coordSpec.verticalRange ?? [0, 1],
     ));
     if (coordSpec.verticalRangeUpdater != null) {
-      verticalRange = view.add(SignalUpdateOp({
+      verticalRange = view.add(EventUpdateOp({
         'update': coordSpec.verticalRangeUpdater,
         'initialValue': verticalRange,
-        'signal': signal,
+        'event': event,
       }));
     }
 
@@ -174,20 +175,20 @@ void parse<D>(
       coordSpec.angleRange ?? [0, 1],
     ));
     if (coordSpec.angleRangeUpdater != null) {
-      angleRange = view.add(SignalUpdateOp({
+      angleRange = view.add(EventUpdateOp({
         'update': coordSpec.angleRangeUpdater,
         'initialValue': angleRange,
-        'signal': signal,
+        'event': event,
       }));
     }
     Operator<List<double>> radiusRange = view.add(Value<List<double>>(
       coordSpec.radiusRange ?? [0, 1],
     ));
     if (coordSpec.radiusRangeUpdater != null) {
-      radiusRange = view.add(SignalUpdateOp({
+      radiusRange = view.add(EventUpdateOp({
         'update': coordSpec.radiusRangeUpdater,
         'initialValue': radiusRange,
-        'signal': signal,
+        'event': event,
       }));
     }
 
@@ -207,7 +208,7 @@ void parse<D>(
 
   // Variable
 
-  final data = view.add(DataOp<D>({'signal': changeDataSignal}, spec.data));
+  final data = view.add(DataOp<D>({'event': changeDataEvent}, spec.data));
 
   final accessors = <String, Accessor<D, dynamic>>{};
   final variableSpecs = spec.variables;
@@ -290,7 +291,7 @@ void parse<D>(
   // Selection.
 
   final gesture = view.add(GestureOp({
-    'signal': gestureSignal,
+    'event': gestureEvent,
   }));
 
   SelectorOp? selectors;
@@ -335,24 +336,24 @@ void parse<D>(
     }
   }
 
-  // Element.
+  // Mark.
 
-  // For all elements, they either all have or all have not select operator.
+  // For all marks, they either all have or all have not select operator.
   final selectOpList = <SelectOp>[];
   final groupsList = <Operator<AesGroups>>[];
-  // First term of the form of the first element, in order to get first variable
+  // First term of the form of the first mark, in order to get first variable
   // of each dimension.
   AlgTerm? firstVariables;
 
-  for (var elementSpec in spec.elements) {
-    var form = elementSpec.position?.form;
+  for (var markSpec in spec.marks) {
+    var form = markSpec.position?.form;
     // Default algebracal form.
     if (form == null) {
       final variables = scaleSpecs.keys.toList();
       form = (Varset(variables[0]) * Varset(variables[1])).form;
     }
 
-    final nesters = elementSpec.position?.nesters ?? <AlgForm>[];
+    final nesters = markSpec.position?.nesters ?? <AlgForm>[];
 
     firstVariables ??= form.first;
 
@@ -365,7 +366,7 @@ void parse<D>(
     final positionEncoder = view.add(PositionEncoderOp({
       'form': form,
       'scales': scales,
-      'completer': getPositionCompleter(elementSpec),
+      'completer': getPositionCompleter(markSpec),
       'origin': origin,
     }));
 
@@ -374,42 +375,42 @@ void parse<D>(
       'tuples': tuples,
       'positionEncoder': positionEncoder,
       'shapeEncoder': getChannelEncoder<Shape>(
-        elementSpec.shape ?? ShapeAttr(value: getDefaultShape(elementSpec)),
+        markSpec.shape ?? ShapeEncode(value: getDefaultShape(markSpec)),
         scaleSpecs,
         null,
       ),
-      // Uses a default color when both color and gradient attributes are null.
-      'colorEncoder': elementSpec.gradient == null
+      // Uses a default color when both color and gradient encodes are null.
+      'colorEncoder': markSpec.gradient == null
           ? getChannelEncoder<Color>(
-              elementSpec.color ?? ColorAttr(value: Defaults.primaryColor),
+              markSpec.color ?? ColorEncode(value: Defaults.primaryColor),
               scaleSpecs,
               (List<Color> values, List<double> stops) =>
                   ContinuousColorConv(values, stops),
             )
           : null,
-      'gradientEncoder': elementSpec.gradient == null
+      'gradientEncoder': markSpec.gradient == null
           ? null
           : getChannelEncoder<Gradient>(
-              elementSpec.gradient!,
+              markSpec.gradient!,
               scaleSpecs,
               (List<Gradient> values, List<double> stops) =>
                   ContinuousGradientConv(values, stops),
             ),
-      'elevationEncoder': elementSpec.elevation == null
+      'elevationEncoder': markSpec.elevation == null
           ? null
           : getChannelEncoder<double>(
-              elementSpec.elevation!,
+              markSpec.elevation!,
               scaleSpecs,
               (List<double> values, List<double> stops) =>
                   ContinuousElevationConv(values, stops),
             ),
-      'labelEncoder': elementSpec.label == null
+      'labelEncoder': markSpec.label == null
           ? null
-          : CustomEncoder<Label>(elementSpec.label!.encoder!),
-      'sizeEncoder': elementSpec.size == null
+          : CustomEncoder<Label>(markSpec.label!.encoder!),
+      'sizeEncoder': markSpec.size == null
           ? null
           : getChannelEncoder<double>(
-              elementSpec.size!,
+              markSpec.size!,
               scaleSpecs,
               (List<double> values, List<double> stops) =>
                   ContinuousSizeConv(values, stops),
@@ -423,8 +424,8 @@ void parse<D>(
       'scales': scales,
     }));
 
-    if (elementSpec.modifiers != null) {
-      for (var modifier in elementSpec.modifiers!) {
+    if (markSpec.modifiers != null) {
+      for (var modifier in markSpec.modifiers!) {
         groups = view.add(ModifyOp({
           'modifier': modifier,
           'groups': groups,
@@ -442,18 +443,18 @@ void parse<D>(
         'groups': groups,
         'tuples': tuples,
         'coord': coord,
-      }, elementSpec.selected));
-      if (elementSpec.selectionChannel != null) {
-        view.bindChannel(elementSpec.selectionChannel!, selected);
+      }, markSpec.selected));
+      if (markSpec.selectionStream != null) {
+        view.bindStream(markSpec.selectionStream!, selected);
       }
       selectOpList.add(selected);
 
-      final shapeUpdaters = elementSpec.shape?.updaters;
-      final colorUpdaters = elementSpec.color?.updaters;
-      final gradientUpdaters = elementSpec.gradient?.updaters;
-      final elevationUpdaters = elementSpec.elevation?.updaters;
-      final labelUpdaters = elementSpec.label?.updaters;
-      final sizeUpdaters = elementSpec.size?.updaters;
+      final shapeUpdaters = markSpec.shape?.updaters;
+      final colorUpdaters = markSpec.color?.updaters;
+      final gradientUpdaters = markSpec.gradient?.updaters;
+      final elevationUpdaters = markSpec.elevation?.updaters;
+      final labelUpdaters = markSpec.label?.updaters;
+      final sizeUpdaters = markSpec.size?.updaters;
 
       final updaterNames = <String>{};
       if (shapeUpdaters != null) {
@@ -491,13 +492,13 @@ void parse<D>(
 
     groupsList.add(groups);
 
-    final elementScene =
-        view.graffiti.add(ElementScene(elementSpec.layer ?? 0));
-    view.add(ElementRenderOp({
+    final markScene =
+        view.graffiti.add(MarkScene(markSpec.layer ?? 0));
+    view.add(MarkRenderOp({
       'groups': groups,
       'coord': coord,
       'origin': origin,
-    }, elementScene, view));
+    }, markScene, view));
   }
 
   // Guide.
@@ -629,16 +630,16 @@ void parse<D>(
     assert(selectors != null);
 
     final crosshairSpec = spec.crosshair!;
-    final elementIndex = crosshairSpec.element ?? 0;
+    final markIndex = crosshairSpec.mark ?? 0;
 
     final crosshairScene =
         view.graffiti.add(CrosshairScene(crosshairSpec.layer ?? 0));
     view.add(CrosshairRenderOp({
       'selections': crosshairSpec.selections ?? spec.selections!.keys.toSet(),
       'selectors': selectors!,
-      'selected': selectOpList[elementIndex],
+      'selected': selectOpList[markIndex],
       'coord': coord,
-      'groups': groupsList[elementIndex],
+      'groups': groupsList[markIndex],
       'styles': crosshairSpec.styles ??
           [
             StrokeStyle(color: const Color(0xffbfbfbf)),
@@ -652,17 +653,17 @@ void parse<D>(
     assert(selectors != null);
 
     final tooltipSpec = spec.tooltip!;
-    final elementIndex = tooltipSpec.element ?? 0;
+    final markIndex = tooltipSpec.mark ?? 0;
 
     final tooltipScene =
         view.graffiti.add(TooltipScene(tooltipSpec.layer ?? 0));
     view.add(TooltipRenderOp({
       'selections': tooltipSpec.selections ?? spec.selections!.keys.toSet(),
       'selectors': selectors!,
-      'selected': selectOpList[elementIndex],
+      'selected': selectOpList[markIndex],
       'selectionSpecs': spec.selections!,
       'coord': coord,
-      'groups': groupsList[elementIndex],
+      'groups': groupsList[markIndex],
       'tuples': tuples,
       'align': tooltipSpec.align ?? Alignment.center,
       'offset': tooltipSpec.offset,

@@ -7,7 +7,7 @@ import 'package:graphic/src/shape/util/gradient.dart';
 
 import '../shape.dart';
 
-/// Renders a basic element item.
+/// Renders a basic mark item.
 ///
 /// This is a util function for implementing [Shape.renderGroup] and [Shape.renderItem].
 /// The [path] should be calculated before it and label is not rendered in it.
@@ -18,7 +18,7 @@ import '../shape.dart';
 /// - [renderLabel], which renders an item label.
 List<Figure> renderBasicItem(
   Path path,
-  Aes aes,
+  Attributes attributes,
   bool hollow,
   double strokeWidth, [
   Rect? gradientBounds,
@@ -26,30 +26,30 @@ List<Figure> renderBasicItem(
   final rst = <Figure>[];
 
   final style = Paint();
-  if (aes.gradient != null) {
+  if (attributes.gradient != null) {
     style.shader = toUIGradient(
-      aes.gradient!,
+      attributes.gradient!,
       gradientBounds == null
           ? path.getBounds()
           : path.getBounds().intersect(gradientBounds),
     );
   } else {
-    style.color = aes.color!;
+    style.color = attributes.color!;
   }
   style.style = hollow ? PaintingStyle.stroke : PaintingStyle.fill;
   style.strokeWidth = strokeWidth;
 
-  if (aes.elevation != null && aes.elevation != 0) {
+  if (attributes.elevation != null && attributes.elevation != 0) {
     Color? shadowColor;
-    if (aes.gradient != null) {
-      shadowColor = getShadowColor(aes.gradient!);
+    if (attributes.gradient != null) {
+      shadowColor = getShadowColor(attributes.gradient!);
     } else {
-      shadowColor = aes.color!;
+      shadowColor = attributes.color!;
     }
     rst.add(ShadowFigure(
       path,
       shadowColor,
-      aes.elevation!,
+      attributes.elevation!,
     ));
   }
 

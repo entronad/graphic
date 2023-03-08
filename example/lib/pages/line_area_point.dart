@@ -17,7 +17,7 @@ class LineAreaPointPage extends StatelessWidget {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: const Text('Line and Area Element'),
+        title: const Text('Line and Area Mark'),
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -83,9 +83,9 @@ class LineAreaPointPage extends StatelessWidget {
                       accessor: (TimeSeriesSales datum) => datum.sales,
                     ),
                   },
-                  elements: [
-                    LineElement(
-                      shape: ShapeAttr(value: BasicLineShape(dash: [5, 2])),
+                  marks: [
+                    LineMark(
+                      shape: ShapeEncode(value: BasicLineShape(dash: [5, 2])),
                       selected: {
                         'touchMove': {1}
                       },
@@ -151,15 +151,15 @@ class LineAreaPointPage extends StatelessWidget {
                           (map['Close'] ?? double.nan) as num,
                     ),
                   },
-                  elements: [
-                    AreaElement(
-                      shape: ShapeAttr(value: BasicAreaShape(smooth: true)),
-                      color: ColorAttr(
+                  marks: [
+                    AreaMark(
+                      shape: ShapeEncode(value: BasicAreaShape(smooth: true)),
+                      color: ColorEncode(
                           value: Defaults.colors10.first.withAlpha(80)),
                     ),
-                    LineElement(
-                      shape: ShapeAttr(value: BasicLineShape(smooth: true)),
-                      size: SizeAttr(value: 0.5),
+                    LineMark(
+                      shape: ShapeEncode(value: BasicLineShape(smooth: true)),
+                      size: SizeEncode(value: 0.5),
                     ),
                   ],
                   axes: [
@@ -221,7 +221,7 @@ class LineAreaPointPage extends StatelessWidget {
                   variables: {
                     'date': Variable(
                       accessor: (Map map) => map['date'] as String,
-                      scale: OrdinalScale(tickCount: 5),
+                      scale: OrdinalScale(tickCount: 5, inflate: true),
                     ),
                     'points': Variable(
                       accessor: (Map map) => map['points'] as num,
@@ -230,13 +230,14 @@ class LineAreaPointPage extends StatelessWidget {
                       accessor: (Map map) => map['name'] as String,
                     ),
                   },
-                  elements: [
-                    LineElement(
+                  coord: RectCoord(horizontalRange: [0.01, 0.99]),
+                  marks: [
+                    LineMark(
                       position:
                           Varset('date') * Varset('points') / Varset('name'),
-                      shape: ShapeAttr(value: BasicLineShape(smooth: true)),
-                      size: SizeAttr(value: 0.5),
-                      color: ColorAttr(
+                      shape: ShapeEncode(value: BasicLineShape(smooth: true)),
+                      size: SizeEncode(value: 0.5),
+                      color: ColorEncode(
                         variable: 'name',
                         values: Defaults.colors10,
                         updaters: {
@@ -249,8 +250,8 @@ class LineAreaPointPage extends StatelessWidget {
                         },
                       ),
                     ),
-                    PointElement(
-                      color: ColorAttr(
+                    PointMark(
+                      color: ColorEncode(
                         variable: 'name',
                         values: Defaults.colors10,
                         updaters: {
@@ -300,7 +301,7 @@ class LineAreaPointPage extends StatelessWidget {
                     selections: {'tooltipTouch', 'tooltipMouse'},
                     followPointer: [true, true],
                     align: Alignment.topLeft,
-                    element: 0,
+                    mark: 0,
                     variables: [
                       'date',
                       'name',
@@ -343,12 +344,12 @@ class LineAreaPointPage extends StatelessWidget {
                       accessor: (List list) => list[2] as String,
                     ),
                   },
-                  elements: [
-                    AreaElement(
+                  marks: [
+                    AreaMark(
                       position:
                           Varset('date') * Varset('value') / Varset('type'),
-                      shape: ShapeAttr(value: BasicAreaShape(smooth: true)),
-                      color: ColorAttr(
+                      shape: ShapeEncode(value: BasicAreaShape(smooth: true)),
+                      color: ColorEncode(
                         variable: 'type',
                         values: Defaults.colors10,
                       ),
@@ -411,12 +412,12 @@ class LineAreaPointPage extends StatelessWidget {
                       accessor: (Map map) => map['value'] as num,
                     ),
                   },
-                  elements: [
-                    LineElement(
+                  marks: [
+                    LineMark(
                       position:
                           Varset('index') * Varset('value') / Varset('type'),
-                      shape: ShapeAttr(value: BasicLineShape(loop: true)),
-                      color: ColorAttr(
+                      shape: ShapeEncode(value: BasicLineShape(loop: true)),
+                      color: ColorEncode(
                           variable: 'type', values: Defaults.colors10),
                     )
                   ],
@@ -493,17 +494,17 @@ class LineAreaPointPage extends StatelessWidget {
                       accessor: (List datum) => datum[4].toString(),
                     ),
                   },
-                  elements: [
-                    PointElement(
-                      size: SizeAttr(variable: '2', values: [5, 20]),
-                      color: ColorAttr(
+                  marks: [
+                    PointMark(
+                      size: SizeEncode(variable: '2', values: [5, 20]),
+                      color: ColorEncode(
                         variable: '4',
                         values: Defaults.colors10,
                         updaters: {
                           'choose': {true: (_) => Colors.red}
                         },
                       ),
-                      shape: ShapeAttr(variable: '4', values: [
+                      shape: ShapeEncode(variable: '4', values: [
                         CircleShape(hollow: true),
                         SquareShape(hollow: true),
                       ]),
@@ -516,8 +517,8 @@ class LineAreaPointPage extends StatelessWidget {
                   coord: RectCoord(
                     horizontalRange: [0.05, 0.95],
                     verticalRange: [0.05, 0.95],
-                    horizontalRangeUpdater: Defaults.horizontalRangeSignal,
-                    verticalRangeUpdater: Defaults.verticalRangeSignal,
+                    horizontalRangeUpdater: Defaults.horizontalRangeEvent,
+                    verticalRangeUpdater: Defaults.verticalRangeEvent,
                   ),
                   selections: {'choose': PointSelection(toggle: true)},
                   tooltip: TooltipGuide(
@@ -575,17 +576,17 @@ class LineAreaPointPage extends StatelessWidget {
                       accessor: (List datum) => datum[4].toString(),
                     ),
                   },
-                  elements: [
-                    PointElement(
-                      size: SizeAttr(variable: '2', values: [5, 20]),
-                      color: ColorAttr(
+                  marks: [
+                    PointMark(
+                      size: SizeEncode(variable: '2', values: [5, 20]),
+                      color: ColorEncode(
                         variable: '4',
                         values: Defaults.colors10,
                         updaters: {
                           'choose': {true: (_) => Colors.red}
                         },
                       ),
-                      shape: ShapeAttr(variable: '4', values: [
+                      shape: ShapeEncode(variable: '4', values: [
                         CircleShape(hollow: true),
                         SquareShape(hollow: true),
                       ]),
@@ -648,17 +649,17 @@ class LineAreaPointPage extends StatelessWidget {
                       accessor: (List datum) => datum[4].toString(),
                     ),
                   },
-                  elements: [
-                    PointElement(
-                      size: SizeAttr(variable: '2', values: [5, 20]),
-                      color: ColorAttr(
+                  marks: [
+                    PointMark(
+                      size: SizeEncode(variable: '2', values: [5, 20]),
+                      color: ColorEncode(
                         variable: '4',
                         values: Defaults.colors10,
                         updaters: {
                           'choose': {true: (_) => Colors.red}
                         },
                       ),
-                      shape: ShapeAttr(variable: '4', values: [
+                      shape: ShapeEncode(variable: '4', values: [
                         CircleShape(hollow: true),
                         SquareShape(hollow: true),
                       ]),
@@ -722,8 +723,8 @@ class LineAreaPointPage extends StatelessWidget {
                       scale: LinearScale(min: 0),
                     ),
                   },
-                  elements: [
-                    PointElement(
+                  marks: [
+                    PointMark(
                       position: Varset('value'),
                     )
                   ],

@@ -89,16 +89,16 @@ class PointSelector extends Selector {
     int nearestIndex = -1;
     // nearestDistance is a canvas distance.
     double nearestDistance = double.infinity;
-    void Function(Aes) updateNearest;
+    void Function(Attributes) updateNearest;
 
     final point = coord.invert(points.single);
     if (dim == null) {
-      updateNearest = (aes) {
-        final offset = aes.representPoint - point;
+      updateNearest = (attributes) {
+        final offset = attributes.representPoint - point;
         // The neighborhood is an approximate square.
         final distance = (offset.dx.abs() + offset.dy.abs()) / 2;
         if (distance < nearestDistance) {
-          nearestIndex = aes.index;
+          nearestIndex = attributes.index;
           nearestDistance = distance;
         }
       };
@@ -106,19 +106,19 @@ class PointSelector extends Selector {
       final getProjection = dim == Dim.x
           ? (Offset offset) => offset.dx
           : (Offset offset) => offset.dy;
-      updateNearest = (aes) {
-        final p = aes.representPoint;
+      updateNearest = (attributes) {
+        final p = attributes.representPoint;
         final distance = (getProjection(point) - getProjection(p)).abs();
         if (distance < nearestDistance) {
-          nearestIndex = aes.index;
+          nearestIndex = attributes.index;
           nearestDistance = distance;
         }
       };
     }
 
     for (var group in groups) {
-      for (var aes in group) {
-        updateNearest(aes);
+      for (var attributes in group) {
+        updateNearest(attributes);
       }
     }
 

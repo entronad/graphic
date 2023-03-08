@@ -2,21 +2,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/geom/point.dart';
+import 'package:graphic/src/mark/point.dart';
 import 'package:graphic/src/graffiti/figure.dart';
 
 import 'function.dart';
 import 'util/render_basic_item.dart';
 
-/// The shape for the point element.
+/// The shape for the point mark.
 ///
 /// See also:
 ///
-/// - [PointElement], which this shape is for.
+/// - [PointMark], which this shape is for.
 abstract class PointShape extends FunctionShape {
   @override
   List<Figure> renderGroup(
-    List<Aes> group,
+    List<Attributes> group,
     CoordConv coord,
     Offset origin,
   ) {
@@ -54,7 +54,7 @@ abstract class PointShapeBase extends PointShape {
 
   @override
   List<Figure> renderItem(
-    Aes item,
+    Attributes item,
     CoordConv coord,
     Offset origin,
   ) {
@@ -90,7 +90,7 @@ abstract class PointShapeBase extends PointShape {
     return rst;
   }
 
-  Path path(Aes item, CoordConv coord);
+  Path path(Attributes item, CoordConv coord);
 }
 
 /// A circle shape.
@@ -105,7 +105,7 @@ class CircleShape extends PointShapeBase {
   bool equalTo(Object other) => super.equalTo(other) && other is CircleShape;
 
   @override
-  Path path(Aes item, CoordConv coord) {
+  Path path(Attributes item, CoordConv coord) {
     final point = coord.convert(item.position.last);
     final size = item.size ?? defaultSize;
     return Path()
@@ -129,7 +129,7 @@ class SquareShape extends PointShapeBase {
   bool equalTo(Object other) => super.equalTo(other) && other is SquareShape;
 
   @override
-  Path path(Aes item, CoordConv coord) {
+  Path path(Attributes item, CoordConv coord) {
     final point = coord.convert(item.position.last);
     final size = item.size ?? defaultSize;
     return Path()

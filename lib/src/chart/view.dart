@@ -38,39 +38,39 @@ class View<D> extends Dataflow {
   /// The view is dirty when any [Render] operater has rendered.
   bool dirty = false;
 
-  /// The gesture signal channel.
+  /// The gesture event stream.
   ///
   /// This is generated in [parse] and hold by [View] for internal interactions.
-  late StreamController<GestureSignal> gestureChannel;
+  late StreamController<GestureEvent> gestureStream;
 
-  /// The resize signal channel.
+  /// The resize event stream.
   ///
   /// This is generated in [parse] and hold by [View] for internal interactions.
-  late StreamController<ResizeSignal> resizeChannel;
+  late StreamController<ResizeEvent> resizeStream;
 
-  /// The changeData signal channel.
+  /// The changeData event stream.
   ///
   /// This is generated in [parse] and hold by [View] for internal interactions.
-  late StreamController<ChangeDataSignal<D>> changeDataChannel;
+  late StreamController<ChangeDataEvent<D>> changeDataStream;
 
-  /// Emits a gesture signal.
+  /// Emits a gesture event.
   Future<void> gesture(Gesture gesture) async {
     await Future(() {
-      gestureChannel.sink.add(GestureSignal(gesture));
+      gestureStream.sink.add(GestureEvent(gesture));
     });
   }
 
-  /// Emits a resize signal.
+  /// Emits a resize event.
   Future<void> resize(Size size) async {
     await Future(() {
-      resizeChannel.sink.add(ResizeSignal(size));
+      resizeStream.sink.add(ResizeEvent(size));
     });
   }
 
-  /// Emits a change data signal.
+  /// Emits a change data event.
   Future<void> changeData(List<D> data) async {
     await Future(() {
-      changeDataChannel.sink.add(ChangeDataSignal<D>(data));
+      changeDataStream.sink.add(ChangeDataEvent<D>(data));
     });
   }
 

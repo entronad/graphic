@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 
-import 'signal.dart';
+import 'event.dart';
 
 /// Types of [Gesture]s.
 ///
@@ -498,11 +498,11 @@ enum GestureType {
 /// A gesture is triggered by pointer events, including touch, stylus, or mouse.
 /// Gesture types are refering to [GestureDetector] (See details in [GestureType]).
 ///
-/// This is carried as payload by [GestureSignal].
+/// This is carried as payload by [GestureEvent].
 ///
 /// See also:
 ///
-/// - [GestureSignal], which signal carries gesture as payload.
+/// - [GestureEvent], which event carries gesture as payload.
 class Gesture {
   /// Creates a gesture.
   Gesture(
@@ -558,13 +558,13 @@ class Gesture {
   final ScaleUpdateDetails? preScaleDetail;
 }
 
-/// The signal emitted when a gesture occurs.
-class GestureSignal extends Signal {
-  /// Creates a gesture signal.
-  GestureSignal(this.gesture);
+/// The event emitted when a gesture occurs.
+class GestureEvent extends Event {
+  /// Creates a gesture event.
+  GestureEvent(this.gesture);
 
   @override
-  SignalType get type => SignalType.gesture;
+  EventType get type => EventType.gesture;
 
   /// Informations about the gesture.
   final Gesture gesture;
@@ -581,7 +581,7 @@ class GestureOp extends Operator<Gesture?> {
 
   @override
   Gesture? evaluate() {
-    final signal = params['signal'] as GestureSignal;
-    return signal.gesture;
+    final event = params['event'] as GestureEvent;
+    return event.gesture;
   }
 }

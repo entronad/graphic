@@ -45,7 +45,7 @@ class CandlestickShape extends Shape {
 
   @override
   List<Figure> renderGroup(
-    List<Aes> group,
+    List<Attributes> group,
     CoordConv coord,
     Offset origin,
   ) {
@@ -61,7 +61,7 @@ class CandlestickShape extends Shape {
 
   @override
   List<Figure> renderItem(
-    Aes item,
+    Attributes item,
     CoordConv coord,
     Offset origin,
   ) {
@@ -103,7 +103,7 @@ class CandlestickShape extends Shape {
       Offset(x + bias, bottomEdge),
     ));
 
-    // Color variation should be controled by color attribute.
+    // Color variation should be controled by color encode.
     return renderBasicItem(
       path,
       item,

@@ -46,7 +46,9 @@ final points1 = getPointBigData(100000).map((e) => Offset(e[0], e[1])).toList();
 
 final points2 = getPointBigData(100000).map((e) => Offset(e[0], e[1])).toList();
 
-final cubics = getPointBigData(100000).map((e) => [Offset(e[0], e[2]), Offset(e[1], e[3]), Offset(e[0], e[2])]).toList();
+final cubics = getPointBigData(100000)
+    .map((e) => [Offset(e[0], e[2]), Offset(e[1], e[3]), Offset(e[0], e[2])])
+    .toList();
 
 class ShapePage extends StatefulWidget {
   const ShapePage({super.key});
@@ -58,7 +60,8 @@ class ShapePage extends StatefulWidget {
 // final style = PaintStyle(strokeColor: Colors.black);
 final style = PaintStyle(fillColor: Colors.black);
 
-class _ShapePageState extends State<ShapePage> with SingleTickerProviderStateMixin {
+class _ShapePageState extends State<ShapePage>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   late final Graffiti graffiti;
@@ -73,7 +76,8 @@ class _ShapePageState extends State<ShapePage> with SingleTickerProviderStateMix
   void initState() {
     graffiti = Graffiti(tickerProvider: this, repaint: repaint);
 
-    scene = graffiti.createScene(transition: Transition(duration: Duration(seconds: 2)));
+    scene = graffiti.createScene(
+        transition: Transition(duration: Duration(seconds: 2)));
 
     // final a = SplineElement(start: Offset(10, 10), cubics: [
     //   [Offset(20, 10), Offset(10, 20), Offset(20, 20)],
@@ -101,40 +105,40 @@ class _ShapePageState extends State<ShapePage> with SingleTickerProviderStateMix
     // final c = s.toCubic(start);
 
     // scene.set([
-      // LineElement(start: Offset(0, 0), end: Offset(50, 50), style: PaintStyle(strokeColor: Colors.black)),
-      // ArcElement(oval: Rect.fromCircle(center: Offset(100, 100), radius: 50), startAngle: 0, endAngle: pi, style: PaintStyle(strokeColor: Colors.black)),
-      // CircleElement(center: Offset(50, 50), radius: 30, style: style),
-      // GroupElement(elements: [LineElement(start: Offset(0, 0), end: Offset(50, 50), style: PaintStyle(strokeColor: Colors.black)),CircleElement(center: Offset(50, 50), radius: 30, style: style)]),
-      // LabelElement(text: 'text', anchor: Offset(50, 50), defaultAlign: Alignment.center, style: LabelStyle(textStyle: TextStyle())),
-      // OvalElement(oval: Rect.fromCircle(center: Offset(100, 100), radius: 50), style: style),
-      // PolygonElement(points: [Offset(0, 0), Offset(10, 10), Offset(30, 60)], close: true, style: style),
-      // RectElement(rect: Rect.fromPoints(Offset(0, 0), Offset(100, 100)), borderRadius: BorderRadius.all(Radius.circular(5)), style: style),
-      // SectorElement(center: Offset(100, 100), startRadius: 20, endRadius: 80, startAngle: 0, endAngle: 3, borderRadius: BorderRadius.all(Radius.circular(10)), style: style)
-      // GroupElement(elements: [
-      //   LineElement(start: Offset(0, 0), end: Offset(50, 50), style: PaintStyle(strokeColor: Colors.black)),
-      //   ArcElement(oval: Rect.fromCircle(center: Offset(100, 100), radius: 50), startAngle: 0, endAngle: pi, style: PaintStyle(strokeColor: Colors.black)),
-      //   CircleElement(center: Offset(50, 50), radius: 30, style: style),
-      //   GroupElement(elements: [LineElement(start: Offset(0, 0), end: Offset(50, 50), style: PaintStyle(strokeColor: Colors.black)),CircleElement(center: Offset(50, 50), radius: 30, style: style)]),
-      //   LabelElement(text: 'text', anchor: Offset(50, 50), defaultAlign: Alignment.center, style: LabelStyle(textStyle: TextStyle())),
-      //   OvalElement(oval: Rect.fromCircle(center: Offset(100, 100), radius: 50), style: style),
-      //   PolygonElement(points: [Offset(0, 0), Offset(10, 10), Offset(30, 60)], close: true, style: style),
-      //   RectElement(rect: Rect.fromPoints(Offset(0, 0), Offset(100, 100)), borderRadius: BorderRadius.all(Radius.circular(5)), style: style),
-      //   SectorElement(center: Offset(100, 100), startRadius: 20, endRadius: 80, startAngle: 0, endAngle: 3, borderRadius: BorderRadius.all(Radius.circular(10)), style: style),
-      // ])
-      // PathElement(segments: [
-      //   MoveSegment(end: Offset(10, 10)),
-      //   // ArcToPointSegment(end: Offset(40, 40), radius: Radius.circular(30)),
-      //   // ArcSegment(oval: Rect.fromPoints(Offset(0, 0), Offset(100, 100)), startAngle: 3, endAngle: 5),
-      //   // ConicSegment(control: Offset(20, 20), end: Offset(40, 70), weight: 0.6),
-      //   LineSegment(end: Offset(50, 110)),
-      //   MoveSegment(end: Offset(20, 20)),
-      //   // CubicSegment(control1: Offset(0, 50), control2: Offset(66, 0), end: Offset(100, 100)),
-      //   QuadraticSegment(control: Offset(0, 50), end: Offset(100, 100)),
-      //   CloseSegment(),
-      // ], style: style),
-      // a,
-      // b,
-      // e,
+    // LineElement(start: Offset(0, 0), end: Offset(50, 50), style: PaintStyle(strokeColor: Colors.black)),
+    // ArcElement(oval: Rect.fromCircle(center: Offset(100, 100), radius: 50), startAngle: 0, endAngle: pi, style: PaintStyle(strokeColor: Colors.black)),
+    // CircleElement(center: Offset(50, 50), radius: 30, style: style),
+    // GroupElement(elements: [LineElement(start: Offset(0, 0), end: Offset(50, 50), style: PaintStyle(strokeColor: Colors.black)),CircleElement(center: Offset(50, 50), radius: 30, style: style)]),
+    // LabelElement(text: 'text', anchor: Offset(50, 50), defaultAlign: Alignment.center, style: LabelStyle(textStyle: TextStyle())),
+    // OvalElement(oval: Rect.fromCircle(center: Offset(100, 100), radius: 50), style: style),
+    // PolygonElement(points: [Offset(0, 0), Offset(10, 10), Offset(30, 60)], close: true, style: style),
+    // RectElement(rect: Rect.fromPoints(Offset(0, 0), Offset(100, 100)), borderRadius: BorderRadius.all(Radius.circular(5)), style: style),
+    // SectorElement(center: Offset(100, 100), startRadius: 20, endRadius: 80, startAngle: 0, endAngle: 3, borderRadius: BorderRadius.all(Radius.circular(10)), style: style)
+    // GroupElement(elements: [
+    //   LineElement(start: Offset(0, 0), end: Offset(50, 50), style: PaintStyle(strokeColor: Colors.black)),
+    //   ArcElement(oval: Rect.fromCircle(center: Offset(100, 100), radius: 50), startAngle: 0, endAngle: pi, style: PaintStyle(strokeColor: Colors.black)),
+    //   CircleElement(center: Offset(50, 50), radius: 30, style: style),
+    //   GroupElement(elements: [LineElement(start: Offset(0, 0), end: Offset(50, 50), style: PaintStyle(strokeColor: Colors.black)),CircleElement(center: Offset(50, 50), radius: 30, style: style)]),
+    //   LabelElement(text: 'text', anchor: Offset(50, 50), defaultAlign: Alignment.center, style: LabelStyle(textStyle: TextStyle())),
+    //   OvalElement(oval: Rect.fromCircle(center: Offset(100, 100), radius: 50), style: style),
+    //   PolygonElement(points: [Offset(0, 0), Offset(10, 10), Offset(30, 60)], close: true, style: style),
+    //   RectElement(rect: Rect.fromPoints(Offset(0, 0), Offset(100, 100)), borderRadius: BorderRadius.all(Radius.circular(5)), style: style),
+    //   SectorElement(center: Offset(100, 100), startRadius: 20, endRadius: 80, startAngle: 0, endAngle: 3, borderRadius: BorderRadius.all(Radius.circular(10)), style: style),
+    // ])
+    // PathElement(segments: [
+    //   MoveSegment(end: Offset(10, 10)),
+    //   // ArcToPointSegment(end: Offset(40, 40), radius: Radius.circular(30)),
+    //   // ArcSegment(oval: Rect.fromPoints(Offset(0, 0), Offset(100, 100)), startAngle: 3, endAngle: 5),
+    //   // ConicSegment(control: Offset(20, 20), end: Offset(40, 70), weight: 0.6),
+    //   LineSegment(end: Offset(50, 110)),
+    //   MoveSegment(end: Offset(20, 20)),
+    //   // CubicSegment(control1: Offset(0, 50), control2: Offset(66, 0), end: Offset(100, 100)),
+    //   QuadraticSegment(control: Offset(0, 50), end: Offset(100, 100)),
+    //   CloseSegment(),
+    // ], style: style),
+    // a,
+    // b,
+    // e,
     //   PathElement(segments: [
     //     MoveSegment(end: start),
     //     s,
@@ -147,7 +151,10 @@ class _ShapePageState extends State<ShapePage> with SingleTickerProviderStateMix
 
     // scene.set([ArcElement(oval: Rect.fromPoints(Offset(100, 100), Offset(200, 200)), startAngle: 2, endAngle: 4, style: style)]);
 
-    scene.set([RectElement(rect: Rect.fromPoints(Offset(0, 0), Offset(500, 500)), style: style)], CircleElement(center: Offset(150, 150), radius: 70));
+    scene.set([
+      RectElement(
+          rect: Rect.fromPoints(Offset(0, 0), Offset(500, 500)), style: style)
+    ], CircleElement(center: Offset(150, 150), radius: 70));
 
     // scene.set([PolylineElement(points: points1, style: style)], CircleElement(center: Offset(150, 150), radius: 70, style: style));
 
@@ -184,7 +191,15 @@ class _ShapePageState extends State<ShapePage> with SingleTickerProviderStateMix
     // scene.set([PolygonElement(points: points2, style: style)]);
 
     // scene.set([SplineElement(start: Offset(500, 500), cubics: cubics, style: style)], RectElement(rect: Rect.fromPoints(Offset(0, 0), Offset(100, 100)), borderRadius: BorderRadius.all(Radius.circular(5)), style: style));
-    scene.set([RectElement(rect: Rect.fromPoints(Offset(0, 0), Offset(500, 500)), style: style)], RectElement(rect: Rect.fromPoints(Offset(0, 0), Offset(100, 100)), borderRadius: BorderRadius.all(Radius.circular(5))));
+    scene.set(
+        [
+          RectElement(
+              rect: Rect.fromPoints(Offset(0, 0), Offset(500, 500)),
+              style: style)
+        ],
+        RectElement(
+            rect: Rect.fromPoints(Offset(0, 0), Offset(100, 100)),
+            borderRadius: BorderRadius.all(Radius.circular(5))));
     graffiti.update();
   }
 

@@ -40,8 +40,7 @@ abstract class Event {
 /// previous value before this update.
 ///
 /// Make sure the return value is a different instance from initialValue or preValue.
-typedef EventUpdater<V> = V Function(
-    V initialValue, V preValue, Event event);
+typedef EventUpdater<V> = V Function(V initialValue, V preValue, Event event);
 
 /// The event value operator.
 class EventOp<S extends Event> extends Value<S?> {
@@ -63,8 +62,7 @@ class EventReducerOp<D> extends Operator<Event?> {
     final changeData = params['changeData'] as ChangeDataEvent<D>?;
 
     assert(isSingle([gesture, resize, changeData]));
-    return [gesture, resize, changeData]
-        .singleWhere((mark) => mark != null);
+    return [gesture, resize, changeData].singleWhere((mark) => mark != null);
   }
 }
 

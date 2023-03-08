@@ -9,29 +9,28 @@ class ConicSegment extends Segment {
     required this.control,
     required this.end,
     required this.weight,
-  
     String? tag,
   }) : super(
-    tag: tag,
-  );
+          tag: tag,
+        );
 
   final Offset control;
 
   final Offset end;
 
   final double weight;
-  
+
   @override
   void drawPath(Path path) =>
-    path.conicTo(control.dx, control.dy, end.dx, end.dy, weight);
+      path.conicTo(control.dx, control.dy, end.dx, end.dy, weight);
 
   @override
   ConicSegment lerpFrom(covariant ConicSegment from, double t) => ConicSegment(
-    control: Offset.lerp(from.control, control, t)!,
-    end: Offset.lerp(from.end, end, t)!,
-    weight: lerpDouble(from.weight, weight, t)!,
-    tag: tag,
-  );
+        control: Offset.lerp(from.control, control, t)!,
+        end: Offset.lerp(from.end, end, t)!,
+        weight: lerpDouble(from.weight, weight, t)!,
+        tag: tag,
+      );
 
   @override
   CubicSegment toCubic(Offset start) {
@@ -45,14 +44,14 @@ class ConicSegment extends Segment {
       tag: tag,
     );
   }
-  
+
   @override
   ConicSegment sow(Offset position) => ConicSegment(
-    control: position,
-    end: position,
-    weight: weight,
-    tag: tag,
-  );
+        control: position,
+        end: position,
+        weight: weight,
+        tag: tag,
+      );
 
   @override
   Offset getEnd() => end;

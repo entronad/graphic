@@ -28,19 +28,18 @@ List<Offset> lerpPointList(List<Offset> from, List<Offset> to, double t) {
 class PolylineElement extends PrimitiveElement {
   PolylineElement({
     required this.points,
-
     PaintStyle? style,
     double? rotation,
     Offset? rotationAxis,
-  }) : assert(points.length >= 2),
-       super(
-         style: style ?? defaultPaintStyle,
-         rotation: rotation,
-         rotationAxis: rotationAxis,
-       );
+  })  : assert(points.length >= 2),
+        super(
+          style: style ?? defaultPaintStyle,
+          rotation: rotation,
+          rotationAxis: rotationAxis,
+        );
 
   final List<Offset> points;
-  
+
   @override
   void drawPath(Path path) {
     path.moveTo(points[0].dx, points[0].dy);

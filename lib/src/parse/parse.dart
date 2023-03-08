@@ -70,8 +70,7 @@ void parse<D>(
 
   final gestureEvent = view.add(EventOp<GestureEvent>());
 
-  final gestureStream =
-      spec.gestureStream ?? StreamController<GestureEvent>();
+  final gestureStream = spec.gestureStream ?? StreamController<GestureEvent>();
   view.bindStream(gestureStream, gestureEvent);
   view.gestureStream = gestureStream;
 
@@ -492,8 +491,7 @@ void parse<D>(
 
     groupsList.add(groups);
 
-    final markScene =
-        view.graffiti.add(MarkScene(markSpec.layer ?? 0));
+    final markScene = view.graffiti.add(MarkScene(markSpec.layer ?? 0));
     view.add(MarkRenderOp({
       'groups': groups,
       'coord': coord,

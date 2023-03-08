@@ -6,9 +6,9 @@ import 'cubic.dart';
 import 'line.dart';
 
 Offset _rotateVector(double x, double y, double angle) => Offset(
-  x * cos(angle) - y * sin(angle),
-  x * sin(angle) + y * cos(angle),
-);
+      x * cos(angle) - y * sin(angle),
+      x * sin(angle) + y * cos(angle),
+    );
 
 List<double> _arcToCubicControls(
   double x1,
@@ -50,7 +50,10 @@ List<double> _arcToCubicControls(
     final rx2 = rx * rx;
     final ry2 = ry * ry;
 
-    final k = (largeArc == clockwise ? -1 : 1) * sqrt(((rx2 * ry2 - rx2 * y * y - ry2 * x * x) / (rx2 * y * y + ry2 * x * x)).abs());
+    final k = (largeArc == clockwise ? -1 : 1) *
+        sqrt(((rx2 * ry2 - rx2 * y * y - ry2 * x * x) /
+                (rx2 * y * y + ry2 * x * x))
+            .abs());
 
     cx = (k * rx * y) / ry + (x1 + x2) / 2;
     cy = (k * -ry * x) / rx + (y1 + y2) / 2;
@@ -66,10 +69,10 @@ List<double> _arcToCubicControls(
       f2 = pi * 2 + f2;
     }
     if (clockwise && f1 > f2) {
-      f1 -= pi *2;
+      f1 -= pi * 2;
     }
     if (!clockwise && f2 > f1) {
-      f2 -= pi *2;
+      f2 -= pi * 2;
     }
   } else {
     f1 = recursive[0];
@@ -85,7 +88,8 @@ List<double> _arcToCubicControls(
     f2 = f1 + d120 * (clockwise && f2 > f1 ? 1 : -1);
     x2 = cx + rx * cos(f2);
     y2 = cy + rx * sin(f2);
-    rst = _arcToCubicControls(x2, y2, rx, ry, angle, false, clockwise, preX2, preY2, [f2, preF2, cx, cy]);
+    rst = _arcToCubicControls(x2, y2, rx, ry, angle, false, clockwise, preX2,
+        preY2, [f2, preF2, cx, cy]);
   }
   final c1 = cos(f1);
   final s1 = sin(f1);
@@ -107,7 +111,9 @@ List<double> _arcToCubicControls(
   rst = [...m2, ...m3, ...m4, ...rst];
   final newRst = <double>[];
   for (var i = 0, ii = rst.length; i < ii; i += 1) {
-    newRst.add((i % 2 != 0) ? _rotateVector(rst[i - 1], rst[i], angle).dy : _rotateVector(rst[i], rst[i + 1], angle).dx);
+    newRst.add((i % 2 != 0)
+        ? _rotateVector(rst[i - 1], rst[i], angle).dy
+        : _rotateVector(rst[i], rst[i + 1], angle).dx);
   }
   return newRst;
 }
@@ -119,11 +125,10 @@ class ArcToPointSegment extends Segment {
     this.rotation = 0,
     this.largeArc = false,
     this.clockwise = true,
-
     String? tag,
   }) : super(
-    tag: tag,
-  );
+          tag: tag,
+        );
 
   final Offset end;
 
@@ -134,20 +139,24 @@ class ArcToPointSegment extends Segment {
   final bool largeArc;
 
   final bool clockwise;
-  
-  @override
-  void drawPath(Path path) =>
-    path.arcToPoint(end, radius: radius, rotation: rotation, largeArc: largeArc, clockwise: clockwise);
 
   @override
-  ArcToPointSegment lerpFrom(covariant ArcToPointSegment from, double t) => ArcToPointSegment(
-    end: Offset.lerp(from.end, end, t)!,
-    radius: Radius.lerp(from.radius, radius, t)!,
-    rotation: lerpDouble(from.rotation, rotation, t)!,
-    largeArc: largeArc,
-    clockwise: clockwise,
-    tag: tag,
-  );
+  void drawPath(Path path) => path.arcToPoint(end,
+      radius: radius,
+      rotation: rotation,
+      largeArc: largeArc,
+      clockwise: clockwise);
+
+  @override
+  ArcToPointSegment lerpFrom(covariant ArcToPointSegment from, double t) =>
+      ArcToPointSegment(
+        end: Offset.lerp(from.end, end, t)!,
+        radius: Radius.lerp(from.radius, radius, t)!,
+        rotation: lerpDouble(from.rotation, rotation, t)!,
+        largeArc: largeArc,
+        clockwise: clockwise,
+        tag: tag,
+      );
 
   @override
   CubicSegment toCubic(Offset start) {
@@ -156,7 +165,8 @@ class ArcToPointSegment extends Segment {
     if (radius.x == 0 || radius.y == 0) {
       controlsRst = lineToCubicControls(start, end);
     } else {
-      final xyRst = _arcToCubicControls(start.dx, start.dy, radius.x, radius.y, rotation, largeArc, clockwise, end.dx, end.dy, null);
+      final xyRst = _arcToCubicControls(start.dx, start.dy, radius.x, radius.y,
+          rotation, largeArc, clockwise, end.dx, end.dy, null);
       controlsRst = [
         Offset(xyRst[0], xyRst[1]),
         Offset(xyRst[2], xyRst[3]),
@@ -170,16 +180,16 @@ class ArcToPointSegment extends Segment {
       tag: tag,
     );
   }
-  
+
   @override
   ArcToPointSegment sow(Offset position) => ArcToPointSegment(
-    end: position,
-    rotation: rotation,
-    largeArc: largeArc,
-    clockwise: clockwise,
-    tag: tag,
-  );
-  
+        end: position,
+        rotation: rotation,
+        largeArc: largeArc,
+        clockwise: clockwise,
+        tag: tag,
+      );
+
   @override
   Offset getEnd() => end;
 }

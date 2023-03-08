@@ -414,7 +414,8 @@ class SelectionUpdateOp extends Operator<AesGroups> {
           shape: _update(attributes.shape, isSelected, shapeUpdater)!,
           color: _update(attributes.color, isSelected, colorUpdater),
           gradient: _update(attributes.gradient, isSelected, gradientUpdater),
-          elevation: _update(attributes.elevation, isSelected, elevationUpdater),
+          elevation:
+              _update(attributes.elevation, isSelected, elevationUpdater),
           label: _update(attributes.label, isSelected, labelUpdater),
           size: _update(attributes.size, isSelected, sizeUpdater),
         ));

@@ -440,7 +440,8 @@ class PolygonCustomPage extends StatelessWidget {
                       elevation: ElevationEncode(value: 0, updaters: {
                         'tap': {true: (_) => 5}
                       }),
-                      color: ColorEncode(value: Defaults.primaryColor, updaters: {
+                      color:
+                          ColorEncode(value: Defaults.primaryColor, updaters: {
                         'tap': {false: (color) => color.withAlpha(100)}
                       }),
                     )
@@ -813,7 +814,8 @@ class DodgeSizeModifier extends Modifier {
     final maxWidthInBand = effectiveBand * maxWidth;
     final maxWidthPerAttributes = maxWidthInBand / numGroups;
     final barHorizontalPadding = groupHorizontalPadding / 2;
-    final size = max(maxWidthPerAttributes - barHorizontalPadding, _kMinBarSize);
+    final size =
+        max(maxWidthPerAttributes - barHorizontalPadding, _kMinBarSize);
 
     final bias = ratio * effectiveBand;
 

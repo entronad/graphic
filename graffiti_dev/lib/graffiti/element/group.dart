@@ -14,14 +14,13 @@ final _groupStyle = _GroupStyle();
 class GroupElement extends MarkElement<_GroupStyle> {
   GroupElement({
     required this.elements,
-
     double? rotation,
     Offset? rotationAxis,
   }) : super(
-    style: _groupStyle,
-    rotation: rotation,
-    rotationAxis: rotationAxis,
-  );
+          style: _groupStyle,
+          rotation: rotation,
+          rotationAxis: rotationAxis,
+        );
 
   final List<MarkElement> elements;
 

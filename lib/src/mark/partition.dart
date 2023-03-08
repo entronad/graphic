@@ -16,8 +16,7 @@ import 'modifier/modifier.dart';
 /// The specification of a partition mark.
 ///
 /// Partitions separete a set of points into two or more subsets.
-abstract class PartitionMark<S extends PartitionShape>
-    extends Mark<S> {
+abstract class PartitionMark<S extends PartitionShape> extends Mark<S> {
   /// Creates a partition mark.
   PartitionMark({
     ColorEncode? color,

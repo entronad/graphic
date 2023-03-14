@@ -7,7 +7,7 @@ import '../path.dart';
 import '../element.dart';
 
 /// Built-in segment tags.
-/// 
+///
 /// Built-in elements use these tags to optimize morphing.
 abstract class SegmentTags {
   static const topLeft = 'topLeft';
@@ -28,7 +28,7 @@ abstract class Segment {
   });
 
   /// The tag to indicate correspondence of this segment in animation.
-  /// 
+  ///
   /// The order and connecting relations of items in a segment list is important,
   /// which is different to [MarkElement] list. So to make a best morphing, two
   /// path segments should:
@@ -44,9 +44,9 @@ abstract class Segment {
   Segment lerpFrom(covariant Segment from, double t);
 
   /// Converts this segment to a [CubicSegment].
-  /// 
+  ///
   /// This method is used for morphing.
-  /// 
+  ///
   /// The algrithoms are from https://github.com/thednp/svg-path-commander 2.0.2
   CubicSegment toCubic(Offset start);
 
@@ -61,7 +61,7 @@ abstract class Segment {
 }
 
 /// A [segment] and its [start]ing point.
-/// 
+///
 /// This is used for [Segment.toCubic] in morphing.
 class SegmentInfo<S extends Segment> {
   /// Creates a segment info.
@@ -75,7 +75,7 @@ class SegmentInfo<S extends Segment> {
 }
 
 /// Splites a path segments into contours.
-/// 
+///
 /// A contour is a continuous path that starts with a [MoveSegment] but dosen't
 /// include other [MoveSegment]s in the middle.
 List<List<Segment>> _spliteContours(List<Segment> segments) {
@@ -95,7 +95,7 @@ List<List<Segment>> _spliteContours(List<Segment> segments) {
 }
 
 /// Complements the [shorter]’s contours count to the [longer].
-/// 
+///
 /// The complementing contours are at the end with a single [MoveSegment].
 List<List<Segment>> _complementContours(
     List<List<Segment>> shorter, List<List<Segment>> longer) {
@@ -127,9 +127,9 @@ List<SegmentInfo> _getContourInfos(List<Segment> contour) {
 }
 
 /// Complements [SegmentInfo]s of [shorter] contour to [longer].
-/// 
+///
 /// The complemention is mainly according to tags.
-/// 
+///
 /// Every item in [shorter] will be kept.
 List<SegmentInfo> _complementInfos(
     List<SegmentInfo> shorter, List<SegmentInfo> longer) {
@@ -167,7 +167,7 @@ List<SegmentInfo> _complementInfos(
 }
 
 /// Normalizes two path segments into same length and same corresponding segment types.
-/// 
+///
 /// Returns a pair of two path results: \[fromRst, toRst\].
 List<List<Segment>> nomalizeSegments(List<Segment> from, List<Segment> to) {
   var fromContours = _spliteContours(from);
@@ -213,7 +213,7 @@ List<List<Segment>> nomalizeSegments(List<Segment> from, List<Segment> to) {
 }
 
 /// Linearly interpolate between two path segments.
-/// 
+///
 /// Make sure the two path segments are nomalized.
 List<Segment> lerpSegments(List<Segment> from, List<Segment> to, double t) {
   final rst = <Segment>[];

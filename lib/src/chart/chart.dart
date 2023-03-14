@@ -252,6 +252,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onDoubleTapCancel: () {
@@ -261,6 +262,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onDoubleTapDown: (detail) {
@@ -271,6 +273,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onForcePressEnd: (detail) {
@@ -281,6 +284,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onForcePressPeak: (detail) {
@@ -291,6 +295,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onForcePressStart: (detail) {
@@ -301,6 +306,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onForcePressUpdate: (detail) {
@@ -311,6 +317,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onLongPress: () {
@@ -320,6 +327,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onLongPressCancel: () {
@@ -329,6 +337,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onLongPressDown: (detail) {
@@ -339,6 +348,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onLongPressEnd: (detail) {
@@ -350,6 +360,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onLongPressMoveUpdate: (detail) {
@@ -361,6 +372,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 size,
                 detail,
                 localMoveStart: gestureLocalMoveStart,
+                key: widget.key,
               ));
             },
             onLongPressStart: (detail) {
@@ -372,6 +384,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onLongPressUp: () {
@@ -381,18 +394,21 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onScaleEnd: (detail) {
-              gestureLocalMoveStart = null;
-              gestureScaleDetail = null;
               view!.gesture(Gesture(
                 GestureType.scaleEnd,
                 gestureKind,
                 gestureLocalPosition,
                 size,
                 detail,
+                localMoveStart: gestureLocalMoveStart,
+                key: widget.key,
               ));
+              gestureLocalMoveStart = null;
+              gestureScaleDetail = null;
             },
             onScaleStart: (detail) {
               gestureLocalPosition = detail.localFocalPoint;
@@ -410,6 +426,8 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                localMoveStart: gestureLocalMoveStart,
+                key: widget.key,
               ));
             },
             onScaleUpdate: (detail) {
@@ -422,6 +440,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 detail,
                 localMoveStart: gestureLocalMoveStart,
                 preScaleDetail: gestureScaleDetail,
+                key: widget.key,
               ));
               gestureScaleDetail = detail;
             },
@@ -432,6 +451,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onSecondaryLongPressCancel: () {
@@ -441,6 +461,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onSecondaryLongPressDown: (detail) {
@@ -451,6 +472,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onSecondaryLongPressEnd: (detail) {
@@ -462,6 +484,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onSecondaryLongPressMoveUpdate: (detail) {
@@ -473,6 +496,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 size,
                 detail,
                 localMoveStart: gestureLocalMoveStart,
+                key: widget.key,
               ));
             },
             onSecondaryLongPressStart: (detail) {
@@ -484,6 +508,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onSecondaryLongPressUp: () {
@@ -493,6 +518,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onSecondaryTap: () {
@@ -502,6 +528,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onSecondaryTapCancel: () {
@@ -511,6 +538,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onSecondaryTapDown: (detail) {
@@ -521,6 +549,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onSecondaryTapUp: (detail) {
@@ -531,6 +560,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onTap: () {
@@ -540,6 +570,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onTapCancel: () {
@@ -549,6 +580,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onTapDown: (detail) {
@@ -559,6 +591,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onTapUp: (detail) {
@@ -569,6 +602,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onTertiaryLongPress: () {
@@ -578,6 +612,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onTertiaryLongPressCancel: () {
@@ -587,6 +622,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onTertiaryLongPressDown: (detail) {
@@ -597,6 +633,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onTertiaryLongPressEnd: (detail) {
@@ -608,6 +645,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onTertiaryLongPressMoveUpdate: (detail) {
@@ -619,6 +657,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 size,
                 detail,
                 localMoveStart: gestureLocalMoveStart,
+                key: widget.key,
               ));
             },
             onTertiaryLongPressStart: (detail) {
@@ -630,6 +669,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onTertiaryLongPressUp: () {
@@ -639,6 +679,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onTertiaryTapCancel: () {
@@ -648,6 +689,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 null,
+                key: widget.key,
               ));
             },
             onTertiaryTapDown: (detail) {
@@ -658,6 +700,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
             onTertiaryTapUp: (detail) {
@@ -668,6 +711,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 detail,
+                key: widget.key,
               ));
             },
           ),
@@ -680,6 +724,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
               gestureLocalPosition,
               size,
               null,
+              key: widget.key,
             ));
           },
           onPointerSignal: (event) {
@@ -691,6 +736,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
                 gestureLocalPosition,
                 size,
                 event.scrollDelta,
+                key: widget.key,
               ));
             }
           },
@@ -704,6 +750,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
             gestureLocalPosition,
             size,
             null,
+            key: widget.key,
           ));
         },
         onExit: (event) {
@@ -715,6 +762,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
             gestureLocalPosition,
             size,
             null,
+            key: widget.key,
           ));
         },
       ),

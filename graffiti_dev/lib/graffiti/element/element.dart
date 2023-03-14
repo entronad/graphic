@@ -79,17 +79,9 @@ class PaintStyle extends ElementStyle {
     Color? shadowColor,
     this.dash,
     this.dashOffset,
-  })  : assert(
-            isSingle([fillColor, fillGradient, fillShader], allowNone: true)),
-        assert(isSingle([strokeColor, strokeGradient, strokeShader],
-            allowNone: true)),
-        assert(strokeColor != null ||
-            strokeGradient != null ||
-            strokeShader != null ||
-            (strokeWidth == null ||
-                strokeCap == null ||
-                strokeJoin == null ||
-                strokeMiterLimit == null)),
+  })  : assert(isSingle([fillColor, fillGradient, fillShader], allowNone: true)),
+        assert(isSingle([strokeColor, strokeGradient, strokeShader], allowNone: true)),
+        assert(strokeColor != null || strokeGradient != null || strokeShader != null || (strokeWidth == null || strokeCap == null || strokeJoin == null || strokeMiterLimit == null)),
         assert(elevation != null || shadowColor == null),
         assert(dash != null || dashOffset == null),
         shadowColor = elevation == null

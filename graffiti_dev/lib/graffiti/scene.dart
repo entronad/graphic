@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/animation.dart';
 
 import 'element/element.dart';
-import 'graffiti.dart';
 import 'transition.dart';
 
 class Scene {
@@ -17,13 +16,17 @@ class Scene {
     if (transition == null) {
       _controller = null;
     } else {
-      _controller = AnimationController(vsync: tickerProvider, duration: transition!.duration);
-      final animation = transition!.curve == null ? _controller! : CurvedAnimation(parent: _controller!, curve: transition!.curve!);
+      _controller = AnimationController(
+          vsync: tickerProvider, duration: transition!.duration);
+      final animation = transition!.curve == null
+          ? _controller!
+          : CurvedAnimation(parent: _controller!, curve: transition!.curve!);
       animation.addListener(() {
         if (_animateElements) {
           _elements = [];
           for (var i = 0; i < _endElements!.length; i++) {
-            _elements!.add(_endElements![i].lerpFrom(_startElements![i], animation.value));
+            _elements!.add(
+                _endElements![i].lerpFrom(_startElements![i], animation.value));
           }
         }
 
@@ -85,7 +88,8 @@ class Scene {
   late bool _animateClip;
 
   void set(List<MarkElement>? elements, [PrimitiveElement? clip]) {
-    _animateElements = _controller != null && _currentElements != null && elements != null;
+    _animateElements =
+        _controller != null && _currentElements != null && elements != null;
     _animateClip = _controller != null && _currentClip != null && clip != null;
 
     _preElements = _currentElements;
@@ -103,7 +107,8 @@ class Scene {
 
   void update() {
     if (_animateElements) {
-      final elementsPair = nomalizeElementList(_preElements!, _currentElements!);
+      final elementsPair =
+          nomalizeElementList(_preElements!, _currentElements!);
       _startElements = elementsPair.first;
       _endElements = elementsPair.last;
     }
@@ -129,7 +134,7 @@ class Scene {
   void paint(Canvas canvas) {
     if (_elements != null) {
       canvas.save();
-      
+
       if (_clip != null) {
         if (_clip!.rotation == null) {
           canvas.clipPath(_clip!.path);

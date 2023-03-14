@@ -44,7 +44,8 @@ class ImageElement extends BlockElement<ImageStyle> {
     defaultAlign: defaultAlign ?? Alignment.center,
     style: style ?? _defaultImageStyle,
   ) {
-    paintPoint = getPaintPoint(rotationAxis!, image.width.toDouble(), image.height.toDouble(), this.style.align ?? this.defaultAlign); // TODO: Image width height pixel ratio.
+    // TODO: Image width height pixel ratio
+    paintPoint = getPaintPoint(rotationAxis!, image.width.toDouble(), image.height.toDouble(), this.style.align ?? this.defaultAlign);
   }
 
   final Image image;

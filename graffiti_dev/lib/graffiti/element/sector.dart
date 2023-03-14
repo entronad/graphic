@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/painting.dart';
 import 'package:graffiti_dev/graffiti/element/segment/arc.dart';
 
+// ignore: implementation_imports
 import 'package:graphic/src/util/math.dart';
 
 import 'element.dart';

@@ -25,8 +25,8 @@ class PageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final TextStyle titleStyle = theme.textTheme.headline6!;
-    final TextStyle descriptionStyle = theme.textTheme.bodyText2!;
+    final TextStyle titleStyle = theme.textTheme.titleLarge!;
+    final TextStyle descriptionStyle = theme.textTheme.bodyMedium!;
 
     return Container(
         padding: const EdgeInsets.all(4.0),

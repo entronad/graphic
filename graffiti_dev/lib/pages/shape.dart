@@ -1,26 +1,8 @@
 import 'dart:math';
 
-import 'package:graffiti_dev/graffiti/element/arc.dart';
 import 'package:graffiti_dev/graffiti/element/circle.dart';
-import 'package:graffiti_dev/graffiti/element/spline.dart';
-import 'package:graffiti_dev/graffiti/element/group.dart';
-import 'package:graffiti_dev/graffiti/element/label.dart';
-import 'package:graffiti_dev/graffiti/element/oval.dart';
-import 'package:graffiti_dev/graffiti/element/path.dart';
-import 'package:graffiti_dev/graffiti/element/polygon.dart';
-import 'package:graffiti_dev/graffiti/element/polyline.dart';
 import 'package:graffiti_dev/graffiti/element/rect.dart';
-import 'package:graffiti_dev/graffiti/element/sector.dart';
-import 'package:graffiti_dev/graffiti/element/segment/arc.dart';
-import 'package:graffiti_dev/graffiti/element/segment/arc_to_point.dart';
-import 'package:graffiti_dev/graffiti/element/segment/close.dart';
-import 'package:graffiti_dev/graffiti/element/segment/conic.dart';
-import 'package:graffiti_dev/graffiti/element/segment/cubic.dart';
-import 'package:graffiti_dev/graffiti/element/segment/line.dart';
-import 'package:graffiti_dev/graffiti/element/segment/move.dart';
-import 'package:graffiti_dev/graffiti/element/segment/quadratic.dart';
 import 'package:graffiti_dev/graffiti/graffiti.dart';
-import 'package:graffiti_dev/graffiti/element/line.dart';
 import 'package:graffiti_dev/graffiti/element/element.dart';
 import 'package:flutter/material.dart';
 import 'package:graffiti_dev/graffiti/scene.dart';
@@ -73,7 +55,7 @@ class _ShapePageState extends State<ShapePage> with SingleTickerProviderStateMix
   void initState() {
     graffiti = Graffiti(tickerProvider: this, repaint: repaint);
 
-    scene = graffiti.createScene(transition: Transition(duration: Duration(seconds: 2)));
+    scene = graffiti.createScene(transition: Transition(duration: const Duration(seconds: 2)));
 
     // final a = SplineElement(start: Offset(10, 10), cubics: [
     //   [Offset(20, 10), Offset(10, 20), Offset(20, 20)],
@@ -147,7 +129,7 @@ class _ShapePageState extends State<ShapePage> with SingleTickerProviderStateMix
 
     // scene.set([ArcElement(oval: Rect.fromPoints(Offset(100, 100), Offset(200, 200)), startAngle: 2, endAngle: 4, style: style)]);
 
-    scene.set([RectElement(rect: Rect.fromPoints(Offset(0, 0), Offset(500, 500)), style: style)], CircleElement(center: Offset(150, 150), radius: 70));
+    scene.set([RectElement(rect: Rect.fromPoints(const Offset(0, 0), const Offset(500, 500)), style: style)], CircleElement(center: const Offset(150, 150), radius: 70));
 
     // scene.set([PolylineElement(points: points1, style: style)], CircleElement(center: Offset(150, 150), radius: 70, style: style));
 
@@ -184,7 +166,7 @@ class _ShapePageState extends State<ShapePage> with SingleTickerProviderStateMix
     // scene.set([PolygonElement(points: points2, style: style)]);
 
     // scene.set([SplineElement(start: Offset(500, 500), cubics: cubics, style: style)], RectElement(rect: Rect.fromPoints(Offset(0, 0), Offset(100, 100)), borderRadius: BorderRadius.all(Radius.circular(5)), style: style));
-    scene.set([RectElement(rect: Rect.fromPoints(Offset(0, 0), Offset(500, 500)), style: style)], RectElement(rect: Rect.fromPoints(Offset(0, 0), Offset(100, 100)), borderRadius: BorderRadius.all(Radius.circular(5))));
+    scene.set([RectElement(rect: Rect.fromPoints(const Offset(0, 0), const Offset(500, 500)), style: style)], RectElement(rect: Rect.fromPoints(const Offset(0, 0), const Offset(100, 100)), borderRadius: const BorderRadius.all(Radius.circular(5))));
     graffiti.update();
   }
 
@@ -200,7 +182,7 @@ class _ShapePageState extends State<ShapePage> with SingleTickerProviderStateMix
         child: Center(
           child: Column(
             children: <Widget>[
-              Container(
+              SizedBox(
                 width: 350,
                 height: 300,
                 child: CustomPaint(painter: _Painter(graffiti)),

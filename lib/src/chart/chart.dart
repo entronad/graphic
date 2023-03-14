@@ -174,7 +174,7 @@ class Chart<D> extends StatefulWidget {
       changeDataStream == other.changeDataStream;
 
   @override
-  _ChartState<D> createState() => _ChartState<D>();
+  State<Chart<D>> createState() => _ChartState<D>();
 }
 
 /// The state of a [Chart].

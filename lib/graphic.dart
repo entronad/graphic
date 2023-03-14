@@ -150,7 +150,7 @@ export 'src/mark/modifier/jitter.dart' show JitterModifier;
 export 'src/mark/modifier/symmetric.dart' show SymmetricModifier;
 
 export 'src/encode/encode.dart' show Encode;
-export 'src/encode/channel.dart' show StreamEncode;
+export 'src/encode/channel.dart' show ChannelEncode;
 export 'src/encode/color.dart' show ColorEncode;
 export 'src/encode/elevation.dart' show ElevationEncode;
 export 'src/encode/gradient.dart' show GradientEncode;

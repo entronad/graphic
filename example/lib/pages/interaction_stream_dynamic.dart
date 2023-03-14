@@ -10,7 +10,7 @@ class InteractionStreamDynamicPage extends StatefulWidget {
   const InteractionStreamDynamicPage({Key? key}) : super(key: key);
 
   @override
-  _InteractionStreamDynamicPageState createState() =>
+  State<InteractionStreamDynamicPage> createState() =>
       _InteractionStreamDynamicPageState();
 }
 

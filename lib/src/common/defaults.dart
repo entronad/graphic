@@ -22,7 +22,6 @@ EventUpdater<List<double>> _getRangeUpdate(
 
           if (detail.pointerCount == 1) {
             // Panning.
-
             final deltaRatio = isHorizontal
                 ? gesture.preScaleDetail!.focalPointDelta.dx
                 : -gesture.preScaleDetail!.focalPointDelta.dy;
@@ -33,9 +32,10 @@ EventUpdater<List<double>> _getRangeUpdate(
             return [pre.first + delta, pre.last + delta];
           } else {
             // Scaling.
+            double getScaleDim(ScaleUpdateDetails updateDetails) => isHorizontal 
+                ? updateDetails.horizontalScale 
+                : updateDetails.verticalScale;
 
-            double Function(ScaleUpdateDetails) getScaleDim =
-                (p0) => isHorizontal ? p0.horizontalScale : p0.verticalScale;
             final preScale = getScaleDim(gesture.preScaleDetail!);
             final scale = getScaleDim(detail);
             final deltaRatio = (scale - preScale) / preScale / 2;

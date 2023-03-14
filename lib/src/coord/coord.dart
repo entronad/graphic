@@ -5,7 +5,6 @@ import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/common/intrinsic_layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/dataflow/operator.dart';
-import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/util/assert.dart';
 

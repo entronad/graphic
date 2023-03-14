@@ -1,59 +1,25 @@
 import 'dart:ui';
 
-import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/graffiti/figure.dart';
-import 'package:graphic/src/shape/util/gradient.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
 
-import '../shape.dart';
-
-/// Renders a basic mark item.
-///
-/// This is a util function for implementing [Shape.renderGroup] and [Shape.renderItem].
-/// The [path] should be calculated before it and label is not rendered in it.
-///
-/// See also
-///
-/// - [Shape.renderGroup] and [Shape.renderItem], where this function is usually used.
-/// - [renderLabel], which renders an item label.
-List<Figure> renderBasicItem(
-  Path path,
+PaintStyle getPaintStyle(
   Attributes attributes,
   bool hollow,
   double strokeWidth, [
   Rect? gradientBounds,
 ]) {
-  final rst = <Figure>[];
-
-  final style = Paint();
-  if (attributes.gradient != null) {
-    style.shader = toUIGradient(
-      attributes.gradient!,
-      gradientBounds == null
-          ? path.getBounds()
-          : path.getBounds().intersect(gradientBounds),
-    );
-  } else {
-    style.color = attributes.color!;
-  }
-  style.style = hollow ? PaintingStyle.stroke : PaintingStyle.fill;
-  style.strokeWidth = strokeWidth;
-
-  if (attributes.elevation != null && attributes.elevation != 0) {
-    Color? shadowColor;
+  if (hollow) {
     if (attributes.gradient != null) {
-      shadowColor = getShadowColor(attributes.gradient!);
+      return PaintStyle(strokeGradient: attributes.gradient, strokeWidth: strokeWidth, elevation: attributes.elevation, gradientBounds: gradientBounds);
     } else {
-      shadowColor = attributes.color!;
+      return PaintStyle(strokeColor: attributes.color, strokeWidth: strokeWidth, elevation: attributes.elevation, gradientBounds: gradientBounds);
     }
-    rst.add(ShadowFigure(
-      path,
-      shadowColor,
-      attributes.elevation!,
-    ));
+  } else {
+    if (attributes.gradient != null) {
+      return PaintStyle(fillGradient: attributes.gradient, elevation: attributes.elevation, gradientBounds: gradientBounds);
+    } else {
+      return PaintStyle(fillColor: attributes.color, elevation: attributes.elevation, gradientBounds: gradientBounds);
+    }
   }
-
-  rst.add(PathFigure(path, style));
-
-  return rst;
 }

@@ -174,7 +174,7 @@ class Chart<D> extends StatefulWidget {
       changeDataStream == other.changeDataStream;
 
   @override
-  _ChartState<D> createState() => _ChartState<D>();
+  ChartState<D> createState() => ChartState<D>();
 }
 
 /// The state of a [Chart].
@@ -182,7 +182,7 @@ class Chart<D> extends StatefulWidget {
 /// The methods calling order is:
 ///
 /// [initState] --> [build] --> [_ChartLayoutDelegate.getPositionForChild] --> [_ChartPainter.paint]
-class _ChartState<D> extends State<Chart<D>> {
+class ChartState<D> extends State<Chart<D>> with SingleTickerProviderStateMixin {
   /// The view that controlls the data visualization.
   ///
   /// For a chart widget, to "rebuild" means to create a new [view].
@@ -727,7 +727,7 @@ class _ChartLayoutDelegate<D> extends SingleChildLayoutDelegate {
   _ChartLayoutDelegate(this.state);
 
   /// The chart state.
-  final _ChartState<D> state;
+  final ChartState<D> state;
 
   @override
   bool shouldRelayout(covariant SingleChildLayoutDelegate oldDelegate) => true;
@@ -742,6 +742,7 @@ class _ChartLayoutDelegate<D> extends SingleChildLayoutDelegate {
       state.view = View<D>(
         state.widget,
         size,
+        state,
         state.repaint,
       );
     } else if (size != state.size) {
@@ -761,7 +762,7 @@ class _ChartPainter<D> extends CustomPainter {
   _ChartPainter(this.state);
 
   /// The chart state.
-  final _ChartState<D> state;
+  final ChartState<D> state;
 
   @override
   void paint(Canvas canvas, Size size) {

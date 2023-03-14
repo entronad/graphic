@@ -1,14 +1,17 @@
 import 'dart:math';
 
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/graffiti/element/group.dart';
+import 'package:graphic/src/graffiti/element/label.dart';
+import 'package:graphic/src/graffiti/element/polygon.dart';
+import 'package:graphic/src/graffiti/element/rect.dart';
+import 'package:graphic/src/graffiti/element/sector.dart';
 import 'package:graphic/src/mark/polygon.dart';
-import 'package:graphic/src/graffiti/figure.dart';
-import 'package:graphic/src/util/path.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
 
 import 'util/render_basic_item.dart';
 import 'partition.dart';
@@ -46,7 +49,7 @@ class HeatmapShape extends PolygonShape {
       borderRadius == other.borderRadius;
 
   @override
-  List<Figure> renderGroup(
+  List<MarkElement> renderGroup(
     List<Attributes> group,
     CoordConv coord,
     Offset origin,
@@ -68,30 +71,21 @@ class HeatmapShape extends PolygonShape {
     final biasX = stepX / 2;
     final biasY = stepY / 2;
 
-    final rst = <Figure>[];
+    final basicElements = <MarkElement>[];
+    final labelElements = <MarkElement>[];
 
     for (var item in group) {
       assert(item.shape is HeatmapShape);
 
+      final style = getPaintStyle(item, false, 0, coord.region);
+
       final point = item.position.last;
-      final path = Path();
       if (coord is RectCoordConv) {
         assert(!sector);
-        final rect = Rect.fromPoints(
+        basicElements.add(RectElement(rect: Rect.fromPoints(
           coord.convert(Offset(point.dx - biasX, point.dy + biasY)),
           coord.convert(Offset(point.dx + biasX, point.dy - biasY)),
-        );
-        if (borderRadius != null) {
-          path.addRRect(RRect.fromRectAndCorners(
-            rect,
-            topLeft: borderRadius!.topLeft,
-            topRight: borderRadius!.topRight,
-            bottomRight: borderRadius!.bottomRight,
-            bottomLeft: borderRadius!.bottomLeft,
-          ));
-        } else {
-          path.addRect(rect);
-        }
+        ), borderRadius: borderRadius, style: style));
       } else {
         if (sector) {
           coord as PolarCoordConv;
@@ -101,31 +95,15 @@ class HeatmapShape extends PolygonShape {
               coord.transposed ? point.dy + biasY : point.dx + biasX;
           final r = coord.transposed ? point.dx + biasX : point.dy + biasY;
           final r0 = coord.transposed ? point.dx - biasX : point.dy - biasY;
-          if (borderRadius != null) {
-            Paths.rSector(
-              center: coord.center,
-              r: coord.convertRadius(r),
-              r0: coord.convertRadius(r0),
+          basicElements.add(SectorElement(
+            center: coord.center,
+              endRadius: coord.convertRadius(r),
+              startRadius: coord.convertRadius(r0),
               startAngle: coord.convertAngle(startAngle),
               endAngle: coord.convertAngle(endAngle),
-              clockwise: true,
-              path: path,
-              topLeft: borderRadius!.topLeft,
-              topRight: borderRadius!.topRight,
-              bottomRight: borderRadius!.bottomRight,
-              bottomLeft: borderRadius!.bottomLeft,
-            );
-          } else {
-            Paths.sector(
-              center: coord.center,
-              r: coord.convertRadius(r),
-              r0: coord.convertRadius(r0),
-              startAngle: coord.convertAngle(startAngle),
-              endAngle: coord.convertAngle(endAngle),
-              clockwise: true,
-              path: path,
-            );
-          }
+              borderRadius: borderRadius,
+              style: style,
+          ));
         } else {
           assert(borderRadius == null);
 
@@ -136,30 +114,15 @@ class HeatmapShape extends PolygonShape {
             Offset(point.dx + biasX, point.dy - biasY),
             Offset(point.dx - biasX, point.dy - biasY),
           ];
-          path.addPolygon(
-            vertices.map(coord.convert).toList(),
-            true,
-          );
+          basicElements.add(PolygonElement(points: vertices.map(coord.convert).toList(), style: style));
         }
       }
 
-      rst.addAll(renderBasicItem(
-        path,
-        item,
-        false,
-        0,
-        coord.region,
-      ));
-
       if (item.label != null && item.label!.haveText) {
-        rst.add(renderLabel(
-          item.label!,
-          coord.convert(point),
-          Alignment.center,
-        ));
+        labelElements.add(LabelElement(text: item.label!.text!, anchor: coord.convert(point), defaultAlign: Alignment.center, style: item.label!.style));
       }
     }
 
-    return rst;
+    return [GroupElement(elements: basicElements), GroupElement(elements: labelElements)];
   }
 }

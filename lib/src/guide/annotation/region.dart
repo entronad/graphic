@@ -1,15 +1,16 @@
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/dim.dart';
+import 'package:graphic/src/graffiti/element/rect.dart';
+import 'package:graphic/src/graffiti/element/sector.dart';
+import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/util/assert.dart';
 import 'package:graphic/src/util/collection.dart';
 import 'package:graphic/src/chart/view.dart';
-import 'package:graphic/src/common/intrinsic_layers.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
-import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
 import 'package:graphic/src/scale/scale.dart';
-import 'package:graphic/src/util/path.dart';
 
 import 'annotation.dart';
 
@@ -64,19 +65,11 @@ class RegionAnnotation extends Annotation {
       gradient == other.gradient;
 }
 
-/// The region annotation scene.
-class RegionAnnotScene extends AnnotScene {
-  RegionAnnotScene(int layer) : super(layer);
-
-  @override
-  int get intrinsicLayer => IntrinsicLayers.regionAnnot;
-}
-
 /// The region annotation render operator.
-class RegionAnnotRenderOp extends AnnotRenderOp<RegionAnnotScene> {
+class RegionAnnotRenderOp extends AnnotRenderOp {
   RegionAnnotRenderOp(
     Map<String, dynamic> params,
-    RegionAnnotScene scene,
+    Scene scene,
     View view,
   ) : super(params, scene, view);
 
@@ -90,56 +83,42 @@ class RegionAnnotRenderOp extends AnnotRenderOp<RegionAnnotScene> {
     final scales = params['scales'] as Map<String, ScaleConv>;
     final coord = params['coord'] as CoordConv;
 
-    scene.setRegionClip(coord.region);
+    final style = PaintStyle(fillColor: color, fillGradient: gradient);
 
     final scale = scales[variable]!;
     final start = scale.normalize(scale.convert(values.first));
     final end = scale.normalize(scale.convert(values.last));
 
-    final Path path;
     if (coord is RectCoordConv) {
-      path = Path()
-        ..addRect(Rect.fromPoints(
+      scene.set([RectElement(rect: Rect.fromPoints(
           coord.convert(
             dim == Dim.x ? Offset(start, 0) : Offset(0, start),
           ),
           coord.convert(
             dim == Dim.x ? Offset(end, 1) : Offset(1, end),
           ),
-        ));
+        ), style: style)], RectElement(rect: coord.region));
     } else {
       coord as PolarCoordConv;
       if (coord.getCanvasDim(dim) == Dim.x) {
-        path = Paths.sector(
+        scene.set([SectorElement(
           center: coord.center,
-          r: coord.radiuses.last,
-          r0: coord.radiuses.first,
+          startRadius: coord.radiuses.first,
+          endRadius: coord.radiuses.last,
           startAngle: coord.convertAngle(start),
           endAngle: coord.convertAngle(end),
-          clockwise: true,
-        );
+          style: style,
+        )], RectElement(rect: coord.region));
       } else {
-        path = Paths.sector(
+        scene.set([SectorElement(
           center: coord.center,
-          r: coord.convertRadius(end),
-          r0: coord.convertRadius(start),
+          startRadius: coord.convertRadius(start),
+          endRadius: coord.convertRadius(end),
           startAngle: coord.angles.first,
           endAngle: coord.angles.last,
-          clockwise: true,
-        );
+          style: style,
+        )], RectElement(rect: coord.region));
       }
     }
-
-    final paint = Paint();
-    if (color != null) {
-      paint.color = color;
-    }
-    if (gradient != null) {
-      paint.shader = gradient.createShader(path.getBounds());
-    }
-
-    scene.figures = [
-      PathFigure(path, paint),
-    ];
   }
 }

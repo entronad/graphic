@@ -11,9 +11,9 @@ import 'pages/polygon_custom.dart';
 
 final routes = {
   '/': (context) => const HomePage(),
-  '/examples/Interval Mark': (context) => IntervalPage(),
-  '/examples/Line,Area,Point Mark': (context) => LineAreaPointPage(),
-  '/examples/Polygon,Custom Mark': (context) => PolygonCustomPage(),
+  '/examples/Interval': (context) => IntervalPage(),
+  '/examples/Line,Area,Point': (context) => LineAreaPointPage(),
+  '/examples/Polygon,Custom': (context) => PolygonCustomPage(),
   '/examples/Interaction Stream, Dynamic': (context) =>
       const InteractionStreamDynamicPage(),
   '/examples/Bigdata': (context) => BigdataPage(),

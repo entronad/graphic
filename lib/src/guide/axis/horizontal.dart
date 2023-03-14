@@ -1,34 +1,27 @@
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/common/label.dart';
-import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/coord/rect.dart';
-import 'package:graphic/src/graffiti/figure.dart';
-import 'package:graphic/src/util/path.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
+import 'package:graphic/src/graffiti/element/label.dart';
+import 'package:graphic/src/graffiti/element/line.dart';
 
 import 'axis.dart';
 
 /// Renders horizontal axis.
-List<Figure>? renderHorizontalAxis(
+List<MarkElement>? renderHorizontalAxis(
   List<TickInfo> ticks,
   double position,
   bool flip,
-  StrokeStyle? line,
+  PaintStyle? line,
   RectCoordConv coord,
 ) {
-  final rst = <Figure>[];
+  final rst = <MarkElement>[];
 
   final region = coord.region;
   final flipSign = flip ? -1.0 : 1.0;
   final y = region.bottom - region.height * position;
 
   if (line != null) {
-    rst.add(PathFigure(
-      line.dashPath(Paths.line(
-        from: Offset(region.left, y),
-        to: Offset(region.right, y),
-      )),
-      line.toPaint(),
-    ));
+    rst.add(LineElement(start: Offset(region.left, y), end: Offset(region.right, y), style: line));
   }
 
   for (var tick in ticks) {
@@ -37,20 +30,10 @@ List<Figure>? renderHorizontalAxis(
     final x = coordLeft + tick.position * (coordRight - coordLeft);
     if (x >= region.left && x <= region.right) {
       if (tick.tickLine != null) {
-        rst.add(PathFigure(
-          tick.tickLine!.style.dashPath(Paths.line(
-            from: Offset(x, y),
-            to: Offset(x, y + tick.tickLine!.length * flipSign),
-          )),
-          tick.tickLine!.style.toPaint(),
-        ));
+        rst.add(LineElement(start: Offset(x, y), end: Offset(x, y + tick.tickLine!.length * flipSign), style: tick.tickLine!.style));
       }
       if (tick.haveLabel) {
-        rst.add(renderLabel(
-          Label(tick.text, tick.label!),
-          Offset(x, y),
-          flip ? Alignment.topCenter : Alignment.bottomCenter,
-        ));
+        rst.add(LabelElement(text: tick.text!, anchor: Offset(x, y), defaultAlign: flip ? Alignment.topCenter : Alignment.bottomCenter, style: tick.label));
       }
     }
   }
@@ -59,11 +42,11 @@ List<Figure>? renderHorizontalAxis(
 }
 
 /// Renders horizontal axis grid.
-List<Figure>? renderHorizontalGrid(
+List<MarkElement>? renderHorizontalGrid(
   List<TickInfo> ticks,
   RectCoordConv coord,
 ) {
-  final rst = <Figure>[];
+  final rst = <MarkElement>[];
 
   final region = coord.region;
   for (var tick in ticks) {
@@ -72,13 +55,7 @@ List<Figure>? renderHorizontalGrid(
       final coordRight = coord.horizontals.last;
       final x = coordLeft + tick.position * (coordRight - coordLeft);
       if (x >= region.left && x <= region.right) {
-        rst.add(PathFigure(
-          tick.grid!.dashPath(Paths.line(
-            from: Offset(x, region.bottom),
-            to: Offset(x, region.top),
-          )),
-          tick.grid!.toPaint(),
-        ));
+        rst.add(LineElement(start: Offset(x, region.bottom), end: Offset(x, region.top), style: tick.grid));
       }
     }
   }

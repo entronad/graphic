@@ -3,7 +3,8 @@ import 'dart:ui';
 import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
+import 'package:graphic/src/graffiti/element/rect.dart';
 import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/util/math.dart';
 
@@ -118,14 +119,11 @@ class IntervalSelector extends Selector {
 }
 
 /// Renders interval selector.
-List<Figure>? renderIntervalSelector(
+List<MarkElement>? renderIntervalSelector(
   Offset start,
   Offset end,
   Color color,
 ) =>
     [
-      PathFigure(
-        Path()..addRect(Rect.fromPoints(start, end)),
-        Paint()..color = color,
-      )
+      RectElement(rect: Rect.fromPoints(start, end), style: PaintStyle(fillColor: color)),
     ];

@@ -1,7 +1,8 @@
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/dim.dart';
-import 'package:graphic/src/graffiti/figure.dart';
-import 'package:graphic/src/shape/util/gradient.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
+import 'package:graphic/src/graffiti/element/rect.dart';
+import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/interaction/event.dart';
@@ -170,7 +171,7 @@ class RectCoordConvOp extends CoordConvOp<RectCoordConv> {
 class RectRegionColorRenderOp extends RegionBackgroundRenderOp {
   RectRegionColorRenderOp(
     Map<String, dynamic> params,
-    RegionBackgroundScene scene,
+    Scene scene,
     View view,
   ) : super(params, scene, view);
 
@@ -179,12 +180,7 @@ class RectRegionColorRenderOp extends RegionBackgroundRenderOp {
     final region = params['region'] as Rect;
     final color = params['color'] as Color;
 
-    scene.figures = [
-      PathFigure(
-        Path()..addRect(region),
-        Paint()..color = color,
-      )
-    ];
+    scene.set([RectElement(rect: region, style: PaintStyle(fillColor: color))]);
   }
 }
 
@@ -192,7 +188,7 @@ class RectRegionColorRenderOp extends RegionBackgroundRenderOp {
 class RectRegionGradientRenderOp extends RegionBackgroundRenderOp {
   RectRegionGradientRenderOp(
     Map<String, dynamic> params,
-    RegionBackgroundScene scene,
+    Scene scene,
     View view,
   ) : super(params, scene, view);
 
@@ -201,11 +197,6 @@ class RectRegionGradientRenderOp extends RegionBackgroundRenderOp {
     final region = params['region'] as Rect;
     final gradient = params['gradient'] as Gradient;
 
-    scene.figures = [
-      PathFigure(
-        Path()..addRect(region),
-        Paint()..shader = toUIGradient(gradient, region),
-      )
-    ];
+    scene.set([RectElement(rect: region, style: PaintStyle(fillGradient: gradient, gradientBounds: region))]);
   }
 }

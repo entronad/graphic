@@ -1,60 +1,157 @@
 import 'dart:ui';
 
-import 'package:graphic/src/common/intrinsic_layers.dart';
-import 'package:graphic/src/common/operators/render.dart';
+import 'package:flutter/animation.dart';
 
-import 'figure.dart';
-import 'graffiti.dart';
+import 'element/element.dart';
+import 'transition.dart';
 
-/// The base class of scenes.
-///
-/// A scene holds a group of [Figure]s for the [Graffiti] to paint. They are held
-/// by [Graffiti] and [Render] operators simutaniously, so they connect the dataflow
-/// and rendering engine. Once the chart is built, the scene instances will not
-/// change, but the figures they hold may vary on reevaluation.
-abstract class Scene {
-  Scene(this.layer);
+class Scene {
+  Scene({
+    required this.layer,
+    required this.chartLayer,
+    this.transition,
+    required TickerProvider tickerProvider,
+    required this.repaint,
+  }) {
+    if (transition == null) {
+      _controller = null;
+    } else {
+      _controller = AnimationController(vsync: tickerProvider, duration: transition!.duration);
+      final animation = transition!.curve == null ? _controller! : CurvedAnimation(parent: _controller!, curve: transition!.curve!);
+      animation.addListener(() {
+        if (_animateElements) {
+          _elements = [];
+          for (var i = 0; i < _endElements!.length; i++) {
+            _elements!.add(_endElements![i].lerpFrom(_startElements![i], animation.value));
+          }
+        }
 
-  /// The layer of this scene.
-  int layer;
+        if (_animateClip) {
+          _clip = _endClip!.lerpFrom(_startClip!, animation.value);
+        }
 
-  /// The intrinsic layer of this scene.
-  ///
-  /// It determins the stacking order when [layer]s are the same. It is picked
-  /// from [IntrinsicLayers] by subclass implementation.
-  int get intrinsicLayer;
+        repaint();
+      });
+      animation.addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          if (_animateElements) {
+            _elements = _currentElements;
+          }
+          if (_animateClip) {
+            _clip = _currentClip;
+          }
 
-  /// The previous stakcking order.
-  ///
-  /// It helps the [Graffiti] to sort scenes stably.
-  late int preOrder;
+          repaint();
+        }
+      });
+    }
+  }
 
-  /// Figures to paint.
-  ///
-  /// If null, the scene will do nothing in painting.
-  List<Figure>? figures;
+  final int layer;
 
-  /// The painting clip of the figures of this scene.
-  Path? clip;
+  final int chartLayer;
 
-  /// Sets a Rectangle [clip].
-  void setRegionClip(Rect region) => clip = Path()..addRect(region);
+  final Transition? transition;
 
-  /// Paints the figures
-  ///
-  /// It is called by [Graffiti.paint].
+  late int preIndex;
+
+  List<MarkElement>? _currentElements;
+
+  List<MarkElement>? _preElements;
+
+  List<MarkElement>? _startElements;
+
+  List<MarkElement>? _endElements;
+
+  List<MarkElement>? _elements;
+
+  PrimitiveElement? _currentClip;
+
+  PrimitiveElement? _preClip;
+
+  PrimitiveElement? _startClip;
+
+  PrimitiveElement? _endClip;
+
+  PrimitiveElement? _clip;
+
+  final void Function() repaint;
+
+  late final AnimationController? _controller;
+
+  late bool _animateElements;
+
+  late bool _animateClip;
+
+  void set(List<MarkElement>? elements, [PrimitiveElement? clip]) {
+    _animateElements = _controller != null && _currentElements != null && elements != null;
+    _animateClip = _controller != null && _currentClip != null && clip != null;
+
+    _preElements = _currentElements;
+    _currentElements = elements;
+    if (!_animateElements) {
+      _elements = elements;
+    }
+
+    _preClip = _currentClip;
+    _currentClip = clip;
+    if (!_animateClip) {
+      _clip = clip;
+    }
+  }
+
+  void update() {
+    if (_animateElements) {
+      final elementsPair = nomalizeElementList(_preElements!, _currentElements!);
+      _startElements = elementsPair.first;
+      _endElements = elementsPair.last;
+    }
+
+    if (_animateClip) {
+      final clipPair = nomalizeElement(_preClip!, _currentClip!);
+      _startClip = clipPair.first as PrimitiveElement;
+      _endClip = clipPair.last as PrimitiveElement;
+    }
+
+    if (_animateElements || _animateClip) {
+      _controller!.reset();
+      if (transition!.repeat) {
+        _controller!.repeat(reverse: transition!.repeatReverse);
+      } else {
+        _controller!.forward();
+      }
+    } else {
+      repaint();
+    }
+  }
+
   void paint(Canvas canvas) {
-    if (figures != null) {
+    if (_elements != null) {
       canvas.save();
-      if (clip != null) {
-        canvas.clipPath(clip!);
+      
+      if (_clip != null) {
+        if (_clip!.rotation == null) {
+          canvas.clipPath(_clip!.path);
+        } else {
+          canvas.save();
+
+          canvas.translate(_clip!.rotationAxis!.dx, _clip!.rotationAxis!.dy);
+          canvas.rotate(_clip!.rotation!);
+          canvas.translate(-_clip!.rotationAxis!.dx, -_clip!.rotationAxis!.dy);
+
+          canvas.clipPath(_clip!.path);
+
+          canvas.restore();
+        }
       }
 
-      for (var figure in figures!) {
-        figure.paint(canvas);
+      for (var element in _elements!) {
+        element.paint(canvas);
       }
 
       canvas.restore();
     }
   }
+
+  void dispose() => _controller?.dispose();
 }

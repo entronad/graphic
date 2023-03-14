@@ -44,7 +44,7 @@
 /// ```
 ///    variable    scale           aesthetic                  shape
 ///       |          |                 |                        |
-/// data --> tuples --> scaled tuples --> aesthetic encodes --> figures
+/// data --> tuples --> scaled tuples --> aesthetic encodes --> elements
 /// ```
 ///
 /// ## Variable
@@ -87,7 +87,7 @@
 ///
 /// ## Shape
 ///
-/// Shapes render [Tuple]s with [Aes] encodes. Rendering means to get [Figure]s,
+/// Shapes render [Tuple]s with [Aes] encodes. Rendering means to get [MarkElement]s,
 /// which carry the painting information for the rendering engine. Extending a shape
 /// subclass is the way to custom charts.
 ///
@@ -150,7 +150,7 @@ export 'src/mark/modifier/jitter.dart' show JitterModifier;
 export 'src/mark/modifier/symmetric.dart' show SymmetricModifier;
 
 export 'src/encode/encode.dart' show Encode;
-export 'src/encode/channel.dart' show StreamEncode;
+export 'src/encode/channel.dart' show ChannelEncode;
 export 'src/encode/color.dart' show ColorEncode;
 export 'src/encode/elevation.dart' show ElevationEncode;
 export 'src/encode/gradient.dart' show GradientEncode;
@@ -169,10 +169,32 @@ export 'src/shape/interval.dart' show IntervalShape, RectShape, FunnelShape;
 export 'src/shape/line.dart' show LineShape, BasicLineShape;
 export 'src/shape/point.dart' show PointShape, CircleShape, SquareShape;
 export 'src/shape/polygon.dart' show PolygonShape, HeatmapShape;
-export 'src/shape/util/render_basic_item.dart' show renderBasicItem;
+export 'src/shape/util/render_basic_item.dart' show getPaintStyle;
 
-export 'src/graffiti/figure.dart'
-    show Figure, PathFigure, ShadowFigure, TextFigure, RotatedTextFigure;
+export 'src/graffiti/element/element.dart'
+    show MarkElement, PaintStyle, PrimitiveElement, getBlockPaintPoint;
+export 'src/graffiti/element/arc.dart' show ArcElement;
+export 'src/graffiti/element/circle.dart' show CircleElement;
+export 'src/graffiti/element/group.dart' show GroupElement;
+export 'src/graffiti/element/image.dart' show ImageElement, ImageStyle;
+export 'src/graffiti/element/label.dart' show LabelElement, LabelStyle;
+export 'src/graffiti/element/line.dart' show LineElement;
+export 'src/graffiti/element/oval.dart' show OvalElement;
+export 'src/graffiti/element/path.dart' show PathElement;
+export 'src/graffiti/element/polygon.dart' show PolygonElement;
+export 'src/graffiti/element/polyline.dart' show PolylineElement;
+export 'src/graffiti/element/rect.dart' show RectElement;
+export 'src/graffiti/element/sector.dart' show SectorElement;
+export 'src/graffiti/element/spline.dart' show SplineElement;
+export 'src/graffiti/element/segment/segment.dart' show Segment, SegmentTags;
+export 'src/graffiti/element/segment/arc_to_point.dart' show ArcToPointSegment;
+export 'src/graffiti/element/segment/arc.dart' show ArcSegment;
+export 'src/graffiti/element/segment/close.dart' show CloseSegment;
+export 'src/graffiti/element/segment/conic.dart' show ConicSegment;
+export 'src/graffiti/element/segment/cubic.dart' show CubicSegment;
+export 'src/graffiti/element/segment/line.dart' show LineSegment;
+export 'src/graffiti/element/segment/move.dart' show MoveSegment;
+export 'src/graffiti/element/segment/quadratic.dart' show QuadraticSegment;
 
 export 'src/coord/coord.dart' show Coord, CoordConv;
 export 'src/coord/polar.dart' show PolarCoord, PolarCoordConv;
@@ -183,10 +205,9 @@ export 'src/guide/axis/axis.dart'
 export 'src/guide/interaction/tooltip.dart' show TooltipGuide, TooltipRenderer;
 export 'src/guide/interaction/crosshair.dart' show CrosshairGuide;
 export 'src/guide/annotation/annotation.dart' show Annotation;
-export 'src/guide/annotation/figure.dart' show FigureAnnotation;
+export 'src/guide/annotation/element.dart' show ElementAnnotation;
 export 'src/guide/annotation/line.dart' show LineAnnotation;
 export 'src/guide/annotation/region.dart' show RegionAnnotation;
-export 'src/guide/annotation/mark.dart' show MarkAnnotation;
 export 'src/guide/annotation/tag.dart' show TagAnnotation;
 export 'src/guide/annotation/custom.dart' show CustomAnnotation;
 
@@ -197,13 +218,11 @@ export 'src/interaction/selection/selection.dart'
 export 'src/interaction/selection/interval.dart' show IntervalSelection;
 export 'src/interaction/selection/point.dart' show PointSelection;
 
-export 'src/common/styles.dart' show StrokeStyle;
 export 'src/common/label.dart'
-    show Label, LabelStyle, renderLabel, getPaintPoint;
+    show Label;
 export 'src/common/defaults.dart' show Defaults;
 export 'src/common/dim.dart' show Dim;
 
 export 'src/dataflow/tuple.dart' show Tuple, Attributes, AesGroups;
 
-export 'src/util/path.dart' show Paths;
 export 'package:path_drawing/path_drawing.dart' show DashOffset;

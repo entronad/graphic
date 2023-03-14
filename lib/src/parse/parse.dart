@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/painting.dart';
+import 'package:graphic/src/common/chart_layers.dart';
 import 'package:graphic/src/encode/encode.dart';
 import 'package:graphic/src/encode/channel.dart';
 import 'package:graphic/src/encode/color.dart';
@@ -19,18 +20,17 @@ import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/operators/value.dart';
 import 'package:graphic/src/common/reserveds.dart';
-import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/data/data_set.dart';
 import 'package:graphic/src/dataflow/operator.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
 import 'package:graphic/src/mark/mark.dart';
 import 'package:graphic/src/mark/modifier/modifier.dart';
 import 'package:graphic/src/guide/annotation/custom.dart';
-import 'package:graphic/src/guide/annotation/figure.dart';
+import 'package:graphic/src/guide/annotation/element.dart';
 import 'package:graphic/src/guide/annotation/line.dart';
-import 'package:graphic/src/guide/annotation/mark.dart';
 import 'package:graphic/src/guide/annotation/region.dart';
 import 'package:graphic/src/guide/annotation/tag.dart';
 import 'package:graphic/src/guide/axis/axis.dart';
@@ -110,7 +110,7 @@ void parse<D>(
 
   if (coordSpec.color != null) {
     final regionBackgroundScene =
-        view.graffiti.add(RegionBackgroundScene(coordSpec.layer ?? 0));
+        view.graffiti.createScene(layer: coordSpec.layer ?? 0, chartLayer: ChartLayers.regionBackground);
     if (coordSpec is RectCoord) {
       view.add(RectRegionColorRenderOp({
         'region': region,
@@ -124,7 +124,7 @@ void parse<D>(
     }
   } else if (coordSpec.gradient != null) {
     final regionBackgroundScene =
-        view.graffiti.add(RegionBackgroundScene(coordSpec.layer ?? 0));
+        view.graffiti.createScene(layer: coordSpec.layer ?? 0, chartLayer: ChartLayers.regionBackground);
     if (coordSpec is RectCoord) {
       view.add(RectRegionGradientRenderOp({
         'region': region,
@@ -328,7 +328,7 @@ void parse<D>(
 
     for (var name in selectSpecs.keys) {
       final selectorScene =
-          view.graffiti.add(SelectorScene(selectSpecs[name]!.layer ?? 0));
+          view.graffiti.createScene(layer: selectSpecs[name]!.layer ?? 0, chartLayer: ChartLayers.selector);
       view.add(SelectorRenderOp({
         'selectors': selectors,
         'name': name,
@@ -493,7 +493,7 @@ void parse<D>(
     groupsList.add(groups);
 
     final markScene =
-        view.graffiti.add(MarkScene(markSpec.layer ?? 0));
+        view.graffiti.createScene(layer: markSpec.layer ?? 0, chartLayer: ChartLayers.mark);
     view.add(MarkRenderOp({
       'groups': groups,
       'coord': coord,
@@ -521,7 +521,7 @@ void parse<D>(
         'gridMapper': axisSpec.gridMapper,
       }));
 
-      final axisScene = view.graffiti.add(AxisScene(axisSpec.layer ?? 0));
+      final axisScene = view.graffiti.createScene(layer: axisSpec.layer ?? 0, chartLayer: ChartLayers.axis);
       view.add(AxisRenderOp({
         'coord': coord,
         'dim': dim,
@@ -531,7 +531,7 @@ void parse<D>(
         'ticks': ticks,
       }, axisScene, view));
 
-      final gridScene = view.graffiti.add(GridScene(axisSpec.gridZIndex ?? 0));
+      final gridScene = view.graffiti.createScene(layer: axisSpec.gridZIndex ?? 0, chartLayer: ChartLayers.grid);
       view.add(GridRenderOp({
         'coord': coord,
         'dim': dim,
@@ -547,7 +547,7 @@ void parse<D>(
         final variable =
             annotSpec.variable ?? firstVariables![dim == Dim.x ? 0 : 1];
         final annotScene =
-            view.graffiti.add(RegionAnnotScene(annotSpec.layer ?? 0));
+            view.graffiti.createScene(layer: annotSpec.layer ?? 0, chartLayer: ChartLayers.regionAnnot);
         view.add(RegionAnnotRenderOp({
           'dim': dim,
           'variable': variable,
@@ -562,7 +562,7 @@ void parse<D>(
         final variable =
             annotSpec.variable ?? firstVariables![dim == Dim.x ? 0 : 1];
         final annotScene =
-            view.graffiti.add(LineAnnotScene(annotSpec.layer ?? 0));
+            view.graffiti.createScene(layer: annotSpec.layer ?? 0, chartLayer: ChartLayers.lineAnnot);
         view.add(LineAnnotRenderOp({
           'dim': dim,
           'variable': variable,
@@ -571,15 +571,15 @@ void parse<D>(
           'scales': scales,
           'coord': coord,
         }, annotScene, view));
-      } else if (annotSpec is FigureAnnotation) {
+      } else if (annotSpec is ElementAnnotation) {
         Operator<Offset> anchor;
         if (annotSpec.anchor != null) {
-          anchor = view.add(FigureAnnotSetAnchorOp({
+          anchor = view.add(ElementAnnotSetAnchorOp({
             'anchor': annotSpec.anchor,
             'size': size,
           }));
         } else {
-          anchor = view.add(FigureAnnotCalcAnchorOp({
+          anchor = view.add(ElementAnnotCalcAnchorOp({
             'variables': annotSpec.variables ??
                 [
                   firstVariables![0],
@@ -591,15 +591,8 @@ void parse<D>(
           }));
         }
 
-        FigureAnnotOp annot;
-        if (annotSpec is MarkAnnotation) {
-          annot = view.add(MarkAnnotOp({
-            'anchor': anchor,
-            'relativePath': annotSpec.relativePath,
-            'style': annotSpec.style,
-            'elevation': annotSpec.elevation,
-          }));
-        } else if (annotSpec is TagAnnotation) {
+        ElementAnnotOp annot;
+        if (annotSpec is TagAnnotation) {
           annot = view.add(TagAnnotOp({
             'anchor': anchor,
             'label': annotSpec.label,
@@ -614,9 +607,9 @@ void parse<D>(
         }
 
         final annotScene =
-            view.graffiti.add(FigureAnnotScene(annotSpec.layer ?? 0));
-        view.add(FigureAnnotRenderOp({
-          'figures': annot,
+            view.graffiti.createScene(layer: annotSpec.layer ?? 0, chartLayer: ChartLayers.elementAnnot);
+        view.add(ElementAnnotRenderOp({
+          'elements': annot,
           'clip': annotSpec.clip ?? false,
           'coord': coord,
         }, annotScene, view));
@@ -633,7 +626,7 @@ void parse<D>(
     final markIndex = crosshairSpec.mark ?? 0;
 
     final crosshairScene =
-        view.graffiti.add(CrosshairScene(crosshairSpec.layer ?? 0));
+        view.graffiti.createScene(layer: crosshairSpec.layer ?? 0, chartLayer: ChartLayers.crosshair);
     view.add(CrosshairRenderOp({
       'selections': crosshairSpec.selections ?? spec.selections!.keys.toSet(),
       'selectors': selectors!,
@@ -642,8 +635,8 @@ void parse<D>(
       'groups': groupsList[markIndex],
       'styles': crosshairSpec.styles ??
           [
-            StrokeStyle(color: const Color(0xffbfbfbf)),
-            StrokeStyle(color: const Color(0xffbfbfbf)),
+            PaintStyle(strokeColor: const Color(0xffbfbfbf)),
+            PaintStyle(strokeColor: const Color(0xffbfbfbf)),
           ],
       'followPointer': crosshairSpec.followPointer ?? [false, false],
     }, crosshairScene, view));
@@ -656,7 +649,7 @@ void parse<D>(
     final markIndex = tooltipSpec.mark ?? 0;
 
     final tooltipScene =
-        view.graffiti.add(TooltipScene(tooltipSpec.layer ?? 0));
+        view.graffiti.createScene(layer: tooltipSpec.layer ?? 0, chartLayer: ChartLayers.tooltip);
     view.add(TooltipRenderOp({
       'selections': tooltipSpec.selections ?? spec.selections!.keys.toSet(),
       'selectors': selectors!,

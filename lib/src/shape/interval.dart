@@ -1,14 +1,17 @@
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/graffiti/element/group.dart';
+import 'package:graphic/src/graffiti/element/label.dart';
+import 'package:graphic/src/graffiti/element/polygon.dart';
+import 'package:graphic/src/graffiti/element/rect.dart';
+import 'package:graphic/src/graffiti/element/sector.dart';
 import 'package:graphic/src/mark/interval.dart';
-import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
 import 'package:graphic/src/guide/axis/radial.dart';
 import 'package:graphic/src/util/math.dart';
-import 'package:graphic/src/util/path.dart';
 
 import 'util/render_basic_item.dart';
 import 'function.dart';
@@ -56,12 +59,12 @@ class RectShape extends IntervalShape {
       borderRadius == other.borderRadius;
 
   @override
-  List<Figure> renderGroup(
+  List<MarkElement> renderGroup(
     List<Attributes> group,
     CoordConv coord,
     Offset origin,
   ) {
-    final rst = <Figure>[];
+    final rst = <List<MarkElement>>[];
 
     if (coord is RectCoordConv) {
       if (histogram) {
@@ -72,7 +75,7 @@ class RectShape extends IntervalShape {
         List<Offset> position = item.position;
         double bandStart = 0;
         double bandEnd = (group[1].position.first.dx + position.first.dx) / 2;
-        rst.addAll(_renderRect(
+        rst.add(_renderRect(
           item,
           Rect.fromPoints(
             coord.convert(Offset(bandStart, position[1].dy)),
@@ -90,7 +93,7 @@ class RectShape extends IntervalShape {
               (group[i].position.first.dx + group[i - 1].position.first.dx) / 2;
           bandEnd =
               (group[i + 1].position.first.dx + group[i].position.first.dx) / 2;
-          rst.addAll(_renderRect(
+          rst.add(_renderRect(
             item,
             Rect.fromPoints(
               coord.convert(Offset(bandStart, position[1].dy)),
@@ -107,7 +110,7 @@ class RectShape extends IntervalShape {
         bandStart =
             (position.first.dx + group[group.length - 2].position.first.dx) / 2;
         bandEnd = 1;
-        rst.addAll(_renderRect(
+        rst.add(_renderRect(
           item,
           Rect.fromPoints(
             coord.convert(Offset(bandStart, position[1].dy)),
@@ -151,7 +154,7 @@ class RectShape extends IntervalShape {
               start.dy,
             );
           }
-          rst.addAll(_renderRect(
+          rst.add(_renderRect(
             item,
             rect,
             start + (end - start) * labelPosition,
@@ -168,7 +171,7 @@ class RectShape extends IntervalShape {
 
           for (var item in group) {
             final position = item.position;
-            rst.addAll(_renderSector(
+            rst.add(_renderSector(
               item,
               coord.radiuses.last,
               coord.radiuses.first,
@@ -189,7 +192,7 @@ class RectShape extends IntervalShape {
             final position = item.position;
             final r = coord.convertRadius(position[0].dx);
             final halfSize = (item.size ?? defaultSize) / 2;
-            rst.addAll(_renderSector(
+            final rstItem = _renderSector(
               item,
               r + halfSize,
               r - halfSize,
@@ -201,17 +204,14 @@ class RectShape extends IntervalShape {
                 (position[1].dy - position[0].dy) / 2,
               )),
               coord,
-            ));
+            );
             if (item.label != null && item.label!.haveText) {
               final labelAnchor = coord.convert(
                   position[0] + (position[1] - position[0]) * labelPosition);
               final anchorOffset = labelAnchor - coord.center;
-              rst.add(renderLabel(
-                item.label!,
-                labelAnchor,
-                radialLabelAlign(anchorOffset) * -1,
-              ));
+              rstItem.add(LabelElement(text: item.label!.text!, anchor: labelAnchor, defaultAlign: radialLabelAlign(anchorOffset) * -1, style: item.label!.style));
             }
+            rst.add(rstItem);
           }
         }
       } else {
@@ -219,7 +219,7 @@ class RectShape extends IntervalShape {
           // Bull eye.
 
           for (var item in group) {
-            rst.addAll(_renderSector(
+            rst.add(_renderSector(
               item,
               coord.convertRadius(item.position[1].dy),
               coord.convertRadius(item.position[0].dy),
@@ -239,7 +239,7 @@ class RectShape extends IntervalShape {
           List<Offset> position = group.first.position;
           double bandStart = 0;
           double bandEnd = (group[1].position.first.dx + position.first.dx) / 2;
-          rst.addAll(_renderSector(
+          rst.add(_renderSector(
             item,
             coord.convertRadius(position[1].dy),
             coord.convertRadius(position[0].dy),
@@ -260,7 +260,7 @@ class RectShape extends IntervalShape {
             bandEnd =
                 (group[i + 1].position.first.dx + group[i].position.first.dx) /
                     2;
-            rst.addAll(_renderSector(
+            rst.add(_renderSector(
               item,
               coord.convertRadius(position[1].dy),
               coord.convertRadius(position[0].dy),
@@ -279,7 +279,7 @@ class RectShape extends IntervalShape {
               (position.first.dx + group[group.length - 2].position.first.dx) /
                   2;
           bandEnd = 1;
-          rst.addAll(_renderSector(
+          rst.add(_renderSector(
             item,
             coord.convertRadius(position[1].dy),
             coord.convertRadius(position[0].dy),
@@ -294,13 +294,23 @@ class RectShape extends IntervalShape {
       }
     }
 
-    return rst;
+    final basicElements = <MarkElement>[];
+    final labelElements = <MarkElement>[];
+
+    for (var rstItem in rst) {
+      basicElements.add(rstItem.first);
+      if (rstItem.length > 1) {
+        labelElements.add(rstItem.last);
+      }
+    }
+
+    return [GroupElement(elements: basicElements), GroupElement(elements: labelElements)];
   }
 
   /// Renders a rectangle interval item.
   ///
-  /// It relaced [renderItem].
-  List<Figure> _renderRect(
+  /// The first is basic and last is label.
+  List<MarkElement> _renderRect(
     Attributes item,
     Rect rect,
     Offset labelAnchor,
@@ -308,37 +318,16 @@ class RectShape extends IntervalShape {
   ) {
     assert(item.shape is RectShape);
 
-    final path = Path();
-    if (borderRadius != null) {
-      path.addRRect(RRect.fromRectAndCorners(
-        rect,
-        topLeft: borderRadius!.topLeft,
-        topRight: borderRadius!.topRight,
-        bottomRight: borderRadius!.bottomRight,
-        bottomLeft: borderRadius!.bottomLeft,
-      ));
-    } else {
-      path.addRect(rect);
-    }
+    final style = getPaintStyle(item, false, 0, coord.region);
 
-    final rst = <Figure>[];
+    final rst = <MarkElement>[];
 
-    rst.addAll(renderBasicItem(
-      path,
-      item,
-      false,
-      0,
-      coord.region,
-    ));
+    rst.add(RectElement(rect: rect, borderRadius: borderRadius, style: style));
 
     if (item.label != null) {
-      rst.add(renderLabel(
-        item.label!,
-        labelAnchor,
-        labelPosition.equalTo(1)
+      rst.add(LabelElement(text: item.label!.text!, anchor: labelAnchor, defaultAlign: labelPosition.equalTo(1)
             ? (coord.transposed ? Alignment.centerRight : Alignment.topCenter)
-            : Alignment.center,
-      ));
+            : Alignment.center, style: item.label!.style));
     }
 
     return rst;
@@ -346,8 +335,8 @@ class RectShape extends IntervalShape {
 
   /// Renders a sector interval item.
   ///
-  /// It relaced [renderItem].
-  List<Figure> _renderSector(
+  /// The first is basic and last is label.
+  List<MarkElement> _renderSector(
     Attributes item,
     double r,
     double r0,
@@ -359,39 +348,18 @@ class RectShape extends IntervalShape {
   ) {
     assert(item.shape is RectShape);
 
-    Path path;
-    if (borderRadius != null) {
-      path = Paths.rSector(
-        center: coord.center,
-        r: r,
-        r0: r0,
-        startAngle: startAngle,
-        endAngle: endAngle,
-        clockwise: true,
-        topLeft: borderRadius!.topLeft,
-        topRight: borderRadius!.topRight,
-        bottomRight: borderRadius!.bottomRight,
-        bottomLeft: borderRadius!.bottomLeft,
-      );
-    } else {
-      path = Paths.sector(
-        center: coord.center,
-        r: r,
-        r0: r0,
-        startAngle: startAngle,
-        endAngle: endAngle,
-        clockwise: true,
-      );
-    }
+    final style = getPaintStyle(item, false, 0, coord.region);
 
-    final rst = <Figure>[];
+    final rst = <MarkElement>[];
 
-    rst.addAll(renderBasicItem(
-      path,
-      item,
-      false,
-      0,
-      coord.region,
+    rst.add(SectorElement(
+      center: coord.center,
+      endRadius: r,
+      startRadius: r0,
+      startAngle: startAngle,
+      endAngle: endAngle,
+      borderRadius: borderRadius,
+      style: style
     ));
 
     if (haveLabel && item.label != null) {
@@ -410,23 +378,11 @@ class RectShape extends IntervalShape {
       } else {
         defaultAlign = Alignment.center;
       }
-      rst.add(renderLabel(
-        item.label!,
-        labelAnchor,
-        defaultAlign,
-      ));
+      rst.add(LabelElement(text: item.label!.text!, anchor: labelAnchor, defaultAlign: defaultAlign, style: item.label!.style));
     }
 
     return rst;
   }
-
-  @override
-  List<Figure> renderItem(
-    Attributes item,
-    CoordConv coord,
-    Offset origin,
-  ) =>
-      throw UnimplementedError('Use _renderRect or _renderSector instead.');
 }
 
 /// A funnel or pyramid shape.
@@ -456,14 +412,14 @@ class FunnelShape extends IntervalShape {
       pyramid == other.pyramid;
 
   @override
-  List<Figure> renderGroup(
+  List<MarkElement> renderGroup(
     List<Attributes> group,
     CoordConv coord,
     Offset origin,
   ) {
     assert(coord is RectCoordConv);
 
-    final rst = <Figure>[];
+    final rst = <List<MarkElement>>[];
 
     // First item.
     Attributes item = group.first;
@@ -477,7 +433,7 @@ class FunnelShape extends IntervalShape {
       coord.convert(Offset(bandEnd, group[1].position[0].dy)),
       coord.convert(Offset(bandStart, position[0].dy)),
     ];
-    rst.addAll(_renderSlope(
+    rst.add(_renderSlope(
       item,
       corners,
       coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
@@ -497,7 +453,7 @@ class FunnelShape extends IntervalShape {
         coord.convert(Offset(bandEnd, group[i + 1].position[0].dy)),
         coord.convert(Offset(bandStart, position[0].dy)),
       ];
-      rst.addAll(_renderSlope(
+      rst.add(_renderSlope(
         item,
         corners,
         coord
@@ -519,20 +475,30 @@ class FunnelShape extends IntervalShape {
       coord.convert(Offset(bandEnd, closeStart)),
       coord.convert(Offset(bandStart, position[0].dy)),
     ];
-    rst.addAll(_renderSlope(
+    rst.add(_renderSlope(
       item,
       corners,
       coord.convert(position[0] + (position[1] - position[0]) * labelPosition),
       coord,
     ));
 
-    return rst;
+    final basicElements = <MarkElement>[];
+    final labelElements = <MarkElement>[];
+
+    for (var rstItem in rst) {
+      basicElements.add(rstItem.first);
+      if (rstItem.length > 1) {
+        labelElements.add(rstItem.last);
+      }
+    }
+
+    return [GroupElement(elements: basicElements), GroupElement(elements: labelElements)];
   }
 
   /// Renders a slope-toped interval item.
   ///
-  /// It relaced [renderItem].
-  List<Figure> _renderSlope(
+  /// The first is basic and last is label.
+  List<MarkElement> _renderSlope(
     Attributes item,
     List<Offset> corners,
     Offset labelAnchor,
@@ -540,41 +506,22 @@ class FunnelShape extends IntervalShape {
   ) {
     assert(item.shape is FunnelShape);
 
-    final path = Path();
-    path.addPolygon(corners, true);
+    final style = getPaintStyle(item, false, 0, coord.region);
 
-    final rst = <Figure>[];
+    final rst = <MarkElement>[];
 
-    rst.addAll(renderBasicItem(
-      path,
-      item,
-      false,
-      0,
-      coord.region,
-    ));
+    rst.add(PolygonElement(points: corners, style: style));
 
     if (item.label != null) {
-      rst.add(renderLabel(
-        item.label!,
-        labelAnchor,
-        labelPosition.equalTo(1)
+      rst.add(LabelElement(text: item.label!.text!, anchor: labelAnchor, defaultAlign: labelPosition.equalTo(1)
             ? (coord.transposed ? Alignment.centerRight : Alignment.topCenter)
             : labelPosition.equalTo(0)
                 ? (coord.transposed
                     ? Alignment.centerLeft
                     : Alignment.bottomCenter)
-                : Alignment.center,
-      ));
+                : Alignment.center, style: item.label!.style));
     }
 
     return rst;
   }
-
-  @override
-  List<Figure> renderItem(
-    Attributes item,
-    CoordConv coord,
-    Offset origin,
-  ) =>
-      throw UnimplementedError('Use _renderSlope instead.');
 }

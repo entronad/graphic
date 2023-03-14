@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:graphic/src/graffiti/element/element.dart';
+import 'package:graphic/src/graffiti/element/group.dart';
+import 'package:graphic/src/graffiti/element/rect.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
@@ -12,12 +15,10 @@ import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/encode/shape.dart';
 import 'package:graphic/src/encode/size.dart';
 import 'package:graphic/src/chart/view.dart';
-import 'package:graphic/src/common/intrinsic_layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/scale/discrete.dart';
 import 'package:graphic/src/scale/scale.dart';
@@ -80,7 +81,7 @@ abstract class Mark<S extends Shape> {
   /// The label encode of this mark.
   ///
   /// For an mark, labels are always painted above item graphics, no matter how
-  /// their [Figure]s are rendered in [Shape]s.
+  /// their [MarkElement]s are rendered in [Shape]s.
   LabelEncode? label;
 
   /// Algebra expression of the mark position.
@@ -204,21 +205,11 @@ class GroupOp extends Operator<AesGroups> {
   }
 }
 
-/// The geometry mark scene.
-///
-/// All items of a geometry mark are in a same scene, and their order is immutable.
-class MarkScene extends Scene {
-  MarkScene(int layer) : super(layer);
-
-  @override
-  int get intrinsicLayer => IntrinsicLayers.mark;
-}
-
 /// The geometry mark render operator.
-class MarkRenderOp extends Render<MarkScene> {
+class MarkRenderOp extends Render {
   MarkRenderOp(
     Map<String, dynamic> params,
-    MarkScene scene,
+    Scene scene,
     View view,
   ) : super(params, scene, view);
 
@@ -228,30 +219,21 @@ class MarkRenderOp extends Render<MarkScene> {
     final coord = params['coord'] as CoordConv;
     final origin = params['origin'] as Offset;
 
-    final basicItems = <Figure>[];
-    final labels = <TextFigure>[];
-
+    final basicElements = <MarkElement>[];
+    final labelElements = <MarkElement>[];
+ 
     for (var group in groups) {
-      final groupFigures = group.first.shape.renderGroup(
+      final groupRst = group.first.shape.renderGroup(
         group,
         coord,
         origin,
       );
       // Pick out the labels to make sure labels are always above item graphics.
-      for (var figure in groupFigures) {
-        if (figure is TextFigure) {
-          labels.add(figure);
-        } else {
-          basicItems.add(figure);
-        }
-      }
+      basicElements.add(groupRst.first);
+      labelElements.add(groupRst.last);
     }
 
-    final figures = [...basicItems, ...labels];
-
-    scene
-      ..setRegionClip(coord.region)
-      ..figures = figures.isEmpty ? null : figures;
+    scene.set([GroupElement(elements: basicElements), GroupElement(elements: labelElements)], RectElement(rect: coord.region));
   }
 }
 

@@ -1,11 +1,12 @@
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/label.dart';
-import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
+import 'package:graphic/src/graffiti/element/label.dart';
 
-import 'figure.dart';
+import 'element.dart';
 
 /// The specification of a tag annotation.
-class TagAnnotation extends FigureAnnotation {
+class TagAnnotation extends ElementAnnotation {
   /// Creates a tag annotation.
   TagAnnotation({
     required this.label,
@@ -30,22 +31,18 @@ class TagAnnotation extends FigureAnnotation {
       other is TagAnnotation && super == other && label == other.label;
 }
 
-/// The tag figure annotation operator.
-class TagAnnotOp extends FigureAnnotOp {
+/// The tag element annotation operator.
+class TagAnnotOp extends ElementAnnotOp {
   TagAnnotOp(Map<String, dynamic> params) : super(params);
 
   @override
-  List<Figure>? evaluate() {
+  List<MarkElement>? evaluate() {
     final anchor = params['anchor'] as Offset;
     final label = params['label'] as Label;
 
     return label.haveText
         ? [
-            renderLabel(
-              label,
-              anchor,
-              Alignment.center,
-            )
+            LabelElement(text: label.text!, anchor: anchor, defaultAlign: Alignment.center, style: label.style),
           ]
         : null;
   }

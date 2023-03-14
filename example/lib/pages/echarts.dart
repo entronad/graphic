@@ -228,48 +228,28 @@ class EchartsPage extends StatelessWidget {
                     LineAnnotation(
                       dim: Dim.y,
                       value: 11.14,
-                      style: StrokeStyle(
-                        color: const Color(0xff5470c6).withAlpha(100),
+                      style: PaintStyle(
+                        strokeColor: const Color(0xff5470c6).withAlpha(100),
                         dash: [2],
                       ),
                     ),
                     LineAnnotation(
                       dim: Dim.y,
                       value: 1.57,
-                      style: StrokeStyle(
-                        color: const Color(0xff91cc75).withAlpha(100),
+                      style: PaintStyle(
+                        strokeColor: const Color(0xff91cc75).withAlpha(100),
                         dash: [2],
                       ),
                     ),
-                    MarkAnnotation(
-                      relativePath:
-                          Paths.circle(center: Offset.zero, radius: 5),
-                      style: Paint()..color = const Color(0xff5470c6),
-                      values: ['Wed', 13],
-                    ),
-                    MarkAnnotation(
-                      relativePath:
-                          Paths.circle(center: Offset.zero, radius: 5),
-                      style: Paint()..color = const Color(0xff5470c6),
-                      values: ['Sun', 9],
-                    ),
-                    MarkAnnotation(
-                      relativePath:
-                          Paths.circle(center: Offset.zero, radius: 5),
-                      style: Paint()..color = const Color(0xff91cc75),
-                      values: ['Tue', -2],
-                    ),
-                    MarkAnnotation(
-                      relativePath:
-                          Paths.circle(center: Offset.zero, radius: 5),
-                      style: Paint()..color = const Color(0xff91cc75),
-                      values: ['Thu', 5],
-                    ),
+                    CustomAnnotation(renderer: (offset, _) => [CircleElement(center: offset, radius: 5, style: PaintStyle(fillColor: const Color(0xff5470c6)))], values: ['Wed', 13]),
+                    CustomAnnotation(renderer: (offset, _) => [CircleElement(center: offset, radius: 5, style: PaintStyle(fillColor: const Color(0xff5470c6)))], values: ['Sun', 9]),
+                    CustomAnnotation(renderer: (offset, _) => [CircleElement(center: offset, radius: 5, style: PaintStyle(fillColor: const Color(0xff91cc75)))], values: ['Tue', -2]),
+                    CustomAnnotation(renderer: (offset, _) => [CircleElement(center: offset, radius: 5, style: PaintStyle(fillColor: const Color(0xff91cc75)))], values: ['Thu', 5]),
                     TagAnnotation(
                       label: Label(
                           '13',
                           LabelStyle(
-                            style: Defaults.textStyle,
+                            textStyle: Defaults.textStyle,
                             offset: const Offset(0, -10),
                           )),
                       values: ['Wed', 13],
@@ -278,7 +258,7 @@ class EchartsPage extends StatelessWidget {
                       label: Label(
                           '9',
                           LabelStyle(
-                            style: Defaults.textStyle,
+                            textStyle: Defaults.textStyle,
                             offset: const Offset(0, -10),
                           )),
                       values: ['Sun', 9],
@@ -287,7 +267,7 @@ class EchartsPage extends StatelessWidget {
                       label: Label(
                           '-2',
                           LabelStyle(
-                            style: Defaults.textStyle,
+                            textStyle: Defaults.textStyle,
                             offset: const Offset(0, -10),
                           )),
                       values: ['Tue', -2],
@@ -296,7 +276,7 @@ class EchartsPage extends StatelessWidget {
                       label: Label(
                           '5',
                           LabelStyle(
-                            style: Defaults.textStyle,
+                            textStyle: Defaults.textStyle,
                             offset: const Offset(0, -10),
                           )),
                       values: ['Thu', 5],

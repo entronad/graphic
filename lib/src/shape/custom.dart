@@ -3,7 +3,12 @@ import 'dart:ui';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
+import 'package:graphic/src/graffiti/element/group.dart';
+import 'package:graphic/src/graffiti/element/path.dart';
+import 'package:graphic/src/graffiti/element/segment/close.dart';
+import 'package:graphic/src/graffiti/element/segment/line.dart';
+import 'package:graphic/src/graffiti/element/segment/move.dart';
 
 import 'util/render_basic_item.dart';
 import 'shape.dart';
@@ -44,7 +49,7 @@ class CandlestickShape extends Shape {
   double get defaultSize => 10;
 
   @override
-  List<Figure> renderGroup(
+  List<MarkElement> renderGroup(
     List<Attributes> group,
     CoordConv coord,
     Offset origin,
@@ -52,66 +57,60 @@ class CandlestickShape extends Shape {
     assert(coord is RectCoordConv);
     assert(!coord.transposed);
 
-    final rst = <Figure>[];
+    final basicElements = <MarkElement>[];
+    final labelElements = <MarkElement>[];
+
     for (var item in group) {
-      rst.addAll(item.shape.renderItem(item, coord, origin));
+      assert(item.shape is CandlestickShape);
+
+      final style = getPaintStyle(item, hollow, strokeWidth);
+
+      // Candle stick shape dosen't allow NaN value.
+      final points = item.position.map((p) => coord.convert(p)).toList();
+      final x = points.first.dx;
+      final ys = points.map((p) => p.dy).toList()..sort();
+      final bias = (item.size ?? defaultSize) / 2;
+      final top = ys[0];
+      final topEdge = ys[1];
+      final bottomEdge = ys[2];
+      final bottom = ys[3];
+
+      if (hollow) {
+        basicElements.add(PathElement(segments: [
+          MoveSegment(end: Offset(x, top)),
+          LineSegment(end: Offset(x, topEdge)),
+          MoveSegment(end: Offset(x - bias, topEdge)),
+          LineSegment(end: Offset(x + bias, topEdge)),
+          LineSegment(end: Offset(x + bias, bottomEdge)),
+          LineSegment(end: Offset(x - bias, bottomEdge)),
+          CloseSegment(),
+          MoveSegment(end: Offset(x, bottomEdge)),
+          LineSegment(end: Offset(x, bottom)),
+        ], style: style));
+      } else {
+        // If the stoke style is fill, the lines created by Path.lineTo will not
+        // be rendered.
+        final strokeBias = strokeWidth / 2;
+        basicElements.add(PathElement(segments: [
+          MoveSegment(end: Offset(x + strokeBias, top)),
+          LineSegment(end: Offset(x + strokeBias, topEdge)),
+          LineSegment(end: Offset(x + bias, topEdge)),
+          LineSegment(end: Offset(x + bias, bottomEdge)),
+          LineSegment(end: Offset(x + strokeBias, bottomEdge)),
+          LineSegment(end: Offset(x + strokeBias, bottom)),
+          LineSegment(end: Offset(x - strokeBias, bottom)),
+          LineSegment(end: Offset(x - strokeBias, bottomEdge)),
+          LineSegment(end: Offset(x - bias, bottomEdge)),
+          LineSegment(end: Offset(x - bias, topEdge)),
+          LineSegment(end: Offset(x - strokeBias, topEdge)),
+          LineSegment(end: Offset(x - strokeBias, top)),
+          CloseSegment(),
+        ], style: style));
+      }
+      // No labels.
     }
-    return rst;
-  }
 
-  @override
-  List<Figure> renderItem(
-    Attributes item,
-    CoordConv coord,
-    Offset origin,
-  ) {
-    assert(item.shape is CandlestickShape);
-
-    final path = Path();
-
-    // Candle stick shape dosen't allow NaN value.
-    final points = item.position.map((p) => coord.convert(p)).toList();
-    final x = points.first.dx;
-    final ys = points.map((p) => p.dy).toList()..sort();
-    final bias = (item.size ?? defaultSize) / 2;
-    final top = ys[0];
-    final topEdge = ys[1];
-    final bottomEdge = ys[2];
-    final bottom = ys[3];
-
-    if (hollow) {
-      path.moveTo(x, top);
-      path.lineTo(x, topEdge);
-      path.moveTo(x, bottomEdge);
-      path.lineTo(x, bottom);
-    } else {
-      // If the stoke style is fill, the lines created by Path.lineTo will not
-      // be rendered.
-      final strokeBias = strokeWidth / 2;
-      path.addRect(Rect.fromPoints(
-        Offset(x - strokeBias, top),
-        Offset(x + strokeBias, topEdge),
-      ));
-      path.addRect(Rect.fromPoints(
-        Offset(x - strokeBias, bottomEdge),
-        Offset(x + strokeBias, bottom),
-      ));
-    }
-
-    path.addRect(Rect.fromPoints(
-      Offset(x - bias, topEdge),
-      Offset(x + bias, bottomEdge),
-    ));
-
-    // Color variation should be controled by color encode.
-    return renderBasicItem(
-      path,
-      item,
-      hollow,
-      strokeWidth,
-    );
-
-    // No labels.
+    return [GroupElement(elements: basicElements), GroupElement(elements: labelElements)];
   }
 
   @override

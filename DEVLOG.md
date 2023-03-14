@@ -345,7 +345,7 @@ conic 有理贝塞尔曲线的近似，别管是不是，用端点连线的中�
 
 树状结构，但是不混用，group是单独的
 
-lerp的原则是必须都不为null，数组长度一样，所有补全工作都在aes里做
+lerp的原则是必须都不为null，数组长度一样，所有补全工作都在aes里做 **注意补全要递归的包含GroupElement的子元素**
 
 复杂图形，到底是一个group里多个mark还是pathmark中多个segment，一个重要的依据是style是否相同
 
@@ -396,7 +396,7 @@ complement: 1 shorter 本来就少，所以每个都要用上，必须确保shot
 
 并没有每个segment应用不同style的需求
 
-visualMap用clip实现，这就要求element可以clip。scene和element的clip就用shapeelement，不过当shape element被当做clip时，clip、style无效
+~~visualMap用clip实现，这就要求element可以clip。scene和element的clip就用shapeelement，不过当shape element被当做clip时，clip、style无效~~
 
 blendmode是需要的，在某些图形重叠时
 
@@ -428,3 +428,13 @@ scene.set(shapes, coordRegion);
 ```
 
 由于element有做clip这样的作用，所以还是设个默认的黑线style，所有图形都能看见，image等一般也可不设，所以都加上default的。
+
+之前的shape中图形和label放在一起，然后在element中遍历挑出来，现在改为约定 first group是图形，last group 是label
+
+shape中的图形和标签分别称为 basicElements和 labelElements
+
+原则上尽量避免使用一个Element里面多段（中间出现Move）的情况
+
+由于在mark op里要统一取label，所以强制要求每个shape都要有basic 和label
+
+StrokeStyle 移除，换成更全面的PaintStyle。

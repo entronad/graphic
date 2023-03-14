@@ -1,34 +1,27 @@
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/common/label.dart';
-import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/coord/rect.dart';
-import 'package:graphic/src/graffiti/figure.dart';
-import 'package:graphic/src/util/path.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
+import 'package:graphic/src/graffiti/element/label.dart';
+import 'package:graphic/src/graffiti/element/line.dart';
 
 import 'axis.dart';
 
 /// Renders vertical axis.
-List<Figure>? renderVerticalAxis(
+List<MarkElement>? renderVerticalAxis(
   List<TickInfo> ticks,
   double position,
   bool flip,
-  StrokeStyle? line,
+  PaintStyle? line,
   RectCoordConv coord,
 ) {
-  final rst = <Figure>[];
+  final rst = <MarkElement>[];
 
   final region = coord.region;
   final flipSign = flip ? -1.0 : 1.0;
   final x = region.left + region.width * position;
 
   if (line != null) {
-    rst.add(PathFigure(
-      line.dashPath(Paths.line(
-        from: Offset(x, region.bottom),
-        to: Offset(x, region.top),
-      )),
-      line.toPaint(),
-    ));
+    rst.add(LineElement(start: Offset(x, region.bottom), end: Offset(x, region.top), style: line));
   }
 
   for (var tick in ticks) {
@@ -37,20 +30,10 @@ List<Figure>? renderVerticalAxis(
     final y = coordBottom - tick.position * (coordBottom - coordTop);
     if (y >= region.top && y <= region.bottom) {
       if (tick.tickLine != null) {
-        rst.add(PathFigure(
-          tick.tickLine!.style.dashPath(Paths.line(
-            from: Offset(x, y),
-            to: Offset(x - tick.tickLine!.length * flipSign, y),
-          )),
-          tick.tickLine!.style.toPaint(),
-        ));
+        rst.add(LineElement(start: Offset(x, y), end: Offset(x - tick.tickLine!.length * flipSign, y), style: tick.tickLine!.style));
       }
       if (tick.haveLabel) {
-        rst.add(renderLabel(
-          Label(tick.text, tick.label!),
-          Offset(x, y),
-          flip ? Alignment.centerRight : Alignment.centerLeft,
-        ));
+        rst.add(LabelElement(text: tick.text!, anchor: Offset(x, y), defaultAlign: flip ? Alignment.centerRight : Alignment.centerLeft, style: tick.label));
       }
     }
   }
@@ -59,11 +42,11 @@ List<Figure>? renderVerticalAxis(
 }
 
 /// Renders vertical axis grid.
-List<Figure>? renderVerticalGrid(
+List<MarkElement>? renderVerticalGrid(
   List<TickInfo> ticks,
   RectCoordConv coord,
 ) {
-  final rst = <Figure>[];
+  final rst = <MarkElement>[];
 
   final region = coord.region;
   for (var tick in ticks) {
@@ -72,13 +55,7 @@ List<Figure>? renderVerticalGrid(
       final coordTop = coord.verticals.last;
       final y = coordBottom - tick.position * (coordBottom - coordTop);
       if (y >= region.top && y <= region.bottom) {
-        rst.add(PathFigure(
-          tick.grid!.dashPath(Paths.line(
-            from: Offset(region.left, y),
-            to: Offset(region.right, y),
-          )),
-          tick.grid!.toPaint(),
-        ));
+        rst.add(LineElement(start: Offset(region.left, y), end: Offset(region.right, y), style: tick.grid));
       }
     }
   }

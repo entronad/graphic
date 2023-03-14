@@ -10,11 +10,11 @@ class InteractionStreamDynamicPage extends StatefulWidget {
   const InteractionStreamDynamicPage({Key? key}) : super(key: key);
 
   @override
-  _InteractionStreamDynamicPageState createState() =>
-      _InteractionStreamDynamicPageState();
+  InteractionStreamDynamicPageState createState() =>
+      InteractionStreamDynamicPageState();
 }
 
-class _InteractionStreamDynamicPageState
+class InteractionStreamDynamicPageState
     extends State<InteractionStreamDynamicPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -129,8 +129,8 @@ class _InteractionStreamDynamicPageState
                   crosshair: CrosshairGuide(
                     followPointer: [true, false],
                     styles: [
-                      StrokeStyle(color: const Color(0xffbfbfbf), dash: [4, 2]),
-                      StrokeStyle(color: const Color(0xffbfbfbf), dash: [4, 2]),
+                      PaintStyle(strokeColor: const Color(0xffbfbfbf), dash: [4, 2]),
+                      PaintStyle(strokeColor: const Color(0xffbfbfbf), dash: [4, 2]),
                     ],
                   ),
                   gestureStream: priceVolumeStream,
@@ -175,8 +175,8 @@ class _InteractionStreamDynamicPageState
                   crosshair: CrosshairGuide(
                     followPointer: [true, false],
                     styles: [
-                      StrokeStyle(color: const Color(0xffbfbfbf), dash: [4, 2]),
-                      StrokeStyle(color: const Color(0xffbfbfbf), dash: [4, 2]),
+                      PaintStyle(strokeColor: const Color(0xffbfbfbf), dash: [4, 2]),
+                      PaintStyle(strokeColor: const Color(0xffbfbfbf), dash: [4, 2]),
                     ],
                   ),
                   gestureStream: priceVolumeStream,

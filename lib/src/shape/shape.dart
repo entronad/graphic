@@ -3,13 +3,13 @@ import 'dart:ui';
 import 'package:graphic/src/common/customizable_spec.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/mark/custom.dart';
-import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
 import 'package:flutter/foundation.dart';
 import 'package:graphic/src/coord/coord.dart';
 
 /// The Base class of a shape.
 ///
-/// A shape renders figures of tuples from their aesthetic encode values. It is
+/// A shape renders elements of tuples from their aesthetic encode values. It is
 /// the key of painting geometry marks. Besides, the shape it self is an aesthetic
 /// encode in Grammar of Graphics.
 ///
@@ -24,16 +24,8 @@ abstract class Shape extends CustomizableSpec {
   /// the basic way to render the whole group. The [renderGroup] method then may
   /// call [renderItem]s of each tuple of the group respectively or render in it's
   /// own way accrording to the implementation.
-  List<Figure> renderGroup(
+  List<MarkElement> renderGroup(
     List<Attributes> group,
-    CoordConv coord,
-    Offset origin,
-  );
-
-  /// Renders a single tuple if called by [renderGroup].
-  @protected
-  List<Figure> renderItem(
-    Attributes item,
     CoordConv coord,
     Offset origin,
   );

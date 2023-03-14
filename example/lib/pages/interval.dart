@@ -269,7 +269,7 @@ class IntervalPage extends StatelessWidget {
                       label: LabelEncode(
                           encoder: (tuple) => Label(
                                 tuple['value'].toString(),
-                                LabelStyle(style: const TextStyle(fontSize: 6)),
+                                LabelStyle(textStyle: const TextStyle(fontSize: 6)),
                               )),
                       modifiers: [StackModifier()],
                     )
@@ -321,7 +321,7 @@ class IntervalPage extends StatelessWidget {
                       label: LabelEncode(
                           encoder: (tuple) => Label(
                                 tuple['sold'].toString(),
-                                LabelStyle(style: Defaults.runeStyle),
+                                LabelStyle(textStyle: Defaults.runeStyle),
                               )),
                       shape: ShapeEncode(value: FunnelShape()),
                       color: ColorEncode(
@@ -365,7 +365,7 @@ class IntervalPage extends StatelessWidget {
                       label: LabelEncode(
                           encoder: (tuple) => Label(
                                 tuple['sold'].toString(),
-                                LabelStyle(style: Defaults.runeStyle),
+                                LabelStyle(textStyle: Defaults.runeStyle),
                               )),
                       color: ColorEncode(
                           variable: 'genre', values: Defaults.colors10),

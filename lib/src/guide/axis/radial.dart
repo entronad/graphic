@@ -1,10 +1,10 @@
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/common/label.dart';
-import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/coord/polar.dart';
-import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/graffiti/element/arc.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
+import 'package:graphic/src/graffiti/element/label.dart';
+import 'package:graphic/src/graffiti/element/line.dart';
 import 'package:graphic/src/util/math.dart';
-import 'package:graphic/src/util/path.dart';
 
 import 'axis.dart';
 
@@ -44,27 +44,21 @@ Alignment radialLabelAlign(Offset offset) {
 }
 
 /// Renders radial axis.
-List<Figure>? renderRadialAxis(
+List<MarkElement>? renderRadialAxis(
   List<TickInfo> ticks,
   double position,
   bool flip,
-  StrokeStyle? line,
+  PaintStyle? line,
   PolarCoordConv coord,
 ) {
-  final rst = <Figure>[];
+  final rst = <MarkElement>[];
 
   final flipSign = flip ? -1.0 : 1.0;
   final angle =
       coord.startAngle + (coord.endAngle - coord.startAngle) * position;
 
   if (line != null) {
-    rst.add(PathFigure(
-      line.dashPath(Paths.line(
-        from: coord.polarToOffset(angle, coord.startRadius),
-        to: coord.polarToOffset(angle, coord.endRadius),
-      )),
-      line.toPaint(),
-    ));
+    rst.add(LineElement(start: coord.polarToOffset(angle, coord.startRadius), end: coord.polarToOffset(angle, coord.endRadius), style: line));
   }
 
   // The align of all labels should be consist, so loop twice.
@@ -94,36 +88,24 @@ List<Figure>? renderRadialAxis(
   final labelAlign = radialLabelAlign(featureOffset) * flipSign;
   for (var index in labelAnchors.keys) {
     final tick = ticks[index];
-    rst.add(renderLabel(
-      Label(tick.text, tick.label!),
-      labelAnchors[index]!,
-      labelAlign,
-    ));
+    rst.add(LabelElement(text: tick.text!, anchor: labelAnchors[index]!, defaultAlign: labelAlign, style: tick.label));
   }
 
   return rst.isEmpty ? null : rst;
 }
 
 /// Renders radial axis grid.
-List<Figure>? renderRadialGrid(
+List<MarkElement>? renderRadialGrid(
   List<TickInfo> ticks,
   PolarCoordConv coord,
 ) {
-  final rst = <Figure>[];
+  final rst = <MarkElement>[];
 
   for (var tick in ticks) {
     if (tick.grid != null) {
       final r = coord.convertRadius(tick.position);
       if (r >= coord.startRadius && r <= coord.endRadius) {
-        rst.add(PathFigure(
-          tick.grid!.dashPath(Path()
-            ..addArc(
-              Rect.fromCircle(center: coord.center, radius: r),
-              coord.startAngle,
-              coord.endAngle - coord.startAngle,
-            )),
-          tick.grid!.toPaint()..style = PaintingStyle.stroke,
-        ));
+        rst.add(ArcElement(oval: Rect.fromCircle(center: coord.center, radius: r), startAngle: coord.startAngle, endAngle: coord.endAngle, style: tick.grid));
       }
     }
   }

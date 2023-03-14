@@ -1,19 +1,19 @@
 import 'dart:ui';
 
+import 'package:graphic/src/graffiti/element/arc.dart';
+import 'package:graphic/src/graffiti/element/line.dart';
+import 'package:graphic/src/graffiti/element/rect.dart';
 import 'package:graphic/src/util/collection.dart';
 import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
-import 'package:graphic/src/common/intrinsic_layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
-import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
-import 'package:graphic/src/util/path.dart';
 
 /// The specification of a crosshair
 ///
@@ -40,9 +40,9 @@ class CrosshairGuide {
   ///
   /// The dimension means which a crosshair line stands on.
   ///
-  /// If null a default `[StrokeStyle(color: Color(0xffbfbfbf)), StrokeStyle(color: Color(0xffbfbfbf))]`
+  /// If null a default `[PaintStyle(strokeColor: Color(0xffbfbfbf)), PaintStyle(strokeColor: Color(0xffbfbfbf))]`
   /// is set.
-  List<StrokeStyle?>? styles;
+  List<PaintStyle?>? styles;
 
   /// Whether the position for each dimension follows the pointer or stick to selected
   /// points.
@@ -74,19 +74,11 @@ class CrosshairGuide {
       mark == other.mark;
 }
 
-/// The crosshair scene.
-class CrosshairScene extends Scene {
-  CrosshairScene(int layer) : super(layer);
-
-  @override
-  int get intrinsicLayer => IntrinsicLayers.crosshair;
-}
-
 /// The crosshair render operator.
-class CrosshairRenderOp extends Render<CrosshairScene> {
+class CrosshairRenderOp extends Render {
   CrosshairRenderOp(
     Map<String, dynamic> params,
-    CrosshairScene scene,
+    Scene scene,
     View view,
   ) : super(params, scene, view);
 
@@ -97,7 +89,7 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
     final selected = params['selected'] as Selected?;
     final coord = params['coord'] as CoordConv;
     final groups = params['groups'] as AesGroups;
-    final styles = params['styles'] as List<StrokeStyle?>;
+    final styles = params['styles'] as List<PaintStyle?>;
     final followPointer = params['followPointer'] as List<bool>;
 
     // The main indicator is selected, if no selector, takes selectedPoint for pointer.
@@ -105,7 +97,7 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
     final selects = name == null ? null : selected?[name];
 
     if (selects == null || selects.isEmpty) {
-      scene.figures = null;
+      scene.set(null);
       return;
     }
 
@@ -137,7 +129,7 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
       followPointer[1] ? pointer.dy : selectedPoint.dy,
     );
 
-    final figures = <Figure>[];
+    final elements = <MarkElement>[];
 
     final region = coord.region;
     final canvasStyleX = coord.transposed ? styles[1] : styles[0];
@@ -145,53 +137,25 @@ class CrosshairRenderOp extends Render<CrosshairScene> {
     if (coord is RectCoordConv) {
       final canvasCross = coord.convert(cross);
       if (canvasStyleX != null) {
-        figures.add(PathFigure(
-          canvasStyleX.dashPath(Paths.line(
-            from: Offset(canvasCross.dx, region.top),
-            to: Offset(canvasCross.dx, region.bottom),
-          )),
-          canvasStyleX.toPaint(),
-        ));
+        elements.add(LineElement(start: Offset(canvasCross.dx, region.top), end: Offset(canvasCross.dx, region.bottom), style: canvasStyleX));
       }
       if (canvasStyleY != null) {
-        figures.add(PathFigure(
-          canvasStyleY.dashPath(Paths.line(
-            from: Offset(region.left, canvasCross.dy),
-            to: Offset(region.right, canvasCross.dy),
-          )),
-          canvasStyleY.toPaint(),
-        ));
+        elements.add(LineElement(start: Offset(region.left, canvasCross.dy), end: Offset(region.right, canvasCross.dy), style: canvasStyleY));
       }
     } else {
       final polarCoord = coord as PolarCoordConv;
       if (canvasStyleX != null) {
         final angle = polarCoord
             .convertAngle(polarCoord.transposed ? cross.dy : cross.dx);
-        figures.add(PathFigure(
-          canvasStyleX.dashPath(Paths.line(
-            from: polarCoord.polarToOffset(angle, coord.startRadius),
-            to: polarCoord.polarToOffset(angle, coord.endRadius),
-          )),
-          canvasStyleX.toPaint(),
-        ));
+        elements.add(LineElement(start: polarCoord.polarToOffset(angle, coord.startRadius), end: polarCoord.polarToOffset(angle, coord.endRadius), style: canvasStyleX));
       }
       if (canvasStyleY != null) {
         final r = polarCoord
             .convertRadius(polarCoord.transposed ? cross.dx : cross.dy);
-        figures.add(PathFigure(
-          canvasStyleY.dashPath(Path()
-            ..addArc(
-              Rect.fromCircle(center: coord.center, radius: r),
-              coord.startAngle,
-              coord.endAngle - coord.startAngle,
-            )),
-          canvasStyleY.toPaint()..style = PaintingStyle.stroke,
-        ));
+        elements.add(ArcElement(oval: Rect.fromCircle(center: coord.center, radius: r), startAngle: coord.startAngle, endAngle: coord.endAngle, style: canvasStyleY));
       }
     }
 
-    scene
-      ..setRegionClip(coord.region)
-      ..figures = figures.isEmpty ? null : figures;
+    scene.set(elements, RectElement(rect: coord.region));
   }
 }

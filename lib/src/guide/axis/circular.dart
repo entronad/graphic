@@ -1,37 +1,29 @@
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/common/label.dart';
-import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/coord/polar.dart';
-import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/graffiti/element/arc.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
+import 'package:graphic/src/graffiti/element/label.dart';
+import 'package:graphic/src/graffiti/element/line.dart';
 import 'package:graphic/src/util/math.dart';
-import 'package:graphic/src/util/path.dart';
 
 import 'axis.dart';
 
 /// Renders circular axis.
-List<Figure>? renderCircularAxis(
+List<MarkElement>? renderCircularAxis(
   List<TickInfo> ticks,
   double position,
   bool flip,
-  StrokeStyle? line,
+  PaintStyle? line,
   PolarCoordConv coord,
 ) {
-  final rst = <Figure>[];
+  final rst = <MarkElement>[];
 
   final flipSign = flip ? -1.0 : 1.0;
   final r =
       coord.startRadius + (coord.endRadius - coord.startRadius) * position;
 
   if (line != null) {
-    rst.add(PathFigure(
-      line.dashPath(Path()
-        ..addArc(
-          Rect.fromCircle(center: coord.center, radius: r),
-          coord.startAngle,
-          coord.endAngle - coord.startAngle,
-        )),
-      line.toPaint()..style = PaintingStyle.stroke,
-    ));
+    rst.add(ArcElement(oval: Rect.fromCircle(center: coord.center, radius: r), startAngle: coord.startAngle, endAngle: coord.endAngle, style: line));
   }
 
   for (var tick in ticks) {
@@ -54,11 +46,7 @@ List<Figure>? renderCircularAxis(
                   : anchorOffset.dy / anchorOffset.dy.abs(),
             ) *
             flipSign;
-        rst.add(renderLabel(
-          Label(tick.text, tick.label!),
-          labelAnchor,
-          defaultAlign,
-        ));
+        rst.add(LabelElement(text: tick.text!, anchor: labelAnchor, defaultAlign: defaultAlign, style: tick.label));
       }
     }
   }
@@ -67,23 +55,17 @@ List<Figure>? renderCircularAxis(
 }
 
 /// Renders circular axis grid.
-List<Figure>? renderCircularGrid(
+List<MarkElement>? renderCircularGrid(
   List<TickInfo> ticks,
   PolarCoordConv coord,
 ) {
-  final rst = <Figure>[];
+  final rst = <MarkElement>[];
 
   for (var tick in ticks) {
     if (tick.grid != null) {
       final angle = coord.convertAngle(tick.position);
       if (angle >= coord.startAngle && angle <= coord.endAngle) {
-        rst.add(PathFigure(
-          tick.grid!.dashPath(Paths.line(
-            from: coord.polarToOffset(angle, coord.startRadius),
-            to: coord.polarToOffset(angle, coord.endRadius),
-          )),
-          tick.grid!.toPaint(),
-        ));
+        rst.add(LineElement(start: coord.polarToOffset(angle, coord.startRadius), end: coord.polarToOffset(angle, coord.endRadius), style: tick.grid));
       }
     }
   }

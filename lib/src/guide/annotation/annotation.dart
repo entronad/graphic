@@ -18,16 +18,11 @@ abstract class Annotation {
   bool operator ==(Object other) => other is Annotation && layer == other.layer;
 }
 
-/// The annotation scene.
-abstract class AnnotScene extends Scene {
-  AnnotScene(int layer) : super(layer);
-}
-
 /// The annotation render operator.
-abstract class AnnotRenderOp<S extends AnnotScene> extends Render<S> {
+abstract class AnnotRenderOp extends Render {
   AnnotRenderOp(
     Map<String, dynamic> params,
-    S scene,
+    Scene scene,
     View view,
   ) : super(params, scene, view);
 }

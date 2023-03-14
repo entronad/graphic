@@ -1,12 +1,12 @@
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
 
-import 'figure.dart';
+import 'element.dart';
 
 /// The specification of a custom annotation.
-class CustomAnnotation extends FigureAnnotation {
+class CustomAnnotation extends ElementAnnotation {
   /// Creates a custom annotation.
   CustomAnnotation({
     required this.renderer,
@@ -24,21 +24,21 @@ class CustomAnnotation extends FigureAnnotation {
         );
 
   /// Indicates the custom render funcion of this annotation.
-  List<Figure> Function(Offset, Size) renderer;
+  List<MarkElement> Function(Offset, Size) renderer;
 
   @override
   bool operator ==(Object other) => other is CustomAnnotation && super == other;
 }
 
-/// The custom figure annotation operator.
-class CustomAnnotOp extends FigureAnnotOp {
+/// The custom element annotation operator.
+class CustomAnnotOp extends ElementAnnotOp {
   CustomAnnotOp(Map<String, dynamic> params) : super(params);
 
   @override
-  List<Figure>? evaluate() {
+  List<MarkElement>? evaluate() {
     final anchor = params['anchor'] as Offset;
     final size = params['size'] as Size;
-    final renderer = params['renderer'] as List<Figure> Function(Offset, Size);
+    final renderer = params['renderer'] as List<MarkElement> Function(Offset, Size);
 
     return renderer(anchor, size);
   }

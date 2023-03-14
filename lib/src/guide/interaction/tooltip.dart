@@ -1,24 +1,24 @@
+import 'package:graphic/src/graffiti/element/label.dart';
+import 'package:graphic/src/graffiti/element/rect.dart';
 import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
-import 'package:graphic/src/common/label.dart';
-import 'package:graphic/src/common/intrinsic_layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/selection/interval.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/scale/scale.dart';
 import 'package:graphic/src/util/assert.dart';
 
-/// Gets the figures of a tooltip.
+/// Gets the elements of a tooltip.
 ///
 /// The [anchor] is the result either set directly or calculated. The keys of [selectedTuples]
 /// are indexes of the tuples in the whole data set.
-typedef TooltipRenderer = List<Figure> Function(
+typedef TooltipRenderer = List<MarkElement> Function(
   Size size,
   Offset anchor,
   Map<int, Tuple> selectedTuples,
@@ -179,19 +179,11 @@ class TooltipGuide {
       constrained == other.constrained;
 }
 
-/// The tooltip scene.
-class TooltipScene extends Scene {
-  TooltipScene(int layer) : super(layer);
-
-  @override
-  int get intrinsicLayer => IntrinsicLayers.tooltip;
-}
-
 /// The tooltip render operator.
-class TooltipRenderOp extends Render<TooltipScene> {
+class TooltipRenderOp extends Render {
   TooltipRenderOp(
     Map<String, dynamic> params,
-    TooltipScene scene,
+    Scene scene,
     View view,
   ) : super(params, scene, view);
 
@@ -225,7 +217,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
     final selects = name == null ? null : selected?[name];
 
     if (selects == null || selects.isEmpty) {
-      scene.figures = null;
+      scene.set(null);
       return;
     }
 
@@ -267,9 +259,9 @@ class TooltipRenderOp extends Render<TooltipScene> {
       ));
     }
 
-    List<Figure> figures;
+    List<MarkElement> elements;
     if (renderer != null) {
-      figures = renderer(
+      elements = renderer(
         size,
         anchorRst,
         selectedTuples,
@@ -338,7 +330,7 @@ class TooltipRenderOp extends Render<TooltipScene> {
       final width = padding.left + painter.width + padding.right;
       final height = padding.top + painter.height + padding.bottom;
 
-      final paintPoint = getPaintPoint(
+      final paintPoint = getBlockPaintPoint(
         offset == null ? anchorRst : anchorRst + offset,
         width,
         height,
@@ -372,30 +364,13 @@ class TooltipRenderOp extends Render<TooltipScene> {
         }
       }
 
-      final windowPath = radius == null
-          ? (Path()..addRect(windowRect))
-          : (Path()..addRRect(RRect.fromRectAndRadius(windowRect, radius)));
-
-      figures = <Figure>[];
-
-      if (elevation != null && elevation != 0) {
-        figures.add(ShadowFigure(
-          windowPath,
-          backgroundColor,
-          elevation,
-        ));
-      }
-      figures.add(PathFigure(
-        windowPath,
-        Paint()..color = backgroundColor,
-      ));
-      figures.add(TextFigure(
-        painter,
-        textPaintPoint,
-      ));
+      elements = <MarkElement>[
+        RectElement(rect: windowRect, borderRadius: radius != null ? BorderRadius.all(radius) : null, style: PaintStyle(fillColor: backgroundColor, elevation: elevation)),
+        LabelElement(text: textContent, anchor: textPaintPoint, style: LabelStyle(textStyle: textStyle, align: Alignment.bottomRight)),
+      ];
     }
 
     // Tooltip dosent't need to be cliped within the coordinate region.
-    scene.figures = figures.isEmpty ? null : figures;
+    scene.set(elements);
   }
 }

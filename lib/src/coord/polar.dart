@@ -2,8 +2,9 @@ import 'dart:math';
 
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/dim.dart';
-import 'package:graphic/src/graffiti/figure.dart';
-import 'package:graphic/src/shape/util/gradient.dart';
+import 'package:graphic/src/graffiti/element/circle.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
+import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/interaction/event.dart';
@@ -281,7 +282,7 @@ class PolarCoordConvOp extends CoordConvOp<PolarCoordConv> {
 class PolarRegionColorRenderOp extends RegionBackgroundRenderOp {
   PolarRegionColorRenderOp(
     Map<String, dynamic> params,
-    RegionBackgroundScene scene,
+    Scene scene,
     View view,
   ) : super(params, scene, view);
 
@@ -291,15 +292,8 @@ class PolarRegionColorRenderOp extends RegionBackgroundRenderOp {
     final color = params['color'] as Color;
 
     final shortestSide = region.shortestSide;
-    final square = Rect.fromCenter(
-        center: region.center, width: shortestSide, height: shortestSide);
-
-    scene.figures = [
-      PathFigure(
-        Path()..addOval(square),
-        Paint()..color = color,
-      )
-    ];
+    
+    scene.set([CircleElement(center: region.center, radius: shortestSide / 2, style: PaintStyle(fillColor: color))]);
   }
 }
 
@@ -307,7 +301,7 @@ class PolarRegionColorRenderOp extends RegionBackgroundRenderOp {
 class PolarRegionGradientRenderOp extends RegionBackgroundRenderOp {
   PolarRegionGradientRenderOp(
     Map<String, dynamic> params,
-    RegionBackgroundScene scene,
+    Scene scene,
     View view,
   ) : super(params, scene, view);
 
@@ -320,11 +314,6 @@ class PolarRegionGradientRenderOp extends RegionBackgroundRenderOp {
     final square = Rect.fromCenter(
         center: region.center, width: shortestSide, height: shortestSide);
 
-    scene.figures = [
-      PathFigure(
-        Path()..addOval(square),
-        Paint()..shader = toUIGradient(gradient, square),
-      )
-    ];
+    scene.set([CircleElement(center: region.center, radius: shortestSide / 2, style: PaintStyle(fillGradient: gradient, gradientBounds: square))]);
   }
 }

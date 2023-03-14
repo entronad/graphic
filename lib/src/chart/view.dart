@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:ui';
 
+import 'package:flutter/animation.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/data/data_set.dart';
 import 'package:graphic/src/dataflow/dataflow.dart';
@@ -16,8 +16,9 @@ class View<D> extends Dataflow {
   View(
     Chart<D> spec,
     Size size,
-    this.repaint,
-  ) : graffiti = Graffiti() {
+    TickerProvider tickerProvider,
+    void Function() repaint,
+  ) : graffiti = Graffiti(tickerProvider: tickerProvider, repaint: repaint) {
     // The view won't hold the size, only to init the size operator.
     parse<D>(spec, this, size);
 
@@ -26,10 +27,6 @@ class View<D> extends Dataflow {
     // Initialization.
     run(init: true);
   }
-
-  /// Asks the chart state to trigger a repaint.
-  final void Function() repaint;
-
   /// The rendering engine.
   final Graffiti graffiti;
 
@@ -79,7 +76,7 @@ class View<D> extends Dataflow {
     await super.init();
 
     // There always needs painting after initialization.
-    repaint();
+    graffiti.update();
     dirty = false;
 
     return this;
@@ -90,7 +87,7 @@ class View<D> extends Dataflow {
     await super.evaluate();
 
     if (dirty) {
-      repaint();
+      graffiti.update();
       dirty = false;
     }
 

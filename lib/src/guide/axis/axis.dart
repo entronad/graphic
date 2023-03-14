@@ -2,14 +2,13 @@ import 'package:graphic/src/chart/chart.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/defaults.dart';
 import 'package:graphic/src/common/dim.dart';
-import 'package:graphic/src/common/label.dart';
-import 'package:graphic/src/common/intrinsic_layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
-import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/operator.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
+import 'package:graphic/src/graffiti/element/label.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/guide/axis/circular.dart';
 import 'package:graphic/src/guide/axis/horizontal.dart';
@@ -22,12 +21,12 @@ import 'package:graphic/src/util/assert.dart';
 class TickLine {
   /// Creates a tick line.
   TickLine({
-    StrokeStyle? style,
+    PaintStyle? style,
     this.length = 5,
   }) : style = style ?? Defaults.strokeStyle;
 
   /// The stroke style of this tick line.
-  StrokeStyle style;
+  PaintStyle style;
 
   /// The length of this tick line.
   double length;
@@ -50,7 +49,7 @@ typedef LabelMapper = LabelStyle? Function(String? text, int index, int total);
 /// Gets an axis grid stroke style form an axis value text.
 ///
 /// [index] and [total] is current and total count of all ticks respectively.
-typedef GridMapper = StrokeStyle? Function(String? text, int index, int total);
+typedef GridMapper = PaintStyle? Function(String? text, int index, int total);
 
 /// The specification of an axis.
 ///
@@ -102,7 +101,7 @@ class AxisGuide<V> {
   /// The stroke style for the axis line.
   ///
   /// If null, there will be no axis line.
-  StrokeStyle? line;
+  PaintStyle? line;
 
   /// The tick line settings for all ticks.
   ///
@@ -133,7 +132,7 @@ class AxisGuide<V> {
   /// Only one in [grid] and [gridMapper] can be set.
   ///
   /// If null and [gridMapper] is also null, there will be no grids.
-  StrokeStyle? grid;
+  PaintStyle? grid;
 
   /// Indicates how to get the grid stroke style for each tick.
   ///
@@ -185,7 +184,7 @@ class TickInfo {
   LabelStyle? label;
 
   /// The stroke style of the tick grid line.
-  StrokeStyle? grid;
+  PaintStyle? grid;
 
   /// Whether this tick has a label to render.
   bool get haveLabel => label != null && text != null && text!.isNotEmpty;
@@ -205,7 +204,7 @@ class TickInfoOp extends Operator<List<TickInfo>> {
     final tickLineMapper = params['tickLineMapper'] as TickLineMapper?;
     final label = params['label'] as LabelStyle?;
     final labelMapper = params['labelMapper'] as LabelMapper?;
-    final grid = params['grid'] as StrokeStyle?;
+    final grid = params['grid'] as PaintStyle?;
     final gridMapper = params['gridMapper'] as GridMapper?;
 
     final scale = scales[variable]!;
@@ -241,19 +240,11 @@ class TickInfoOp extends Operator<List<TickInfo>> {
   }
 }
 
-/// The axis scene.
-class AxisScene extends Scene {
-  AxisScene(int layer) : super(layer);
-
-  @override
-  int get intrinsicLayer => IntrinsicLayers.axis;
-}
-
 /// The axis render operator.
-class AxisRenderOp extends Render<AxisScene> {
+class AxisRenderOp extends Render {
   AxisRenderOp(
     Map<String, dynamic> params,
-    AxisScene scene,
+    Scene scene,
     View view,
   ) : super(params, scene, view);
 
@@ -263,62 +254,54 @@ class AxisRenderOp extends Render<AxisScene> {
     final dim = params['dim'] as Dim;
     final position = params['position'] as double;
     final flip = params['flip'] as bool;
-    final line = params['line'] as StrokeStyle?;
+    final line = params['line'] as PaintStyle?;
     final ticks = params['ticks'] as List<TickInfo>;
 
     final canvasDim = coord.getCanvasDim(dim);
     if (coord is RectCoordConv) {
       if (canvasDim == Dim.x) {
-        scene.figures = renderHorizontalAxis(
+        scene.set(renderHorizontalAxis(
           ticks,
           position,
           flip,
           line,
           coord,
-        );
+        ));
       } else {
-        scene.figures = renderVerticalAxis(
+        scene.set(renderVerticalAxis(
           ticks,
           position,
           flip,
           line,
           coord,
-        );
+        ));
       }
     } else {
       coord as PolarCoordConv;
       if (canvasDim == Dim.x) {
-        scene.figures = renderCircularAxis(
+        scene.set(renderCircularAxis(
           ticks,
           position,
           flip,
           line,
           coord,
-        );
+        ));
       } else {
-        scene.figures = renderRadialAxis(
+        scene.set(renderRadialAxis(
           ticks,
           position,
           flip,
           line,
           coord,
-        );
+        ));
       }
     }
   }
 }
 
-/// The axis grid scene.
-class GridScene extends Scene {
-  GridScene(int layer) : super(layer);
-
-  @override
-  int get intrinsicLayer => IntrinsicLayers.grid;
-}
-
 /// The axis grid render operator.
-class GridRenderOp extends Render<GridScene> {
-  GridRenderOp(Map<String, dynamic> params, GridScene scene, View view)
+class GridRenderOp extends Render {
+  GridRenderOp(Map<String, dynamic> params, Scene scene, View view)
       : super(params, scene, view);
 
   @override
@@ -330,28 +313,28 @@ class GridRenderOp extends Render<GridScene> {
     final canvasDim = coord.getCanvasDim(dim);
     if (coord is RectCoordConv) {
       if (canvasDim == Dim.x) {
-        scene.figures = renderHorizontalGrid(
+        scene.set(renderHorizontalGrid(
           ticks,
           coord,
-        );
+        ));
       } else {
-        scene.figures = renderVerticalGrid(
+        scene.set(renderVerticalGrid(
           ticks,
           coord,
-        );
+        ));
       }
     } else {
       coord as PolarCoordConv;
       if (canvasDim == Dim.x) {
-        scene.figures = renderCircularGrid(
+        scene.set(renderCircularGrid(
           ticks,
           coord,
-        );
+        ));
       } else {
-        scene.figures = renderRadialGrid(
+        scene.set(renderRadialGrid(
           ticks,
           coord,
-        );
+        ));
       }
     }
   }

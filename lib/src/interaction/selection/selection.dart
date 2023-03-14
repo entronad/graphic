@@ -6,7 +6,6 @@ import 'package:graphic/src/encode/encode.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/common/label.dart';
-import 'package:graphic/src/common/intrinsic_layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/operator.dart';
@@ -256,22 +255,14 @@ class SelectorOp extends Operator<Map<String, Selector>?> {
   }
 }
 
-/// The selector scene.
-class SelectorScene extends Scene {
-  SelectorScene(int layer) : super(layer);
-
-  @override
-  int get intrinsicLayer => IntrinsicLayers.selector;
-}
-
 /// The selector render operator.
 ///
 /// Because the selectors may have different layeres, each defined selection has
-/// an own scene and render operator, but the untriggered will has no figures.
-class SelectorRenderOp extends Render<SelectorScene> {
+/// an own scene and render operator, but the untriggered will has no elements.
+class SelectorRenderOp extends Render {
   SelectorRenderOp(
     Map<String, dynamic> params,
-    SelectorScene scene,
+    Scene scene,
     View view,
   ) : super(params, scene, view);
 
@@ -283,15 +274,15 @@ class SelectorRenderOp extends Render<SelectorScene> {
     final selector = selectors?[name];
 
     if (selector is IntervalSelector) {
-      scene.figures = renderIntervalSelector(
+      scene.set(renderIntervalSelector(
         selector.points.first,
         selector.points.last,
         selector.color,
-      );
+      ));
     } else {
       // The point selector has no mark for now.
 
-      scene.figures = null;
+      scene.set(null);
     }
   }
 }

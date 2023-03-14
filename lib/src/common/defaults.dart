@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/common/label.dart';
-import 'package:graphic/src/common/styles.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
+import 'package:graphic/src/graffiti/element/label.dart';
 import 'package:graphic/src/guide/axis/axis.dart';
 import 'package:graphic/src/interaction/event.dart';
 import 'package:graphic/src/interaction/gesture.dart';
@@ -34,8 +34,7 @@ EventUpdater<List<double>> _getRangeUpdate(
           } else {
             // Scaling.
 
-            double Function(ScaleUpdateDetails) getScaleDim =
-                (p0) => isHorizontal ? p0.horizontalScale : p0.verticalScale;
+            double getScaleDim(ScaleUpdateDetails p0) => isHorizontal ? p0.horizontalScale : p0.verticalScale;
             final preScale = getScaleDim(gesture.preScaleDetail!);
             final scale = getScaleDim(detail);
             final deltaRatio = (scale - preScale) / preScale / 2;
@@ -126,8 +125,9 @@ abstract class Defaults {
       ];
 
   /// A stroke style for auxiliary lines.
-  static StrokeStyle get strokeStyle => StrokeStyle(
-        color: strokeColor,
+  static PaintStyle get strokeStyle => PaintStyle(
+        strokeColor: strokeColor,
+        strokeWidth: 1,
       );
 
   /// A text style for labels.
@@ -146,7 +146,7 @@ abstract class Defaults {
   static AxisGuide get horizontalAxis => AxisGuide(
         line: strokeStyle,
         label: LabelStyle(
-          style: textStyle,
+          textStyle: textStyle,
           offset: const Offset(0, 7.5),
         ),
       );
@@ -154,7 +154,7 @@ abstract class Defaults {
   /// A specification for vertical axis.
   static AxisGuide get verticalAxis => AxisGuide(
         label: LabelStyle(
-          style: textStyle,
+          textStyle: textStyle,
           offset: const Offset(-7.5, 0),
         ),
         grid: strokeStyle,
@@ -163,7 +163,7 @@ abstract class Defaults {
   /// A specification for radial axis.
   static AxisGuide get radialAxis => AxisGuide(
         line: strokeStyle,
-        label: LabelStyle(style: textStyle),
+        label: LabelStyle(textStyle: textStyle),
         grid: strokeStyle,
       );
 
@@ -171,7 +171,7 @@ abstract class Defaults {
   static AxisGuide get circularAxis => AxisGuide(
         position: 1,
         line: strokeStyle,
-        label: LabelStyle(style: textStyle),
+        label: LabelStyle(textStyle: textStyle),
         grid: strokeStyle,
       );
 

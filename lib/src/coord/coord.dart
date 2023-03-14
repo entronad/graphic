@@ -2,10 +2,8 @@ import 'package:flutter/painting.dart';
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/converter.dart';
 import 'package:graphic/src/common/dim.dart';
-import 'package:graphic/src/common/intrinsic_layers.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/dataflow/operator.dart';
-import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/util/assert.dart';
 
@@ -131,19 +129,11 @@ class RegionOp extends Operator<Rect> {
   }
 }
 
-/// The region background scene.
-class RegionBackgroundScene extends Scene {
-  RegionBackgroundScene(int layer) : super(layer);
-
-  @override
-  int get intrinsicLayer => IntrinsicLayers.regionBackground;
-}
-
 /// The region background render operator.
-abstract class RegionBackgroundRenderOp extends Render<RegionBackgroundScene> {
+abstract class RegionBackgroundRenderOp extends Render {
   RegionBackgroundRenderOp(
     Map<String, dynamic> params,
-    RegionBackgroundScene scene,
+    Scene scene,
     View view,
   ) : super(params, scene, view);
 }

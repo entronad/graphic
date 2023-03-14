@@ -311,8 +311,8 @@ class LineAreaPointPage extends StatelessWidget {
                   crosshair: CrosshairGuide(
                     selections: {'tooltipTouch', 'tooltipMouse'},
                     styles: [
-                      StrokeStyle(color: const Color(0xffbfbfbf)),
-                      StrokeStyle(color: const Color(0x00bfbfbf)),
+                      PaintStyle(strokeColor: const Color(0xffbfbfbf)),
+                      PaintStyle(strokeColor: const Color(0x00bfbfbf)),
                     ],
                     followPointer: [true, false],
                   ),
@@ -671,7 +671,7 @@ class LineAreaPointPage extends StatelessWidget {
                         if (index == total - 1) {
                           return null;
                         }
-                        return LabelStyle(style: Defaults.textStyle);
+                        return LabelStyle(textStyle: Defaults.textStyle);
                       }
                       ..label = null,
                     Defaults.radialAxis
@@ -679,7 +679,7 @@ class LineAreaPointPage extends StatelessWidget {
                         if (index == total - 1) {
                           return null;
                         }
-                        return LabelStyle(style: Defaults.textStyle);
+                        return LabelStyle(textStyle: Defaults.textStyle);
                       }
                       ..label = null,
                   ],
@@ -695,7 +695,7 @@ class LineAreaPointPage extends StatelessWidget {
                       label: Label(
                           'DANGER',
                           LabelStyle(
-                              style: const TextStyle(
+                              textStyle: const TextStyle(
                             color: Colors.red,
                             fontSize: 12,
                           ))),

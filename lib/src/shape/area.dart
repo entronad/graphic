@@ -1,10 +1,17 @@
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/graffiti/element/group.dart';
+import 'package:graphic/src/graffiti/element/label.dart';
+import 'package:graphic/src/graffiti/element/path.dart';
+import 'package:graphic/src/graffiti/element/segment/close.dart';
+import 'package:graphic/src/graffiti/element/segment/cubic.dart';
+import 'package:graphic/src/graffiti/element/segment/line.dart';
+import 'package:graphic/src/graffiti/element/segment/move.dart';
+import 'package:graphic/src/graffiti/element/segment/segment.dart';
 import 'package:graphic/src/mark/area.dart';
-import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
 import 'package:graphic/src/util/path.dart';
 
 import 'util/render_basic_item.dart';
@@ -18,14 +25,6 @@ import 'function.dart';
 abstract class AreaShape extends FunctionShape {
   @override
   double get defaultSize => throw UnimplementedError('Area needs no size.');
-
-  @override
-  List<Figure> renderItem(
-    Attributes item,
-    CoordConv coord,
-    Offset origin,
-  ) =>
-      throw UnimplementedError('Area only paints group.');
 }
 
 /// A basic area shape.
@@ -49,17 +48,17 @@ class BasicAreaShape extends AreaShape {
       other is BasicAreaShape && smooth == other.smooth && loop == other.loop;
 
   @override
-  List<Figure> renderGroup(
+  List<MarkElement> renderGroup(
     List<Attributes> group,
     CoordConv coord,
     Offset origin,
   ) {
     assert(!(coord is PolarCoordConv && coord.transposed));
 
-    final segments = <List<List<Offset>>>[];
+    final contours = <List<List<Offset>>>[];
     final labels = <Attributes, Offset>{};
 
-    var currentSegment = <List<Offset>>[];
+    var currentContour = <List<Offset>>[];
     for (var item in group) {
       assert(item.shape is BasicAreaShape);
 
@@ -67,15 +66,15 @@ class BasicAreaShape extends AreaShape {
       if (position[0].dy.isFinite && position[1].dy.isFinite) {
         final start = coord.convert(position[0]);
         final end = coord.convert(position[1]);
-        currentSegment.add([start, end]);
+        currentContour.add([start, end]);
         labels[item] = end;
-      } else if (currentSegment.isNotEmpty) {
-        segments.add(currentSegment);
-        currentSegment = [];
+      } else if (currentContour.isNotEmpty) {
+        contours.add(currentContour);
+        currentContour = [];
       }
     }
-    if (currentSegment.isNotEmpty) {
-      segments.add(currentSegment);
+    if (currentContour.isNotEmpty) {
+      contours.add(currentContour);
     }
 
     if (loop &&
@@ -84,75 +83,57 @@ class BasicAreaShape extends AreaShape {
         group.last.position[0].dy.isFinite &&
         group.last.position[1].dy.isFinite) {
       // Because lines may be broken by NaN, don't loop by Path.close.
-      segments.last.add(segments.first.first);
+      contours.last.add(contours.first.first);
     }
 
-    final path = Path();
-    for (var segment in segments) {
+    final basicElements = <MarkElement>[];
+    final labelElements = <MarkElement>[];
+
+    final style = getPaintStyle(group.first, false, 0, coord.region);
+
+    for (var contour in contours) {
       final starts = <Offset>[];
       final ends = <Offset>[];
-      for (var points in segment) {
+      for (var points in contour) {
         starts.add(points[0]);
         ends.add(points[1]);
       }
 
-      // Because area is a whole closed subpath, don't use Paths.polyline, which
-      // contains Path.moveTo.
-      path.moveTo(ends.first.dx, ends.first.dy);
+      final segments = <Segment>[];
+      segments.add(MoveSegment(end: ends.first));
       if (smooth) {
-        final segments = getBezierSegments(
-          ends,
-          false,
-          true,
-        );
-        for (var s in segments) {
-          path.cubicTo(s.cp1.dx, s.cp1.dy, s.cp2.dx, s.cp2.dy, s.p.dx, s.p.dy);
+        final controlsList = getCubicControls(ends, false, true);
+        for (var c in controlsList) {
+          segments.add(CubicSegment(control1: c[0], control2: c[1], end: c[2]));
         }
       } else {
         for (var point in ends) {
-          path.lineTo(point.dx, point.dy);
+          segments.add(LineSegment(end: point));
         }
       }
-      path.lineTo(starts.last.dx, starts.last.dy);
+      segments.add(LineSegment(end: starts.last));
       final reversedStarts = starts.reversed.toList();
       if (smooth) {
-        final segments = getBezierSegments(
-          reversedStarts,
-          false,
-          true,
-        );
-        for (var s in segments) {
-          path.cubicTo(s.cp1.dx, s.cp1.dy, s.cp2.dx, s.cp2.dy, s.p.dx, s.p.dy);
+        final controlsList = getCubicControls(reversedStarts, false, true);
+        for (var c in controlsList) {
+          segments.add(CubicSegment(control1: c[0], control2: c[1], end: c[2]));
         }
       } else {
         for (var point in reversedStarts) {
-          path.lineTo(point.dx, point.dy);
+          segments.add(LineSegment(end: point));
         }
       }
-      path.close();
+      segments.add(CloseSegment());
+
+      basicElements.add(PathElement(segments: segments, style: style));
     }
-
-    final rst = <Figure>[];
-
-    final represent = group.first;
-    rst.addAll(renderBasicItem(
-      path,
-      represent,
-      false,
-      0,
-      coord.region,
-    ));
 
     for (var item in labels.keys) {
       if (item.label != null && item.label!.haveText) {
-        rst.add(renderLabel(
-          item.label!,
-          labels[item]!,
-          coord.transposed ? Alignment.centerRight : Alignment.topCenter,
-        ));
+        labelElements.add(LabelElement(text: item.label!.text!, anchor: labels[item]!, defaultAlign: coord.transposed ? Alignment.centerRight : Alignment.topCenter, style: item.label!.style));
       }
     }
-
-    return rst;
+    
+    return [GroupElement(elements: basicElements), GroupElement(elements: labelElements)];
   }
 }

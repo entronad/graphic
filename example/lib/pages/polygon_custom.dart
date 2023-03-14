@@ -7,7 +7,7 @@ import '../data.dart';
 
 class TriangleShape extends IntervalShape {
   @override
-  List<Figure> renderGroup(
+  List<MarkElement> renderGroup(
     List<Attributes> group,
     CoordConv coord,
     Offset origin,
@@ -15,47 +15,49 @@ class TriangleShape extends IntervalShape {
     assert(coord is RectCoordConv);
     assert(coord.transposed == false);
 
-    final rst = <Figure>[];
+    final rst = <List<MarkElement>>[];
 
     for (var item in group) {
-      rst.addAll(renderItem(item, coord, origin));
+      for (var point in item.position) {
+        if (!point.dy.isFinite) {
+          return [];
+        }
+      }
+
+      final style = getPaintStyle(item, false, 0);
+
+      final start = coord.convert(item.position[0]);
+      final end = coord.convert(item.position[1]);
+      final size = item.size ?? defaultSize;
+      final startLeft = Offset(start.dx - size / 2, start.dy);
+      final startRight = Offset(start.dx + size / 2, start.dy);
+
+      rst.add([PolygonElement(points: [end, startLeft, startRight], style: style)]);
     }
 
-    return rst;
-  }
+    final basicElements = <MarkElement>[];
+    final labelElements = <MarkElement>[];
 
-  @override
-  List<Figure> renderItem(
-    Attributes item,
-    CoordConv coord,
-    Offset origin,
-  ) {
-    for (var point in item.position) {
-      if (!point.dy.isFinite) {
-        return [];
+    for (var rstItem in rst) {
+      basicElements.add(rstItem.first);
+      if (rstItem.length > 1) {
+        labelElements.add(rstItem.last);
       }
     }
 
-    final start = coord.convert(item.position[0]);
-    final end = coord.convert(item.position[1]);
-    final size = item.size ?? defaultSize;
-    final startLeft = Offset(start.dx - size / 2, start.dy);
-    final startRight = Offset(start.dx + size / 2, start.dy);
-    final path = Path()..addPolygon([end, startLeft, startRight], true);
-
-    return renderBasicItem(path, item, false, 0);
+    return [GroupElement(elements: basicElements), GroupElement(elements: labelElements)];
   }
 
   @override
   bool equalTo(Object other) => other is TriangleShape;
 }
 
-List<Figure> simpleTooltip(
+List<MarkElement> simpleTooltip(
   Size size,
   Offset anchor,
   Map<int, Tuple> selectedTuples,
 ) {
-  List<Figure> figures;
+  List<MarkElement> elements;
 
   String textContent = '';
   final selectedTupleList = selectedTuples.values;
@@ -76,11 +78,10 @@ List<Figure> simpleTooltip(
     }
   }
 
-  const textStyle = TextStyle(fontSize: 12);
+  const textStyle = TextStyle(fontSize: 12, color: Colors.white);
   const padding = EdgeInsets.all(5);
   const align = Alignment.topRight;
   const offset = Offset(5, -5);
-  const radius = Radius.zero;
   const elevation = 1.0;
   const backgroundColor = Colors.black;
 
@@ -93,82 +94,48 @@ List<Figure> simpleTooltip(
   final width = padding.left + painter.width + padding.right;
   final height = padding.top + painter.height + padding.bottom;
 
-  final paintPoint = getPaintPoint(
+  final paintPoint = getBlockPaintPoint(
     anchor + offset,
     width,
     height,
     align,
   );
 
-  final widow = Rect.fromLTWH(
+  final window = Rect.fromLTWH(
     paintPoint.dx,
     paintPoint.dy,
     width,
     height,
   );
 
-  final widowPath = Path()
-    ..addRRect(
-      RRect.fromRectAndRadius(widow, radius),
-    );
+  var textPaintPoint = paintPoint + padding.topLeft;
 
-  figures = <Figure>[];
+  elements = <MarkElement>[
+        RectElement(rect: window, style: PaintStyle(fillColor: backgroundColor, elevation: elevation)),
+        LabelElement(text: textContent, anchor: textPaintPoint, style: LabelStyle(textStyle: textStyle, align: Alignment.bottomRight)),
+      ];
 
-  figures.add(ShadowFigure(
-    widowPath,
-    backgroundColor,
-    elevation,
-  ));
-  figures.add(PathFigure(
-    widowPath,
-    Paint()..color = backgroundColor,
-  ));
-  figures.add(TextFigure(
-    painter,
-    paintPoint + padding.topLeft,
-  ));
-
-  return figures;
+  return elements;
 }
 
-List<Figure> centralPieLabel(
+List<MarkElement> centralPieLabel(
   Size size,
   Offset anchor,
   Map<int, Tuple> selectedTuples,
 ) {
   final tuple = selectedTuples.values.last;
 
-  final titleSpan = TextSpan(
-    text: '${tuple['genre']}\n',
-    style: const TextStyle(
+  final titleElement = LabelElement(text: '${tuple['genre']}\n', anchor: const Offset(175, 150), style: LabelStyle(textStyle: const TextStyle(
       fontSize: 14,
       color: Colors.black87,
-    ),
-  );
+    ), align: Alignment.topCenter));
 
-  final valueSpan = TextSpan(
-    text: tuple['sold'].toString(),
-    style: const TextStyle(
+  final valueElement = LabelElement(text: tuple['sold'].toString(), anchor: const Offset(175, 150), style: LabelStyle(textStyle: const TextStyle(
       fontSize: 28,
       color: Colors.black87,
-    ),
-  );
+    ), align: Alignment.bottomCenter));
 
-  final painter = TextPainter(
-    text: TextSpan(children: [titleSpan, valueSpan]),
-    textDirection: TextDirection.ltr,
-    textAlign: TextAlign.center,
-  );
-  painter.layout();
-
-  final paintPoint = getPaintPoint(
-    const Offset(175, 150),
-    painter.width,
-    painter.height,
-    Alignment.center,
-  );
-
-  return [TextFigure(painter, paintPoint)];
+  return [titleElement, valueElement];
 }
 
 class PolygonCustomPage extends StatelessWidget {
@@ -559,82 +526,52 @@ class PolygonCustomPage extends StatelessWidget {
                   tooltip: TooltipGuide(multiTuples: true),
                   crosshair: CrosshairGuide(),
                   annotations: [
-                    MarkAnnotation(
-                      relativePath: Path()
-                        ..addRect(Rect.fromCircle(
-                            center: const Offset(0, 0), radius: 5)),
-                      style: Paint()..color = Defaults.colors10[0],
-                      anchor: (size) => const Offset(25, 290),
-                    ),
+                    CustomAnnotation(renderer: (_, size) => [CircleElement(center: const Offset(25, 290), radius: 5, style: PaintStyle(fillColor: Defaults.colors10[0]))], anchor: (p0) => Offset(0, 0)),
                     TagAnnotation(
                       label: Label(
                         'Email',
                         LabelStyle(
-                            style: Defaults.textStyle,
+                            textStyle: Defaults.textStyle,
                             align: Alignment.centerRight),
                       ),
                       anchor: (size) => const Offset(34, 290),
                     ),
-                    MarkAnnotation(
-                      relativePath: Path()
-                        ..addRect(Rect.fromCircle(
-                            center: const Offset(0, 0), radius: 5)),
-                      style: Paint()..color = Defaults.colors10[1],
-                      anchor: (size) => Offset(25 + size.width / 5, 290),
-                    ),
+                    CustomAnnotation(renderer: (_, size) => [CircleElement(center: Offset(25 + size.width / 5, 290), radius: 5, style: PaintStyle(fillColor: Defaults.colors10[1]))], anchor: (p0) => Offset(0, 0)),
                     TagAnnotation(
                       label: Label(
                         'Affiliate',
                         LabelStyle(
-                            style: Defaults.textStyle,
+                            textStyle: Defaults.textStyle,
                             align: Alignment.centerRight),
                       ),
                       anchor: (size) => Offset(34 + size.width / 5, 290),
                     ),
-                    MarkAnnotation(
-                      relativePath: Path()
-                        ..addRect(Rect.fromCircle(
-                            center: const Offset(0, 0), radius: 5)),
-                      style: Paint()..color = Defaults.colors10[2],
-                      anchor: (size) => Offset(25 + size.width / 5 * 2, 290),
-                    ),
+                    CustomAnnotation(renderer: (_, size) => [CircleElement(center: Offset(25 + size.width / 5 * 2, 290), radius: 5, style: PaintStyle(fillColor: Defaults.colors10[2]))], anchor: (p0) => Offset(0, 0)),
                     TagAnnotation(
                       label: Label(
                         'Video',
                         LabelStyle(
-                            style: Defaults.textStyle,
+                            textStyle: Defaults.textStyle,
                             align: Alignment.centerRight),
                       ),
                       anchor: (size) => Offset(34 + size.width / 5 * 2, 290),
                     ),
-                    MarkAnnotation(
-                      relativePath: Path()
-                        ..addRect(Rect.fromCircle(
-                            center: const Offset(0, 0), radius: 5)),
-                      style: Paint()..color = Defaults.colors10[3],
-                      anchor: (size) => Offset(25 + size.width / 5 * 3, 290),
-                    ),
+                    CustomAnnotation(renderer: (_, size) => [CircleElement(center: Offset(25 + size.width / 5 * 3, 290), radius: 5, style: PaintStyle(fillColor: Defaults.colors10[3]))], anchor: (p0) => Offset(0, 0)),
                     TagAnnotation(
                       label: Label(
                         'Direct',
                         LabelStyle(
-                            style: Defaults.textStyle,
+                            textStyle: Defaults.textStyle,
                             align: Alignment.centerRight),
                       ),
                       anchor: (size) => Offset(34 + size.width / 5 * 3, 290),
                     ),
-                    MarkAnnotation(
-                      relativePath: Path()
-                        ..addRect(Rect.fromCircle(
-                            center: const Offset(0, 0), radius: 5)),
-                      style: Paint()..color = Defaults.colors10[4],
-                      anchor: (size) => Offset(25 + size.width / 5 * 4, 290),
-                    ),
+                    CustomAnnotation(renderer: (_, size) => [CircleElement(center: Offset(25 + size.width / 5 * 4, 290), radius: 5, style: PaintStyle(fillColor: Defaults.colors10[4]))], anchor: (p0) => Offset(0, 0)),
                     TagAnnotation(
                       label: Label(
                         'Search',
                         LabelStyle(
-                            style: Defaults.textStyle,
+                            textStyle: Defaults.textStyle,
                             align: Alignment.centerRight),
                       ),
                       anchor: (size) => Offset(34 + size.width / 5 * 4, 290),

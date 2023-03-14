@@ -1,14 +1,15 @@
-import 'dart:ui';
+import 'dart:ui' hide Scene;
 
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/dim.dart';
-import 'package:graphic/src/common/intrinsic_layers.dart';
-import 'package:graphic/src/common/styles.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
-import 'package:graphic/src/graffiti/figure.dart';
+import 'package:graphic/src/graffiti/element/arc.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
+import 'package:graphic/src/graffiti/element/line.dart';
+import 'package:graphic/src/graffiti/element/rect.dart';
+import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/scale/scale.dart';
-import 'package:graphic/src/util/path.dart';
 
 import 'annotation.dart';
 
@@ -39,7 +40,7 @@ class LineAnnotation extends Annotation {
   dynamic value;
 
   /// The stroke style of this line.
-  StrokeStyle? style;
+  PaintStyle? style;
 
   @override
   bool operator ==(Object other) =>
@@ -51,19 +52,11 @@ class LineAnnotation extends Annotation {
       style == other.style;
 }
 
-/// The line annotation scene.
-class LineAnnotScene extends AnnotScene {
-  LineAnnotScene(int layer) : super(layer);
-
-  @override
-  int get intrinsicLayer => IntrinsicLayers.lineAnnot;
-}
-
 /// The line annotation render operator.
-class LineAnnotRenderOp extends AnnotRenderOp<LineAnnotScene> {
+class LineAnnotRenderOp extends AnnotRenderOp {
   LineAnnotRenderOp(
     Map<String, dynamic> params,
-    LineAnnotScene scene,
+    Scene scene,
     View view,
   ) : super(params, scene, view);
 
@@ -72,44 +65,33 @@ class LineAnnotRenderOp extends AnnotRenderOp<LineAnnotScene> {
     final dim = params['dim'] as Dim;
     final variable = params['variable'] as String;
     final value = params['value'];
-    final style = params['style'] as StrokeStyle;
+    final style = params['style'] as PaintStyle;
     final scales = params['scales'] as Map<String, ScaleConv>;
     final coord = params['coord'] as CoordConv;
-
-    scene.setRegionClip(coord.region);
 
     final scale = scales[variable]!;
     final position = scale.normalize(scale.convert(value));
 
     if (coord is PolarCoordConv && coord.getCanvasDim(dim) == Dim.y) {
-      scene.figures = [
-        PathFigure(
-          style.dashPath(Path()
-            ..addArc(
-              Rect.fromCircle(
+      scene.set([ArcElement(
+        oval: Rect.fromCircle(
                 center: coord.center,
                 radius: coord.convertRadius(position),
               ),
-              coord.angles.first,
-              coord.angles.last - coord.angles.first,
-            )),
-          style.toPaint(),
-        )
-      ];
+        startAngle: coord.angles.first,
+        endAngle: coord.angles.last,
+        style: style,
+      )], RectElement(rect: coord.region));
     } else {
-      scene.figures = [
-        PathFigure(
-          style.dashPath(Paths.line(
-            from: coord.convert(
+      scene.set([LineElement(
+        start: coord.convert(
               dim == Dim.x ? Offset(position, 0) : Offset(0, position),
             ),
-            to: coord.convert(
+            end: coord.convert(
               dim == Dim.x ? Offset(position, 1) : Offset(1, position),
             ),
-          )),
-          style.toPaint(),
-        )
-      ];
+            style: style,
+      )], RectElement(rect: coord.region));
     }
   }
 }

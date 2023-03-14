@@ -1,14 +1,7 @@
+import 'package:graphic/graphic.dart';
 import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/common/label.dart';
-import 'package:graphic/src/coord/coord.dart';
-import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/mark/line.dart';
-import 'package:graphic/src/graffiti/figure.dart';
 import 'package:graphic/src/util/path.dart';
-
-import 'util/render_basic_item.dart';
-import 'function.dart';
 
 /// The shape for the line mark.
 ///
@@ -18,14 +11,6 @@ import 'function.dart';
 abstract class LineShape extends FunctionShape {
   @override
   double get defaultSize => 2;
-
-  @override
-  List<Figure> renderItem(
-    Attributes item,
-    CoordConv coord,
-    Offset origin,
-  ) =>
-      throw UnimplementedError('Line only paints group.');
 }
 
 /// A basic line shape.
@@ -61,68 +46,60 @@ class BasicLineShape extends LineShape {
       deepCollectionEquals(dash, other.dash);
 
   @override
-  List<Figure> renderGroup(
+  List<MarkElement> renderGroup(
     List<Attributes> group,
     CoordConv coord,
     Offset origin,
   ) {
-    final segments = <List<Offset>>[];
+    assert(!(coord is PolarCoordConv && coord.transposed));
+
+    final contours = <List<Offset>>[];
     final labels = <Attributes, Offset>{};
 
-    var currentSegment = <Offset>[];
+    var currentContour = <Offset>[];
     for (var item in group) {
       assert(item.shape is BasicLineShape);
 
       if (item.position.last.dy.isFinite) {
         final point = coord.convert(item.position.last);
-        currentSegment.add(point);
+        currentContour.add(point);
         labels[item] = point;
-      } else if (currentSegment.isNotEmpty) {
-        segments.add(currentSegment);
-        currentSegment = [];
+      } else if (currentContour.isNotEmpty) {
+        contours.add(currentContour);
+        currentContour = [];
       }
     }
-    if (currentSegment.isNotEmpty) {
-      segments.add(currentSegment);
+    if (currentContour.isNotEmpty) {
+      contours.add(currentContour);
     }
 
     if (loop &&
         group.first.position.last.dy.isFinite &&
         group.last.position.last.dy.isFinite) {
       // Because lines may be broken by NaN, don't loop by Path.close.
-      segments.last.add(segments.first.first);
+      contours.last.add(contours.first.first);
     }
 
-    final path = Path();
-    for (var segment in segments) {
-      Paths.polyline(
-        points: segment,
-        smooth: smooth,
-        path: path,
-      );
-    }
-
-    final rst = <Figure>[];
+    final basicElements = <MarkElement>[];
+    final labelElements = <MarkElement>[];
 
     final represent = group.first;
-    rst.addAll(renderBasicItem(
-      dash == null ? path : Paths.dashLine(source: path, dashArray: dash!),
-      represent,
-      true,
-      represent.size ?? defaultSize,
-      coord.region,
-    ));
+    final style = getPaintStyle(represent, true, represent.size ?? defaultSize, coord.region);
 
-    for (var item in labels.keys) {
-      if (item.label != null && item.label!.haveText) {
-        rst.add(renderLabel(
-          item.label!,
-          labels[item]!,
-          coord.transposed ? Alignment.centerRight : Alignment.topCenter,
-        ));
+    for (var contour in contours) {
+      if (smooth) {
+        basicElements.add(SplineElement(start: contour.first, cubics: getCubicControls(contour, false, true), style: style));
+      } else {
+        basicElements.add(PolylineElement(points: contour, style: style));
       }
     }
 
-    return rst;
+    for (var item in labels.keys) {
+      if (item.label != null && item.label!.haveText) {
+        labelElements.add(LabelElement(text: item.label!.text!, anchor: labels[item]!, defaultAlign: coord.transposed ? Alignment.centerRight : Alignment.topCenter, style: item.label!.style));
+      }
+    }
+    
+    return [GroupElement(elements: basicElements), GroupElement(elements: labelElements)];
   }
 }

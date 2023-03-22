@@ -157,6 +157,14 @@ figure相关的改造时再考虑，annot系列属于辅助，现在原则上不
 
 **尽量不用缩写，宁可换用简单的词，同时遵循越常用用越简单的词**
 
+是否使用缩写的依据是，chatgpt能不能从缩写反向推导出原意，比如coord就可以，annot就不可以，内部类可以用缩写
+
+
+
+
+
+
+
 ## 论文
 
 与gg的区别：shape
@@ -438,3 +446,17 @@ shape中的图形和标签分别称为 basicElements和 labelElements
 由于在mark op里要统一取label，所以强制要求每个shape都要有basic 和label
 
 StrokeStyle 移除，换成更全面的PaintStyle。
+
+先暂时这样：只做elements为null时的填补，不一样长就先不animate。
+
+渐入类型：x, y, xy, size, alpha
+
+对于同一个Mark，应当所有label在所有basic之上，包括不同item和不同group，但不需要所有marks的label在所有marks之上，因为mark是可以进行层级设定的。综合考虑引擎的通用性，最合理的方式应该是分为两个scene渲染，分别通过MarkRenderOp 和 MarkLabelRenderOp，同时shape的渲染函数也分开，这样label的alpha也方便处理，不放在同一个elements里是因为不利于动画diff，不在scene里设置两个elements是因为那样会使scene的判断动画逻辑非常复杂，而且也不够通用。
+
+drawGroupLabels先不限制仅LabelElement，防止需要图标什么的
+
+elements空和null应当相同处理，这个放在RenderOp中，以便与补头一起
+
+还是应该吧primitive和label放在不同的函数中，应当鼓励这样，放在一起处理并不会给性能带来多大提升，好多也是基于过去的思路才写成这样的。
+
+对于 mark-group-item 提醒，primitive对于同一个mark先平铺，因为假如不对齐了，分了也没有意义

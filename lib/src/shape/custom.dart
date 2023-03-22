@@ -49,7 +49,7 @@ class CandlestickShape extends Shape {
   double get defaultSize => 10;
 
   @override
-  List<MarkElement> renderGroup(
+  List<MarkElement> drawGroupPrimitives(
     List<Attributes> group,
     CoordConv coord,
     Offset origin,
@@ -57,8 +57,7 @@ class CandlestickShape extends Shape {
     assert(coord is RectCoordConv);
     assert(!coord.transposed);
 
-    final basicElements = <MarkElement>[];
-    final labelElements = <MarkElement>[];
+    final primitives = <MarkElement>[];
 
     for (var item in group) {
       assert(item.shape is CandlestickShape);
@@ -76,7 +75,7 @@ class CandlestickShape extends Shape {
       final bottom = ys[3];
 
       if (hollow) {
-        basicElements.add(PathElement(segments: [
+        primitives.add(PathElement(segments: [
           MoveSegment(end: Offset(x, top)),
           LineSegment(end: Offset(x, topEdge)),
           MoveSegment(end: Offset(x - bias, topEdge)),
@@ -91,7 +90,7 @@ class CandlestickShape extends Shape {
         // If the stoke style is fill, the lines created by Path.lineTo will not
         // be rendered.
         final strokeBias = strokeWidth / 2;
-        basicElements.add(PathElement(segments: [
+        primitives.add(PathElement(segments: [
           MoveSegment(end: Offset(x + strokeBias, top)),
           LineSegment(end: Offset(x + strokeBias, topEdge)),
           LineSegment(end: Offset(x + bias, topEdge)),
@@ -110,8 +109,11 @@ class CandlestickShape extends Shape {
       // No labels.
     }
 
-    return [GroupElement(elements: basicElements), GroupElement(elements: labelElements)];
+    return primitives;
   }
+
+  @override
+  List<MarkElement> drawGroupLabels(List<Attributes> group, CoordConv coord, Offset origin) => [];
 
   @override
   Offset representPoint(List<Offset> position) => position[1];

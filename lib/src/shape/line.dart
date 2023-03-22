@@ -3,6 +3,24 @@ import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/util/path.dart';
 
+List<MarkElement> drawLineLabels(List<Attributes> group, CoordConv coord, Offset origin) {
+  final labels = <Attributes, Offset>{};
+    for (var item in group) {
+      final position = item.position;
+      if (position.every((point) => point.dy.isFinite)) {
+        final end = coord.convert(position.last);
+        labels[item] = end;
+      }
+    }
+    final labelElements = <MarkElement>[];
+    for (var item in labels.keys) {
+      if (item.label != null && item.label!.haveText) {
+        labelElements.add(LabelElement(text: item.label!.text!, anchor: labels[item]!, defaultAlign: coord.transposed ? Alignment.centerRight : Alignment.topCenter, style: item.label!.style));
+      }
+    }
+    return labelElements;
+}
+
 /// The shape for the line mark.
 ///
 /// See also:
@@ -46,7 +64,7 @@ class BasicLineShape extends LineShape {
       deepCollectionEquals(dash, other.dash);
 
   @override
-  List<MarkElement> renderGroup(
+  List<MarkElement> drawGroupPrimitives(
     List<Attributes> group,
     CoordConv coord,
     Offset origin,
@@ -54,7 +72,6 @@ class BasicLineShape extends LineShape {
     assert(!(coord is PolarCoordConv && coord.transposed));
 
     final contours = <List<Offset>>[];
-    final labels = <Attributes, Offset>{};
 
     var currentContour = <Offset>[];
     for (var item in group) {
@@ -63,7 +80,6 @@ class BasicLineShape extends LineShape {
       if (item.position.last.dy.isFinite) {
         final point = coord.convert(item.position.last);
         currentContour.add(point);
-        labels[item] = point;
       } else if (currentContour.isNotEmpty) {
         contours.add(currentContour);
         currentContour = [];
@@ -80,26 +96,22 @@ class BasicLineShape extends LineShape {
       contours.last.add(contours.first.first);
     }
 
-    final basicElements = <MarkElement>[];
-    final labelElements = <MarkElement>[];
+    final primitives = <MarkElement>[];
 
     final represent = group.first;
     final style = getPaintStyle(represent, true, represent.size ?? defaultSize, coord.region);
 
     for (var contour in contours) {
       if (smooth) {
-        basicElements.add(SplineElement(start: contour.first, cubics: getCubicControls(contour, false, true), style: style));
+        primitives.add(SplineElement(start: contour.first, cubics: getCubicControls(contour, false, true), style: style));
       } else {
-        basicElements.add(PolylineElement(points: contour, style: style));
-      }
-    }
-
-    for (var item in labels.keys) {
-      if (item.label != null && item.label!.haveText) {
-        labelElements.add(LabelElement(text: item.label!.text!, anchor: labels[item]!, defaultAlign: coord.transposed ? Alignment.centerRight : Alignment.topCenter, style: item.label!.style));
+        primitives.add(PolylineElement(points: contour, style: style));
       }
     }
     
-    return [GroupElement(elements: basicElements), GroupElement(elements: labelElements)];
+    return primitives;
   }
+
+  @override
+  List<MarkElement> drawGroupLabels(List<Attributes> group, CoordConv coord, Offset origin) => drawLineLabels(group, coord, origin);
 }

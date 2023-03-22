@@ -2,12 +2,13 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
+import 'package:graphic/src/graffiti/element/element.dart';
 
 import '../data.dart';
 
 class TriangleShape extends IntervalShape {
   @override
-  List<MarkElement> renderGroup(
+  List<MarkElement> drawGroupPrimitives(
     List<Attributes> group,
     CoordConv coord,
     Offset origin,
@@ -15,7 +16,7 @@ class TriangleShape extends IntervalShape {
     assert(coord is RectCoordConv);
     assert(coord.transposed == false);
 
-    final rst = <List<MarkElement>>[];
+    final rst = <MarkElement>[];
 
     for (var item in group) {
       for (var point in item.position) {
@@ -32,20 +33,31 @@ class TriangleShape extends IntervalShape {
       final startLeft = Offset(start.dx - size / 2, start.dy);
       final startRight = Offset(start.dx + size / 2, start.dy);
 
-      rst.add([PolygonElement(points: [end, startLeft, startRight], style: style)]);
+      rst.add(PolygonElement(points: [end, startLeft, startRight], style: style));
     }
 
-    final basicElements = <MarkElement>[];
-    final labelElements = <MarkElement>[];
+    return rst;
+  }
 
-    for (var rstItem in rst) {
-      basicElements.add(rstItem.first);
-      if (rstItem.length > 1) {
-        labelElements.add(rstItem.last);
+  @override
+  List<MarkElement<ElementStyle>> drawGroupLabels(List<Attributes> group, CoordConv coord, Offset origin) {
+    final rst = <MarkElement>[];
+
+    for (var item in group) {
+      bool nan = false;
+      for (var point in item.position) {
+        if (!point.dy.isFinite) {
+          nan = true;
+          break;
+        }
+      }
+      if (!nan && item.label != null) {
+        final end = coord.convert(item.position[1]);
+        rst.add(LabelElement(text: item.label!.text!, anchor: end, defaultAlign: Alignment.topCenter, style: item.label!.style));
       }
     }
 
-    return [GroupElement(elements: basicElements), GroupElement(elements: labelElements)];
+    return rst;
   }
 
   @override

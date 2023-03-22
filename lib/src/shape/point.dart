@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/element/circle.dart';
-import 'package:graphic/src/graffiti/element/group.dart';
 import 'package:graphic/src/graffiti/element/label.dart';
 import 'package:graphic/src/graffiti/element/rect.dart';
 import 'package:graphic/src/mark/point.dart';
@@ -31,16 +30,15 @@ abstract class PointShape extends FunctionShape {
       hollow == other.hollow &&
       strokeWidth == other.strokeWidth;
   
-  MarkElement renderBasicItem(Attributes item, CoordConv coord, bool hollow, double strokeWidth);
+  MarkElement drawPoint(Attributes item, CoordConv coord, bool hollow, double strokeWidth);
 
   @override
-  List<MarkElement> renderGroup(
+  List<MarkElement> drawGroupPrimitives(
     List<Attributes> group,
     CoordConv coord,
     Offset origin,
   ) {
-    final basicElements = <MarkElement>[];
-    final labelElements = <MarkElement>[];
+    final rst = <MarkElement>[];
 
     for (var item in group) {
       assert(item.shape is PointShape);
@@ -56,7 +54,29 @@ abstract class PointShape extends FunctionShape {
         continue;
       }
 
-      basicElements.add(renderBasicItem(item, coord, hollow, strokeWidth));
+      rst.add(drawPoint(item, coord, hollow, strokeWidth));
+    }
+
+    return rst;
+  }
+
+  @override
+  List<MarkElement> drawGroupLabels(List<Attributes> group, CoordConv coord, Offset origin) {
+    final rst = <MarkElement>[];
+
+    for (var item in group) {
+      assert(item.shape is PointShape);
+
+      var empty = false;
+      for (var point in item.position) {
+        if (!point.isFinite) {
+          empty = true;
+          break;
+        }
+      }
+      if (empty) {
+        continue;
+      }
 
       final size = item.size ?? defaultSize;
       if (item.label != null && item.label!.haveText) {
@@ -65,11 +85,11 @@ abstract class PointShape extends FunctionShape {
           point.dx,
           point.dy + (size / 2),
         );
-        labelElements.add(LabelElement(text: item.label!.text!, anchor: anchor, defaultAlign: Alignment.topCenter, style: item.label!.style));
+        rst.add(LabelElement(text: item.label!.text!, anchor: anchor, defaultAlign: Alignment.topCenter, style: item.label!.style));
       }
     }
 
-    return [GroupElement(elements: basicElements), GroupElement(elements: labelElements)];
+    return rst;
   }
 
   @override
@@ -88,7 +108,7 @@ class CircleShape extends PointShape {
   bool equalTo(Object other) => super.equalTo(other) && other is CircleShape;
   
   @override
-  MarkElement<ElementStyle> renderBasicItem(Attributes item, CoordConv coord, bool hollow, double strokeWidth) {
+  MarkElement<ElementStyle> drawPoint(Attributes item, CoordConv coord, bool hollow, double strokeWidth) {
     final point = coord.convert(item.position.last);
     final size = item.size ?? defaultSize;
     return CircleElement(center: point, radius: size / 2, style: getPaintStyle(item, hollow, strokeWidth));
@@ -107,7 +127,7 @@ class SquareShape extends PointShape {
   bool equalTo(Object other) => super.equalTo(other) && other is SquareShape;
 
   @override
-  MarkElement<ElementStyle> renderBasicItem(Attributes item, CoordConv coord, bool hollow, double strokeWidth) {
+  MarkElement<ElementStyle> drawPoint(Attributes item, CoordConv coord, bool hollow, double strokeWidth) {
     final point = coord.convert(item.position.last);
     final size = item.size ?? defaultSize;
     return RectElement(rect: Rect.fromCenter(center: point, width: size, height: size), style: getPaintStyle(item, hollow, strokeWidth));

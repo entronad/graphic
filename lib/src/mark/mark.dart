@@ -206,8 +206,8 @@ class GroupOp extends Operator<AesGroups> {
 }
 
 /// The geometry mark render operator.
-class MarkRenderOp extends Render {
-  MarkRenderOp(
+class MarkPrimitiveRenderOp extends Render {
+  MarkPrimitiveRenderOp(
     Map<String, dynamic> params,
     Scene scene,
     View view,
@@ -219,21 +219,44 @@ class MarkRenderOp extends Render {
     final coord = params['coord'] as CoordConv;
     final origin = params['origin'] as Offset;
 
-    final basicElements = <MarkElement>[];
-    final labelElements = <MarkElement>[];
+    final rst = <MarkElement>[];
  
     for (var group in groups) {
-      final groupRst = group.first.shape.renderGroup(
+      rst.addAll(group.first.shape.drawGroupPrimitives(
         group,
         coord,
         origin,
-      );
-      // Pick out the labels to make sure labels are always above item graphics.
-      basicElements.add(groupRst.first);
-      labelElements.add(groupRst.last);
+      ));
     }
 
-    scene.set([GroupElement(elements: basicElements), GroupElement(elements: labelElements)], RectElement(rect: coord.region));
+    scene.set(rst, RectElement(rect: coord.region));
+  }
+}
+
+class MarkLabelRenderOp extends Render {
+  MarkLabelRenderOp(
+    Map<String, dynamic> params,
+    Scene scene,
+    View view,
+  ) : super(params, scene, view);
+
+  @override
+  void render() {
+    final groups = params['groups'] as AesGroups;
+    final coord = params['coord'] as CoordConv;
+    final origin = params['origin'] as Offset;
+
+    final rst = <MarkElement>[];
+ 
+    for (var group in groups) {
+      rst.addAll(group.first.shape.drawGroupLabels(
+        group,
+        coord,
+        origin,
+      ));
+    }
+
+    scene.set(rst, RectElement(rect: coord.region));
   }
 }
 

@@ -49,7 +49,7 @@ class HeatmapShape extends PolygonShape {
       borderRadius == other.borderRadius;
 
   @override
-  List<MarkElement> renderGroup(
+  List<MarkElement> drawGroupPrimitives(
     List<Attributes> group,
     CoordConv coord,
     Offset origin,
@@ -71,8 +71,7 @@ class HeatmapShape extends PolygonShape {
     final biasX = stepX / 2;
     final biasY = stepY / 2;
 
-    final basicElements = <MarkElement>[];
-    final labelElements = <MarkElement>[];
+    final rst = <MarkElement>[];
 
     for (var item in group) {
       assert(item.shape is HeatmapShape);
@@ -82,7 +81,7 @@ class HeatmapShape extends PolygonShape {
       final point = item.position.last;
       if (coord is RectCoordConv) {
         assert(!sector);
-        basicElements.add(RectElement(rect: Rect.fromPoints(
+        rst.add(RectElement(rect: Rect.fromPoints(
           coord.convert(Offset(point.dx - biasX, point.dy + biasY)),
           coord.convert(Offset(point.dx + biasX, point.dy - biasY)),
         ), borderRadius: borderRadius, style: style));
@@ -95,7 +94,7 @@ class HeatmapShape extends PolygonShape {
               coord.transposed ? point.dy + biasY : point.dx + biasX;
           final r = coord.transposed ? point.dx + biasX : point.dy + biasY;
           final r0 = coord.transposed ? point.dx - biasX : point.dy - biasY;
-          basicElements.add(SectorElement(
+          rst.add(SectorElement(
             center: coord.center,
               endRadius: coord.convertRadius(r),
               startRadius: coord.convertRadius(r0),
@@ -114,15 +113,24 @@ class HeatmapShape extends PolygonShape {
             Offset(point.dx + biasX, point.dy - biasY),
             Offset(point.dx - biasX, point.dy - biasY),
           ];
-          basicElements.add(PolygonElement(points: vertices.map(coord.convert).toList(), style: style));
+          rst.add(PolygonElement(points: vertices.map(coord.convert).toList(), style: style));
         }
       }
+    }
+    return rst;
+  }
 
+  @override
+  List<MarkElement> drawGroupLabels(List<Attributes> group, CoordConv coord, Offset origin) {
+    final rst = <MarkElement>[];
+
+    for (var item in group) {
       if (item.label != null && item.label!.haveText) {
-        labelElements.add(LabelElement(text: item.label!.text!, anchor: coord.convert(point), defaultAlign: Alignment.center, style: item.label!.style));
+        final point = item.position.last;
+        rst.add(LabelElement(text: item.label!.text!, anchor: coord.convert(point), defaultAlign: Alignment.center, style: item.label!.style));
       }
     }
 
-    return [GroupElement(elements: basicElements), GroupElement(elements: labelElements)];
+    return rst;
   }
 }

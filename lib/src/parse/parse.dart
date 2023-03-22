@@ -492,13 +492,21 @@ void parse<D>(
 
     groupsList.add(groups);
 
-    final markScene =
+    final markPrimitiveScene =
         view.graffiti.createScene(layer: markSpec.layer ?? 0, chartLayer: ChartLayers.mark);
-    view.add(MarkRenderOp({
+    view.add(MarkPrimitiveRenderOp({
       'groups': groups,
       'coord': coord,
       'origin': origin,
-    }, markScene, view));
+    }, markPrimitiveScene, view));
+
+    final markLabelScene =
+        view.graffiti.createScene(layer: markSpec.layer ?? 0, chartLayer: ChartLayers.mark);
+    view.add(MarkLabelRenderOp({
+      'groups': groups,
+      'coord': coord,
+      'origin': origin,
+    }, markLabelScene, view));
   }
 
   // Guide.

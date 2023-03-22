@@ -24,7 +24,13 @@ abstract class Shape extends CustomizableSpec {
   /// the basic way to render the whole group. The [renderGroup] method then may
   /// call [renderItem]s of each tuple of the group respectively or render in it's
   /// own way accrording to the implementation.
-  List<MarkElement> renderGroup(
+  List<MarkElement> drawGroupPrimitives(
+    List<Attributes> group,
+    CoordConv coord,
+    Offset origin,
+  );
+
+  List<MarkElement> drawGroupLabels(
     List<Attributes> group,
     CoordConv coord,
     Offset origin,

@@ -2,8 +2,6 @@ import 'package:flutter/painting.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/graffiti/element/group.dart';
-import 'package:graphic/src/graffiti/element/label.dart';
 import 'package:graphic/src/graffiti/element/path.dart';
 import 'package:graphic/src/graffiti/element/segment/close.dart';
 import 'package:graphic/src/graffiti/element/segment/cubic.dart';
@@ -16,6 +14,7 @@ import 'package:graphic/src/util/path.dart';
 
 import 'util/render_basic_item.dart';
 import 'function.dart';
+import 'line.dart';
 
 /// The shape for the area mark.
 ///
@@ -48,7 +47,7 @@ class BasicAreaShape extends AreaShape {
       other is BasicAreaShape && smooth == other.smooth && loop == other.loop;
 
   @override
-  List<MarkElement> renderGroup(
+  List<MarkElement> drawGroupPrimitives(
     List<Attributes> group,
     CoordConv coord,
     Offset origin,
@@ -56,7 +55,6 @@ class BasicAreaShape extends AreaShape {
     assert(!(coord is PolarCoordConv && coord.transposed));
 
     final contours = <List<List<Offset>>>[];
-    final labels = <Attributes, Offset>{};
 
     var currentContour = <List<Offset>>[];
     for (var item in group) {
@@ -67,7 +65,6 @@ class BasicAreaShape extends AreaShape {
         final start = coord.convert(position[0]);
         final end = coord.convert(position[1]);
         currentContour.add([start, end]);
-        labels[item] = end;
       } else if (currentContour.isNotEmpty) {
         contours.add(currentContour);
         currentContour = [];
@@ -86,8 +83,7 @@ class BasicAreaShape extends AreaShape {
       contours.last.add(contours.first.first);
     }
 
-    final basicElements = <MarkElement>[];
-    final labelElements = <MarkElement>[];
+    final primitives = <MarkElement>[];
 
     final style = getPaintStyle(group.first, false, 0, coord.region);
 
@@ -125,15 +121,12 @@ class BasicAreaShape extends AreaShape {
       }
       segments.add(CloseSegment());
 
-      basicElements.add(PathElement(segments: segments, style: style));
+      primitives.add(PathElement(segments: segments, style: style));
     }
 
-    for (var item in labels.keys) {
-      if (item.label != null && item.label!.haveText) {
-        labelElements.add(LabelElement(text: item.label!.text!, anchor: labels[item]!, defaultAlign: coord.transposed ? Alignment.centerRight : Alignment.topCenter, style: item.label!.style));
-      }
-    }
-    
-    return [GroupElement(elements: basicElements), GroupElement(elements: labelElements)];
+    return primitives;
   }
+
+  @override
+  List<MarkElement> drawGroupLabels(List<Attributes> group, CoordConv coord, Offset origin) => drawLineLabels(group, coord, origin);
 }

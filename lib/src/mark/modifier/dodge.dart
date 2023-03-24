@@ -36,8 +36,12 @@ class DodgeModifier extends Modifier {
       symmetric == other.symmetric;
 
   @override
-  void modify(AesGroups groups, Map<String, ScaleConv<dynamic, num>> scales,
-      AlgForm form, CoordConv coord, Offset origin) {
+  void modify(
+      AttributesGroups groups,
+      Map<String, ScaleConv<dynamic, num>> scales,
+      AlgForm form,
+      CoordConv coord,
+      Offset origin) {
     final xField = form.first[0];
     final band = (scales[xField] as DiscreteScaleConv).band;
 

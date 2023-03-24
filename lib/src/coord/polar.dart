@@ -292,8 +292,13 @@ class PolarRegionColorRenderOp extends RegionBackgroundRenderOp {
     final color = params['color'] as Color;
 
     final shortestSide = region.shortestSide;
-    
-    scene.set([CircleElement(center: region.center, radius: shortestSide / 2, style: PaintStyle(fillColor: color))]);
+
+    scene.set([
+      CircleElement(
+          center: region.center,
+          radius: shortestSide / 2,
+          style: PaintStyle(fillColor: color))
+    ]);
   }
 }
 
@@ -314,6 +319,11 @@ class PolarRegionGradientRenderOp extends RegionBackgroundRenderOp {
     final square = Rect.fromCenter(
         center: region.center, width: shortestSide, height: shortestSide);
 
-    scene.set([CircleElement(center: region.center, radius: shortestSide / 2, style: PaintStyle(fillGradient: gradient, gradientBounds: square))]);
+    scene.set([
+      CircleElement(
+          center: region.center,
+          radius: shortestSide / 2,
+          style: PaintStyle(fillGradient: gradient, gradientBounds: square))
+    ]);
   }
 }

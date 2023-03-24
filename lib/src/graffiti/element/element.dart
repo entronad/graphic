@@ -1,23 +1,25 @@
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart' as painting;
+import 'package:graphic/src/util/collection.dart';
 
 import 'package:path_drawing/path_drawing.dart';
 import 'package:graphic/src/util/assert.dart';
 
-import '../util/gradient.dart';
 import 'segment/segment.dart';
 import 'group.dart';
 import 'path.dart';
 
 abstract class ElementStyle {
   ElementStyle lerpFrom(covariant ElementStyle from, double t);
+
+  @override
+  bool operator ==(Object other) => other is ElementStyle;
 }
 
 abstract class MarkElement<S extends ElementStyle> {
   MarkElement({
     required this.style,
-
     this.rotation,
     this.rotationAxis,
   }) : assert(rotation == null || rotationAxis != null);
@@ -48,6 +50,13 @@ abstract class MarkElement<S extends ElementStyle> {
   }
 
   MarkElement<S> lerpFrom(covariant MarkElement<S> from, double t);
+
+  @override
+  bool operator ==(Object other) =>
+      other is MarkElement &&
+      style == other.style &&
+      rotation == other.rotation &&
+      rotationAxis == other.rotationAxis;
 }
 
 List<double>? _lerpDash(List<double>? a, List<double>? b, double t) {
@@ -79,14 +88,22 @@ class PaintStyle extends ElementStyle {
     Color? shadowColor,
     this.dash,
     this.dashOffset,
-  }) : assert(isSingle([fillColor, fillGradient, fillShader], allowNone: true)),
-       assert(isSingle([strokeColor, strokeGradient, strokeShader], allowNone: true)),
-       assert(strokeColor != null || strokeGradient != null || strokeShader != null || (strokeWidth == null || strokeCap == null || strokeJoin == null || strokeMiterLimit == null)),
-       assert(elevation != null || shadowColor == null),
-       assert(dash != null || dashOffset == null),
-       shadowColor = elevation == null
-        ? null
-        : fillColor ?? (strokeColor ?? const Color(0xFF000000));
+  })  : assert(
+            isSingle([fillColor, fillGradient, fillShader], allowNone: true)),
+        assert(isSingle([strokeColor, strokeGradient, strokeShader],
+            allowNone: true)),
+        assert(strokeColor != null ||
+            strokeGradient != null ||
+            strokeShader != null ||
+            (strokeWidth == null ||
+                strokeCap == null ||
+                strokeJoin == null ||
+                strokeMiterLimit == null)),
+        assert(elevation != null || shadowColor == null),
+        assert(dash != null || dashOffset == null),
+        shadowColor = elevation == null
+            ? null
+            : fillColor ?? (strokeColor ?? const Color(0xFF000000));
 
   final Color? fillColor;
 
@@ -111,7 +128,7 @@ class PaintStyle extends ElementStyle {
   final StrokeJoin? strokeJoin;
 
   final double? strokeMiterLimit;
-  
+
   final double? elevation;
 
   final Color? shadowColor;
@@ -122,47 +139,71 @@ class PaintStyle extends ElementStyle {
 
   @override
   PaintStyle lerpFrom(covariant PaintStyle from, double t) => PaintStyle(
-    fillColor: Color.lerp(from.fillColor, fillColor, t),
-    fillGradient: painting.Gradient.lerp(from.fillGradient, fillGradient, t),
-    fillShader: fillShader,
-    strokeColor: Color.lerp(from.strokeColor, strokeColor, t),
-    strokeGradient: painting.Gradient.lerp(from.strokeGradient, strokeGradient, t),
-    strokeShader: strokeShader,
-    gradientBounds: Rect.lerp(from.gradientBounds, gradientBounds, t),
-    blendMode: blendMode,
-    strokeWidth: lerpDouble(from.strokeWidth, strokeWidth, t),
-    strokeCap: strokeCap,
-    strokeJoin: strokeJoin,
-    strokeMiterLimit: lerpDouble(from.strokeMiterLimit, strokeMiterLimit, t),
-    elevation: lerpDouble(from.elevation, elevation, t),
-    shadowColor: Color.lerp(from.shadowColor, shadowColor, t),
-    dash: _lerpDash(from.dash, dash, t),
-    dashOffset: dashOffset,
-  );
-}
+        fillColor: Color.lerp(from.fillColor, fillColor, t),
+        fillGradient:
+            painting.Gradient.lerp(from.fillGradient, fillGradient, t),
+        fillShader: fillShader,
+        strokeColor: Color.lerp(from.strokeColor, strokeColor, t),
+        strokeGradient:
+            painting.Gradient.lerp(from.strokeGradient, strokeGradient, t),
+        strokeShader: strokeShader,
+        gradientBounds: Rect.lerp(from.gradientBounds, gradientBounds, t),
+        blendMode: blendMode,
+        strokeWidth: lerpDouble(from.strokeWidth, strokeWidth, t),
+        strokeCap: strokeCap,
+        strokeJoin: strokeJoin,
+        strokeMiterLimit:
+            lerpDouble(from.strokeMiterLimit, strokeMiterLimit, t),
+        elevation: lerpDouble(from.elevation, elevation, t),
+        shadowColor: Color.lerp(from.shadowColor, shadowColor, t),
+        dash: _lerpDash(from.dash, dash, t),
+        dashOffset: dashOffset,
+      );
 
-final defaultPaintStyle = PaintStyle(strokeColor: const Color(0xff000000));
+  @override
+  bool operator ==(Object other) =>
+      other is PaintStyle &&
+      super == other &&
+      fillColor == other.fillColor &&
+      fillGradient == other.fillGradient &&
+      // fillShader will not check.
+      strokeColor == other.strokeColor &&
+      strokeGradient == other.strokeGradient &&
+      // strokeShader will not check
+      gradientBounds == other.gradientBounds &&
+      blendMode == other.blendMode &&
+      strokeWidth == other.strokeWidth &&
+      strokeCap == other.strokeCap &&
+      strokeJoin == other.strokeJoin &&
+      strokeMiterLimit == other.strokeMiterLimit &&
+      elevation == other.elevation &&
+      shadowColor == other.shadowColor &&
+      deepCollectionEquals(dash, other.dash) &&
+      dashOffset == other.dashOffset;
+}
 
 abstract class PrimitiveElement extends MarkElement<PaintStyle> {
   PrimitiveElement({
     required PaintStyle style,
-
     double? rotation,
     Offset? rotationAxis,
   }) : super(
-    style: style,
-    rotation: rotation,
-    rotationAxis: rotationAxis,
-  ) {
+          style: style,
+          rotation: rotation,
+          rotationAxis: rotationAxis,
+        ) {
     drawPath(path);
 
-    if (style.fillColor != null || style.fillGradient != null || style.fillShader != null) {
+    if (style.fillColor != null ||
+        style.fillGradient != null ||
+        style.fillShader != null) {
       _fillPaint = Paint();
 
       if (style.fillShader != null) {
         _fillPaint!.shader = style.fillShader;
       } else if (style.fillGradient != null) {
-        _fillPaint!.shader = toUiGradient(style.fillGradient!, style.gradientBounds ?? path.getBounds());
+        _fillPaint!.shader = style.fillGradient!
+            .createShader(style.gradientBounds ?? path.getBounds());
       } else {
         _fillPaint!.color = style.fillColor!;
       }
@@ -178,7 +219,8 @@ abstract class PrimitiveElement extends MarkElement<PaintStyle> {
       if (style.strokeShader != null) {
         _strokePaint!.shader = style.strokeShader;
       } else if (style.strokeGradient != null) {
-        _strokePaint!.shader = toUiGradient(style.strokeGradient!, style.gradientBounds ?? path.getBounds());
+        _strokePaint!.shader = style.strokeGradient!
+            .createShader(style.gradientBounds ?? path.getBounds());
       } else {
         _strokePaint!.color = style.strokeColor!;
       }
@@ -201,7 +243,9 @@ abstract class PrimitiveElement extends MarkElement<PaintStyle> {
     }
 
     if (style.dash != null) {
-      _dathPath = dashPath(path, dashArray: CircularIntervalList(style.dash!), dashOffset: style.dashOffset);
+      _dathPath = dashPath(path,
+          dashArray: CircularIntervalList(style.dash!),
+          dashOffset: style.dashOffset);
     }
   }
 
@@ -234,6 +278,9 @@ abstract class PrimitiveElement extends MarkElement<PaintStyle> {
   PrimitiveElement lerpFrom(covariant PrimitiveElement from, double t);
 
   List<Segment> toSegments();
+
+  @override
+  bool operator ==(Object other) => other is PrimitiveElement && super == other;
 }
 
 abstract class BlockStyle extends ElementStyle {
@@ -253,6 +300,14 @@ abstract class BlockStyle extends ElementStyle {
 
   /// How the box align to the anchor point.
   final painting.Alignment? align;
+
+  @override
+  bool operator ==(Object other) =>
+      other is BlockStyle &&
+      super == other &&
+      offset == other.offset &&
+      rotation == other.rotation &&
+      align == other.align;
 }
 
 /// Calculates the real painting offset point for [BlockElement].
@@ -273,13 +328,12 @@ abstract class BlockElement<S extends BlockStyle> extends MarkElement<S> {
   BlockElement({
     required this.anchor,
     required this.defaultAlign,
-
     required S style,
   }) : super(
-    style: style,
-    rotation: style.rotation,
-    rotationAxis: style.offset == null ? anchor : anchor + style.offset!,
-  );
+          style: style,
+          rotation: style.rotation,
+          rotationAxis: style.offset == null ? anchor : anchor + style.offset!,
+        );
 
   final Offset anchor;
 
@@ -287,14 +341,29 @@ abstract class BlockElement<S extends BlockStyle> extends MarkElement<S> {
 
   @protected
   late final Offset paintPoint;
+
+  @override
+  bool operator ==(Object other) =>
+      other is BlockElement &&
+      super == other &&
+      anchor == other.anchor &&
+      defaultAlign == other.defaultAlign;
 }
 
 // No predicate, call only when needed.
 List<PathElement> _nomalizeShape(PrimitiveElement from, PrimitiveElement to) {
   final segmentsPair = nomalizeSegments(from.toSegments(), to.toSegments());
   return [
-    PathElement(segments: segmentsPair.first, style: from.style, rotation: from.rotation, rotationAxis: from.rotationAxis),
-    PathElement(segments: segmentsPair.last, style: to.style, rotation: to.rotation, rotationAxis: to.rotationAxis),
+    PathElement(
+        segments: segmentsPair.first,
+        style: from.style,
+        rotation: from.rotation,
+        rotationAxis: from.rotationAxis),
+    PathElement(
+        segments: segmentsPair.last,
+        style: to.style,
+        rotation: to.rotation,
+        rotationAxis: to.rotationAxis),
   ];
 }
 
@@ -302,8 +371,14 @@ List<MarkElement> nomalizeElement(MarkElement from, MarkElement to) {
   if (from is GroupElement && to is GroupElement) {
     final elementsPair = nomalizeElementList(from.elements, to.elements);
     return [
-      GroupElement(elements: elementsPair.first, rotation: from.rotation, rotationAxis: from.rotationAxis),
-      GroupElement(elements: elementsPair.last, rotation: to.rotation, rotationAxis: to.rotationAxis),
+      GroupElement(
+          elements: elementsPair.first,
+          rotation: from.rotation,
+          rotationAxis: from.rotationAxis),
+      GroupElement(
+          elements: elementsPair.last,
+          rotation: to.rotation,
+          rotationAxis: to.rotationAxis),
     ];
   }
 
@@ -323,7 +398,8 @@ List<MarkElement> nomalizeElement(MarkElement from, MarkElement to) {
   return [to, to];
 }
 
-List<List<MarkElement>> nomalizeElementList(List<MarkElement> from, List<MarkElement> to) {
+List<List<MarkElement>> nomalizeElementList(
+    List<MarkElement> from, List<MarkElement> to) {
   final fromRst = <MarkElement>[];
   final toRst = <MarkElement>[];
   assert(from.length == to.length);

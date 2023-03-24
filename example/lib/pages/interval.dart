@@ -69,7 +69,8 @@ class IntervalPage extends StatelessWidget {
                       elevation: ElevationEncode(value: 0, updaters: {
                         'tap': {true: (_) => 5}
                       }),
-                      color: ColorEncode(value: Defaults.primaryColor, updaters: {
+                      color:
+                          ColorEncode(value: Defaults.primaryColor, updaters: {
                         'tap': {false: (color) => color.withAlpha(100)}
                       }),
                     )
@@ -269,7 +270,8 @@ class IntervalPage extends StatelessWidget {
                       label: LabelEncode(
                           encoder: (tuple) => Label(
                                 tuple['value'].toString(),
-                                LabelStyle(textStyle: const TextStyle(fontSize: 6)),
+                                LabelStyle(
+                                    textStyle: const TextStyle(fontSize: 6)),
                               )),
                       modifiers: [StackModifier()],
                     )

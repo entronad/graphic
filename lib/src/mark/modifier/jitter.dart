@@ -28,8 +28,12 @@ class JitterModifier extends Modifier {
   bool equalTo(Object other) => other is JitterModifier && ratio == other.ratio;
 
   @override
-  void modify(AesGroups groups, Map<String, ScaleConv<dynamic, num>> scales,
-      AlgForm form, CoordConv coord, Offset origin) {
+  void modify(
+      AttributesGroups groups,
+      Map<String, ScaleConv<dynamic, num>> scales,
+      AlgForm form,
+      CoordConv coord,
+      Offset origin) {
     final xField = form.first[0];
     final band = (scales[xField] as DiscreteScaleConv).band;
 

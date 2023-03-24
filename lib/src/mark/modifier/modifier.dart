@@ -21,7 +21,7 @@ abstract class Modifier extends CustomizableSpec {
   ///
   /// The aesthetic encodes are in the [groups].
   void modify(
-    AesGroups groups,
+    AttributesGroups groups,
     Map<String, ScaleConv> scales,
     AlgForm form,
     CoordConv coord,
@@ -29,14 +29,14 @@ abstract class Modifier extends CustomizableSpec {
   );
 }
 
-/// The operator to modify aeses with a modifier.
-class ModifyOp extends Operator<AesGroups> {
+/// The operator to modify attributes with a modifier.
+class ModifyOp extends Operator<AttributesGroups> {
   ModifyOp(Map<String, dynamic> params) : super(params);
 
   @override
-  AesGroups evaluate() {
+  AttributesGroups evaluate() {
     final modifier = params['modifier'] as Modifier;
-    final groups = params['groups'] as AesGroups;
+    final groups = params['groups'] as AttributesGroups;
     final scales = params['scales'] as Map<String, ScaleConv>;
     final form = params['form'] as AlgForm;
     final coord = params['coord'] as CoordConv;

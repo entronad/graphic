@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:graphic/src/util/collection.dart';
+
 import 'element.dart';
 import 'segment/segment.dart';
 import 'segment/move.dart';
@@ -28,19 +30,18 @@ List<Offset> lerpPointList(List<Offset> from, List<Offset> to, double t) {
 class PolylineElement extends PrimitiveElement {
   PolylineElement({
     required this.points,
-
-    PaintStyle? style,
+    required PaintStyle style,
     double? rotation,
     Offset? rotationAxis,
-  }) : assert(points.length >= 2),
-       super(
-         style: style ?? defaultPaintStyle,
-         rotation: rotation,
-         rotationAxis: rotationAxis,
-       );
+  })  : assert(points.length >= 2),
+        super(
+          style: style,
+          rotation: rotation,
+          rotationAxis: rotationAxis,
+        );
 
   final List<Offset> points;
-  
+
   @override
   void drawPath(Path path) {
     path.moveTo(points[0].dx, points[0].dy);
@@ -74,4 +75,10 @@ class PolylineElement extends PrimitiveElement {
 
     return rst;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is PolylineElement &&
+      super == other &&
+      deepCollectionEquals(points, other.points);
 }

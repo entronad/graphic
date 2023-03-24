@@ -9,20 +9,19 @@ class LineElement extends PrimitiveElement {
   LineElement({
     required this.start,
     required this.end,
-
-    PaintStyle? style,
+    required PaintStyle style,
     double? rotation,
     Offset? rotationAxis,
   }) : super(
-    style: style ?? defaultPaintStyle,
-    rotation: rotation,
-    rotationAxis: rotationAxis,
-  );
+          style: style,
+          rotation: rotation,
+          rotationAxis: rotationAxis,
+        );
 
   final Offset start;
 
   final Offset end;
-  
+
   @override
   void drawPath(Path path) {
     path.moveTo(start.dx, start.dy);
@@ -31,16 +30,23 @@ class LineElement extends PrimitiveElement {
 
   @override
   LineElement lerpFrom(covariant LineElement from, double t) => LineElement(
-    start: Offset.lerp(from.start, start, t)!,
-    end: Offset.lerp(from.end, end, t)!,
-    style: style.lerpFrom(from.style, t),
-    rotation: lerpDouble(from.rotation, rotation, t),
-    rotationAxis: Offset.lerp(from.rotationAxis, rotationAxis, t),
-  );
+        start: Offset.lerp(from.start, start, t)!,
+        end: Offset.lerp(from.end, end, t)!,
+        style: style.lerpFrom(from.style, t),
+        rotation: lerpDouble(from.rotation, rotation, t),
+        rotationAxis: Offset.lerp(from.rotationAxis, rotationAxis, t),
+      );
 
   @override
   List<Segment> toSegments() => [
-    MoveSegment(end: start),
-    LineSegment(end: end, tag: SegmentTags.top),
-  ];
+        MoveSegment(end: start),
+        LineSegment(end: end, tag: SegmentTags.top),
+      ];
+
+  @override
+  bool operator ==(Object other) =>
+      other is LineElement &&
+      super == other &&
+      start == other.start &&
+      end == other.end;
 }

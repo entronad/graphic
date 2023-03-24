@@ -21,8 +21,12 @@ class StackModifier extends Modifier {
   bool equalTo(Object other) => other is StackModifier;
 
   @override
-  void modify(AesGroups groups, Map<String, ScaleConv<dynamic, num>> scales,
-      AlgForm form, CoordConv coord, Offset origin) {
+  void modify(
+      AttributesGroups groups,
+      Map<String, ScaleConv<dynamic, num>> scales,
+      AlgForm form,
+      CoordConv coord,
+      Offset origin) {
     final normalZero = origin.dy;
 
     for (var i = 1; i < groups.length; i++) {

@@ -114,7 +114,7 @@ class ElementAnnotRenderOp extends AnnotRenderOp {
     final coord = params['coord'] as CoordConv;
 
     if (clip) {
-      scene.set(elements, RectElement(rect: coord.region));
+      scene.set(elements, RectElement(rect: coord.region, style: PaintStyle()));
     } else {
       scene.set(elements);
     }

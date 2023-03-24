@@ -42,7 +42,11 @@ class TagAnnotOp extends ElementAnnotOp {
 
     return label.haveText
         ? [
-            LabelElement(text: label.text!, anchor: anchor, defaultAlign: Alignment.center, style: label.style),
+            LabelElement(
+                text: label.text!,
+                anchor: anchor,
+                defaultAlign: Alignment.center,
+                style: label.style),
           ]
         : null;
   }

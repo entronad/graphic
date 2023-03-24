@@ -13,20 +13,19 @@ class RectElement extends PrimitiveElement {
   RectElement({
     required this.rect,
     this.borderRadius,
-
-    PaintStyle? style,
+    required PaintStyle style,
     double? rotation,
     Offset? rotationAxis,
   }) : super(
-    style: style ?? defaultPaintStyle,
-    rotation: rotation,
-    rotationAxis: rotationAxis,
-  );
+          style: style,
+          rotation: rotation,
+          rotationAxis: rotationAxis,
+        );
 
   final Rect rect;
 
   final BorderRadius? borderRadius;
-  
+
   @override
   void drawPath(Path path) {
     if (borderRadius == null || borderRadius == BorderRadius.zero) {
@@ -38,12 +37,12 @@ class RectElement extends PrimitiveElement {
 
   @override
   RectElement lerpFrom(covariant RectElement from, double t) => RectElement(
-    rect: Rect.lerp(from.rect, rect, t)!,
-    borderRadius: BorderRadius.lerp(from.borderRadius, borderRadius, t),
-    style: style.lerpFrom(from.style, t),
-    rotation: lerpDouble(from.rotation, rotation, t),
-    rotationAxis: Offset.lerp(from.rotationAxis, rotationAxis, t),
-  );
+        rect: Rect.lerp(from.rect, rect, t)!,
+        borderRadius: BorderRadius.lerp(from.borderRadius, borderRadius, t),
+        style: style.lerpFrom(from.style, t),
+        rotation: lerpDouble(from.rotation, rotation, t),
+        rotationAxis: Offset.lerp(from.rotationAxis, rotationAxis, t),
+      );
 
   @override
   List<Segment> toSegments() {
@@ -67,16 +66,55 @@ class RectElement extends PrimitiveElement {
 
       return [
         MoveSegment(end: rect.topLeft.translate(0, signY * tlr.y)),
-        ArcToPointSegment(end: rect.topLeft.translate(signX * tlr.x, 0), radius: tlr, clockwise: clockwise, tag: SegmentTags.topLeft),
-        LineSegment(end: rect.topRight.translate(-signX * trr.x, 0), tag: SegmentTags.top),
-        ArcToPointSegment(end: rect.topRight.translate(0, signY * trr.y), radius: trr, clockwise: clockwise, tag: SegmentTags.topRight),
-        LineSegment(end: rect.bottomRight.translate(0, -signY * brr.y), tag: SegmentTags.right),
-        ArcToPointSegment(end: rect.bottomRight.translate(-signX * brr.x, 0), radius: brr, clockwise: clockwise, tag: SegmentTags.bottomRight),
-        LineSegment(end: rect.bottomLeft.translate(signX * blr.x, 0), tag: SegmentTags.bottom),
-        ArcToPointSegment(end: rect.bottomLeft.translate(0, -signY * blr.y), radius: blr, clockwise: clockwise, tag: SegmentTags.bottomLeft),
-        LineSegment(end: rect.topLeft.translate(0, signY * tlr.y), tag: SegmentTags.left),
+        ArcToPointSegment(
+            end: rect.topLeft.translate(signX * tlr.x, 0),
+            radius: tlr,
+            rotation: 0,
+            largeArc: false,
+            clockwise: clockwise,
+            tag: SegmentTags.topLeft),
+        LineSegment(
+            end: rect.topRight.translate(-signX * trr.x, 0),
+            tag: SegmentTags.top),
+        ArcToPointSegment(
+            end: rect.topRight.translate(0, signY * trr.y),
+            radius: trr,
+            rotation: 0,
+            largeArc: false,
+            clockwise: clockwise,
+            tag: SegmentTags.topRight),
+        LineSegment(
+            end: rect.bottomRight.translate(0, -signY * brr.y),
+            tag: SegmentTags.right),
+        ArcToPointSegment(
+            end: rect.bottomRight.translate(-signX * brr.x, 0),
+            radius: brr,
+            rotation: 0,
+            largeArc: false,
+            clockwise: clockwise,
+            tag: SegmentTags.bottomRight),
+        LineSegment(
+            end: rect.bottomLeft.translate(signX * blr.x, 0),
+            tag: SegmentTags.bottom),
+        ArcToPointSegment(
+            end: rect.bottomLeft.translate(0, -signY * blr.y),
+            radius: blr,
+            rotation: 0,
+            largeArc: false,
+            clockwise: clockwise,
+            tag: SegmentTags.bottomLeft),
+        LineSegment(
+            end: rect.topLeft.translate(0, signY * tlr.y),
+            tag: SegmentTags.left),
         CloseSegment(),
       ];
     }
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is RectElement &&
+      super == other &&
+      rect == other.rect &&
+      borderRadius == other.borderRadius;
 }

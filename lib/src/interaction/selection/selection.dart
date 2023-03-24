@@ -127,7 +127,7 @@ abstract class Selector {
 
   /// Gets the selected tuple indexes.
   Set<int>? select(
-    AesGroups groups,
+    AttributesGroups groups,
     List<Tuple> tuples,
     Set<int>? preSelects,
     CoordConv coord,
@@ -303,7 +303,7 @@ class SelectOp extends Operator<Selected?> {
   @override
   Selected? evaluate() {
     final selectors = params['selectors'] as Map<String, Selector>?;
-    final groups = params['groups'] as AesGroups;
+    final groups = params['groups'] as AttributesGroups;
     final tuples = params['tuples'] as List<Tuple>;
     final coord = params['coord'] as CoordConv;
 
@@ -344,12 +344,12 @@ V? _update<V>(
 }
 
 /// The operator to update aesthetic encodes by selectors.
-class SelectionUpdateOp extends Operator<AesGroups> {
+class SelectionUpdateOp extends Operator<AttributesGroups> {
   SelectionUpdateOp(Map<String, dynamic> params) : super(params);
 
   @override
-  AesGroups evaluate() {
-    final groups = params['groups'] as AesGroups;
+  AttributesGroups evaluate() {
+    final groups = params['groups'] as AttributesGroups;
     final selected = params['selected'] as Selected?;
     final shapeUpdaters = params['shapeUpdaters']
         as Map<String, Map<bool, SelectionUpdater<Shape>>>?;
@@ -405,7 +405,8 @@ class SelectionUpdateOp extends Operator<AesGroups> {
           shape: _update(attributes.shape, isSelected, shapeUpdater)!,
           color: _update(attributes.color, isSelected, colorUpdater),
           gradient: _update(attributes.gradient, isSelected, gradientUpdater),
-          elevation: _update(attributes.elevation, isSelected, elevationUpdater),
+          elevation:
+              _update(attributes.elevation, isSelected, elevationUpdater),
           label: _update(attributes.label, isSelected, labelUpdater),
           size: _update(attributes.size, isSelected, sizeUpdater),
         ));

@@ -23,39 +23,50 @@ class ArcElement extends PrimitiveElement {
     required this.oval,
     required this.startAngle,
     required this.endAngle,
-
-    PaintStyle? style,
+    required PaintStyle style,
     double? rotation,
     Offset? rotationAxis,
   }) : super(
-    style: style ?? defaultPaintStyle,
-    rotation: rotation,
-    rotationAxis: rotationAxis,
-  );
+          style: style,
+          rotation: rotation,
+          rotationAxis: rotationAxis,
+        );
 
   final Rect oval;
 
   final double startAngle;
 
   final double endAngle;
-  
+
   @override
   void drawPath(Path path) =>
-    path.addArc(oval, startAngle, endAngle - startAngle);
+      path.addArc(oval, startAngle, endAngle - startAngle);
 
   @override
   ArcElement lerpFrom(covariant ArcElement from, double t) => ArcElement(
-    oval: Rect.lerp(from.oval, oval, t)!,
-    startAngle: lerpDouble(from.startAngle, startAngle, t)!,
-    endAngle: lerpDouble(from.endAngle, endAngle, t)!,
-    style: style.lerpFrom(from.style, t),
-    rotation: lerpDouble(from.rotation, rotation, t),
-    rotationAxis: Offset.lerp(from.rotationAxis, rotationAxis, t),
-  );
+        oval: Rect.lerp(from.oval, oval, t)!,
+        startAngle: lerpDouble(from.startAngle, startAngle, t)!,
+        endAngle: lerpDouble(from.endAngle, endAngle, t)!,
+        style: style.lerpFrom(from.style, t),
+        rotation: lerpDouble(from.rotation, rotation, t),
+        rotationAxis: Offset.lerp(from.rotationAxis, rotationAxis, t),
+      );
 
   @override
   List<Segment> toSegments() => [
-    MoveSegment(end: getArcPoint(oval, startAngle)),
-    ArcSegment(oval: oval, startAngle: startAngle, endAngle: endAngle, tag: SegmentTags.top),
-  ];
+        MoveSegment(end: getArcPoint(oval, startAngle)),
+        ArcSegment(
+            oval: oval,
+            startAngle: startAngle,
+            endAngle: endAngle,
+            tag: SegmentTags.top),
+      ];
+
+  @override
+  bool operator ==(Object other) =>
+      other is ArcElement &&
+      super == other &&
+      oval == other.oval &&
+      startAngle == other.startAngle &&
+      endAngle == other.endAngle;
 }

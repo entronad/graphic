@@ -7,6 +7,7 @@ import 'package:graphic/src/encode/label.dart';
 import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/encode/shape.dart';
 import 'package:graphic/src/encode/size.dart';
+import 'package:graphic/src/graffiti/transition.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/shape/partition.dart';
 
@@ -16,8 +17,7 @@ import 'modifier/modifier.dart';
 /// The specification of a partition mark.
 ///
 /// Partitions separete a set of points into two or more subsets.
-abstract class PartitionMark<S extends PartitionShape>
-    extends Mark<S> {
+abstract class PartitionMark<S extends PartitionShape> extends Mark<S> {
   /// Creates a partition mark.
   PartitionMark({
     ColorEncode? color,
@@ -31,6 +31,8 @@ abstract class PartitionMark<S extends PartitionShape>
     int? layer,
     Selected? selected,
     StreamController<Selected?>? selectionStream,
+    Transition? transition,
+    MarkEntrance? entrance,
   }) : super(
           color: color,
           elevation: elevation,
@@ -43,5 +45,7 @@ abstract class PartitionMark<S extends PartitionShape>
           layer: layer,
           selected: selected,
           selectionStream: selectionStream,
+          transition: transition,
+          entrance: entrance,
         );
 }

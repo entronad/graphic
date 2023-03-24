@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:graphic/src/graffiti/element/element.dart';
-import 'package:graphic/src/graffiti/element/group.dart';
 import 'package:graphic/src/graffiti/element/rect.dart';
+import 'package:graphic/src/graffiti/transition.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
@@ -38,6 +38,14 @@ import 'line.dart';
 import 'point.dart';
 import 'polygon.dart';
 
+enum MarkEntrance {
+  x,
+  y,
+  xy,
+  size,
+  alpha,
+}
+
 /// The specification of a geometry mark.
 ///
 /// A geometry mark applies a certain graphing rule to get a graph from the
@@ -59,6 +67,8 @@ abstract class Mark<S extends Shape> {
     this.layer,
     this.selected,
     this.selectionStream,
+    this.transition,
+    this.entrance,
   })  : assert(isSingle([color, gradient], allowNone: true)),
         assert(selected == null || selected.keys.length == 1);
 
@@ -137,6 +147,10 @@ abstract class Mark<S extends Shape> {
   /// make sure it is broadcast.
   StreamController<Selected?>? selectionStream;
 
+  Transition? transition;
+
+  MarkEntrance? entrance;
+
   @override
   bool operator ==(Object other) =>
       other is Mark &&
@@ -150,10 +164,12 @@ abstract class Mark<S extends Shape> {
       deepCollectionEquals(modifiers, other.modifiers) &&
       layer == other.layer &&
       selected == other.selected &&
-      selectionStream == other.selectionStream;
+      selectionStream == other.selectionStream &&
+      transition == other.transition &&
+      entrance == other.entrance;
 }
 
-/// The operator to group aeses.
+/// The operator to group attributes.
 ///
 /// The nesters, no matter `x * y`, `a + y`, or `a / y`, will be used in cartesian
 /// production. If empty, all eases will be in a same group.
@@ -165,12 +181,12 @@ abstract class Mark<S extends Shape> {
 ///
 /// List is the best way to store groups. If nester values are needed for indexing,
 /// store them in another corresponding list. List indexes are better then map keys.
-class GroupOp extends Operator<AesGroups> {
+class GroupOp extends Operator<AttributesGroups> {
   GroupOp(Map<String, dynamic> params) : super(params);
 
   @override
-  AesGroups evaluate() {
-    final aeses = params['aeses'] as List<Attributes>;
+  AttributesGroups evaluate() {
+    final attributes = params['attributes'] as List<Attributes>;
     final tuples = params['tuples'] as List<Tuple>;
     final nesters = params['nesters'] as List<AlgForm>;
     final scales = params['scales'] as Map<String, ScaleConv>;
@@ -182,7 +198,7 @@ class GroupOp extends Operator<AesGroups> {
       }
     }
 
-    var rst = [aeses];
+    var rst = [attributes];
 
     for (var nester in nesterVariables) {
       final tmpRst = <List<Attributes>>[];
@@ -215,12 +231,15 @@ class MarkPrimitiveRenderOp extends Render {
 
   @override
   void render() {
-    final groups = params['groups'] as AesGroups;
+    final groups = params['groups'] as AttributesGroups;
     final coord = params['coord'] as CoordConv;
     final origin = params['origin'] as Offset;
+    final transition = params['transition'] as Transition?;
+    final entrance = params['entrance'] as MarkEntrance;
+
+    final clip = RectElement(rect: coord.region, style: PaintStyle());
 
     final rst = <MarkElement>[];
- 
     for (var group in groups) {
       rst.addAll(group.first.shape.drawGroupPrimitives(
         group,
@@ -229,7 +248,21 @@ class MarkPrimitiveRenderOp extends Render {
       ));
     }
 
-    scene.set(rst, RectElement(rect: coord.region));
+    if (transition != null && !scene.hasCurrent) {
+      final entranceRst = <MarkElement>[];
+      for (var group in groups) {
+        final entranceGroup =
+            group.map((item) => item.deflate(entrance)).toList();
+        entranceRst.addAll(entranceGroup.first.shape.drawGroupPrimitives(
+          entranceGroup,
+          coord,
+          origin,
+        ));
+      }
+      scene.set(entranceRst, clip);
+    }
+
+    scene.set(rst, clip);
   }
 }
 
@@ -242,12 +275,15 @@ class MarkLabelRenderOp extends Render {
 
   @override
   void render() {
-    final groups = params['groups'] as AesGroups;
+    final groups = params['groups'] as AttributesGroups;
     final coord = params['coord'] as CoordConv;
     final origin = params['origin'] as Offset;
+    final transition = params['transition'] as Transition?;
+    final entrance = params['entrance'] as MarkEntrance;
+
+    final clip = RectElement(rect: coord.region, style: PaintStyle());
 
     final rst = <MarkElement>[];
- 
     for (var group in groups) {
       rst.addAll(group.first.shape.drawGroupLabels(
         group,
@@ -256,7 +292,21 @@ class MarkLabelRenderOp extends Render {
       ));
     }
 
-    scene.set(rst, RectElement(rect: coord.region));
+    if (transition != null && !scene.hasCurrent) {
+      final entranceRst = <MarkElement>[];
+      for (var group in groups) {
+        final entranceGroup =
+            group.map((item) => item.deflate(entrance)).toList();
+        entranceRst.addAll(entranceGroup.first.shape.drawGroupLabels(
+          entranceGroup,
+          coord,
+          origin,
+        ));
+      }
+      scene.set(entranceRst, clip);
+    }
+
+    scene.set(rst, clip);
   }
 }
 

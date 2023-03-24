@@ -4,7 +4,6 @@ import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/element/element.dart';
-import 'package:graphic/src/graffiti/element/group.dart';
 import 'package:graphic/src/graffiti/element/path.dart';
 import 'package:graphic/src/graffiti/element/segment/close.dart';
 import 'package:graphic/src/graffiti/element/segment/line.dart';
@@ -113,7 +112,9 @@ class CandlestickShape extends Shape {
   }
 
   @override
-  List<MarkElement> drawGroupLabels(List<Attributes> group, CoordConv coord, Offset origin) => [];
+  List<MarkElement> drawGroupLabels(
+          List<Attributes> group, CoordConv coord, Offset origin) =>
+      [];
 
   @override
   Offset representPoint(List<Offset> position) => position[1];

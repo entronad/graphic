@@ -182,7 +182,7 @@ class Chart<D> extends StatefulWidget {
 /// The methods calling order is:
 ///
 /// [initState] --> [build] --> [_ChartLayoutDelegate.getPositionForChild] --> [_ChartPainter.paint]
-class ChartState<D> extends State<Chart<D>> with SingleTickerProviderStateMixin {
+class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
   /// The view that controlls the data visualization.
   ///
   /// For a chart widget, to "rebuild" means to create a new [view].
@@ -719,6 +719,12 @@ class ChartState<D> extends State<Chart<D>> with SingleTickerProviderStateMixin 
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    view?.dispose();
+    super.dispose();
   }
 }
 

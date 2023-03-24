@@ -241,10 +241,42 @@ class EchartsPage extends StatelessWidget {
                         dash: [2],
                       ),
                     ),
-                    CustomAnnotation(renderer: (offset, _) => [CircleElement(center: offset, radius: 5, style: PaintStyle(fillColor: const Color(0xff5470c6)))], values: ['Wed', 13]),
-                    CustomAnnotation(renderer: (offset, _) => [CircleElement(center: offset, radius: 5, style: PaintStyle(fillColor: const Color(0xff5470c6)))], values: ['Sun', 9]),
-                    CustomAnnotation(renderer: (offset, _) => [CircleElement(center: offset, radius: 5, style: PaintStyle(fillColor: const Color(0xff91cc75)))], values: ['Tue', -2]),
-                    CustomAnnotation(renderer: (offset, _) => [CircleElement(center: offset, radius: 5, style: PaintStyle(fillColor: const Color(0xff91cc75)))], values: ['Thu', 5]),
+                    CustomAnnotation(
+                        renderer: (offset, _) => [
+                              CircleElement(
+                                  center: offset,
+                                  radius: 5,
+                                  style: PaintStyle(
+                                      fillColor: const Color(0xff5470c6)))
+                            ],
+                        values: ['Wed', 13]),
+                    CustomAnnotation(
+                        renderer: (offset, _) => [
+                              CircleElement(
+                                  center: offset,
+                                  radius: 5,
+                                  style: PaintStyle(
+                                      fillColor: const Color(0xff5470c6)))
+                            ],
+                        values: ['Sun', 9]),
+                    CustomAnnotation(
+                        renderer: (offset, _) => [
+                              CircleElement(
+                                  center: offset,
+                                  radius: 5,
+                                  style: PaintStyle(
+                                      fillColor: const Color(0xff91cc75)))
+                            ],
+                        values: ['Tue', -2]),
+                    CustomAnnotation(
+                        renderer: (offset, _) => [
+                              CircleElement(
+                                  center: offset,
+                                  radius: 5,
+                                  style: PaintStyle(
+                                      fillColor: const Color(0xff91cc75)))
+                            ],
+                        values: ['Thu', 5]),
                     TagAnnotation(
                       label: Label(
                           '13',

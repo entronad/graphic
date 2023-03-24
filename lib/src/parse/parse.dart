@@ -70,8 +70,7 @@ void parse<D>(
 
   final gestureEvent = view.add(EventOp<GestureEvent>());
 
-  final gestureStream =
-      spec.gestureStream ?? StreamController<GestureEvent>();
+  final gestureStream = spec.gestureStream ?? StreamController<GestureEvent>();
   view.bindStream(gestureStream, gestureEvent);
   view.gestureStream = gestureStream;
 
@@ -109,8 +108,8 @@ void parse<D>(
   }));
 
   if (coordSpec.color != null) {
-    final regionBackgroundScene =
-        view.graffiti.createScene(layer: coordSpec.layer ?? 0, chartLayer: ChartLayers.regionBackground);
+    final regionBackgroundScene = view.graffiti.createScene(
+        layer: coordSpec.layer ?? 0, chartLayer: ChartLayers.regionBackground);
     if (coordSpec is RectCoord) {
       view.add(RectRegionColorRenderOp({
         'region': region,
@@ -123,8 +122,8 @@ void parse<D>(
       }, regionBackgroundScene, view));
     }
   } else if (coordSpec.gradient != null) {
-    final regionBackgroundScene =
-        view.graffiti.createScene(layer: coordSpec.layer ?? 0, chartLayer: ChartLayers.regionBackground);
+    final regionBackgroundScene = view.graffiti.createScene(
+        layer: coordSpec.layer ?? 0, chartLayer: ChartLayers.regionBackground);
     if (coordSpec is RectCoord) {
       view.add(RectRegionGradientRenderOp({
         'region': region,
@@ -327,8 +326,9 @@ void parse<D>(
     }));
 
     for (var name in selectSpecs.keys) {
-      final selectorScene =
-          view.graffiti.createScene(layer: selectSpecs[name]!.layer ?? 0, chartLayer: ChartLayers.selector);
+      final selectorScene = view.graffiti.createScene(
+          layer: selectSpecs[name]!.layer ?? 0,
+          chartLayer: ChartLayers.selector);
       view.add(SelectorRenderOp({
         'selectors': selectors,
         'name': name,
@@ -340,7 +340,7 @@ void parse<D>(
 
   // For all marks, they either all have or all have not select operator.
   final selectOpList = <SelectOp>[];
-  final groupsList = <Operator<AesGroups>>[];
+  final groupsList = <Operator<AttributesGroups>>[];
   // First term of the form of the first mark, in order to get first variable
   // of each dimension.
   AlgTerm? firstVariables;
@@ -370,7 +370,7 @@ void parse<D>(
       'origin': origin,
     }));
 
-    final aeses = view.add(AesOp({
+    final attributes = view.add(AesOp({
       'scaleds': scaleds,
       'tuples': tuples,
       'positionEncoder': positionEncoder,
@@ -417,8 +417,8 @@ void parse<D>(
             ),
     }));
 
-    Operator<AesGroups> groups = view.add(GroupOp({
-      'aeses': aeses,
+    Operator<AttributesGroups> groups = view.add(GroupOp({
+      'attributes': attributes,
       'tuples': tuples,
       'nesters': nesters,
       'scales': scales,
@@ -492,20 +492,28 @@ void parse<D>(
 
     groupsList.add(groups);
 
-    final markPrimitiveScene =
-        view.graffiti.createScene(layer: markSpec.layer ?? 0, chartLayer: ChartLayers.mark);
+    final markPrimitiveScene = view.graffiti.createScene(
+        layer: markSpec.layer ?? 0,
+        chartLayer: ChartLayers.mark,
+        transition: markSpec.transition);
     view.add(MarkPrimitiveRenderOp({
       'groups': groups,
       'coord': coord,
       'origin': origin,
+      'transition': markSpec.transition,
+      'entrance': markSpec.entrance ?? MarkEntrance.alpha,
     }, markPrimitiveScene, view));
 
-    final markLabelScene =
-        view.graffiti.createScene(layer: markSpec.layer ?? 0, chartLayer: ChartLayers.mark);
+    final markLabelScene = view.graffiti.createScene(
+        layer: markSpec.layer ?? 0,
+        chartLayer: ChartLayers.mark,
+        transition: markSpec.transition);
     view.add(MarkLabelRenderOp({
       'groups': groups,
       'coord': coord,
       'origin': origin,
+      'transition': markSpec.transition,
+      'entrance': markSpec.entrance ?? MarkEntrance.alpha,
     }, markLabelScene, view));
   }
 
@@ -529,7 +537,8 @@ void parse<D>(
         'gridMapper': axisSpec.gridMapper,
       }));
 
-      final axisScene = view.graffiti.createScene(layer: axisSpec.layer ?? 0, chartLayer: ChartLayers.axis);
+      final axisScene = view.graffiti.createScene(
+          layer: axisSpec.layer ?? 0, chartLayer: ChartLayers.axis);
       view.add(AxisRenderOp({
         'coord': coord,
         'dim': dim,
@@ -539,7 +548,8 @@ void parse<D>(
         'ticks': ticks,
       }, axisScene, view));
 
-      final gridScene = view.graffiti.createScene(layer: axisSpec.gridZIndex ?? 0, chartLayer: ChartLayers.grid);
+      final gridScene = view.graffiti.createScene(
+          layer: axisSpec.gridZIndex ?? 0, chartLayer: ChartLayers.grid);
       view.add(GridRenderOp({
         'coord': coord,
         'dim': dim,
@@ -554,8 +564,8 @@ void parse<D>(
         final dim = annotSpec.dim ?? Dim.x;
         final variable =
             annotSpec.variable ?? firstVariables![dim == Dim.x ? 0 : 1];
-        final annotScene =
-            view.graffiti.createScene(layer: annotSpec.layer ?? 0, chartLayer: ChartLayers.regionAnnot);
+        final annotScene = view.graffiti.createScene(
+            layer: annotSpec.layer ?? 0, chartLayer: ChartLayers.regionAnnot);
         view.add(RegionAnnotRenderOp({
           'dim': dim,
           'variable': variable,
@@ -569,8 +579,8 @@ void parse<D>(
         final dim = annotSpec.dim ?? Dim.x;
         final variable =
             annotSpec.variable ?? firstVariables![dim == Dim.x ? 0 : 1];
-        final annotScene =
-            view.graffiti.createScene(layer: annotSpec.layer ?? 0, chartLayer: ChartLayers.lineAnnot);
+        final annotScene = view.graffiti.createScene(
+            layer: annotSpec.layer ?? 0, chartLayer: ChartLayers.lineAnnot);
         view.add(LineAnnotRenderOp({
           'dim': dim,
           'variable': variable,
@@ -614,8 +624,8 @@ void parse<D>(
           }));
         }
 
-        final annotScene =
-            view.graffiti.createScene(layer: annotSpec.layer ?? 0, chartLayer: ChartLayers.elementAnnot);
+        final annotScene = view.graffiti.createScene(
+            layer: annotSpec.layer ?? 0, chartLayer: ChartLayers.elementAnnot);
         view.add(ElementAnnotRenderOp({
           'elements': annot,
           'clip': annotSpec.clip ?? false,
@@ -633,8 +643,8 @@ void parse<D>(
     final crosshairSpec = spec.crosshair!;
     final markIndex = crosshairSpec.mark ?? 0;
 
-    final crosshairScene =
-        view.graffiti.createScene(layer: crosshairSpec.layer ?? 0, chartLayer: ChartLayers.crosshair);
+    final crosshairScene = view.graffiti.createScene(
+        layer: crosshairSpec.layer ?? 0, chartLayer: ChartLayers.crosshair);
     view.add(CrosshairRenderOp({
       'selections': crosshairSpec.selections ?? spec.selections!.keys.toSet(),
       'selectors': selectors!,
@@ -656,8 +666,8 @@ void parse<D>(
     final tooltipSpec = spec.tooltip!;
     final markIndex = tooltipSpec.mark ?? 0;
 
-    final tooltipScene =
-        view.graffiti.createScene(layer: tooltipSpec.layer ?? 0, chartLayer: ChartLayers.tooltip);
+    final tooltipScene = view.graffiti.createScene(
+        layer: tooltipSpec.layer ?? 0, chartLayer: ChartLayers.tooltip);
     view.add(TooltipRenderOp({
       'selections': tooltipSpec.selections ?? spec.selections!.keys.toSet(),
       'selectors': selectors!,

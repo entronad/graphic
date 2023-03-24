@@ -26,7 +26,7 @@ class Dataflow {
   );
 
   ///The list of subscriptions this Dataflow currently listens to.
-  final List<StreamSubscription<dynamic>> _streamSubscription = [];
+  final List<StreamSubscription<dynamic>> _streamSubscriptions = [];
 
   /// The [Future] instance when this dataflow is running.
   ///
@@ -93,10 +93,10 @@ class Dataflow {
 
   /// Dispose of all the listeners.
   /// This function should be called whenever the parent widget of this view rebuilds.
-  Future<void> dispose() async {
-    final futures = _streamSubscription.map((e) => e.cancel());
-    await Future.wait(futures);
-    _streamSubscription.clear();
+  void dispose() {
+    for (var subscription in _streamSubscriptions) {
+      subscription.cancel();
+    }
   }
 
   /// Evaluates the touched operators.
@@ -175,7 +175,7 @@ class Dataflow {
   ) {
     assert(target.stream == null);
     // adds streamSubscription to list, to dispose later.
-    _streamSubscription.add(stream.stream.listen((value) {
+    _streamSubscriptions.add(stream.stream.listen((value) {
       _update(target, value);
       run();
     }));

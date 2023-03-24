@@ -11,15 +11,29 @@ PaintStyle getPaintStyle(
 ]) {
   if (hollow) {
     if (attributes.gradient != null) {
-      return PaintStyle(strokeGradient: attributes.gradient, strokeWidth: strokeWidth, elevation: attributes.elevation, gradientBounds: gradientBounds);
+      return PaintStyle(
+          strokeGradient: attributes.gradient,
+          strokeWidth: strokeWidth,
+          elevation: attributes.elevation,
+          gradientBounds: gradientBounds);
     } else {
-      return PaintStyle(strokeColor: attributes.color, strokeWidth: strokeWidth, elevation: attributes.elevation, gradientBounds: gradientBounds);
+      return PaintStyle(
+          strokeColor: attributes.color,
+          strokeWidth: strokeWidth,
+          elevation: attributes.elevation,
+          gradientBounds: gradientBounds);
     }
   } else {
     if (attributes.gradient != null) {
-      return PaintStyle(fillGradient: attributes.gradient, elevation: attributes.elevation, gradientBounds: gradientBounds);
+      return PaintStyle(
+          fillGradient: attributes.gradient,
+          elevation: attributes.elevation,
+          gradientBounds: gradientBounds);
     } else {
-      return PaintStyle(fillColor: attributes.color, elevation: attributes.elevation, gradientBounds: gradientBounds);
+      return PaintStyle(
+          fillColor: attributes.color,
+          elevation: attributes.elevation,
+          gradientBounds: gradientBounds);
     }
   }
 }

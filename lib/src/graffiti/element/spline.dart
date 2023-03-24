@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:graphic/src/util/collection.dart';
+
 import 'element.dart';
 import 'segment/segment.dart';
 import 'segment/move.dart';
@@ -9,20 +11,19 @@ class SplineElement extends PrimitiveElement {
   SplineElement({
     required this.start,
     required this.cubics,
-
-    PaintStyle? style,
+    required PaintStyle style,
     double? rotation,
     Offset? rotationAxis,
   }) : super(
-         style: style ?? defaultPaintStyle,
-         rotation: rotation,
-         rotationAxis: rotationAxis,
-       );
+          style: style,
+          rotation: rotation,
+          rotationAxis: rotationAxis,
+        );
 
   final Offset start;
 
-  final List<List<Offset>> cubics; 
-  
+  final List<List<Offset>> cubics;
+
   @override
   void drawPath(Path path) {
     path.moveTo(start.dx, start.dy);
@@ -77,9 +78,17 @@ class SplineElement extends PrimitiveElement {
     rst.add(MoveSegment(end: Offset(start.dx, start.dy)));
 
     for (var cubic in cubics) {
-      rst.add(CubicSegment(control1: cubic[0], control2: cubic[1], end: cubic[2]));
+      rst.add(
+          CubicSegment(control1: cubic[0], control2: cubic[1], end: cubic[2]));
     }
 
     return rst;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is SplineElement &&
+      super == other &&
+      start == other.start &&
+      deepCollectionEquals(cubics, other.cubics);
 }

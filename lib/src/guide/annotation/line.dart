@@ -73,25 +73,29 @@ class LineAnnotRenderOp extends AnnotRenderOp {
     final position = scale.normalize(scale.convert(value));
 
     if (coord is PolarCoordConv && coord.getCanvasDim(dim) == Dim.y) {
-      scene.set([ArcElement(
-        oval: Rect.fromCircle(
-                center: coord.center,
-                radius: coord.convertRadius(position),
-              ),
-        startAngle: coord.angles.first,
-        endAngle: coord.angles.last,
-        style: style,
-      )], RectElement(rect: coord.region));
+      scene.set([
+        ArcElement(
+          oval: Rect.fromCircle(
+            center: coord.center,
+            radius: coord.convertRadius(position),
+          ),
+          startAngle: coord.angles.first,
+          endAngle: coord.angles.last,
+          style: style,
+        )
+      ], RectElement(rect: coord.region, style: PaintStyle()));
     } else {
-      scene.set([LineElement(
-        start: coord.convert(
-              dim == Dim.x ? Offset(position, 0) : Offset(0, position),
-            ),
-            end: coord.convert(
-              dim == Dim.x ? Offset(position, 1) : Offset(1, position),
-            ),
-            style: style,
-      )], RectElement(rect: coord.region));
+      scene.set([
+        LineElement(
+          start: coord.convert(
+            dim == Dim.x ? Offset(position, 0) : Offset(0, position),
+          ),
+          end: coord.convert(
+            dim == Dim.x ? Offset(position, 1) : Offset(1, position),
+          ),
+          style: style,
+        )
+      ], RectElement(rect: coord.region, style: PaintStyle()));
     }
   }
 }

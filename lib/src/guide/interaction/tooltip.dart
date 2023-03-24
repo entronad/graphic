@@ -194,7 +194,7 @@ class TooltipRenderOp extends Render {
     final selected = params['selected'] as Selected?;
     final selectionSpecs = params['selectionSpecs'] as Map<String, Selection>;
     final coord = params['coord'] as CoordConv;
-    final groups = params['groups'] as AesGroups;
+    final groups = params['groups'] as AttributesGroups;
     final tuples = params['tuples'] as List<Tuple>;
     final align = params['align'] as Alignment;
     final offset = params['offset'] as Offset?;
@@ -365,8 +365,16 @@ class TooltipRenderOp extends Render {
       }
 
       elements = <MarkElement>[
-        RectElement(rect: windowRect, borderRadius: radius != null ? BorderRadius.all(radius) : null, style: PaintStyle(fillColor: backgroundColor, elevation: elevation)),
-        LabelElement(text: textContent, anchor: textPaintPoint, style: LabelStyle(textStyle: textStyle, align: Alignment.bottomRight)),
+        RectElement(
+            rect: windowRect,
+            borderRadius: radius != null ? BorderRadius.all(radius) : null,
+            style:
+                PaintStyle(fillColor: backgroundColor, elevation: elevation)),
+        LabelElement(
+            text: textContent,
+            anchor: textPaintPoint,
+            style:
+                LabelStyle(textStyle: textStyle, align: Alignment.bottomRight)),
       ];
     }
 

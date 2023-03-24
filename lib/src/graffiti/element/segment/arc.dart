@@ -11,11 +11,10 @@ class ArcSegment extends Segment {
     required this.oval,
     required this.startAngle,
     required this.endAngle,
-
     String? tag,
   }) : super(
-    tag: tag,
-  );
+          tag: tag,
+        );
 
   final Rect oval;
 
@@ -25,15 +24,15 @@ class ArcSegment extends Segment {
 
   @override
   void drawPath(Path path) =>
-    path.arcTo(oval, startAngle, endAngle - startAngle, false);
+      path.arcTo(oval, startAngle, endAngle - startAngle, false);
 
   @override
   ArcSegment lerpFrom(covariant ArcSegment from, double t) => ArcSegment(
-    oval: Rect.lerp(from.oval, oval, t)!,
-    startAngle: lerpDouble(from.startAngle, startAngle, t)!,
-    endAngle: lerpDouble(from.endAngle, endAngle, t)!,
-    tag: tag,
-  );
+        oval: Rect.lerp(from.oval, oval, t)!,
+        startAngle: lerpDouble(from.startAngle, startAngle, t)!,
+        endAngle: lerpDouble(from.endAngle, endAngle, t)!,
+        tag: tag,
+      );
 
   @override
   CubicSegment toCubic(Offset start) {
@@ -41,20 +40,29 @@ class ArcSegment extends Segment {
     return ArcToPointSegment(
       end: getArcPoint(oval, endAngle),
       radius: Radius.elliptical(oval.width / 2, oval.height / 2),
+      rotation: 0,
       largeArc: sweepAngle.abs() % (pi * 2) > pi,
       clockwise: sweepAngle >= 0,
       tag: tag,
     ).toCubic(start);
   }
-  
+
   @override
   ArcSegment sow(Offset position) => ArcSegment(
-    oval: Rect.fromCircle(center: position, radius: 0),
-    startAngle: startAngle,
-    endAngle: endAngle,
-    tag: tag,
-  );
-  
+        oval: Rect.fromCircle(center: position, radius: 0),
+        startAngle: startAngle,
+        endAngle: endAngle,
+        tag: tag,
+      );
+
   @override
   Offset getEnd() => getArcPoint(oval, endAngle);
+
+  @override
+  bool operator ==(Object other) =>
+      other is ArcSegment &&
+      super == other &&
+      oval == other.oval &&
+      startAngle == other.startAngle &&
+      endAngle == other.endAngle;
 }

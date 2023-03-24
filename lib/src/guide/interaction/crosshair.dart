@@ -88,7 +88,7 @@ class CrosshairRenderOp extends Render {
     final selectors = params['selectors'] as Map<String, Selector>?;
     final selected = params['selected'] as Selected?;
     final coord = params['coord'] as CoordConv;
-    final groups = params['groups'] as AesGroups;
+    final groups = params['groups'] as AttributesGroups;
     final styles = params['styles'] as List<PaintStyle?>;
     final followPointer = params['followPointer'] as List<bool>;
 
@@ -137,25 +137,38 @@ class CrosshairRenderOp extends Render {
     if (coord is RectCoordConv) {
       final canvasCross = coord.convert(cross);
       if (canvasStyleX != null) {
-        elements.add(LineElement(start: Offset(canvasCross.dx, region.top), end: Offset(canvasCross.dx, region.bottom), style: canvasStyleX));
+        elements.add(LineElement(
+            start: Offset(canvasCross.dx, region.top),
+            end: Offset(canvasCross.dx, region.bottom),
+            style: canvasStyleX));
       }
       if (canvasStyleY != null) {
-        elements.add(LineElement(start: Offset(region.left, canvasCross.dy), end: Offset(region.right, canvasCross.dy), style: canvasStyleY));
+        elements.add(LineElement(
+            start: Offset(region.left, canvasCross.dy),
+            end: Offset(region.right, canvasCross.dy),
+            style: canvasStyleY));
       }
     } else {
       final polarCoord = coord as PolarCoordConv;
       if (canvasStyleX != null) {
         final angle = polarCoord
             .convertAngle(polarCoord.transposed ? cross.dy : cross.dx);
-        elements.add(LineElement(start: polarCoord.polarToOffset(angle, coord.startRadius), end: polarCoord.polarToOffset(angle, coord.endRadius), style: canvasStyleX));
+        elements.add(LineElement(
+            start: polarCoord.polarToOffset(angle, coord.startRadius),
+            end: polarCoord.polarToOffset(angle, coord.endRadius),
+            style: canvasStyleX));
       }
       if (canvasStyleY != null) {
         final r = polarCoord
             .convertRadius(polarCoord.transposed ? cross.dx : cross.dy);
-        elements.add(ArcElement(oval: Rect.fromCircle(center: coord.center, radius: r), startAngle: coord.startAngle, endAngle: coord.endAngle, style: canvasStyleY));
+        elements.add(ArcElement(
+            oval: Rect.fromCircle(center: coord.center, radius: r),
+            startAngle: coord.startAngle,
+            endAngle: coord.endAngle,
+            style: canvasStyleY));
       }
     }
 
-    scene.set(elements, RectElement(rect: coord.region));
+    scene.set(elements, RectElement(rect: coord.region, style: PaintStyle()));
   }
 }

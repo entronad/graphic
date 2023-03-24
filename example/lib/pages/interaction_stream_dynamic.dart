@@ -129,8 +129,10 @@ class InteractionStreamDynamicPageState
                   crosshair: CrosshairGuide(
                     followPointer: [true, false],
                     styles: [
-                      PaintStyle(strokeColor: const Color(0xffbfbfbf), dash: [4, 2]),
-                      PaintStyle(strokeColor: const Color(0xffbfbfbf), dash: [4, 2]),
+                      PaintStyle(
+                          strokeColor: const Color(0xffbfbfbf), dash: [4, 2]),
+                      PaintStyle(
+                          strokeColor: const Color(0xffbfbfbf), dash: [4, 2]),
                     ],
                   ),
                   gestureStream: priceVolumeStream,
@@ -175,8 +177,10 @@ class InteractionStreamDynamicPageState
                   crosshair: CrosshairGuide(
                     followPointer: [true, false],
                     styles: [
-                      PaintStyle(strokeColor: const Color(0xffbfbfbf), dash: [4, 2]),
-                      PaintStyle(strokeColor: const Color(0xffbfbfbf), dash: [4, 2]),
+                      PaintStyle(
+                          strokeColor: const Color(0xffbfbfbf), dash: [4, 2]),
+                      PaintStyle(
+                          strokeColor: const Color(0xffbfbfbf), dash: [4, 2]),
                     ],
                   ),
                   gestureStream: priceVolumeStream,

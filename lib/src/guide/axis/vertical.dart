@@ -21,7 +21,10 @@ List<MarkElement>? renderVerticalAxis(
   final x = region.left + region.width * position;
 
   if (line != null) {
-    rst.add(LineElement(start: Offset(x, region.bottom), end: Offset(x, region.top), style: line));
+    rst.add(LineElement(
+        start: Offset(x, region.bottom),
+        end: Offset(x, region.top),
+        style: line));
   }
 
   for (var tick in ticks) {
@@ -30,10 +33,17 @@ List<MarkElement>? renderVerticalAxis(
     final y = coordBottom - tick.position * (coordBottom - coordTop);
     if (y >= region.top && y <= region.bottom) {
       if (tick.tickLine != null) {
-        rst.add(LineElement(start: Offset(x, y), end: Offset(x - tick.tickLine!.length * flipSign, y), style: tick.tickLine!.style));
+        rst.add(LineElement(
+            start: Offset(x, y),
+            end: Offset(x - tick.tickLine!.length * flipSign, y),
+            style: tick.tickLine!.style));
       }
       if (tick.haveLabel) {
-        rst.add(LabelElement(text: tick.text!, anchor: Offset(x, y), defaultAlign: flip ? Alignment.centerRight : Alignment.centerLeft, style: tick.label));
+        rst.add(LabelElement(
+            text: tick.text!,
+            anchor: Offset(x, y),
+            defaultAlign: flip ? Alignment.centerRight : Alignment.centerLeft,
+            style: tick.label!));
       }
     }
   }
@@ -55,7 +65,10 @@ List<MarkElement>? renderVerticalGrid(
       final coordTop = coord.verticals.last;
       final y = coordBottom - tick.position * (coordBottom - coordTop);
       if (y >= region.top && y <= region.bottom) {
-        rst.add(LineElement(start: Offset(region.left, y), end: Offset(region.right, y), style: tick.grid));
+        rst.add(LineElement(
+            start: Offset(region.left, y),
+            end: Offset(region.right, y),
+            style: tick.grid!));
       }
     }
   }

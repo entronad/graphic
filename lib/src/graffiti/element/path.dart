@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:graphic/src/util/collection.dart';
+
 import 'element.dart';
 import 'segment/segment.dart';
 import 'segment/move.dart';
@@ -7,19 +9,18 @@ import 'segment/move.dart';
 class PathElement extends PrimitiveElement {
   PathElement({
     required this.segments,
-
-    PaintStyle? style,
+    required PaintStyle style,
     double? rotation,
     Offset? rotationAxis,
-  }) : assert(segments.first is MoveSegment),
-  super(
-    style: style ?? defaultPaintStyle,
-    rotation: rotation,
-    rotationAxis: rotationAxis,
-  );
+  })  : assert(segments.first is MoveSegment),
+        super(
+          style: style,
+          rotation: rotation,
+          rotationAxis: rotationAxis,
+        );
 
   final List<Segment> segments;
-  
+
   @override
   void drawPath(Path path) {
     for (var segment in segments) {
@@ -29,12 +30,18 @@ class PathElement extends PrimitiveElement {
 
   @override
   List<Segment> toSegments() => segments;
-  
+
   @override
   PathElement lerpFrom(covariant PathElement from, double t) => PathElement(
-    segments: lerpSegments(from.segments, segments, t),
-    style: style.lerpFrom(from.style, t),
-    rotation: lerpDouble(from.rotation, rotation, t),
-    rotationAxis: Offset.lerp(from.rotationAxis, rotationAxis, t),
-  );
+        segments: lerpSegments(from.segments, segments, t),
+        style: style.lerpFrom(from.style, t),
+        rotation: lerpDouble(from.rotation, rotation, t),
+        rotationAxis: Offset.lerp(from.rotationAxis, rotationAxis, t),
+      );
+
+  @override
+  bool operator ==(Object other) =>
+      other is PathElement &&
+      super == other &&
+      deepCollectionEquals(segments, other.segments);
 }

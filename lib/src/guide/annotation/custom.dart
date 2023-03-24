@@ -38,7 +38,8 @@ class CustomAnnotOp extends ElementAnnotOp {
   List<MarkElement>? evaluate() {
     final anchor = params['anchor'] as Offset;
     final size = params['size'] as Size;
-    final renderer = params['renderer'] as List<MarkElement> Function(Offset, Size);
+    final renderer =
+        params['renderer'] as List<MarkElement> Function(Offset, Size);
 
     return renderer(anchor, size);
   }

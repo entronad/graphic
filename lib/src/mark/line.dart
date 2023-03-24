@@ -8,11 +8,13 @@ import 'package:graphic/src/encode/label.dart';
 import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/encode/shape.dart';
 import 'package:graphic/src/encode/size.dart';
+import 'package:graphic/src/graffiti/transition.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/shape/line.dart';
 
 import 'function.dart';
 import 'modifier/modifier.dart';
+import 'mark.dart';
 
 /// The specification of a line mark.
 ///
@@ -38,6 +40,8 @@ class LineMark extends FunctionMark<LineShape> {
     int? layer,
     Selected? selected,
     StreamController<Selected?>? selectionStream,
+    Transition? transition,
+    MarkEntrance? entrance,
   }) : super(
           color: color,
           elevation: elevation,
@@ -50,6 +54,8 @@ class LineMark extends FunctionMark<LineShape> {
           layer: layer,
           selected: selected,
           selectionStream: selectionStream,
+          transition: transition,
+          entrance: entrance,
         );
 }
 

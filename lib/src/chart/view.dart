@@ -27,6 +27,7 @@ class View<D> extends Dataflow {
     // Initialization.
     run(init: true);
   }
+
   /// The rendering engine.
   final Graffiti graffiti;
 
@@ -92,5 +93,11 @@ class View<D> extends Dataflow {
     }
 
     return this;
+  }
+
+  @override
+  void dispose() {
+    graffiti.dispose();
+    super.dispose();
   }
 }

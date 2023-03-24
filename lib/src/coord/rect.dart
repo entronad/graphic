@@ -197,6 +197,10 @@ class RectRegionGradientRenderOp extends RegionBackgroundRenderOp {
     final region = params['region'] as Rect;
     final gradient = params['gradient'] as Gradient;
 
-    scene.set([RectElement(rect: region, style: PaintStyle(fillGradient: gradient, gradientBounds: region))]);
+    scene.set([
+      RectElement(
+          rect: region,
+          style: PaintStyle(fillGradient: gradient, gradientBounds: region))
+    ]);
   }
 }

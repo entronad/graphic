@@ -15,4 +15,12 @@ class Transition {
   final bool repeat;
 
   final bool repeatReverse;
+
+  @override
+  bool operator ==(Object other) =>
+      other is Transition &&
+      duration == other.duration &&
+      curve == other.curve &&
+      repeat == other.repeat &&
+      repeatReverse == other.repeatReverse;
 }

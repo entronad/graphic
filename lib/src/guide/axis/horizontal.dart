@@ -21,7 +21,10 @@ List<MarkElement>? renderHorizontalAxis(
   final y = region.bottom - region.height * position;
 
   if (line != null) {
-    rst.add(LineElement(start: Offset(region.left, y), end: Offset(region.right, y), style: line));
+    rst.add(LineElement(
+        start: Offset(region.left, y),
+        end: Offset(region.right, y),
+        style: line));
   }
 
   for (var tick in ticks) {
@@ -30,10 +33,17 @@ List<MarkElement>? renderHorizontalAxis(
     final x = coordLeft + tick.position * (coordRight - coordLeft);
     if (x >= region.left && x <= region.right) {
       if (tick.tickLine != null) {
-        rst.add(LineElement(start: Offset(x, y), end: Offset(x, y + tick.tickLine!.length * flipSign), style: tick.tickLine!.style));
+        rst.add(LineElement(
+            start: Offset(x, y),
+            end: Offset(x, y + tick.tickLine!.length * flipSign),
+            style: tick.tickLine!.style));
       }
       if (tick.haveLabel) {
-        rst.add(LabelElement(text: tick.text!, anchor: Offset(x, y), defaultAlign: flip ? Alignment.topCenter : Alignment.bottomCenter, style: tick.label));
+        rst.add(LabelElement(
+            text: tick.text!,
+            anchor: Offset(x, y),
+            defaultAlign: flip ? Alignment.topCenter : Alignment.bottomCenter,
+            style: tick.label!));
       }
     }
   }
@@ -55,7 +65,10 @@ List<MarkElement>? renderHorizontalGrid(
       final coordRight = coord.horizontals.last;
       final x = coordLeft + tick.position * (coordRight - coordLeft);
       if (x >= region.left && x <= region.right) {
-        rst.add(LineElement(start: Offset(x, region.bottom), end: Offset(x, region.top), style: tick.grid));
+        rst.add(LineElement(
+            start: Offset(x, region.bottom),
+            end: Offset(x, region.top),
+            style: tick.grid!));
       }
     }
   }

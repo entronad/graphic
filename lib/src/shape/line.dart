@@ -3,22 +3,28 @@ import 'package:graphic/src/util/collection.dart';
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/util/path.dart';
 
-List<MarkElement> drawLineLabels(List<Attributes> group, CoordConv coord, Offset origin) {
+List<MarkElement> drawLineLabels(
+    List<Attributes> group, CoordConv coord, Offset origin) {
   final labels = <Attributes, Offset>{};
-    for (var item in group) {
-      final position = item.position;
-      if (position.every((point) => point.dy.isFinite)) {
-        final end = coord.convert(position.last);
-        labels[item] = end;
-      }
+  for (var item in group) {
+    final position = item.position;
+    if (position.every((point) => point.dy.isFinite)) {
+      final end = coord.convert(position.last);
+      labels[item] = end;
     }
-    final labelElements = <MarkElement>[];
-    for (var item in labels.keys) {
-      if (item.label != null && item.label!.haveText) {
-        labelElements.add(LabelElement(text: item.label!.text!, anchor: labels[item]!, defaultAlign: coord.transposed ? Alignment.centerRight : Alignment.topCenter, style: item.label!.style));
-      }
+  }
+  final labelElements = <MarkElement>[];
+  for (var item in labels.keys) {
+    if (item.label != null && item.label!.haveText) {
+      labelElements.add(LabelElement(
+          text: item.label!.text!,
+          anchor: labels[item]!,
+          defaultAlign:
+              coord.transposed ? Alignment.centerRight : Alignment.topCenter,
+          style: item.label!.style));
     }
-    return labelElements;
+  }
+  return labelElements;
 }
 
 /// The shape for the line mark.
@@ -99,19 +105,25 @@ class BasicLineShape extends LineShape {
     final primitives = <MarkElement>[];
 
     final represent = group.first;
-    final style = getPaintStyle(represent, true, represent.size ?? defaultSize, coord.region);
+    final style = getPaintStyle(
+        represent, true, represent.size ?? defaultSize, coord.region);
 
     for (var contour in contours) {
       if (smooth) {
-        primitives.add(SplineElement(start: contour.first, cubics: getCubicControls(contour, false, true), style: style));
+        primitives.add(SplineElement(
+            start: contour.first,
+            cubics: getCubicControls(contour, false, true),
+            style: style));
       } else {
         primitives.add(PolylineElement(points: contour, style: style));
       }
     }
-    
+
     return primitives;
   }
 
   @override
-  List<MarkElement> drawGroupLabels(List<Attributes> group, CoordConv coord, Offset origin) => drawLineLabels(group, coord, origin);
+  List<MarkElement> drawGroupLabels(
+          List<Attributes> group, CoordConv coord, Offset origin) =>
+      drawLineLabels(group, coord, origin);
 }

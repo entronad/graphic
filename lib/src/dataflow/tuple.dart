@@ -1,6 +1,8 @@
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
+import 'package:graphic/src/graffiti/element/label.dart';
+import 'package:graphic/src/mark/mark.dart';
 import 'package:graphic/src/scale/scale.dart';
 import 'package:graphic/src/shape/shape.dart';
 import 'package:graphic/src/util/assert.dart';
@@ -70,12 +72,147 @@ class Attributes {
 
   /// The represent point of [position] points.
   Offset get representPoint => shape.representPoint(position);
+
+  Attributes deflate(MarkEntrance entrance) {
+    switch (entrance) {
+      case MarkEntrance.x:
+        return Attributes(
+          index: index,
+          position: position.map((p) => Offset(0, p.dy)).toList(),
+          shape: shape,
+          color: color,
+          gradient: gradient,
+          elevation: elevation,
+          label: label,
+          size: size,
+        );
+      case MarkEntrance.y:
+        return Attributes(
+          index: index,
+          position: position.map((p) => Offset(p.dx, 0)).toList(),
+          shape: shape,
+          color: color,
+          gradient: gradient,
+          elevation: elevation,
+          label: label,
+          size: size,
+        );
+      case MarkEntrance.xy:
+        return Attributes(
+          index: index,
+          position: position.map((p) => Offset.zero).toList(),
+          shape: shape,
+          color: color,
+          gradient: gradient,
+          elevation: elevation,
+          label: label,
+          size: size,
+        );
+      case MarkEntrance.size:
+        return Attributes(
+          index: index,
+          position: position,
+          shape: shape,
+          color: color,
+          gradient: gradient,
+          elevation: elevation,
+          label: label,
+          size: 0,
+        );
+      case MarkEntrance.alpha:
+        final labelColor = label?.style.textStyle?.color;
+        final labelRst = labelColor == null
+            ? label
+            : Label(
+                label!.text,
+                LabelStyle(
+                  textStyle: label!.style.textStyle!.apply(color: labelColor),
+                  span: label!.style.span,
+                  textAlign: label!.style.textAlign,
+                  textDirection: label!.style.textDirection,
+                  textScaleFactor: label!.style.textScaleFactor,
+                  maxLines: label!.style.maxLines,
+                  ellipsis: label!.style.ellipsis,
+                  locale: label!.style.locale,
+                  strutStyle: label!.style.strutStyle,
+                  textWidthBasis: label!.style.textWidthBasis,
+                  textHeightBehavior: label!.style.textHeightBehavior,
+                  minWidth: label!.style.minWidth,
+                  maxWidth: label!.style.maxWidth,
+                  offset: label!.style.offset,
+                  rotation: label!.style.rotation,
+                  align: label!.style.align,
+                ));
+
+        if (gradient != null) {
+          final colorsRst =
+              gradient!.colors.map((color) => color.withAlpha(0)).toList();
+          Gradient gradientRst;
+          if (gradient is LinearGradient) {
+            gradientRst = LinearGradient(
+              begin: (gradient as LinearGradient).begin,
+              end: (gradient as LinearGradient).end,
+              colors: colorsRst,
+              stops: (gradient as LinearGradient).stops,
+              tileMode: (gradient as LinearGradient).tileMode,
+              transform: (gradient as LinearGradient).transform,
+            );
+          } else if (gradient is RadialGradient) {
+            gradientRst = RadialGradient(
+              center: (gradient as RadialGradient).center,
+              radius: (gradient as RadialGradient).radius,
+              colors: colorsRst,
+              stops: (gradient as RadialGradient).stops,
+              tileMode: (gradient as RadialGradient).tileMode,
+              focal: (gradient as RadialGradient).focal,
+              focalRadius: (gradient as RadialGradient).focalRadius,
+              transform: (gradient as RadialGradient).transform,
+            );
+          } else if (gradient is SweepGradient) {
+            gradientRst = SweepGradient(
+              center: (gradient as SweepGradient).center,
+              startAngle: (gradient as SweepGradient).startAngle,
+              endAngle: (gradient as SweepGradient).endAngle,
+              colors: colorsRst,
+              stops: (gradient as SweepGradient).stops,
+              tileMode: (gradient as SweepGradient).tileMode,
+              transform: (gradient as SweepGradient).transform,
+            );
+          } else {
+            throw ArgumentError('Wrong gradient type.');
+          }
+          return Attributes(
+            index: index,
+            position: position,
+            shape: shape,
+            color: color,
+            gradient: gradientRst,
+            elevation: elevation,
+            label: labelRst,
+            size: size,
+          );
+        } else {
+          return Attributes(
+            index: index,
+            position: position,
+            shape: shape,
+            color: color!.withAlpha(0),
+            gradient: gradient,
+            elevation: elevation,
+            label: labelRst,
+            size: size,
+          );
+        }
+      default:
+        throw ArgumentError('Wrong entrance type.');
+    }
+  }
 }
 
 /// Attributes lists for groups.
-typedef AesGroups = List<List<Attributes>>;
+typedef AttributesGroups = List<List<Attributes>>;
 
-extension AesGroupsExt on AesGroups {
+extension AttributesGroupsExt on AttributesGroups {
   /// Gets an attributes form attributes groups by [Aes.index].
   Attributes getAttributes(int index) {
     for (var group in this) {

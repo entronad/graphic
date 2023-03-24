@@ -23,7 +23,12 @@ class Graffiti {
     int chartLayer = 0,
     Transition? transition,
   }) {
-    final scene = Scene(layer: layer, chartLayer: chartLayer, transition: transition, tickerProvider: tickerProvider, repaint: repaint);
+    final scene = Scene(
+        layer: layer,
+        chartLayer: chartLayer,
+        transition: transition,
+        tickerProvider: tickerProvider,
+        repaint: repaint);
     _scenes.add(scene);
     return scene;
   }

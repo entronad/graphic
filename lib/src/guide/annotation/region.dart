@@ -90,34 +90,42 @@ class RegionAnnotRenderOp extends AnnotRenderOp {
     final end = scale.normalize(scale.convert(values.last));
 
     if (coord is RectCoordConv) {
-      scene.set([RectElement(rect: Rect.fromPoints(
-          coord.convert(
-            dim == Dim.x ? Offset(start, 0) : Offset(0, start),
-          ),
-          coord.convert(
-            dim == Dim.x ? Offset(end, 1) : Offset(1, end),
-          ),
-        ), style: style)], RectElement(rect: coord.region));
+      scene.set([
+        RectElement(
+            rect: Rect.fromPoints(
+              coord.convert(
+                dim == Dim.x ? Offset(start, 0) : Offset(0, start),
+              ),
+              coord.convert(
+                dim == Dim.x ? Offset(end, 1) : Offset(1, end),
+              ),
+            ),
+            style: style)
+      ], RectElement(rect: coord.region, style: PaintStyle()));
     } else {
       coord as PolarCoordConv;
       if (coord.getCanvasDim(dim) == Dim.x) {
-        scene.set([SectorElement(
-          center: coord.center,
-          startRadius: coord.radiuses.first,
-          endRadius: coord.radiuses.last,
-          startAngle: coord.convertAngle(start),
-          endAngle: coord.convertAngle(end),
-          style: style,
-        )], RectElement(rect: coord.region));
+        scene.set([
+          SectorElement(
+            center: coord.center,
+            startRadius: coord.radiuses.first,
+            endRadius: coord.radiuses.last,
+            startAngle: coord.convertAngle(start),
+            endAngle: coord.convertAngle(end),
+            style: style,
+          )
+        ], RectElement(rect: coord.region, style: PaintStyle()));
       } else {
-        scene.set([SectorElement(
-          center: coord.center,
-          startRadius: coord.convertRadius(start),
-          endRadius: coord.convertRadius(end),
-          startAngle: coord.angles.first,
-          endAngle: coord.angles.last,
-          style: style,
-        )], RectElement(rect: coord.region));
+        scene.set([
+          SectorElement(
+            center: coord.center,
+            startRadius: coord.convertRadius(start),
+            endRadius: coord.convertRadius(end),
+            startAngle: coord.angles.first,
+            endAngle: coord.angles.last,
+            style: style,
+          )
+        ], RectElement(rect: coord.region, style: PaintStyle()));
       }
     }
   }

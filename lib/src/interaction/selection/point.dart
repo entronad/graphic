@@ -81,7 +81,7 @@ class PointSelector extends Selector {
 
   @override
   Set<int>? select(
-    AesGroups groups,
+    AttributesGroups groups,
     List<Tuple> tuples,
     Set<int>? preSelects,
     CoordConv coord,

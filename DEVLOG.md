@@ -406,7 +406,7 @@ complement: 1 shorter 本来就少，所以每个都要用上，必须确保shot
 
 ~~visualMap用clip实现，这就要求element可以clip。scene和element的clip就用shapeelement，不过当shape element被当做clip时，clip、style无效~~
 
-blendmode是需要的，在某些图形重叠时
+blendmode是需要的，在某些图形重叠时，先就用默认的那种类型，比较符合预期，需要不叠加时自行修改
 
 canvas的分段着色，是通过同一点的不同color实现的。
 
@@ -460,3 +460,25 @@ elements空和null应当相同处理，这个放在RenderOp中，以便与补头
 还是应该吧primitive和label放在不同的函数中，应当鼓励这样，放在一起处理并不会给性能带来多大提升，好多也是基于过去的思路才写成这样的。
 
 对于 mark-group-item 提醒，primitive对于同一个mark先平铺，因为假如不对齐了，分了也没有意义
+
+graffiti diff 时的规则这样：set不限制是否传null，有任一为null或者不一样长的判断放在_animateElements中，update 的时候，兼容不一样长的情况，normalizeList进行判断，如果不一样长，就返回to
+
+mark entrance 还是不要放在transition里而，因为它是一个完全绑定 mark encode 的概念。就用entrance吧，与ppt一致，而且避免与数据enter冲突
+
+ui.Shader 也和函数一样，不作相等校验，它没有重写等号
+
+函数参数是必填还是有默认的原则应当是：是否有情况是确实不需要（而不是恰好是默认值）
+
+- 故mark的style是必填，没有不需要的，clip是一种特殊情况
+
+- arcToPoint的参数都是必填，因为其实都是要决定的，不存在“没有”
+
+- mark rotation选填，因为确实有不需要的，它与arcToPoint的rotation不同
+
+- defaultAlign 选填，因为有“设了align”这种情况是不需要的
+
+scene的clip不需要entrance
+
+可以用has，它区别于其他动词，其他动词相当于祈使句，它和is一样
+
+要dipose的：stream listen时产生的discription（streamController不要管），animationController

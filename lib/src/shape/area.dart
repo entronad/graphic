@@ -128,5 +128,7 @@ class BasicAreaShape extends AreaShape {
   }
 
   @override
-  List<MarkElement> drawGroupLabels(List<Attributes> group, CoordConv coord, Offset origin) => drawLineLabels(group, coord, origin);
+  List<MarkElement> drawGroupLabels(
+          List<Attributes> group, CoordConv coord, Offset origin) =>
+      drawLineLabels(group, coord, origin);
 }

@@ -29,8 +29,9 @@ abstract class PointShape extends FunctionShape {
       other is PointShape &&
       hollow == other.hollow &&
       strokeWidth == other.strokeWidth;
-  
-  MarkElement drawPoint(Attributes item, CoordConv coord, bool hollow, double strokeWidth);
+
+  MarkElement drawPoint(
+      Attributes item, CoordConv coord, bool hollow, double strokeWidth);
 
   @override
   List<MarkElement> drawGroupPrimitives(
@@ -61,7 +62,8 @@ abstract class PointShape extends FunctionShape {
   }
 
   @override
-  List<MarkElement> drawGroupLabels(List<Attributes> group, CoordConv coord, Offset origin) {
+  List<MarkElement> drawGroupLabels(
+      List<Attributes> group, CoordConv coord, Offset origin) {
     final rst = <MarkElement>[];
 
     for (var item in group) {
@@ -85,7 +87,11 @@ abstract class PointShape extends FunctionShape {
           point.dx,
           point.dy + (size / 2),
         );
-        rst.add(LabelElement(text: item.label!.text!, anchor: anchor, defaultAlign: Alignment.topCenter, style: item.label!.style));
+        rst.add(LabelElement(
+            text: item.label!.text!,
+            anchor: anchor,
+            defaultAlign: Alignment.topCenter,
+            style: item.label!.style));
       }
     }
 
@@ -106,12 +112,16 @@ class CircleShape extends PointShape {
 
   @override
   bool equalTo(Object other) => super.equalTo(other) && other is CircleShape;
-  
+
   @override
-  MarkElement<ElementStyle> drawPoint(Attributes item, CoordConv coord, bool hollow, double strokeWidth) {
+  MarkElement<ElementStyle> drawPoint(
+      Attributes item, CoordConv coord, bool hollow, double strokeWidth) {
     final point = coord.convert(item.position.last);
     final size = item.size ?? defaultSize;
-    return CircleElement(center: point, radius: size / 2, style: getPaintStyle(item, hollow, strokeWidth));
+    return CircleElement(
+        center: point,
+        radius: size / 2,
+        style: getPaintStyle(item, hollow, strokeWidth));
   }
 }
 
@@ -127,9 +137,12 @@ class SquareShape extends PointShape {
   bool equalTo(Object other) => super.equalTo(other) && other is SquareShape;
 
   @override
-  MarkElement<ElementStyle> drawPoint(Attributes item, CoordConv coord, bool hollow, double strokeWidth) {
+  MarkElement<ElementStyle> drawPoint(
+      Attributes item, CoordConv coord, bool hollow, double strokeWidth) {
     final point = coord.convert(item.position.last);
     final size = item.size ?? defaultSize;
-    return RectElement(rect: Rect.fromCenter(center: point, width: size, height: size), style: getPaintStyle(item, hollow, strokeWidth));
+    return RectElement(
+        rect: Rect.fromCenter(center: point, width: size, height: size),
+        style: getPaintStyle(item, hollow, strokeWidth));
   }
 }

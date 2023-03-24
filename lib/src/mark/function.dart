@@ -7,6 +7,7 @@ import 'package:graphic/src/encode/label.dart';
 import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/encode/shape.dart';
 import 'package:graphic/src/encode/size.dart';
+import 'package:graphic/src/graffiti/transition.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/shape/function.dart';
 
@@ -31,6 +32,8 @@ abstract class FunctionMark<S extends FunctionShape> extends Mark<S> {
     int? layer,
     Selected? selected,
     StreamController<Selected?>? selectionStream,
+    Transition? transition,
+    MarkEntrance? entrance,
   }) : super(
           color: color,
           elevation: elevation,
@@ -43,5 +46,7 @@ abstract class FunctionMark<S extends FunctionShape> extends Mark<S> {
           layer: layer,
           selected: selected,
           selectionStream: selectionStream,
+          transition: transition,
+          entrance: entrance,
         );
 }

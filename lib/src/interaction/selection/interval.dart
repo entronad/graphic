@@ -60,7 +60,7 @@ class IntervalSelector extends Selector {
 
   @override
   Set<int>? select(
-    AesGroups groups,
+    AttributesGroups groups,
     List<Tuple> tuples,
     Set<int>? preSelects,
     CoordConv coord,
@@ -125,5 +125,7 @@ List<MarkElement>? renderIntervalSelector(
   Color color,
 ) =>
     [
-      RectElement(rect: Rect.fromPoints(start, end), style: PaintStyle(fillColor: color)),
+      RectElement(
+          rect: Rect.fromPoints(start, end),
+          style: PaintStyle(fillColor: color)),
     ];

@@ -134,7 +134,7 @@ export 'src/scale/time.dart' show TimeScale, TimeScaleConv;
 export 'src/scale/util/nice_numbers.dart' show linearNiceNumbers;
 export 'src/scale/util/nice_range.dart' show linearNiceRange;
 
-export 'src/mark/mark.dart' show Mark;
+export 'src/mark/mark.dart' show Mark, MarkEntrance;
 export 'src/mark/function.dart' show FunctionMark;
 export 'src/mark/partition.dart' show PartitionMark;
 export 'src/mark/area.dart' show AreaMark;
@@ -171,6 +171,7 @@ export 'src/shape/point.dart' show PointShape, CircleShape, SquareShape;
 export 'src/shape/polygon.dart' show PolygonShape, HeatmapShape;
 export 'src/shape/util/render_basic_item.dart' show getPaintStyle;
 
+export 'src/graffiti/transition.dart' show Transition;
 export 'src/graffiti/element/element.dart'
     show MarkElement, PaintStyle, PrimitiveElement, getBlockPaintPoint;
 export 'src/graffiti/element/arc.dart' show ArcElement;
@@ -218,11 +219,10 @@ export 'src/interaction/selection/selection.dart'
 export 'src/interaction/selection/interval.dart' show IntervalSelection;
 export 'src/interaction/selection/point.dart' show PointSelection;
 
-export 'src/common/label.dart'
-    show Label;
+export 'src/common/label.dart' show Label;
 export 'src/common/defaults.dart' show Defaults;
 export 'src/common/dim.dart' show Dim;
 
-export 'src/dataflow/tuple.dart' show Tuple, Attributes, AesGroups;
+export 'src/dataflow/tuple.dart' show Tuple, Attributes, AttributesGroups;
 
 export 'package:path_drawing/path_drawing.dart' show DashOffset;

@@ -3,7 +3,6 @@ import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
-import 'package:graphic/src/graffiti/element/group.dart';
 import 'package:graphic/src/graffiti/element/label.dart';
 import 'package:graphic/src/graffiti/element/polygon.dart';
 import 'package:graphic/src/graffiti/element/rect.dart';
@@ -263,7 +262,8 @@ class RectShape extends IntervalShape {
   }
 
   @override
-  List<MarkElement> drawGroupLabels(List<Attributes> group, CoordConv coord, Offset origin) {
+  List<MarkElement> drawGroupLabels(
+      List<Attributes> group, CoordConv coord, Offset origin) {
     final rst = <MarkElement>[];
 
     if (coord is RectCoordConv) {
@@ -316,7 +316,11 @@ class RectShape extends IntervalShape {
               final labelAnchor = coord.convert(
                   position[0] + (position[1] - position[0]) * labelPosition);
               final anchorOffset = labelAnchor - coord.center;
-              rst.add(LabelElement(text: item.label!.text!, anchor: labelAnchor, defaultAlign: radialLabelAlign(anchorOffset) * -1, style: item.label!.style));
+              rst.add(LabelElement(
+                  text: item.label!.text!,
+                  anchor: labelAnchor,
+                  defaultAlign: radialLabelAlign(anchorOffset) * -1,
+                  style: item.label!.style));
             }
           }
         }
@@ -325,8 +329,11 @@ class RectShape extends IntervalShape {
 
         for (var item in group) {
           if (item.label != null) {
-            rst.add(_drawSectorLabel(item, coord.convert(item.position[0] +
-                  (item.position[1] - item.position[0]) * labelPosition), coord));
+            rst.add(_drawSectorLabel(
+                item,
+                coord.convert(item.position[0] +
+                    (item.position[1] - item.position[0]) * labelPosition),
+                coord));
           }
         }
       }
@@ -357,9 +364,13 @@ class RectShape extends IntervalShape {
   ) {
     assert(item.shape is RectShape);
 
-    return LabelElement(text: item.label!.text!, anchor: labelAnchor, defaultAlign: labelPosition.equalTo(1)
+    return LabelElement(
+        text: item.label!.text!,
+        anchor: labelAnchor,
+        defaultAlign: labelPosition.equalTo(1)
             ? (coord.transposed ? Alignment.centerRight : Alignment.topCenter)
-            : Alignment.center, style: item.label!.style);
+            : Alignment.center,
+        style: item.label!.style);
   }
 
   /// Renders a sector interval item.
@@ -378,14 +389,13 @@ class RectShape extends IntervalShape {
     final style = getPaintStyle(item, false, 0, coord.region);
 
     return SectorElement(
-      center: coord.center,
-      endRadius: r,
-      startRadius: r0,
-      startAngle: startAngle,
-      endAngle: endAngle,
-      borderRadius: borderRadius,
-      style: style
-    );
+        center: coord.center,
+        endRadius: r,
+        startRadius: r0,
+        startAngle: startAngle,
+        endAngle: endAngle,
+        borderRadius: borderRadius,
+        style: style);
   }
 
   MarkElement _drawSectorLabel(
@@ -411,7 +421,11 @@ class RectShape extends IntervalShape {
       defaultAlign = Alignment.center;
     }
 
-    return LabelElement(text: item.label!.text!, anchor: labelAnchor, defaultAlign: defaultAlign, style: item.label!.style);
+    return LabelElement(
+        text: item.label!.text!,
+        anchor: labelAnchor,
+        defaultAlign: defaultAlign,
+        style: item.label!.style);
   }
 }
 
@@ -463,7 +477,8 @@ class FunnelShape extends IntervalShape {
       coord.convert(Offset(bandEnd, group[1].position[0].dy)),
       coord.convert(Offset(bandStart, position[0].dy)),
     ];
-    rst.add(PolygonElement(points: corners, style: getPaintStyle(item, false, 0, coord.region)));
+    rst.add(PolygonElement(
+        points: corners, style: getPaintStyle(item, false, 0, coord.region)));
     // Middle items.
     for (var i = 1; i < group.length - 1; i++) {
       item = group[i];
@@ -478,7 +493,8 @@ class FunnelShape extends IntervalShape {
         coord.convert(Offset(bandEnd, group[i + 1].position[0].dy)),
         coord.convert(Offset(bandStart, position[0].dy)),
       ];
-      rst.add(PolygonElement(points: corners, style: getPaintStyle(item, false, 0, coord.region)));
+      rst.add(PolygonElement(
+          points: corners, style: getPaintStyle(item, false, 0, coord.region)));
     }
     // Last item.
     item = group.last;
@@ -494,27 +510,36 @@ class FunnelShape extends IntervalShape {
       coord.convert(Offset(bandEnd, closeStart)),
       coord.convert(Offset(bandStart, position[0].dy)),
     ];
-    rst.add(PolygonElement(points: corners, style: getPaintStyle(item, false, 0, coord.region)));
+    rst.add(PolygonElement(
+        points: corners, style: getPaintStyle(item, false, 0, coord.region)));
 
     return rst;
   }
 
   @override
-  List<MarkElement> drawGroupLabels(List<Attributes> group, CoordConv coord, Offset origin) {
+  List<MarkElement> drawGroupLabels(
+      List<Attributes> group, CoordConv coord, Offset origin) {
     assert(coord is RectCoordConv);
 
     final rst = <MarkElement>[];
 
     for (var item in group) {
       if (item.label != null) {
-        final labelAnchor = coord.convert(item.position[0] + (item.position[1] - item.position[0]) * labelPosition);
-        rst.add(LabelElement(text: item.label!.text!, anchor: labelAnchor, defaultAlign: labelPosition.equalTo(1)
-              ? (coord.transposed ? Alignment.centerRight : Alignment.topCenter)
-              : labelPosition.equalTo(0)
-                  ? (coord.transposed
-                      ? Alignment.centerLeft
-                      : Alignment.bottomCenter)
-                  : Alignment.center, style: item.label!.style));
+        final labelAnchor = coord.convert(item.position[0] +
+            (item.position[1] - item.position[0]) * labelPosition);
+        rst.add(LabelElement(
+            text: item.label!.text!,
+            anchor: labelAnchor,
+            defaultAlign: labelPosition.equalTo(1)
+                ? (coord.transposed
+                    ? Alignment.centerRight
+                    : Alignment.topCenter)
+                : labelPosition.equalTo(0)
+                    ? (coord.transposed
+                        ? Alignment.centerLeft
+                        : Alignment.bottomCenter)
+                    : Alignment.center,
+            style: item.label!.style));
       }
     }
 

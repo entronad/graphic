@@ -23,7 +23,11 @@ List<MarkElement>? renderCircularAxis(
       coord.startRadius + (coord.endRadius - coord.startRadius) * position;
 
   if (line != null) {
-    rst.add(ArcElement(oval: Rect.fromCircle(center: coord.center, radius: r), startAngle: coord.startAngle, endAngle: coord.endAngle, style: line));
+    rst.add(ArcElement(
+        oval: Rect.fromCircle(center: coord.center, radius: r),
+        startAngle: coord.startAngle,
+        endAngle: coord.endAngle,
+        style: line));
   }
 
   for (var tick in ticks) {
@@ -46,7 +50,11 @@ List<MarkElement>? renderCircularAxis(
                   : anchorOffset.dy / anchorOffset.dy.abs(),
             ) *
             flipSign;
-        rst.add(LabelElement(text: tick.text!, anchor: labelAnchor, defaultAlign: defaultAlign, style: tick.label));
+        rst.add(LabelElement(
+            text: tick.text!,
+            anchor: labelAnchor,
+            defaultAlign: defaultAlign,
+            style: tick.label!));
       }
     }
   }
@@ -65,7 +73,10 @@ List<MarkElement>? renderCircularGrid(
     if (tick.grid != null) {
       final angle = coord.convertAngle(tick.position);
       if (angle >= coord.startAngle && angle <= coord.endAngle) {
-        rst.add(LineElement(start: coord.polarToOffset(angle, coord.startRadius), end: coord.polarToOffset(angle, coord.endRadius), style: tick.grid));
+        rst.add(LineElement(
+            start: coord.polarToOffset(angle, coord.startRadius),
+            end: coord.polarToOffset(angle, coord.endRadius),
+            style: tick.grid!));
       }
     }
   }

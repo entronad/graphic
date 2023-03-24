@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:graphic/src/util/collection.dart';
+
 import 'element.dart';
 
 class _GroupStyle extends ElementStyle {
@@ -14,14 +16,13 @@ final _groupStyle = _GroupStyle();
 class GroupElement extends MarkElement<_GroupStyle> {
   GroupElement({
     required this.elements,
-
     double? rotation,
     Offset? rotationAxis,
   }) : super(
-    style: _groupStyle,
-    rotation: rotation,
-    rotationAxis: rotationAxis,
-  );
+          style: _groupStyle,
+          rotation: rotation,
+          rotationAxis: rotationAxis,
+        );
 
   final List<MarkElement> elements;
 
@@ -46,4 +47,10 @@ class GroupElement extends MarkElement<_GroupStyle> {
       rotationAxis: Offset.lerp(from.rotationAxis, rotationAxis, t),
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is GroupElement &&
+      super == other &&
+      deepCollectionEquals(elements, other.elements);
 }

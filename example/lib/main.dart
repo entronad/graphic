@@ -8,6 +8,7 @@ import 'pages/interaction_stream_dynamic.dart';
 import 'pages/interval.dart';
 import 'pages/line_area_point.dart';
 import 'pages/polygon_custom.dart';
+import 'pages/animation.dart';
 
 final routes = {
   '/': (context) => const HomePage(),
@@ -16,6 +17,7 @@ final routes = {
   '/examples/Polygon,Custom': (context) => PolygonCustomPage(),
   '/examples/Interaction Stream, Dynamic': (context) =>
       const InteractionStreamDynamicPage(),
+  '/examples/Animation': (context) => const AnimationPage(),
   '/examples/Bigdata': (context) => BigdataPage(),
   '/examples/Echarts': (context) => EchartsPage(),
   '/examples/Debug': (context) => const DebugPage(),

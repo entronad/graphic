@@ -32,6 +32,9 @@ abstract class Segment {
   Segment sow(Offset position);
 
   Offset getEnd();
+
+  @override
+  bool operator ==(Object other) => other is Segment && tag == other.tag;
 }
 
 class SegmentInfo<S extends Segment> {
@@ -58,7 +61,8 @@ List<List<Segment>> _spliteContours(List<Segment> segments) {
   return contours;
 }
 
-List<List<Segment>> _complementContours(List<List<Segment>> shorter, List<List<Segment>> longer) {
+List<List<Segment>> _complementContours(
+    List<List<Segment>> shorter, List<List<Segment>> longer) {
   final rst = [...shorter];
   for (var i = 0; i < longer.length - shorter.length; i++) {
     final start = rst.last.last.getEnd();
@@ -86,12 +90,13 @@ List<SegmentInfo> _getContourInfos(List<Segment> contour) {
 }
 
 // assume that every in shorter in needed.
-List<SegmentInfo> _complementInfos(List<SegmentInfo> shorter, List<SegmentInfo> longer) {
+List<SegmentInfo> _complementInfos(
+    List<SegmentInfo> shorter, List<SegmentInfo> longer) {
   final rst = <SegmentInfo>[];
   int needCount = longer.length - shorter.length;
   int shorterIndex = 0;
   int longerIndex = 0;
-  while(longerIndex < longer.length) {
+  while (longerIndex < longer.length) {
     if (shorterIndex < shorter.length) {
       // complement in prev.
 
@@ -99,12 +104,13 @@ List<SegmentInfo> _complementInfos(List<SegmentInfo> shorter, List<SegmentInfo> 
       final longerInfo = longer[longerIndex];
       if (shorterInfo.segment.tag == longerInfo.segment.tag || needCount == 0) {
         rst.add(shorterInfo);
-        shorterIndex ++;
-        longerIndex ++;
+        shorterIndex++;
+        longerIndex++;
       } else {
-        rst.add(SegmentInfo(shorterInfo.start, longerInfo.segment.sow(shorterInfo.start)));
-        longerIndex ++;
-        needCount --;
+        rst.add(SegmentInfo(
+            shorterInfo.start, longerInfo.segment.sow(shorterInfo.start)));
+        longerIndex++;
+        needCount--;
       }
     } else {
       // complement in next.
@@ -112,8 +118,8 @@ List<SegmentInfo> _complementInfos(List<SegmentInfo> shorter, List<SegmentInfo> 
       final shorterEnd = shorter[shorterIndex - 1].segment.getEnd();
       final longerInfo = longer[longerIndex];
       rst.add(SegmentInfo(shorterEnd, longerInfo.segment.sow(shorterEnd)));
-      longerIndex ++;
-      needCount --;
+      longerIndex++;
+      needCount--;
     }
   }
   return rst;
@@ -149,7 +155,8 @@ List<List<Segment>> nomalizeSegments(List<Segment> from, List<Segment> to) {
       if (fromInfo.segment.runtimeType == toInfo.segment.runtimeType) {
         fromRst.add(fromInfo.segment);
         toRst.add(toInfo.segment);
-      } else if (fromInfo.segment is CloseSegment || toInfo.segment is CloseSegment) {
+      } else if (fromInfo.segment is CloseSegment ||
+          toInfo.segment is CloseSegment) {
         fromRst.add(toInfo.segment);
         toRst.add(toInfo.segment);
       } else {

@@ -58,7 +58,10 @@ List<MarkElement>? renderRadialAxis(
       coord.startAngle + (coord.endAngle - coord.startAngle) * position;
 
   if (line != null) {
-    rst.add(LineElement(start: coord.polarToOffset(angle, coord.startRadius), end: coord.polarToOffset(angle, coord.endRadius), style: line));
+    rst.add(LineElement(
+        start: coord.polarToOffset(angle, coord.startRadius),
+        end: coord.polarToOffset(angle, coord.endRadius),
+        style: line));
   }
 
   // The align of all labels should be consist, so loop twice.
@@ -88,7 +91,11 @@ List<MarkElement>? renderRadialAxis(
   final labelAlign = radialLabelAlign(featureOffset) * flipSign;
   for (var index in labelAnchors.keys) {
     final tick = ticks[index];
-    rst.add(LabelElement(text: tick.text!, anchor: labelAnchors[index]!, defaultAlign: labelAlign, style: tick.label));
+    rst.add(LabelElement(
+        text: tick.text!,
+        anchor: labelAnchors[index]!,
+        defaultAlign: labelAlign,
+        style: tick.label!));
   }
 
   return rst.isEmpty ? null : rst;
@@ -105,7 +112,11 @@ List<MarkElement>? renderRadialGrid(
     if (tick.grid != null) {
       final r = coord.convertRadius(tick.position);
       if (r >= coord.startRadius && r <= coord.endRadius) {
-        rst.add(ArcElement(oval: Rect.fromCircle(center: coord.center, radius: r), startAngle: coord.startAngle, endAngle: coord.endAngle, style: tick.grid));
+        rst.add(ArcElement(
+            oval: Rect.fromCircle(center: coord.center, radius: r),
+            startAngle: coord.startAngle,
+            endAngle: coord.endAngle,
+            style: tick.grid!));
       }
     }
   }

@@ -22,16 +22,15 @@ class LabelStyle extends BlockStyle {
     this.textHeightBehavior,
     this.minWidth,
     this.maxWidth,
-
     Offset? offset,
     double? rotation,
     Alignment? align,
-  }) : assert(isSingle([textStyle, span])),
-       super(
-         offset: offset,
-         rotation: rotation,
-         align: align,
-       );
+  })  : assert(isSingle([textStyle, span])),
+        super(
+          offset: offset,
+          rotation: rotation,
+          align: align,
+        );
 
   /// The text style of the label.
   ///
@@ -130,36 +129,50 @@ class LabelStyle extends BlockStyle {
 
   @override
   LabelStyle lerpFrom(covariant LabelStyle from, double t) => LabelStyle(
-    textStyle: TextStyle.lerp(from.textStyle, textStyle, t),
-    span: span,
-    textAlign: textAlign,
-    textDirection: textDirection,
-    textScaleFactor: lerpDouble(from.textScaleFactor, textScaleFactor, t),
-    maxLines: lerpDouble(from.maxLines, maxLines, t)?.toInt(),
-    ellipsis: ellipsis,
-    locale: locale,
-    strutStyle: strutStyle,
-    textWidthBasis: textWidthBasis,
-    textHeightBehavior: textHeightBehavior,
-    minWidth: lerpDouble(from.minWidth, minWidth, t),
-    maxWidth: lerpDouble(from.maxWidth, maxWidth, t)
-  );
-}
+      textStyle: TextStyle.lerp(from.textStyle, textStyle, t),
+      span: span,
+      textAlign: textAlign,
+      textDirection: textDirection,
+      textScaleFactor: lerpDouble(from.textScaleFactor, textScaleFactor, t),
+      maxLines: lerpDouble(from.maxLines, maxLines, t)?.toInt(),
+      ellipsis: ellipsis,
+      locale: locale,
+      strutStyle: strutStyle,
+      textWidthBasis: textWidthBasis,
+      textHeightBehavior: textHeightBehavior,
+      minWidth: lerpDouble(from.minWidth, minWidth, t),
+      maxWidth: lerpDouble(from.maxWidth, maxWidth, t));
 
-final _defaultLabelStyle = LabelStyle();
+  @override
+  bool operator ==(Object other) =>
+      other is LabelStyle &&
+      super == other &&
+      textStyle == other.textStyle &&
+      // span is a function.
+      textAlign == other.textAlign &&
+      textDirection == other.textDirection &&
+      textScaleFactor == other.textScaleFactor &&
+      maxLines == other.maxLines &&
+      ellipsis == other.ellipsis &&
+      locale == other.locale &&
+      strutStyle == other.strutStyle &&
+      textWidthBasis == other.textWidthBasis &&
+      textHeightBehavior == other.textHeightBehavior &&
+      minWidth == other.minWidth &&
+      maxWidth == other.maxWidth;
+}
 
 class LabelElement extends BlockElement<LabelStyle> {
   LabelElement({
     required this.text,
-
     required Offset anchor,
-    Alignment? defaultAlign,
-    LabelStyle? style,
+    Alignment defaultAlign = Alignment.center,
+    required LabelStyle style,
   }) : super(
-    anchor: anchor,
-    defaultAlign: defaultAlign ?? Alignment.center,
-    style: style ?? _defaultLabelStyle,
-  ) {
+          anchor: anchor,
+          defaultAlign: defaultAlign,
+          style: style,
+        ) {
     _painter = TextPainter(
       text: this.style.textStyle != null
           ? TextSpan(text: text, style: this.style.textStyle)
@@ -179,22 +192,26 @@ class LabelElement extends BlockElement<LabelStyle> {
       maxWidth: this.style.maxWidth ?? double.infinity,
     );
 
-    paintPoint = getBlockPaintPoint(rotationAxis!, _painter.width, _painter.height, this.style.align ?? this.defaultAlign);
+    paintPoint = getBlockPaintPoint(rotationAxis!, _painter.width,
+        _painter.height, this.style.align ?? this.defaultAlign);
   }
 
   final String text;
 
   late final TextPainter _painter;
-  
+
   @override
-  void draw(Canvas canvas) =>
-    _painter.paint(canvas, paintPoint);
-    
+  void draw(Canvas canvas) => _painter.paint(canvas, paintPoint);
+
   @override
   LabelElement lerpFrom(covariant LabelElement from, double t) => LabelElement(
-    text: text,
-    anchor: Offset.lerp(from.anchor, anchor, t)!,
-    defaultAlign: Alignment.lerp(from.defaultAlign, defaultAlign, t)!,
-    style: style.lerpFrom(from.style, t),
-  );
+        text: text,
+        anchor: Offset.lerp(from.anchor, anchor, t)!,
+        defaultAlign: Alignment.lerp(from.defaultAlign, defaultAlign, t)!,
+        style: style.lerpFrom(from.style, t),
+      );
+
+  @override
+  bool operator ==(Object other) =>
+      other is LabelElement && super == other && text == other.text;
 }

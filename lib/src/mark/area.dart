@@ -8,11 +8,13 @@ import 'package:graphic/src/encode/label.dart';
 import 'package:graphic/src/algebra/varset.dart';
 import 'package:graphic/src/encode/shape.dart';
 import 'package:graphic/src/encode/size.dart';
+import 'package:graphic/src/graffiti/transition.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
 import 'package:graphic/src/shape/area.dart';
 
 import 'function.dart';
 import 'modifier/modifier.dart';
+import 'mark.dart';
 
 /// The specification of an area mark.
 ///
@@ -38,6 +40,8 @@ class AreaMark extends FunctionMark<AreaShape> {
     int? layer,
     Selected? selected,
     StreamController<Selected?>? selectionStream,
+    Transition? transition,
+    MarkEntrance? entrance,
   }) : super(
           color: color,
           elevation: elevation,
@@ -50,6 +54,8 @@ class AreaMark extends FunctionMark<AreaShape> {
           layer: layer,
           selected: selected,
           selectionStream: selectionStream,
+          transition: transition,
+          entrance: entrance,
         );
 }
 

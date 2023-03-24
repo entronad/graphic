@@ -33,14 +33,16 @@ class TriangleShape extends IntervalShape {
       final startLeft = Offset(start.dx - size / 2, start.dy);
       final startRight = Offset(start.dx + size / 2, start.dy);
 
-      rst.add(PolygonElement(points: [end, startLeft, startRight], style: style));
+      rst.add(
+          PolygonElement(points: [end, startLeft, startRight], style: style));
     }
 
     return rst;
   }
 
   @override
-  List<MarkElement<ElementStyle>> drawGroupLabels(List<Attributes> group, CoordConv coord, Offset origin) {
+  List<MarkElement<ElementStyle>> drawGroupLabels(
+      List<Attributes> group, CoordConv coord, Offset origin) {
     final rst = <MarkElement>[];
 
     for (var item in group) {
@@ -53,7 +55,11 @@ class TriangleShape extends IntervalShape {
       }
       if (!nan && item.label != null) {
         final end = coord.convert(item.position[1]);
-        rst.add(LabelElement(text: item.label!.text!, anchor: end, defaultAlign: Alignment.topCenter, style: item.label!.style));
+        rst.add(LabelElement(
+            text: item.label!.text!,
+            anchor: end,
+            defaultAlign: Alignment.topCenter,
+            style: item.label!.style));
       }
     }
 
@@ -123,9 +129,14 @@ List<MarkElement> simpleTooltip(
   var textPaintPoint = paintPoint + padding.topLeft;
 
   elements = <MarkElement>[
-        RectElement(rect: window, style: PaintStyle(fillColor: backgroundColor, elevation: elevation)),
-        LabelElement(text: textContent, anchor: textPaintPoint, style: LabelStyle(textStyle: textStyle, align: Alignment.bottomRight)),
-      ];
+    RectElement(
+        rect: window,
+        style: PaintStyle(fillColor: backgroundColor, elevation: elevation)),
+    LabelElement(
+        text: textContent,
+        anchor: textPaintPoint,
+        style: LabelStyle(textStyle: textStyle, align: Alignment.bottomRight)),
+  ];
 
   return elements;
 }
@@ -137,15 +148,25 @@ List<MarkElement> centralPieLabel(
 ) {
   final tuple = selectedTuples.values.last;
 
-  final titleElement = LabelElement(text: '${tuple['genre']}\n', anchor: const Offset(175, 150), style: LabelStyle(textStyle: const TextStyle(
-      fontSize: 14,
-      color: Colors.black87,
-    ), align: Alignment.topCenter));
+  final titleElement = LabelElement(
+      text: '${tuple['genre']}\n',
+      anchor: const Offset(175, 150),
+      style: LabelStyle(
+          textStyle: const TextStyle(
+            fontSize: 14,
+            color: Colors.black87,
+          ),
+          align: Alignment.topCenter));
 
-  final valueElement = LabelElement(text: tuple['sold'].toString(), anchor: const Offset(175, 150), style: LabelStyle(textStyle: const TextStyle(
-      fontSize: 28,
-      color: Colors.black87,
-    ), align: Alignment.bottomCenter));
+  final valueElement = LabelElement(
+      text: tuple['sold'].toString(),
+      anchor: const Offset(175, 150),
+      style: LabelStyle(
+          textStyle: const TextStyle(
+            fontSize: 28,
+            color: Colors.black87,
+          ),
+          align: Alignment.bottomCenter));
 
   return [titleElement, valueElement];
 }
@@ -419,7 +440,8 @@ class PolygonCustomPage extends StatelessWidget {
                       elevation: ElevationEncode(value: 0, updaters: {
                         'tap': {true: (_) => 5}
                       }),
-                      color: ColorEncode(value: Defaults.primaryColor, updaters: {
+                      color:
+                          ColorEncode(value: Defaults.primaryColor, updaters: {
                         'tap': {false: (color) => color.withAlpha(100)}
                       }),
                     )
@@ -538,7 +560,15 @@ class PolygonCustomPage extends StatelessWidget {
                   tooltip: TooltipGuide(multiTuples: true),
                   crosshair: CrosshairGuide(),
                   annotations: [
-                    CustomAnnotation(renderer: (_, size) => [CircleElement(center: const Offset(25, 290), radius: 5, style: PaintStyle(fillColor: Defaults.colors10[0]))], anchor: (p0) => Offset(0, 0)),
+                    CustomAnnotation(
+                        renderer: (_, size) => [
+                              CircleElement(
+                                  center: const Offset(25, 290),
+                                  radius: 5,
+                                  style: PaintStyle(
+                                      fillColor: Defaults.colors10[0]))
+                            ],
+                        anchor: (p0) => Offset(0, 0)),
                     TagAnnotation(
                       label: Label(
                         'Email',
@@ -548,7 +578,15 @@ class PolygonCustomPage extends StatelessWidget {
                       ),
                       anchor: (size) => const Offset(34, 290),
                     ),
-                    CustomAnnotation(renderer: (_, size) => [CircleElement(center: Offset(25 + size.width / 5, 290), radius: 5, style: PaintStyle(fillColor: Defaults.colors10[1]))], anchor: (p0) => Offset(0, 0)),
+                    CustomAnnotation(
+                        renderer: (_, size) => [
+                              CircleElement(
+                                  center: Offset(25 + size.width / 5, 290),
+                                  radius: 5,
+                                  style: PaintStyle(
+                                      fillColor: Defaults.colors10[1]))
+                            ],
+                        anchor: (p0) => Offset(0, 0)),
                     TagAnnotation(
                       label: Label(
                         'Affiliate',
@@ -558,7 +596,15 @@ class PolygonCustomPage extends StatelessWidget {
                       ),
                       anchor: (size) => Offset(34 + size.width / 5, 290),
                     ),
-                    CustomAnnotation(renderer: (_, size) => [CircleElement(center: Offset(25 + size.width / 5 * 2, 290), radius: 5, style: PaintStyle(fillColor: Defaults.colors10[2]))], anchor: (p0) => Offset(0, 0)),
+                    CustomAnnotation(
+                        renderer: (_, size) => [
+                              CircleElement(
+                                  center: Offset(25 + size.width / 5 * 2, 290),
+                                  radius: 5,
+                                  style: PaintStyle(
+                                      fillColor: Defaults.colors10[2]))
+                            ],
+                        anchor: (p0) => Offset(0, 0)),
                     TagAnnotation(
                       label: Label(
                         'Video',
@@ -568,7 +614,15 @@ class PolygonCustomPage extends StatelessWidget {
                       ),
                       anchor: (size) => Offset(34 + size.width / 5 * 2, 290),
                     ),
-                    CustomAnnotation(renderer: (_, size) => [CircleElement(center: Offset(25 + size.width / 5 * 3, 290), radius: 5, style: PaintStyle(fillColor: Defaults.colors10[3]))], anchor: (p0) => Offset(0, 0)),
+                    CustomAnnotation(
+                        renderer: (_, size) => [
+                              CircleElement(
+                                  center: Offset(25 + size.width / 5 * 3, 290),
+                                  radius: 5,
+                                  style: PaintStyle(
+                                      fillColor: Defaults.colors10[3]))
+                            ],
+                        anchor: (p0) => Offset(0, 0)),
                     TagAnnotation(
                       label: Label(
                         'Direct',
@@ -578,7 +632,15 @@ class PolygonCustomPage extends StatelessWidget {
                       ),
                       anchor: (size) => Offset(34 + size.width / 5 * 3, 290),
                     ),
-                    CustomAnnotation(renderer: (_, size) => [CircleElement(center: Offset(25 + size.width / 5 * 4, 290), radius: 5, style: PaintStyle(fillColor: Defaults.colors10[4]))], anchor: (p0) => Offset(0, 0)),
+                    CustomAnnotation(
+                        renderer: (_, size) => [
+                              CircleElement(
+                                  center: Offset(25 + size.width / 5 * 4, 290),
+                                  radius: 5,
+                                  style: PaintStyle(
+                                      fillColor: Defaults.colors10[4]))
+                            ],
+                        anchor: (p0) => Offset(0, 0)),
                     TagAnnotation(
                       label: Label(
                         'Search',
@@ -745,8 +807,12 @@ const _kMinBarSize = 4.0;
 @immutable
 class DodgeSizeModifier extends Modifier {
   @override
-  void modify(AesGroups groups, Map<String, ScaleConv<dynamic, num>> scales,
-      AlgForm form, CoordConv coord, Offset origin) {
+  void modify(
+      AttributesGroups groups,
+      Map<String, ScaleConv<dynamic, num>> scales,
+      AlgForm form,
+      CoordConv coord,
+      Offset origin) {
     final xField = form.first[0];
     final band = (scales[xField]! as DiscreteScaleConv).band;
 
@@ -762,7 +828,8 @@ class DodgeSizeModifier extends Modifier {
     final maxWidthInBand = effectiveBand * maxWidth;
     final maxWidthPerAttributes = maxWidthInBand / numGroups;
     final barHorizontalPadding = groupHorizontalPadding / 2;
-    final size = max(maxWidthPerAttributes - barHorizontalPadding, _kMinBarSize);
+    final size =
+        max(maxWidthPerAttributes - barHorizontalPadding, _kMinBarSize);
 
     final bias = ratio * effectiveBand;
 

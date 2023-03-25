@@ -168,10 +168,12 @@ class LabelElement extends BlockElement<LabelStyle> {
     required Offset anchor,
     Alignment defaultAlign = Alignment.center,
     required LabelStyle style,
+    String? tag,
   }) : super(
           anchor: anchor,
           defaultAlign: defaultAlign,
           style: style,
+          tag: tag,
         ) {
     _painter = TextPainter(
       text: this.style.textStyle != null
@@ -209,6 +211,7 @@ class LabelElement extends BlockElement<LabelStyle> {
         anchor: Offset.lerp(from.anchor, anchor, t)!,
         defaultAlign: Alignment.lerp(from.defaultAlign, defaultAlign, t)!,
         style: style.lerpFrom(from.style, t),
+        tag: tag,
       );
 
   @override

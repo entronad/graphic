@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/encode/color.dart';
 import 'package:graphic/src/encode/elevation.dart';
 import 'package:graphic/src/encode/gradient.dart';
@@ -42,6 +43,7 @@ class LineMark extends FunctionMark<LineShape> {
     StreamController<Selected?>? selectionStream,
     Transition? transition,
     MarkEntrance? entrance,
+    String? Function(Tuple)? tag,
   }) : super(
           color: color,
           elevation: elevation,
@@ -56,6 +58,7 @@ class LineMark extends FunctionMark<LineShape> {
           selectionStream: selectionStream,
           transition: transition,
           entrance: entrance,
+          tag: tag,
         );
 }
 

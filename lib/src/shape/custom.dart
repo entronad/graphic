@@ -84,7 +84,7 @@ class CandlestickShape extends Shape {
           CloseSegment(),
           MoveSegment(end: Offset(x, bottomEdge)),
           LineSegment(end: Offset(x, bottom)),
-        ], style: style));
+        ], style: style, tag: item.tag));
       } else {
         // If the stoke style is fill, the lines created by Path.lineTo will not
         // be rendered.
@@ -103,7 +103,7 @@ class CandlestickShape extends Shape {
           LineSegment(end: Offset(x - strokeBias, topEdge)),
           LineSegment(end: Offset(x - strokeBias, top)),
           CloseSegment(),
-        ], style: style));
+        ], style: style, tag: item.tag));
       }
       // No labels.
     }

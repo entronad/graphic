@@ -33,6 +33,7 @@ class Attributes {
   /// Creates a attributes.
   Attributes({
     required this.index,
+    this.tag,
     required this.position,
     required this.shape,
     this.color,
@@ -44,6 +45,8 @@ class Attributes {
 
   /// The index of the tuple in all tuples list.
   final int index;
+
+  final String? tag;
 
   /// Position points of the tuple.
   ///
@@ -78,6 +81,7 @@ class Attributes {
       case MarkEntrance.x:
         return Attributes(
           index: index,
+          tag: tag,
           position: position.map((p) => Offset(0, p.dy)).toList(),
           shape: shape,
           color: color,
@@ -89,6 +93,7 @@ class Attributes {
       case MarkEntrance.y:
         return Attributes(
           index: index,
+          tag: tag,
           position: position.map((p) => Offset(p.dx, 0)).toList(),
           shape: shape,
           color: color,
@@ -100,6 +105,7 @@ class Attributes {
       case MarkEntrance.xy:
         return Attributes(
           index: index,
+          tag: tag,
           position: position.map((p) => Offset.zero).toList(),
           shape: shape,
           color: color,
@@ -111,6 +117,7 @@ class Attributes {
       case MarkEntrance.size:
         return Attributes(
           index: index,
+          tag: tag,
           position: position,
           shape: shape,
           color: color,
@@ -183,6 +190,7 @@ class Attributes {
           }
           return Attributes(
             index: index,
+            tag: tag,
             position: position,
             shape: shape,
             color: color,
@@ -194,6 +202,7 @@ class Attributes {
         } else {
           return Attributes(
             index: index,
+            tag: tag,
             position: position,
             shape: shape,
             color: color!.withAlpha(0),

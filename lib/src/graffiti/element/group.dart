@@ -18,10 +18,12 @@ class GroupElement extends MarkElement<_GroupStyle> {
     required this.elements,
     double? rotation,
     Offset? rotationAxis,
+    String? tag,
   }) : super(
           style: _groupStyle,
           rotation: rotation,
           rotationAxis: rotationAxis,
+          tag: tag,
         );
 
   final List<MarkElement> elements;
@@ -45,6 +47,7 @@ class GroupElement extends MarkElement<_GroupStyle> {
       elements: rstElements,
       rotation: lerpDouble(from.rotation, rotation, t),
       rotationAxis: Offset.lerp(from.rotationAxis, rotationAxis, t),
+      tag: tag,
     );
   }
 

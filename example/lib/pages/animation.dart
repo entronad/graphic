@@ -62,27 +62,27 @@ class AnimationPageState extends State<AnimationPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: const Text('Dynamic'),
+        title: const Text('Animation'),
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Center(
           child: Column(
             children: <Widget>[
-              Container(
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
-                child: const Text(
-                  'Auto update',
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                alignment: Alignment.centerLeft,
-                child: const Text(
-                  '- Change data in every second.',
-                ),
-              ),
+              // Container(
+              //   padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
+              //   child: const Text(
+              //     'Auto update',
+              //     style: TextStyle(fontSize: 20),
+              //   ),
+              // ),
+              // Container(
+              //   padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+              //   alignment: Alignment.centerLeft,
+              //   child: const Text(
+              //     '- Change data in every second.',
+              //   ),
+              // ),
               Container(
                 margin: const EdgeInsets.only(top: 10),
                 width: 650,
@@ -98,10 +98,14 @@ class AnimationPageState extends State<AnimationPage> {
                       accessor: (Map map) => map['sold'] as num,
                     ),
                   },
+                  transforms: [Sort(compare: (tuple1, tuple2) => tuple1['sold'] - tuple2['sold'])],
                   marks: [
                     IntervalMark(
                         transition: Transition(duration: Duration(seconds: 2)),
-                        entrance: MarkEntrance.y)
+                        entrance: MarkEntrance.alpha,
+                        label: LabelEncode(encoder: (tuple) => Label(tuple['sold'].toString())),
+                        tag: (tuple) => tuple['genre'].toString(),
+                    )
                   ],
                   axes: [
                     Defaults.horizontalAxis,

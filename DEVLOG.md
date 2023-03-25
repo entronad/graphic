@@ -391,7 +391,7 @@ segments 必须以mov开头
 
 还是不要把end作为segments的统一属性吧，因为close这里会存在误导，正确性大于优雅性，搞个getEnd()方法，正好arc的也不需要在构造函数里每次算。
 
-complement: 1 shorter 本来就少，所以每个都要用上，必须确保shoter的tag集合是longger的子集，且没有重复，且顺序一致，
+**segments打tag的原则**：complement: 1 shorter 本来就少，所以每个都要用上，必须确保shoter的tag集合是longger的子集，且没有重复，且顺序一致，
 
 现在算法的原则是优先在前面加，但确实会出现用完了的情况（表现为shorterIndex溢出）此时需在后面加
 
@@ -482,3 +482,20 @@ scene的clip不需要entrance
 可以用has，它区别于其他动词，其他动词相当于祈使句，它和is一样
 
 要dipose的：stream listen时产生的discription（streamController不要管），animationController
+
+尝试做可视化叙事时的启示：
+
+1. elements diff 时需要有tag进行对应
+
+2. 需要有类似vega signal的东西热更新op参数
+
+segments 和 elements 的tag逻辑是不一样的：
+
+- segments 是前后关联的，顺序和连接关系很重要，elements彼此无关，顺序仅与覆盖有关
+- segments的最终结果必须是有序一一对应的，elements可以派生重叠
+
+elements个数不一样的情况太复杂，数据个数不一样时tag也往往都不一样，tag先仅做排序
+
+**elements打tag的原则**：pre和current的tag集合要一致，这样每一个current元素总能找到自己的对应项
+
+tagEncode 先不要搞默认值了，变量情况复杂不要弄巧成拙，只有在手动改变了data顺序对应被打乱了才要

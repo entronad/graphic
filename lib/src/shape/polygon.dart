@@ -86,7 +86,7 @@ class HeatmapShape extends PolygonShape {
               coord.convert(Offset(point.dx + biasX, point.dy - biasY)),
             ),
             borderRadius: borderRadius,
-            style: style));
+            style: style, tag: item.tag,));
       } else {
         if (sector) {
           coord as PolarCoordConv;
@@ -103,7 +103,7 @@ class HeatmapShape extends PolygonShape {
             startAngle: coord.convertAngle(startAngle),
             endAngle: coord.convertAngle(endAngle),
             borderRadius: borderRadius,
-            style: style,
+            style: style, tag: item.tag,
           ));
         } else {
           assert(borderRadius == null);
@@ -116,7 +116,7 @@ class HeatmapShape extends PolygonShape {
             Offset(point.dx - biasX, point.dy - biasY),
           ];
           rst.add(PolygonElement(
-              points: vertices.map(coord.convert).toList(), style: style));
+              points: vertices.map(coord.convert).toList(), style: style, tag: item.tag));
         }
       }
     }
@@ -135,7 +135,7 @@ class HeatmapShape extends PolygonShape {
             text: item.label!.text!,
             anchor: coord.convert(point),
             defaultAlign: Alignment.center,
-            style: item.label!.style));
+            style: item.label!.style, tag: item.tag,));
       }
     }
 

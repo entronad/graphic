@@ -91,7 +91,7 @@ abstract class PointShape extends FunctionShape {
             text: item.label!.text!,
             anchor: anchor,
             defaultAlign: Alignment.topCenter,
-            style: item.label!.style));
+            style: item.label!.style, tag: item.tag,));
       }
     }
 
@@ -121,7 +121,7 @@ class CircleShape extends PointShape {
     return CircleElement(
         center: point,
         radius: size / 2,
-        style: getPaintStyle(item, hollow, strokeWidth));
+        style: getPaintStyle(item, hollow, strokeWidth), tag: item.tag,);
   }
 }
 
@@ -143,6 +143,6 @@ class SquareShape extends PointShape {
     final size = item.size ?? defaultSize;
     return RectElement(
         rect: Rect.fromCenter(center: point, width: size, height: size),
-        style: getPaintStyle(item, hollow, strokeWidth));
+        style: getPaintStyle(item, hollow, strokeWidth), tag: item.tag,);
   }
 }

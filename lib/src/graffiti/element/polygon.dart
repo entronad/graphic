@@ -15,11 +15,13 @@ class PolygonElement extends PrimitiveElement {
     required PaintStyle style,
     double? rotation,
     Offset? rotationAxis,
+    String? tag,
   })  : assert(points.length >= 2),
         super(
           style: style,
           rotation: rotation,
           rotationAxis: rotationAxis,
+          tag: tag,
         );
 
   final List<Offset> points;
@@ -44,6 +46,7 @@ class PolygonElement extends PrimitiveElement {
       style: style.lerpFrom(from.style, t),
       rotation: lerpDouble(from.rotation, rotation, t),
       rotationAxis: Offset.lerp(from.rotationAxis, rotationAxis, t),
+      tag: tag,
     );
   }
 

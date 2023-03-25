@@ -22,6 +22,7 @@ abstract class MarkElement<S extends ElementStyle> {
     required this.style,
     this.rotation,
     this.rotationAxis,
+    this.tag,
   }) : assert(rotation == null || rotationAxis != null);
 
   final S style;
@@ -29,6 +30,8 @@ abstract class MarkElement<S extends ElementStyle> {
   final double? rotation;
 
   final Offset? rotationAxis;
+
+  final String? tag;
 
   @protected
   void draw(Canvas canvas);
@@ -56,7 +59,8 @@ abstract class MarkElement<S extends ElementStyle> {
       other is MarkElement &&
       style == other.style &&
       rotation == other.rotation &&
-      rotationAxis == other.rotationAxis;
+      rotationAxis == other.rotationAxis &&
+      tag == other.tag;
 }
 
 List<double>? _lerpDash(List<double>? a, List<double>? b, double t) {
@@ -187,10 +191,12 @@ abstract class PrimitiveElement extends MarkElement<PaintStyle> {
     required PaintStyle style,
     double? rotation,
     Offset? rotationAxis,
+    String? tag,
   }) : super(
           style: style,
           rotation: rotation,
           rotationAxis: rotationAxis,
+          tag: tag,
         ) {
     drawPath(path);
 
@@ -329,10 +335,12 @@ abstract class BlockElement<S extends BlockStyle> extends MarkElement<S> {
     required this.anchor,
     required this.defaultAlign,
     required S style,
+    String? tag,
   }) : super(
           style: style,
           rotation: style.rotation,
           rotationAxis: style.offset == null ? anchor : anchor + style.offset!,
+          tag: tag,
         );
 
   final Offset anchor;
@@ -403,8 +411,19 @@ List<List<MarkElement>> nomalizeElementList(
   final fromRst = <MarkElement>[];
   final toRst = <MarkElement>[];
   assert(from.length == to.length);
-  for (var i = 0; i < to.length; i++) {
-    final elementPair = nomalizeElement(from[i], to[i]);
+  final fromCopy = [...from];
+  for (var elementTo in to) {
+    MarkElement? elementFrom;
+
+    for (var i = 0; i < fromCopy.length; i++) {
+      if (fromCopy[i].tag == elementTo.tag) {
+        elementFrom = fromCopy.removeAt(i);
+        break;
+      }
+    }
+    elementFrom ??= fromCopy.removeAt(0);
+
+    final elementPair = nomalizeElement(elementFrom, elementTo);
     fromRst.add(elementPair.first);
     toRst.add(elementPair.last);
   }

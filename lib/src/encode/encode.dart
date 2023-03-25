@@ -82,8 +82,8 @@ class CustomEncoder<AV> extends Encoder<AV> {
 }
 
 /// The operator to encode all encodes and create [Aes]s.
-class AesOp extends Operator<List<Attributes>> {
-  AesOp(Map<String, dynamic> params) : super(params);
+class EncodeOp extends Operator<List<Attributes>> {
+  EncodeOp(Map<String, dynamic> params) : super(params);
 
   @override
   List<Attributes> evaluate() {
@@ -96,6 +96,7 @@ class AesOp extends Operator<List<Attributes>> {
     final elevationEncoder = params['elevationEncoder'] as Encoder<double>?;
     final labelEncoder = params['labelEncoder'] as Encoder<Label>?;
     final sizeEncoder = params['sizeEncoder'] as Encoder<double>?;
+    final tagEncoder = params['tagEncoder'] as String? Function(Tuple)?;
 
     assert(isSingle([colorEncoder, gradientEncoder]));
 
@@ -105,6 +106,7 @@ class AesOp extends Operator<List<Attributes>> {
       final tuple = tuples[i];
       rst.add(Attributes(
         index: i,
+        tag: tagEncoder == null ? null : tagEncoder(tuple),
         position: positionEncoder.encode(scaled, tuple),
         shape: shapeEncoder.encode(scaled, tuple),
         color: colorEncoder?.encode(scaled, tuple),

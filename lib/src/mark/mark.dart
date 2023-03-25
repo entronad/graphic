@@ -69,6 +69,7 @@ abstract class Mark<S extends Shape> {
     this.selectionStream,
     this.transition,
     this.entrance,
+    this.tag,
   })  : assert(isSingle([color, gradient], allowNone: true)),
         assert(selected == null || selected.keys.length == 1);
 
@@ -151,6 +152,8 @@ abstract class Mark<S extends Shape> {
 
   MarkEntrance? entrance;
 
+  String? Function(Tuple)? tag;
+
   @override
   bool operator ==(Object other) =>
       other is Mark &&
@@ -167,6 +170,7 @@ abstract class Mark<S extends Shape> {
       selectionStream == other.selectionStream &&
       transition == other.transition &&
       entrance == other.entrance;
+      // tag is a function.
 }
 
 /// The operator to group attributes.

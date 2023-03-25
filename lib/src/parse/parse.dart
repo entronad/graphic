@@ -370,7 +370,7 @@ void parse<D>(
       'origin': origin,
     }));
 
-    final attributes = view.add(AesOp({
+    final attributes = view.add(EncodeOp({
       'scaleds': scaleds,
       'tuples': tuples,
       'positionEncoder': positionEncoder,
@@ -415,6 +415,7 @@ void parse<D>(
               (List<double> values, List<double> stops) =>
                   ContinuousSizeConv(values, stops),
             ),
+      'tagEncoder': markSpec.tag,
     }));
 
     Operator<AttributesGroups> groups = view.add(GroupOp({

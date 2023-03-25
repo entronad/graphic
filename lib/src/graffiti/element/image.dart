@@ -39,10 +39,12 @@ class ImageElement extends BlockElement<ImageStyle> {
     required Offset anchor,
     Alignment defaultAlign = Alignment.center,
     required ImageStyle style,
+    String? tag,
   }) : super(
           anchor: anchor,
           defaultAlign: defaultAlign,
           style: style,
+          tag: tag,
         ) {
     paintPoint = getBlockPaintPoint(
         rotationAxis!,
@@ -63,6 +65,7 @@ class ImageElement extends BlockElement<ImageStyle> {
         anchor: Offset.lerp(from.anchor, anchor, t)!,
         defaultAlign: Alignment.lerp(from.defaultAlign, defaultAlign, t)!,
         style: style.lerpFrom(from.style, t),
+        tag: tag,
       );
 
   @override

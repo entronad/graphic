@@ -210,6 +210,7 @@ class SectorElement extends PathElement {
     required PaintStyle style,
     double? rotation,
     Offset? rotationAxis,
+    String? tag,
   }) : super(
           segments: _getSectorSegments(
               center: center,
@@ -221,6 +222,7 @@ class SectorElement extends PathElement {
           style: style,
           rotation: rotation,
           rotationAxis: rotationAxis,
+          tag: tag,
         );
 
   final Offset center;
@@ -247,6 +249,7 @@ class SectorElement extends PathElement {
         style: style.lerpFrom(from.style, t),
         rotation: lerpDouble(from.rotation, rotation, t),
         rotationAxis: Offset.lerp(from.rotationAxis, rotationAxis, t),
+        tag: tag,
       );
 
   @override

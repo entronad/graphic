@@ -12,11 +12,13 @@ class PathElement extends PrimitiveElement {
     required PaintStyle style,
     double? rotation,
     Offset? rotationAxis,
+    String? tag,
   })  : assert(segments.first is MoveSegment),
         super(
           style: style,
           rotation: rotation,
           rotationAxis: rotationAxis,
+          tag: tag,
         );
 
   final List<Segment> segments;
@@ -37,6 +39,7 @@ class PathElement extends PrimitiveElement {
         style: style.lerpFrom(from.style, t),
         rotation: lerpDouble(from.rotation, rotation, t),
         rotationAxis: Offset.lerp(from.rotationAxis, rotationAxis, t),
+        tag: tag,
       );
 
   @override

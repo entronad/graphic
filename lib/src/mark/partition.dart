@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/encode/color.dart';
 import 'package:graphic/src/encode/elevation.dart';
 import 'package:graphic/src/encode/gradient.dart';
@@ -33,6 +34,7 @@ abstract class PartitionMark<S extends PartitionShape> extends Mark<S> {
     StreamController<Selected?>? selectionStream,
     Transition? transition,
     MarkEntrance? entrance,
+    String? Function(Tuple)? tag,
   }) : super(
           color: color,
           elevation: elevation,
@@ -47,5 +49,6 @@ abstract class PartitionMark<S extends PartitionShape> extends Mark<S> {
           selectionStream: selectionStream,
           transition: transition,
           entrance: entrance,
+          tag: tag,
         );
 }

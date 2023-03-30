@@ -7,7 +7,9 @@ import 'segment/segment.dart';
 import 'segment/move.dart';
 import 'segment/cubic.dart';
 
+/// A spline element consisting of cubic bezier segments.
 class SplineElement extends PrimitiveElement {
+  /// Creates a spline element.
   SplineElement({
     required this.start,
     required this.cubics,
@@ -22,8 +24,10 @@ class SplineElement extends PrimitiveElement {
           tag: tag,
         );
 
+  /// The start point of this spline.
   final Offset start;
 
+  /// The control points of cubic bezier segments of this spline.
   final List<List<Offset>> cubics;
 
   @override

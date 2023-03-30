@@ -83,11 +83,11 @@
 /// from the scaled values.
 ///
 /// Aesthetic encodes are specified in [Mark] with [Encode]. And encodes
-/// values are stored in [Aes].
+/// values are stored in [Attributes].
 ///
 /// ## Shape
 ///
-/// Shapes render [Tuple]s with [Aes] encodes. Rendering means to get [MarkElement]s,
+/// Shapes render [Tuple]s with [Attributes] encodes. Rendering means to get [MarkElement]s,
 /// which carry the painting information for the rendering engine. Extending a shape
 /// subclass is the way to custom charts.
 ///
@@ -102,8 +102,8 @@
 /// [ChangeDataEvent]. Selection means a tuple aesthetic encode values change
 /// when it is selected or not.
 ///
-/// Events are used by properties named in "on...Event" with [EventUpdater]. Selections
-/// are specified by [Chart.selections] and used by [Encode.onSelection] with [SelectionUpdater].
+/// Events are used by event streams specified in [Chart]. Selections
+/// are specified by [Chart.selections] and used by [Encode.updaters] with [SelectionUpdater].
 ///
 /// ## Guide
 ///
@@ -111,6 +111,11 @@
 ///
 /// They include [Axis] specified by [Chart.axes], [Tooltip] specified by [Chart.tooltip],
 /// [Crosshair] specified by [Chart.crosshair], and [Annotation]s specified by [Chart.annotations],
+/// 
+/// ## Animation
+/// Marks can specify transition animation by [Mark.transition] on entrance or changed.
+/// [Mark.entrance] defines which encode attributes are zero at the begining of
+/// entrance animation.
 library graphic;
 
 export 'src/chart/chart.dart' show Chart;
@@ -169,7 +174,7 @@ export 'src/shape/interval.dart' show IntervalShape, RectShape, FunnelShape;
 export 'src/shape/line.dart' show LineShape, BasicLineShape;
 export 'src/shape/point.dart' show PointShape, CircleShape, SquareShape;
 export 'src/shape/polygon.dart' show PolygonShape, HeatmapShape;
-export 'src/shape/util/render_basic_item.dart' show getPaintStyle;
+export 'src/shape/util/style.dart' show getPaintStyle;
 
 export 'src/graffiti/transition.dart' show Transition;
 export 'src/graffiti/element/element.dart'

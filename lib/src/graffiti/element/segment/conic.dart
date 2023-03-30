@@ -4,7 +4,9 @@ import 'segment.dart';
 import 'quadratic.dart';
 import 'cubic.dart';
 
+/// A conic segment like [Path.conicTo].
 class ConicSegment extends Segment {
+  /// Creates a conic segment.
   ConicSegment({
     required this.control,
     required this.end,
@@ -14,10 +16,13 @@ class ConicSegment extends Segment {
           tag: tag,
         );
 
+  /// The control point of this conic.
   final Offset control;
 
+  /// The end point of this conic.
   final Offset end;
 
+  /// The weight of this conic.
   final double weight;
 
   @override

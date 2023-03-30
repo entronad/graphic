@@ -6,7 +6,9 @@ import 'cubic.dart';
 import 'arc_to_point.dart';
 import '../arc.dart';
 
+/// An arc segment like [Path.arcTo].
 class ArcSegment extends Segment {
+  /// Creates an arc segment.
   ArcSegment({
     required this.oval,
     required this.startAngle,
@@ -16,10 +18,13 @@ class ArcSegment extends Segment {
           tag: tag,
         );
 
+  /// The bounds of the oval this arc belongs to.
   final Rect oval;
 
+  /// The start angle of this arc.
   final double startAngle;
 
+  /// The end angle of this arc.
   final double endAngle;
 
   @override

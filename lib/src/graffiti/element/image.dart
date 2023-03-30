@@ -6,7 +6,9 @@ import 'element.dart';
 
 // TODO: Image loading functions.
 
+/// The style of [ImageElement].
 class ImageStyle extends BlockStyle {
+  /// Creates an image style.
   ImageStyle({
     this.blendMode,
     Offset? offset,
@@ -18,6 +20,7 @@ class ImageStyle extends BlockStyle {
           align: align,
         );
 
+  /// The blend mode of the image.
   final BlendMode? blendMode;
 
   @override
@@ -33,7 +36,9 @@ class ImageStyle extends BlockStyle {
       other is ImageStyle && super == other && blendMode == other.blendMode;
 }
 
+/// An image element.
 class ImageElement extends BlockElement<ImageStyle> {
+  /// Creates an image element.
   ImageElement({
     required this.image,
     required Offset anchor,
@@ -54,6 +59,7 @@ class ImageElement extends BlockElement<ImageStyle> {
             this.defaultAlign); // TODO: Image width height pixel ratio.
   }
 
+  /// The image to display.
   final Image image;
 
   @override

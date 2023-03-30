@@ -9,7 +9,9 @@ import 'segment/move.dart';
 import 'segment/line.dart';
 import 'segment/close.dart';
 
+/// A polygon element.
 class PolygonElement extends PrimitiveElement {
+  /// Creates a polygon element.
   PolygonElement({
     required this.points,
     required PaintStyle style,
@@ -24,6 +26,7 @@ class PolygonElement extends PrimitiveElement {
           tag: tag,
         );
 
+  /// The vertex points of this polygon.
   final List<Offset> points;
 
   @override

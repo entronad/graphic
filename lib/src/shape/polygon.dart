@@ -12,7 +12,7 @@ import 'package:graphic/src/graffiti/element/sector.dart';
 import 'package:graphic/src/mark/polygon.dart';
 import 'package:graphic/src/graffiti/element/element.dart';
 
-import 'util/render_basic_item.dart';
+import 'util/style.dart';
 import 'partition.dart';
 
 /// The shape for the polygon mark.

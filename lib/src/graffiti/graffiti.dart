@@ -5,27 +5,32 @@ import 'transition.dart';
 
 /// The rendering engine.
 class Graffiti {
+  /// Create a graffiti rendering engine.
   Graffiti({
     required this.tickerProvider,
     required this.repaint,
   });
 
+  /// The ticker provider for animation.
+  /// 
+  /// It is the widget state with [TickerProviderStateMixin].
   final TickerProvider tickerProvider;
 
+  /// The handler to notify widget state to repaint.
   final void Function() repaint;
 
   /// The scenes to paint.
   final _scenes = <Scene>[];
 
-  /// Adds a scene to this graffiti.
+  /// Creates a scene, add it to graffiti, and returns this scene.
   Scene createScene({
     int layer = 0,
-    int chartLayer = 0,
+    int builtinLayer = 0,
     Transition? transition,
   }) {
     final scene = Scene(
         layer: layer,
-        chartLayer: chartLayer,
+        builtinLayer: builtinLayer,
         transition: transition,
         tickerProvider: tickerProvider,
         repaint: repaint);
@@ -35,7 +40,7 @@ class Graffiti {
 
   /// Sorts [_scenes].
   ///
-  /// The priority of comparing is [Scene.layer] > [Scene.layer] > [Scene.preOrder].
+  /// The priority of comparing is [Scene.layer] > [Scene.builtinLayer].
   void sort() {
     for (var i = 0; i < _scenes.length; i++) {
       _scenes[i].preIndex = i;
@@ -45,9 +50,9 @@ class Graffiti {
       if (layerRst != 0) {
         return layerRst;
       } else {
-        final chartLayerRst = a.chartLayer - b.chartLayer;
-        if (chartLayerRst != 0) {
-          return chartLayerRst;
+        final builtinLayerRst = a.builtinLayer - b.builtinLayer;
+        if (builtinLayerRst != 0) {
+          return builtinLayerRst;
         } else {
           return a.preIndex - b.preIndex;
         }
@@ -55,6 +60,9 @@ class Graffiti {
     });
   }
 
+  /// Updates all scenes.
+  /// 
+  /// Call this method when all scene settings are down and notify widget for the next frame.
   void update() {
     for (var scene in _scenes) {
       scene.update();
@@ -72,6 +80,7 @@ class Graffiti {
     }
   }
 
+  /// Disposes all scenes.
   void dispose() {
     for (var scene in _scenes) {
       scene.dispose();

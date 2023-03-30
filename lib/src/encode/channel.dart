@@ -12,15 +12,15 @@ import 'encode.dart';
 ///
 /// It encodes a single variable to a value. The encoding will be lerping for continous
 /// [variable] scale, and lookup table for discrete scale.
-abstract class ChannelEncode<AV> extends Encode<AV> {
+abstract class ChannelEncode<EV> extends Encode<EV> {
   /// Creates a channel aesthetic encode.
   ChannelEncode({
     this.variable,
     this.values,
     this.stops,
-    AV? value,
-    AV Function(Tuple)? encoder,
-    Map<String, Map<bool, SelectionUpdater<AV>>>? updaters,
+    EV? value,
+    EV Function(Tuple)? encoder,
+    Map<String, Map<bool, SelectionUpdater<EV>>>? updaters,
   })  : assert(values == null || values.length >= 2),
         super(
           value: value,
@@ -32,7 +32,7 @@ abstract class ChannelEncode<AV> extends Encode<AV> {
   String? variable;
 
   /// Target encode values.
-  List<AV>? values;
+  List<EV>? values;
 
   /// Stops corresponding to [values].
   ///
@@ -55,9 +55,9 @@ abstract class ChannelEncode<AV> extends Encode<AV> {
 ///
 /// Whether a channel encode's converter is continuous or discrete is determined
 /// by its corrsponding variable's scale type.
-abstract class ChannelConv<SV extends num, AV> extends Converter<SV, AV> {
+abstract class ChannelConv<SV extends num, EV> extends Converter<SV, EV> {
   @override
-  SV invert(AV output) {
+  SV invert(EV output) {
     throw UnimplementedError();
   }
 }
@@ -65,19 +65,19 @@ abstract class ChannelConv<SV extends num, AV> extends Converter<SV, AV> {
 /// The continuous channel encode converter.
 ///
 /// Channel encode subtypes need to extend a subclass to implement the [lerp]
-/// for their own [AV] types.
-abstract class ContinuousChannelConv<AV> extends ChannelConv<double, AV> {
+/// for their own [EV] types.
+abstract class ContinuousChannelConv<EV> extends ChannelConv<double, EV> {
   ContinuousChannelConv(this.values, this.stops)
       : assert(values.length == stops.length);
 
   /// Target encode values.
-  final List<AV> values;
+  final List<EV> values;
 
   /// Stops corresponding to [values].
   final List<double> stops;
 
   @override
-  AV convert(double input) {
+  EV convert(double input) {
     if (stops.first <= stops.last) {
       for (var s = 0; s < stops.length - 1; s++) {
         final leftStop = stops[s];
@@ -109,22 +109,22 @@ abstract class ContinuousChannelConv<AV> extends ChannelConv<double, AV> {
     }
   }
 
-  /// Linearly interpolate between two [AV]s.
+  /// Linearly interpolate between two [EV]s.
   @protected
-  AV lerp(AV a, AV b, double t);
+  EV lerp(EV a, EV b, double t);
 }
 
 /// The discrete channel encode converter.
 ///
 /// All channel encode subtypes share the same [DiscreteChannelConv].
-class DiscreteChannelConv<AV> extends ChannelConv<int, AV> {
+class DiscreteChannelConv<EV> extends ChannelConv<int, EV> {
   DiscreteChannelConv(this.values);
 
   /// Target encode values.
-  final List<AV> values;
+  final List<EV> values;
 
   @override
-  AV convert(int input) => values[input];
+  EV convert(int input) => values[input];
 }
 
 /// The encoder for channel encodes whose [ChannelEncode.variable] is set.
@@ -134,17 +134,17 @@ class DiscreteChannelConv<AV> extends ChannelConv<int, AV> {
 /// If a channel encode has [Encode.value] or [Encode.encode] property instead of
 /// [ChannelEncode.variable], it will have other corresponding encoder instead of
 /// this type.
-class ChannelEncoder<AV> extends Encoder<AV> {
+class ChannelEncoder<EV> extends Encoder<EV> {
   ChannelEncoder(this.variable, this.conv);
 
   /// The variable this encode encodes from.
   final String variable;
 
   /// The channel converter.
-  final ChannelConv<num, AV> conv;
+  final ChannelConv<num, EV> conv;
 
   @override
-  AV encode(Scaled scaled, Tuple tuple) => conv.convert(scaled[variable]!);
+  EV encode(Scaled scaled, Tuple tuple) => conv.convert(scaled[variable]!);
 }
 
 /// Gets default equidistance stops.
@@ -159,18 +159,18 @@ List<double> _defaultStops(int length) {
 }
 
 /// Gets the encoder of an channel encode.
-Encoder<AV> getChannelEncoder<AV>(
-  ChannelEncode<AV> spec,
+Encoder<EV> getChannelEncoder<EV>(
+  ChannelEncode<EV> spec,
   Map<String, Scale> scaleSpecs,
-  ContinuousChannelConv<AV> Function(List<AV>, List<double>)? getContinuousConv,
+  ContinuousChannelConv<EV> Function(List<EV>, List<double>)? getContinuousConv,
 ) {
   if (spec.value != null) {
-    return ValueEncodeEncoder<AV>(spec.value as AV);
+    return ValueEncodeEncoder<EV>(spec.value as EV);
   }
   if (spec.variable != null) {
     final variable = spec.variable!;
     final scaleSpec = scaleSpecs[variable];
-    ChannelConv<num, AV> conv;
+    ChannelConv<num, EV> conv;
     if (scaleSpec is ContinuousScale) {
       assert(getContinuousConv != null, '$spec dose not support continuous.');
       conv = getContinuousConv!(

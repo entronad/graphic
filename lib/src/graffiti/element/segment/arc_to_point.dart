@@ -5,11 +5,13 @@ import 'segment.dart';
 import 'cubic.dart';
 import 'line.dart';
 
+/// Rotates a vector.
 Offset _rotateVector(double x, double y, double angle) => Offset(
       x * cos(angle) - y * sin(angle),
       x * sin(angle) + y * cos(angle),
     );
 
+/// Converts an arc to cubic control points.
 List<double> _arcToCubicControls(
   double x1,
   double y1,
@@ -118,7 +120,9 @@ List<double> _arcToCubicControls(
   return newRst;
 }
 
+/// An arc-to-point segment like [Path.arcToPoint].
 class ArcToPointSegment extends Segment {
+  /// Creates an arc-to-point segment
   ArcToPointSegment({
     required this.end,
     required this.radius,
@@ -130,14 +134,19 @@ class ArcToPointSegment extends Segment {
           tag: tag,
         );
 
+  /// The end point of this arc.
   final Offset end;
 
+  /// The radius of this arc.
   final Radius radius;
 
+  /// The rotation of this arc.
   final double rotation;
 
+  /// Whether this arc is a large arc.
   final bool largeArc;
 
+  /// Whether this arc is clockwise.
   final bool clockwise;
 
   @override

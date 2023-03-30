@@ -7,6 +7,7 @@ import 'segment/segment.dart';
 import 'segment/move.dart';
 import 'segment/line.dart';
 
+/// Linearly interpolate between two point list.
 List<Offset> lerpPointList(List<Offset> from, List<Offset> to, double t) {
   final rst = <Offset>[];
 
@@ -27,7 +28,9 @@ List<Offset> lerpPointList(List<Offset> from, List<Offset> to, double t) {
   return rst;
 }
 
+/// A polyline element.
 class PolylineElement extends PrimitiveElement {
+  /// Creates a polyline element.
   PolylineElement({
     required this.points,
     required PaintStyle style,
@@ -42,6 +45,7 @@ class PolylineElement extends PrimitiveElement {
           tag: tag,
         );
 
+  /// The inflection points of this polyline.
   final List<Offset> points;
 
   @override

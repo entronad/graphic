@@ -76,145 +76,140 @@ class Attributes {
   /// The represent point of [position] points.
   Offset get representPoint => shape.representPoint(position);
 
-  Attributes deflate(MarkEntrance entrance) {
-    switch (entrance) {
-      case MarkEntrance.x:
-        return Attributes(
-          index: index,
-          tag: tag,
-          position: position.map((p) => Offset(0, p.dy)).toList(),
-          shape: shape,
-          color: color,
-          gradient: gradient,
-          elevation: elevation,
-          label: label,
-          size: size,
-        );
-      case MarkEntrance.y:
-        return Attributes(
-          index: index,
-          tag: tag,
-          position: position.map((p) => Offset(p.dx, 0)).toList(),
-          shape: shape,
-          color: color,
-          gradient: gradient,
-          elevation: elevation,
-          label: label,
-          size: size,
-        );
-      case MarkEntrance.xy:
-        return Attributes(
-          index: index,
-          tag: tag,
-          position: position.map((p) => Offset.zero).toList(),
-          shape: shape,
-          color: color,
-          gradient: gradient,
-          elevation: elevation,
-          label: label,
-          size: size,
-        );
-      case MarkEntrance.size:
-        return Attributes(
-          index: index,
-          tag: tag,
-          position: position,
-          shape: shape,
-          color: color,
-          gradient: gradient,
-          elevation: elevation,
-          label: label,
-          size: 0,
-        );
-      case MarkEntrance.alpha:
-        final labelColor = label?.style.textStyle?.color;
-        final labelRst = labelColor == null
-            ? label
-            : Label(
-                label!.text,
-                LabelStyle(
-                  textStyle: label!.style.textStyle!.apply(color: labelColor),
-                  span: label!.style.span,
-                  textAlign: label!.style.textAlign,
-                  textDirection: label!.style.textDirection,
-                  textScaleFactor: label!.style.textScaleFactor,
-                  maxLines: label!.style.maxLines,
-                  ellipsis: label!.style.ellipsis,
-                  locale: label!.style.locale,
-                  strutStyle: label!.style.strutStyle,
-                  textWidthBasis: label!.style.textWidthBasis,
-                  textHeightBehavior: label!.style.textHeightBehavior,
-                  minWidth: label!.style.minWidth,
-                  maxWidth: label!.style.maxWidth,
-                  offset: label!.style.offset,
-                  rotation: label!.style.rotation,
-                  align: label!.style.align,
-                ));
+  Attributes deflate(Set<MarkEntrance> entrance) {
+    var rst = this;
 
-        if (gradient != null) {
-          final colorsRst =
-              gradient!.colors.map((color) => color.withAlpha(0)).toList();
-          Gradient gradientRst;
-          if (gradient is LinearGradient) {
-            gradientRst = LinearGradient(
-              begin: (gradient as LinearGradient).begin,
-              end: (gradient as LinearGradient).end,
-              colors: colorsRst,
-              stops: (gradient as LinearGradient).stops,
-              tileMode: (gradient as LinearGradient).tileMode,
-              transform: (gradient as LinearGradient).transform,
-            );
-          } else if (gradient is RadialGradient) {
-            gradientRst = RadialGradient(
-              center: (gradient as RadialGradient).center,
-              radius: (gradient as RadialGradient).radius,
-              colors: colorsRst,
-              stops: (gradient as RadialGradient).stops,
-              tileMode: (gradient as RadialGradient).tileMode,
-              focal: (gradient as RadialGradient).focal,
-              focalRadius: (gradient as RadialGradient).focalRadius,
-              transform: (gradient as RadialGradient).transform,
-            );
-          } else if (gradient is SweepGradient) {
-            gradientRst = SweepGradient(
-              center: (gradient as SweepGradient).center,
-              startAngle: (gradient as SweepGradient).startAngle,
-              endAngle: (gradient as SweepGradient).endAngle,
-              colors: colorsRst,
-              stops: (gradient as SweepGradient).stops,
-              tileMode: (gradient as SweepGradient).tileMode,
-              transform: (gradient as SweepGradient).transform,
-            );
-          } else {
-            throw ArgumentError('Wrong gradient type.');
-          }
-          return Attributes(
-            index: index,
-            tag: tag,
-            position: position,
-            shape: shape,
-            color: color,
-            gradient: gradientRst,
-            elevation: elevation,
-            label: labelRst,
-            size: size,
+    if (entrance.contains(MarkEntrance.x)) {
+      rst = Attributes(
+        index: rst.index,
+        tag: rst.tag,
+        position: rst.position.map((p) => Offset(p.dx.isFinite ? 0 : p.dx, p.dy)).toList(),
+        shape: rst.shape,
+        color: rst.color,
+        gradient: rst.gradient,
+        elevation: rst.elevation,
+        label: rst.label,
+        size: rst.size,
+      );
+    }
+
+    if (entrance.contains(MarkEntrance.y)) {
+      rst = Attributes(
+        index: rst.index,
+        tag: rst.tag,
+        position: rst.position.map((p) => Offset(p.dx, p.dy.isFinite ? 0 : p.dy)).toList(),
+        shape: rst.shape,
+        color: rst.color,
+        gradient: rst.gradient,
+        elevation: rst.elevation,
+        label: rst.label,
+        size: rst.size,
+      );
+    }
+
+    if (entrance.contains(MarkEntrance.size)) {
+      rst = Attributes(
+        index: rst.index,
+        tag: rst.tag,
+        position: rst.position,
+        shape: rst.shape,
+        color: rst.color,
+        gradient: rst.gradient,
+        elevation: rst.elevation,
+        label: rst.label,
+        size: 0,
+      );
+    }
+
+    if (entrance.contains(MarkEntrance.alpha)) {
+      final labelColor = rst.label?.style.textStyle?.color;
+      final labelRst = labelColor == null
+          ? rst.label
+          : Label(
+              rst.label!.text,
+              LabelStyle(
+                textStyle: rst.label!.style.textStyle!.apply(color: labelColor),
+                span: rst.label!.style.span,
+                textAlign: rst.label!.style.textAlign,
+                textDirection: rst.label!.style.textDirection,
+                textScaleFactor: rst.label!.style.textScaleFactor,
+                maxLines: rst.label!.style.maxLines,
+                ellipsis: rst.label!.style.ellipsis,
+                locale: rst.label!.style.locale,
+                strutStyle: rst.label!.style.strutStyle,
+                textWidthBasis: rst.label!.style.textWidthBasis,
+                textHeightBehavior: rst.label!.style.textHeightBehavior,
+                minWidth: rst.label!.style.minWidth,
+                maxWidth: rst.label!.style.maxWidth,
+                offset: rst.label!.style.offset,
+                rotation: rst.label!.style.rotation,
+                align: rst.label!.style.align,
+              ));
+
+      if (rst.gradient != null) {
+        final colorsRst =
+            rst.gradient!.colors.map((color) => color.withAlpha(0)).toList();
+        Gradient gradientRst;
+        if (rst.gradient is LinearGradient) {
+          gradientRst = LinearGradient(
+            begin: (rst.gradient as LinearGradient).begin,
+            end: (rst.gradient as LinearGradient).end,
+            colors: colorsRst,
+            stops: (rst.gradient as LinearGradient).stops,
+            tileMode: (rst.gradient as LinearGradient).tileMode,
+            transform: (rst.gradient as LinearGradient).transform,
+          );
+        } else if (rst.gradient is RadialGradient) {
+          gradientRst = RadialGradient(
+            center: (rst.gradient as RadialGradient).center,
+            radius: (rst.gradient as RadialGradient).radius,
+            colors: colorsRst,
+            stops: (rst.gradient as RadialGradient).stops,
+            tileMode: (rst.gradient as RadialGradient).tileMode,
+            focal: (rst.gradient as RadialGradient).focal,
+            focalRadius: (rst.gradient as RadialGradient).focalRadius,
+            transform: (rst.gradient as RadialGradient).transform,
+          );
+        } else if (rst.gradient is SweepGradient) {
+          gradientRst = SweepGradient(
+            center: (rst.gradient as SweepGradient).center,
+            startAngle: (rst.gradient as SweepGradient).startAngle,
+            endAngle: (rst.gradient as SweepGradient).endAngle,
+            colors: colorsRst,
+            stops: (rst.gradient as SweepGradient).stops,
+            tileMode: (rst.gradient as SweepGradient).tileMode,
+            transform: (rst.gradient as SweepGradient).transform,
           );
         } else {
-          return Attributes(
-            index: index,
-            tag: tag,
-            position: position,
-            shape: shape,
-            color: color!.withAlpha(0),
-            gradient: gradient,
-            elevation: elevation,
-            label: labelRst,
-            size: size,
-          );
+          throw ArgumentError('Wrong gradient type.');
         }
-      default:
-        throw ArgumentError('Wrong entrance type.');
+        rst = Attributes(
+          index: rst.index,
+          tag: rst.tag,
+          position: rst.position,
+          shape: rst.shape,
+          color: rst.color,
+          gradient: gradientRst,
+          elevation: rst.elevation,
+          label: labelRst,
+          size: rst.size,
+        );
+      } else {
+        rst = Attributes(
+          index: rst.index,
+          tag: rst.tag,
+          position: rst.position,
+          shape: rst.shape,
+          color: color!.withAlpha(0),
+          gradient: rst.gradient,
+          elevation: rst.elevation,
+          label: labelRst,
+          size: rst.size,
+        );
+      }
     }
+
+    return rst;
   }
 }
 
@@ -222,7 +217,7 @@ class Attributes {
 typedef AttributesGroups = List<List<Attributes>>;
 
 extension AttributesGroupsExt on AttributesGroups {
-  /// Gets an attributes form attributes groups by [Aes.index].
+  /// Gets an attributes form attributes groups by [Attributes.index].
   Attributes getAttributes(int index) {
     for (var group in this) {
       for (var attributes in group) {

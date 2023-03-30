@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/common/chart_layers.dart';
+import 'package:graphic/src/common/builtin_layers.dart';
 import 'package:graphic/src/encode/encode.dart';
 import 'package:graphic/src/encode/channel.dart';
 import 'package:graphic/src/encode/color.dart';
@@ -109,7 +109,7 @@ void parse<D>(
 
   if (coordSpec.color != null) {
     final regionBackgroundScene = view.graffiti.createScene(
-        layer: coordSpec.layer ?? 0, chartLayer: ChartLayers.regionBackground);
+        layer: coordSpec.layer ?? 0, builtinLayer: BuiltinLayers.regionBackground);
     if (coordSpec is RectCoord) {
       view.add(RectRegionColorRenderOp({
         'region': region,
@@ -123,7 +123,7 @@ void parse<D>(
     }
   } else if (coordSpec.gradient != null) {
     final regionBackgroundScene = view.graffiti.createScene(
-        layer: coordSpec.layer ?? 0, chartLayer: ChartLayers.regionBackground);
+        layer: coordSpec.layer ?? 0, builtinLayer: BuiltinLayers.regionBackground);
     if (coordSpec is RectCoord) {
       view.add(RectRegionGradientRenderOp({
         'region': region,
@@ -328,7 +328,7 @@ void parse<D>(
     for (var name in selectSpecs.keys) {
       final selectorScene = view.graffiti.createScene(
           layer: selectSpecs[name]!.layer ?? 0,
-          chartLayer: ChartLayers.selector);
+          builtinLayer: BuiltinLayers.selector);
       view.add(SelectorRenderOp({
         'selectors': selectors,
         'name': name,
@@ -495,26 +495,26 @@ void parse<D>(
 
     final markPrimitiveScene = view.graffiti.createScene(
         layer: markSpec.layer ?? 0,
-        chartLayer: ChartLayers.mark,
+        builtinLayer: BuiltinLayers.mark,
         transition: markSpec.transition);
     view.add(MarkPrimitiveRenderOp({
       'groups': groups,
       'coord': coord,
       'origin': origin,
       'transition': markSpec.transition,
-      'entrance': markSpec.entrance ?? MarkEntrance.alpha,
+      'entrance': markSpec.entrance ?? {MarkEntrance.alpha},
     }, markPrimitiveScene, view));
 
     final markLabelScene = view.graffiti.createScene(
         layer: markSpec.layer ?? 0,
-        chartLayer: ChartLayers.mark,
+        builtinLayer: BuiltinLayers.mark,
         transition: markSpec.transition);
     view.add(MarkLabelRenderOp({
       'groups': groups,
       'coord': coord,
       'origin': origin,
       'transition': markSpec.transition,
-      'entrance': markSpec.entrance ?? MarkEntrance.alpha,
+      'entrance': markSpec.entrance ?? {MarkEntrance.alpha},
     }, markLabelScene, view));
   }
 
@@ -539,7 +539,7 @@ void parse<D>(
       }));
 
       final axisScene = view.graffiti.createScene(
-          layer: axisSpec.layer ?? 0, chartLayer: ChartLayers.axis);
+          layer: axisSpec.layer ?? 0, builtinLayer: BuiltinLayers.axis);
       view.add(AxisRenderOp({
         'coord': coord,
         'dim': dim,
@@ -550,7 +550,7 @@ void parse<D>(
       }, axisScene, view));
 
       final gridScene = view.graffiti.createScene(
-          layer: axisSpec.gridZIndex ?? 0, chartLayer: ChartLayers.grid);
+          layer: axisSpec.gridZIndex ?? 0, builtinLayer: BuiltinLayers.grid);
       view.add(GridRenderOp({
         'coord': coord,
         'dim': dim,
@@ -566,7 +566,7 @@ void parse<D>(
         final variable =
             annotSpec.variable ?? firstVariables![dim == Dim.x ? 0 : 1];
         final annotScene = view.graffiti.createScene(
-            layer: annotSpec.layer ?? 0, chartLayer: ChartLayers.regionAnnot);
+            layer: annotSpec.layer ?? 0, builtinLayer: BuiltinLayers.regionAnnot);
         view.add(RegionAnnotRenderOp({
           'dim': dim,
           'variable': variable,
@@ -581,7 +581,7 @@ void parse<D>(
         final variable =
             annotSpec.variable ?? firstVariables![dim == Dim.x ? 0 : 1];
         final annotScene = view.graffiti.createScene(
-            layer: annotSpec.layer ?? 0, chartLayer: ChartLayers.lineAnnot);
+            layer: annotSpec.layer ?? 0, builtinLayer: BuiltinLayers.lineAnnot);
         view.add(LineAnnotRenderOp({
           'dim': dim,
           'variable': variable,
@@ -626,7 +626,7 @@ void parse<D>(
         }
 
         final annotScene = view.graffiti.createScene(
-            layer: annotSpec.layer ?? 0, chartLayer: ChartLayers.elementAnnot);
+            layer: annotSpec.layer ?? 0, builtinLayer: BuiltinLayers.elementAnnot);
         view.add(ElementAnnotRenderOp({
           'elements': annot,
           'clip': annotSpec.clip ?? false,
@@ -645,7 +645,7 @@ void parse<D>(
     final markIndex = crosshairSpec.mark ?? 0;
 
     final crosshairScene = view.graffiti.createScene(
-        layer: crosshairSpec.layer ?? 0, chartLayer: ChartLayers.crosshair);
+        layer: crosshairSpec.layer ?? 0, builtinLayer: BuiltinLayers.crosshair);
     view.add(CrosshairRenderOp({
       'selections': crosshairSpec.selections ?? spec.selections!.keys.toSet(),
       'selectors': selectors!,
@@ -668,7 +668,7 @@ void parse<D>(
     final markIndex = tooltipSpec.mark ?? 0;
 
     final tooltipScene = view.graffiti.createScene(
-        layer: tooltipSpec.layer ?? 0, chartLayer: ChartLayers.tooltip);
+        layer: tooltipSpec.layer ?? 0, builtinLayer: BuiltinLayers.tooltip);
     view.add(TooltipRenderOp({
       'selections': tooltipSpec.selections ?? spec.selections!.keys.toSet(),
       'selectors': selectors!,

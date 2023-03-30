@@ -33,7 +33,7 @@ abstract class PartitionMark<S extends PartitionShape> extends Mark<S> {
     Selected? selected,
     StreamController<Selected?>? selectionStream,
     Transition? transition,
-    MarkEntrance? entrance,
+    Set<MarkEntrance>? entrance,
     String? Function(Tuple)? tag,
   }) : super(
           color: color,

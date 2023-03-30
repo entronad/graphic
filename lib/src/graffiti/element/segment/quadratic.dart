@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'segment.dart';
 import 'cubic.dart';
 
+/// Converts a quadratic bezier segment to cubic bezier control points.
 List<Offset> quadraticToCubicControls(
         Offset start, Offset control, Offset end) =>
     [
@@ -10,6 +11,7 @@ List<Offset> quadraticToCubicControls(
       end * (1 / 3) + control * (2 / 3),
     ];
 
+/// A quadratic bezier segment like [Path.quadraticBezierTo].
 class QuadraticSegment extends Segment {
   QuadraticSegment({
     required this.control,
@@ -19,8 +21,10 @@ class QuadraticSegment extends Segment {
           tag: tag,
         );
 
+  /// The control point of this quadratic bezier segment.
   final Offset control;
 
+  /// The end point of this quadratic bezier segment.
   final Offset end;
 
   @override

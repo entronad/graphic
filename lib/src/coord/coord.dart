@@ -72,7 +72,7 @@ abstract class Coord {
 
 /// The converter of a coordinate.
 ///
-/// The inputs are abstract position points from [Aes.position] and outputs are
+/// The inputs are abstract position points from [Attributes.position] and outputs are
 /// canvas points.
 abstract class CoordConv extends Converter<Offset, Offset> {
   /// Creates a coordinate converter.

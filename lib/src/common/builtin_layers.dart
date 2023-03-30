@@ -1,5 +1,7 @@
-/// Intrinsic layer orders, if the components has same layer.
-abstract class ChartLayers {
+/// Built-in layer orders of chart components.
+/// 
+/// It works when components have same layer.
+abstract class BuiltinLayers {
   static const regionBackground = 0;
   static const grid = 1;
   static const regionAnnot = 2;

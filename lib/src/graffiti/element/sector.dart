@@ -13,6 +13,7 @@ import 'segment/move.dart';
 import 'segment/quadratic.dart';
 import 'segment/arc.dart';
 
+/// Gets segments of a sector.
 List<Segment> _getSectorSegments({
   required Offset center,
   required double startRadius,
@@ -24,13 +25,9 @@ List<Segment> _getSectorSegments({
   final sweepAngle = endAngle - startAngle;
   final radialInterval = endRadius - startRadius;
 
-  if (sweepAngle.equalTo(0) || radialInterval.equalTo(0)) {
-    return [];
-  }
-
   final sweepAngleAbs = sweepAngle.abs();
 
-  // The canvas can not fill a ring, so it is devided to two semi rings.
+  // The canvas can not fill a ring, so it is devided into two semi rings.
   if (sweepAngleAbs.equalTo(pi * 2)) {
     return [
       ..._getSectorSegments(
@@ -199,7 +196,9 @@ List<Segment> _getSectorSegments({
   return rst;
 }
 
+/// A sector element.
 class SectorElement extends PathElement {
+  /// Creates a sector element.
   SectorElement({
     required this.center,
     required this.startRadius,
@@ -225,16 +224,22 @@ class SectorElement extends PathElement {
           tag: tag,
         );
 
+  /// The center point of this sector.
   final Offset center;
 
+  /// The start radius of this sector.
   final double startRadius;
 
+  /// The end radius of this sector.
   final double endRadius;
 
+  /// The start angle of this sector.
   final double startAngle;
 
+  /// Then end angle of this sector.
   final double endAngle;
 
+  /// The border radius of this sector.
   final BorderRadius? borderRadius;
 
   @override

@@ -5,14 +5,11 @@
 <img src="https://img.shields.io/pub/v/graphic.svg" />
 </a>
 </p>
-
 Graphic is a grammar of data visualization and Flutter charting library.
 
-- **A Grammar of Graphics**: Graphic derives from Leland Wilkinson's book *The Grammar of Graphics*, and tries to balance between theoretical beauty and practicability. It inherits most concepts, like the graphic algebra.
-- **Declarative and Reactive**: As is encouraged in Flutter, the chart widget of Graphic is declarative and reactive. The grammar of data visualization is implemented by a declarative specification and the chart will reevaluate automatically on widget update.
-- **Interactive**: With the *signal* and *selection* mechanism, the chart is highly interactive. It is easy to pop a tooltip or scale the coordinate.
-- **Customizable**: With the *shape* and *figure* classes, it's easy to custom your own element, tooltip, annotation, etc.
-- **Dataflow Graph and Operators**: Graphic has a internal structure of a dataflow graph and operators. That is how the reactive reevaluation and interaction is implemented.
+- **Flexible declarative grammar**: This visualization grammar derives from Leland Wilkinson's *The Grammar of Graphics*, and tries to balance between theoretical beauty and practicability. Data processing steps and mark shapes can be composed freely in a declarative specification, not limited to certain chart types. And shape draw methods are customizable.
+- **Interaction**: With the *event* and *selection* definition, the chart is highly interactive, such as highlighting selected items, popping a tooltip, or scaling the coordinate.
+- **Animation**: Mark transition animation can be set when a chart is built or changed. The entrance animation has various forms.
 
 ## Documentation
 
@@ -23,13 +20,29 @@ See in the [documentation](https://pub.dev/documentation/graphic/latest/graphic/
 Example of charts can be seen in the [Example App](https://github.com/entronad/graphic/tree/main/example). Please clone this repository and run the example project in example directory.
 
 <div align="center">
-<img src="https://github.com/entronad/graphic/raw/main/devdoc/signal_channel.gif"/>
-<img src="https://github.com/entronad/graphic/raw/main/devdoc/selection_channel.gif"/>
+<img src="https://github.com/entronad/graphic/raw/main/devdoc/animation1.gif" width="40%" height="40%" />
+<img src="https://github.com/entronad/graphic/raw/main/devdoc/animation2.gif" width="40%" height="40%" />
+<img src="https://github.com/entronad/graphic/raw/main/devdoc/animation3.gif" width="40%" height="40%" />
+<img src="https://github.com/entronad/graphic/raw/main/devdoc/animation4.gif" width="40%" height="40%" />
+<img src="https://github.com/entronad/graphic/raw/main/devdoc/signal_channel.gif" width="40%" height="40%" />
+<img src="https://github.com/entronad/graphic/raw/main/devdoc/selection_channel.gif" width="40%" height="40%" />
 </div>
 
 ![examples](https://github.com/entronad/graphic/raw/main/devdoc/examples.jpg)
 
 ## Tutorials
+
+> **Note**: Some of the class names in there articles have been changed:
+>
+> GeomElement -> Mark
+>
+> Attr -> Encode
+>
+> Signal -> Event
+>
+> Channel -> Stream
+>
+> Figure -> MarkElement
 
 [The Versatility of the Grammar of Graphics](https://medium.com/@entronad/the-versatility-of-the-grammar-of-graphics-d1366760424d)
 

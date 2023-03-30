@@ -17,32 +17,32 @@ import 'package:graphic/src/coord/coord.dart';
 /// types, or directly extend this class for the [CustomMark]. Customizing shapes
 /// extenses chart types.
 abstract class Shape extends CustomizableSpec {
-  /// Renders the whole group of tuples.
+  /// Renders primitive elements of all tuples of a group.
   ///
-  /// The tuples are rendered in groups. the [Aes.shape] of the first tuple of a
-  /// group will be taken as a represent, and it's [renderGroup] method decides
-  /// the basic way to render the whole group. The [renderGroup] method then may
-  /// call [renderItem]s of each tuple of the group respectively or render in it's
-  /// own way accrording to the implementation.
+  /// The tuples are rendered in groups. the [Attributes.shape] of the first tuple of a
+  /// group will be taken as a represent, and it's [drawGroupPrimitives] method decides
+  /// the basic way to render the whole group. If different tuples have different
+  /// shapes, define and call special element rendering methods for each item.
   List<MarkElement> drawGroupPrimitives(
     List<Attributes> group,
     CoordConv coord,
     Offset origin,
   );
 
+  /// Renders label elements of all tuples of a group.
   List<MarkElement> drawGroupLabels(
     List<Attributes> group,
     CoordConv coord,
     Offset origin,
   );
 
-  /// The default size of the shape if [Aes.size] is null.
+  /// The default size of the shape if [Attributes.size] is null.
   @protected
   double get defaultSize;
 
-  /// Gets the represent point of [Aes.position] points.
+  /// Gets the represent point of [Attributes.position] points.
   ///
-  /// It is callen by [Aes.representPoint].
+  /// It is callen by [Attributes.representPoint].
   ///
   /// Usually the represent point is the last one.
   Offset representPoint(List<Offset> position) => position.last;

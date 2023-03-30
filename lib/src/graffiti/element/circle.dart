@@ -7,7 +7,9 @@ import 'segment/move.dart';
 import 'segment/cubic.dart';
 import 'segment/close.dart';
 
+/// A circle element.
 class CircleElement extends PrimitiveElement {
+  /// Creates a circle element.
   CircleElement({
     required this.center,
     required this.radius,
@@ -22,8 +24,10 @@ class CircleElement extends PrimitiveElement {
           tag: tag,
         );
 
+  /// The center point of this circle.
   final Offset center;
 
+  /// The radius of this circle.
   final double radius;
 
   @override

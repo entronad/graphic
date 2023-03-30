@@ -7,7 +7,9 @@ import 'segment/move.dart';
 import 'segment/cubic.dart';
 import 'segment/close.dart';
 
+/// An oval element.
 class OvalElement extends PrimitiveElement {
+  /// Creates an oval element.
   OvalElement({
     required this.oval,
     required PaintStyle style,
@@ -21,6 +23,7 @@ class OvalElement extends PrimitiveElement {
           tag: tag,
         );
 
+  /// The bounds of this oval.
   final Rect oval;
 
   @override

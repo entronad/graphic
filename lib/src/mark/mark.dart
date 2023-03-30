@@ -38,11 +38,20 @@ import 'line.dart';
 import 'point.dart';
 import 'polygon.dart';
 
+/// Strategies for mark elements to enter in initialization.
+/// 
+/// That means which encode attribute is zero at the begining of animation.
 enum MarkEntrance {
+  /// All key points will have a zero value in x direction.
   x,
+
+  /// All key points will have a zero value in y direction.
   y,
-  xy,
+
+  /// [Mark.size] will be zero.
   size,
+
+  /// Mark will be transparent.
   alpha,
 }
 
@@ -148,10 +157,23 @@ abstract class Mark<S extends Shape> {
   /// make sure it is broadcast.
   StreamController<Selected?>? selectionStream;
 
+  /// The transition animation of this mark.
   Transition? transition;
 
-  MarkEntrance? entrance;
+  /// The stratage for mark elements to enter in initialization if there is animation.
+  /// 
+  /// That means which encode attributes are zero at the begining of animation.
+  /// 
+  /// If null, a default {MarkEntrance.alpha} is set.
+  Set<MarkEntrance>? entrance;
 
+  /// Tags for each mark element.
+  /// 
+  /// Tags are used to indicate correspondence of mark elements in animation. Transition
+  /// animation happens between elements with the same tag in different frames.
+  /// Make sure mark elements in diffrent frames have same tag set.
+  /// 
+  /// If null, correspondence of mark elements will accord to list indexes.
   String? Function(Tuple)? tag;
 
   @override
@@ -169,7 +191,7 @@ abstract class Mark<S extends Shape> {
       selected == other.selected &&
       selectionStream == other.selectionStream &&
       transition == other.transition &&
-      entrance == other.entrance;
+      deepCollectionEquals(entrance, other.entrance);
       // tag is a function.
 }
 
@@ -225,7 +247,7 @@ class GroupOp extends Operator<AttributesGroups> {
   }
 }
 
-/// The geometry mark render operator.
+/// The mark primitive elements render operator.
 class MarkPrimitiveRenderOp extends Render {
   MarkPrimitiveRenderOp(
     Map<String, dynamic> params,
@@ -239,7 +261,7 @@ class MarkPrimitiveRenderOp extends Render {
     final coord = params['coord'] as CoordConv;
     final origin = params['origin'] as Offset;
     final transition = params['transition'] as Transition?;
-    final entrance = params['entrance'] as MarkEntrance;
+    final entrance = params['entrance'] as Set<MarkEntrance>;
 
     final clip = RectElement(rect: coord.region, style: PaintStyle());
 
@@ -270,6 +292,7 @@ class MarkPrimitiveRenderOp extends Render {
   }
 }
 
+/// The mark label elements render operator.
 class MarkLabelRenderOp extends Render {
   MarkLabelRenderOp(
     Map<String, dynamic> params,
@@ -283,7 +306,7 @@ class MarkLabelRenderOp extends Render {
     final coord = params['coord'] as CoordConv;
     final origin = params['origin'] as Offset;
     final transition = params['transition'] as Transition?;
-    final entrance = params['entrance'] as MarkEntrance;
+    final entrance = params['entrance'] as Set<MarkEntrance>;
 
     final clip = RectElement(rect: coord.region, style: PaintStyle());
 

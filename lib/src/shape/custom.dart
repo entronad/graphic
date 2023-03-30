@@ -9,7 +9,7 @@ import 'package:graphic/src/graffiti/element/segment/close.dart';
 import 'package:graphic/src/graffiti/element/segment/line.dart';
 import 'package:graphic/src/graffiti/element/segment/move.dart';
 
-import 'util/render_basic_item.dart';
+import 'util/style.dart';
 import 'shape.dart';
 
 /// A candle stick shape.

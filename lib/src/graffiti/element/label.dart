@@ -6,6 +6,7 @@ import 'package:graphic/src/util/assert.dart';
 
 import 'element.dart';
 
+/// The style of a label.
 class LabelStyle extends BlockStyle {
   /// Creates a label style.
   LabelStyle({
@@ -162,7 +163,9 @@ class LabelStyle extends BlockStyle {
       maxWidth == other.maxWidth;
 }
 
+/// A label element.
 class LabelElement extends BlockElement<LabelStyle> {
+  /// Creates a label element.
   LabelElement({
     required this.text,
     required Offset anchor,
@@ -198,8 +201,10 @@ class LabelElement extends BlockElement<LabelStyle> {
         _painter.height, this.style.align ?? this.defaultAlign);
   }
 
+  /// The content text of this label.
   final String text;
 
+  /// The text painter.
   late final TextPainter _painter;
 
   @override

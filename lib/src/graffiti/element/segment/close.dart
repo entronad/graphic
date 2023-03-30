@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'segment.dart';
 import 'cubic.dart';
 
+/// A close segment like [Path.close].
 class CloseSegment extends Segment {
+  /// Creates a close segment.
   CloseSegment({
     String? tag,
   }) : super(

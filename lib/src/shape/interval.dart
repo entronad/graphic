@@ -12,7 +12,7 @@ import 'package:graphic/src/graffiti/element/element.dart';
 import 'package:graphic/src/guide/axis/radial.dart';
 import 'package:graphic/src/util/math.dart';
 
-import 'util/render_basic_item.dart';
+import 'util/style.dart';
 import 'function.dart';
 
 /// The shape for the interval mark.

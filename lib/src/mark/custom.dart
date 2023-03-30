@@ -37,7 +37,7 @@ class CustomMark extends Mark<Shape> {
     Selected? selected,
     StreamController<Selected?>? selectionStream,
     Transition? transition,
-    MarkEntrance? entrance,
+    Set<MarkEntrance>? entrance,
     String? Function(Tuple)? tag,
   }) : super(
           color: color,

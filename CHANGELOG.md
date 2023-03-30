@@ -1,3 +1,23 @@
+## 1.1.0
+
+**2023-03-30**
+
+- Add feature of transition animation, see details in `Mark.transition`.
+
+- Update terminology, some class names have changed:
+
+  GeomElement -> Mark
+
+  Attr -> Encode
+
+  Signal -> Event
+
+  Channel -> Stream
+
+  Figure -> MarkElement
+
+- Fix diposing functions.
+
 ## 1.0.1
 
 **2022-12-18**

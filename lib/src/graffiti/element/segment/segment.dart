@@ -3,7 +3,12 @@ import 'dart:ui';
 import 'cubic.dart';
 import 'move.dart';
 import 'close.dart';
+import '../path.dart';
+import '../element.dart';
 
+/// Built-in segment tags.
+/// 
+/// Built-in elements use these tags to optimize morphing.
 abstract class SegmentTags {
   static const topLeft = 'topLeft';
   static const top = 'top';
@@ -15,36 +20,64 @@ abstract class SegmentTags {
   static const left = 'left';
 }
 
+/// Path segments of [PathElement]s.
 abstract class Segment {
+  /// Creates a segment.
   Segment({
     this.tag,
   });
 
+  /// The tag to indicate correspondence of this segment in animation.
+  /// 
+  /// The order and connecting relations of items in a segment list is important,
+  /// which is different to [MarkElement] list. So to make a best morphing, two
+  /// path segments should:
+  /// - Tags should be unique.
+  /// - The shorter's tags are subset of the longer's.
+  /// - The shorter's tags' order are same with they are in longer's.
   final String? tag;
 
+  /// Draws this segment on a path.
   void drawPath(Path path);
 
+  /// Linearly interpolate between this segment and [from].
   Segment lerpFrom(covariant Segment from, double t);
 
-  // toCubic algrithom is from https://github.com/thednp/svg-path-commander 2.0.2
+  /// Converts this segment to a [CubicSegment].
+  /// 
+  /// This method is used for morphing.
+  /// 
+  /// The algrithoms are from https://github.com/thednp/svg-path-commander 2.0.2
   CubicSegment toCubic(Offset start);
 
+  /// Shrinks this segment to a point in [position].
   Segment sow(Offset position);
 
+  /// Gets the end point of this segment.
   Offset getEnd();
 
   @override
   bool operator ==(Object other) => other is Segment && tag == other.tag;
 }
 
+/// A [segment] and its [start]ing point.
+/// 
+/// This is used for [Segment.toCubic] in morphing.
 class SegmentInfo<S extends Segment> {
+  /// Creates a segment info.
   SegmentInfo(this.start, this.segment);
 
+  /// Starting point of the segment.
   final Offset start;
 
+  /// The segment.
   final S segment;
 }
 
+/// Splites a path segments into contours.
+/// 
+/// A contour is a continuous path that starts with a [MoveSegment] but dosen't
+/// include other [MoveSegment]s in the middle.
 List<List<Segment>> _spliteContours(List<Segment> segments) {
   final contours = <List<Segment>>[];
   var currentContour = [segments.first];
@@ -61,6 +94,9 @@ List<List<Segment>> _spliteContours(List<Segment> segments) {
   return contours;
 }
 
+/// Complements the [shorter]’s contours count to the [longer].
+/// 
+/// The complementing contours are at the end with a single [MoveSegment].
 List<List<Segment>> _complementContours(
     List<List<Segment>> shorter, List<List<Segment>> longer) {
   final rst = [...shorter];
@@ -71,10 +107,11 @@ List<List<Segment>> _complementContours(
   return rst;
 }
 
-// No first move.
+/// Converts contour segment list to [SegmentInfo] list.
 List<SegmentInfo> _getContourInfos(List<Segment> contour) {
   final rst = <SegmentInfo>[];
   assert(contour.first is MoveSegment);
+  // The first MoveSegment will not be an item.
   final start = contour.first.getEnd();
   Offset current = start;
   for (var i = 1; i < contour.length; i++) {
@@ -89,7 +126,11 @@ List<SegmentInfo> _getContourInfos(List<Segment> contour) {
   return rst;
 }
 
-// assume that every in shorter in needed.
+/// Complements [SegmentInfo]s of [shorter] contour to [longer].
+/// 
+/// The complemention is mainly according to tags.
+/// 
+/// Every item in [shorter] will be kept.
 List<SegmentInfo> _complementInfos(
     List<SegmentInfo> shorter, List<SegmentInfo> longer) {
   final rst = <SegmentInfo>[];
@@ -98,7 +139,7 @@ List<SegmentInfo> _complementInfos(
   int longerIndex = 0;
   while (longerIndex < longer.length) {
     if (shorterIndex < shorter.length) {
-      // complement in prev.
+      // When there are still items in shorter, sows before the not-matching candidate.
 
       final shorterInfo = shorter[shorterIndex];
       final longerInfo = longer[longerIndex];
@@ -113,7 +154,7 @@ List<SegmentInfo> _complementInfos(
         needCount--;
       }
     } else {
-      // complement in next.
+      // When shorter is used up, sows after the shorter.
 
       final shorterEnd = shorter[shorterIndex - 1].segment.getEnd();
       final longerInfo = longer[longerIndex];
@@ -125,6 +166,9 @@ List<SegmentInfo> _complementInfos(
   return rst;
 }
 
+/// Normalizes two path segments into same length and same corresponding segment types.
+/// 
+/// Returns a pair of two path results: \[fromRst, toRst\].
 List<List<Segment>> nomalizeSegments(List<Segment> from, List<Segment> to) {
   var fromContours = _spliteContours(from);
   var toContours = _spliteContours(to);
@@ -168,7 +212,9 @@ List<List<Segment>> nomalizeSegments(List<Segment> from, List<Segment> to) {
   return [fromRst, toRst];
 }
 
-// Make sure nomalized.
+/// Linearly interpolate between two path segments.
+/// 
+/// Make sure the two path segments are nomalized.
 List<Segment> lerpSegments(List<Segment> from, List<Segment> to, double t) {
   final rst = <Segment>[];
   for (var i = 0; i < to.length; i++) {

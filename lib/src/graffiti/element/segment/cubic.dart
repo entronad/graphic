@@ -2,7 +2,9 @@ import 'dart:ui';
 
 import 'segment.dart';
 
+/// A cubic bezier segment like [Path.cubicTo].
 class CubicSegment extends Segment {
+  /// Creates a cubic bezier segment.
   CubicSegment({
     required this.control1,
     required this.control2,
@@ -12,10 +14,13 @@ class CubicSegment extends Segment {
           tag: tag,
         );
 
+  /// The first control point of this cubic bezier segment.
   final Offset control1;
 
+  /// The second control point of this cubic bezier segment.
   final Offset control2;
 
+  /// The end point of this cubic bezier segment.
   final Offset end;
 
   @override

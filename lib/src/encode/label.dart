@@ -6,7 +6,7 @@ import 'encode.dart';
 
 /// The specification of a label encode.
 ///
-/// How to get label contents form tuples must be indicated by [encode].
+/// How to get label contents from tuples must be indicated by [encoder].
 class LabelEncode extends Encode<Label> {
   /// Creates a label encode.
   LabelEncode({

@@ -6,7 +6,9 @@ import 'element.dart';
 import 'segment/segment.dart';
 import 'segment/move.dart';
 
+/// An element specified by path [Segment]s.
 class PathElement extends PrimitiveElement {
+  /// Creates a path element.
   PathElement({
     required this.segments,
     required PaintStyle style,
@@ -21,6 +23,7 @@ class PathElement extends PrimitiveElement {
           tag: tag,
         );
 
+  /// The path segments of this element.
   final List<Segment> segments;
 
   @override

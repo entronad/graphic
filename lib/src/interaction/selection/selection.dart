@@ -22,14 +22,14 @@ import 'point.dart';
 ///
 /// A selection is a data query driven by [Gesture]s. When a selection is triggered,
 /// data tuples become either selected or unselected states(At least one tuple is
-/// selected), thus may causing their aesthetic encodes change if [Encode.onSelection]
+/// selected), thus may causing their aesthetic encodes change if [Encode.updaters]
 /// is defined.
 ///
 /// See also:
 ///
 /// - [SelectionUpdater], updates an aesthetic encode value when the selection
 /// state changes.
-/// - [Encode.onSelection], where selection updates are defined.
+/// - [Encode.updaters], where selection updates are defined.
 abstract class Selection {
   /// Creates a selection.
   Selection({
@@ -93,7 +93,7 @@ abstract class Selection {
 /// item changes.
 ///
 /// You can define different selection updates for different selections and selection
-/// states (See details in [Encode.onSelection]).
+/// states (See details in [Encode.updaters]).
 ///
 /// The [initialValue] is the original item encode value (Set or calculated.).
 ///
@@ -101,7 +101,7 @@ abstract class Selection {
 ///
 /// See also:
 ///
-/// - [Encode.onSelection], where selection updates are defined.
+/// - [Encode.updaters], where selection updates are defined.
 typedef SelectionUpdater<V> = V Function(V initialValue);
 
 /// The base class of selectors.

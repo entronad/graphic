@@ -5,7 +5,9 @@ import 'segment/segment.dart';
 import 'segment/move.dart';
 import 'segment/line.dart';
 
+/// A line element.
 class LineElement extends PrimitiveElement {
+  /// Creates a line element.
   LineElement({
     required this.start,
     required this.end,
@@ -20,8 +22,10 @@ class LineElement extends PrimitiveElement {
           tag: tag,
         );
 
+  /// The start point of this line.
   final Offset start;
 
+  /// The end point of this line.
   final Offset end;
 
   @override

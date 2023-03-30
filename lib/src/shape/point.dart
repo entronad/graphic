@@ -8,7 +8,7 @@ import 'package:graphic/src/mark/point.dart';
 import 'package:graphic/src/graffiti/element/element.dart';
 
 import 'function.dart';
-import 'util/render_basic_item.dart';
+import 'util/style.dart';
 
 /// The shape for the point mark.
 ///
@@ -55,7 +55,7 @@ abstract class PointShape extends FunctionShape {
         continue;
       }
 
-      rst.add(drawPoint(item, coord, hollow, strokeWidth));
+      rst.add((item.shape as PointShape).drawPoint(item, coord, hollow, strokeWidth));
     }
 
     return rst;

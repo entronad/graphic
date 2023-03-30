@@ -34,7 +34,7 @@ abstract class FunctionMark<S extends FunctionShape> extends Mark<S> {
     Selected? selected,
     StreamController<Selected?>? selectionStream,
     Transition? transition,
-    MarkEntrance? entrance,
+    Set<MarkEntrance>? entrance,
     String? Function(Tuple)? tag,
   }) : super(
           color: color,

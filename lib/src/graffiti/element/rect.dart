@@ -9,7 +9,9 @@ import 'segment/line.dart';
 import 'segment/arc_to_point.dart';
 import 'segment/close.dart';
 
+/// A rectangle element.
 class RectElement extends PrimitiveElement {
+  /// Creates a rectangle element.
   RectElement({
     required this.rect,
     this.borderRadius,
@@ -24,8 +26,10 @@ class RectElement extends PrimitiveElement {
           tag: tag,
         );
 
+  /// The rectangle of this element.
   final Rect rect;
 
+  /// The border radius of this rectangle.
   final BorderRadius? borderRadius;
 
   @override

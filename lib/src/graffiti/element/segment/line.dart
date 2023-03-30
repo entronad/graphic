@@ -3,10 +3,13 @@ import 'dart:ui';
 import 'segment.dart';
 import 'cubic.dart';
 
+/// Converts a line to cubic bezier control points.
 List<Offset> lineToCubicControls(Offset start, Offset end) =>
     [Offset.lerp(start, end, 0.5)!, end];
 
+/// A line segment like [Path.lineTo].
 class LineSegment extends Segment {
+  /// Creates a line segment.
   LineSegment({
     required this.end,
     String? tag,
@@ -14,6 +17,7 @@ class LineSegment extends Segment {
           tag: tag,
         );
 
+  /// The end point of this line.
   final Offset end;
 
   @override

@@ -4,6 +4,7 @@ import 'package:graphic/src/util/collection.dart';
 
 import 'element.dart';
 
+/// The placeholder style of [GroupElement].
 class _GroupStyle extends ElementStyle {
   @override
   _GroupStyle lerpFrom(covariant _GroupStyle from, double t) {
@@ -11,9 +12,12 @@ class _GroupStyle extends ElementStyle {
   }
 }
 
+/// The placeholder group style parameter.
 final _groupStyle = _GroupStyle();
 
+/// A group element.
 class GroupElement extends MarkElement<_GroupStyle> {
+  /// Creates a group element.
   GroupElement({
     required this.elements,
     double? rotation,
@@ -26,6 +30,7 @@ class GroupElement extends MarkElement<_GroupStyle> {
           tag: tag,
         );
 
+  /// The child elements of this group element.
   final List<MarkElement> elements;
 
   @override

@@ -4,11 +4,16 @@ import 'package:flutter/animation.dart';
 
 import 'element/element.dart';
 import 'transition.dart';
+import 'graffiti.dart';
 
+/// A scene for graffiti to paint graphical elements.
 class Scene {
+  /// Creates a scnene.
+  /// 
+  /// You should use [Graffiti.createScene] to get a scene.
   Scene({
     required this.layer,
-    required this.chartLayer,
+    required this.builtinLayer,
     this.transition,
     required TickerProvider tickerProvider,
     required this.repaint,
@@ -51,45 +56,85 @@ class Scene {
     }
   }
 
+  /// The layer index of this scene.
   final int layer;
 
-  final int chartLayer;
+  /// The built-in layer index of this scene.
+  /// 
+  /// It decides the order of scenes with same [layer].
+  final int builtinLayer;
 
+  /// The transition animation specifications of this scene.
   final Transition? transition;
 
+  /// The previous index in [Graffiti._scenes] of this scene.
+  /// 
+  /// This is for stable sorting of scenes with same [layer].
   late int preIndex;
 
+  /// The elements of current cycle.
   List<MarkElement>? _currentElements;
 
+  /// The elements of previous cycle.
   List<MarkElement>? _preElements;
 
+  /// The start elements in animation.
+  /// 
+  /// It is normalized from [_preElements].
   List<MarkElement>? _startElements;
 
+  /// The end elements in animation.
+  /// 
+  /// It is normalized from [_currentElements].
   List<MarkElement>? _endElements;
 
+  /// The elements for painting.
+  /// 
+  /// It is directly set if there is no animation or interpolated from [_startElements]
+  /// and [_endElements] otherwise.
   List<MarkElement>? _elements;
 
+  /// The clip of current cycle.
   PrimitiveElement? _currentClip;
 
+  /// The clip of previous cycle.
   PrimitiveElement? _preClip;
 
+  /// The start clip in animation.
+  /// 
+  /// It is normalized from [_preClip].
   PrimitiveElement? _startClip;
 
+  /// The end clip in animation.
+  /// 
+  /// It is normalized from [_endClip].
   PrimitiveElement? _endClip;
 
+  /// The clip for painting.
+  /// 
+  /// It is directly set if there is no animation or interpolated from [_startClip]
+  /// and [_endClip] otherwise.
   PrimitiveElement? _clip;
 
+  /// The handler to notify graffiti to repaint.
   final void Function() repaint;
 
+  /// The animation controller of this scene if there is animation.
   late final AnimationController? _controller;
 
+  /// Whether to animate elements.
   late bool _animateElements;
 
+  /// Whether to animate the clip.
   late bool _animateClip;
 
+  /// Whether there are elements to paint in current cycle.
+  /// 
+  /// This is for complemention elements in animation.
   bool get hasCurrent =>
       _currentElements != null && _currentElements!.isNotEmpty;
 
+  /// Sets elements and clip of this scene.
   void set(List<MarkElement>? elements, [PrimitiveElement? clip]) {
     _animateElements = _controller != null &&
         _currentElements != null &&
@@ -110,6 +155,12 @@ class Scene {
     }
   }
 
+  /// Updates this scnene.
+  /// 
+  /// Directly notifys graffiti to repaint if there is no animation or prepares
+  /// and starts an animation otherwise.
+  /// 
+  /// It should only be called by graffiti.
   void update() {
     if (_animateElements) {
       final elementsPair =
@@ -132,10 +183,12 @@ class Scene {
         _controller!.forward();
       }
     } else {
+      // Multiple setState in one sync circle will be merged.
       repaint();
     }
   }
 
+  /// Paints this scene.
   void paint(Canvas canvas) {
     if (_elements != null) {
       canvas.save();
@@ -164,5 +217,6 @@ class Scene {
     }
   }
 
+  /// Dispose this scnene.
   void dispose() => _controller?.dispose();
 }

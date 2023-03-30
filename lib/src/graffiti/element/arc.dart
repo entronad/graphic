@@ -6,9 +6,10 @@ import 'segment/segment.dart';
 import 'segment/move.dart';
 import 'segment/arc.dart';
 
+/// Gets the arc point by [angle] on an [oval].
+/// 
+/// The algrithom is from https://blog.csdn.net/chenlu5201314/article/details/99678398
 Offset getArcPoint(Rect oval, double angle) {
-  // https://blog.csdn.net/chenlu5201314/article/details/99678398
-
   final a = oval.width / 2;
   final b = oval.height / 2;
   final yc = sin(angle);
@@ -18,7 +19,9 @@ Offset getArcPoint(Rect oval, double angle) {
   return oval.center.translate(radio * xc, radio * yc);
 }
 
+/// An arc element
 class ArcElement extends PrimitiveElement {
+  /// Creates an arc element.
   ArcElement({
     required this.oval,
     required this.startAngle,
@@ -34,10 +37,13 @@ class ArcElement extends PrimitiveElement {
           tag: tag,
         );
 
+  /// The bounds of the oval this arc belongs to.
   final Rect oval;
 
+  /// The start angle of this arc.
   final double startAngle;
 
+  /// The end angle of this arc.
   final double endAngle;
 
   @override

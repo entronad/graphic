@@ -9,15 +9,20 @@ import 'package:graphic/src/util/assert.dart';
 import 'segment/segment.dart';
 import 'group.dart';
 import 'path.dart';
+import '../scene.dart';
 
+/// The style of [MarkElement].
 abstract class ElementStyle {
+  /// Linearly interpolate between this style and [from].
   ElementStyle lerpFrom(covariant ElementStyle from, double t);
 
   @override
   bool operator ==(Object other) => other is ElementStyle;
 }
 
+/// The basic element to compose graphics on [Scene]s.
 abstract class MarkElement<S extends ElementStyle> {
+  /// Creates an element.
   MarkElement({
     required this.style,
     this.rotation,
@@ -25,17 +30,29 @@ abstract class MarkElement<S extends ElementStyle> {
     this.tag,
   }) : assert(rotation == null || rotationAxis != null);
 
+  /// The style of this element.
   final S style;
 
+  /// The rotation of this element.
   final double? rotation;
 
+  /// The rotation axis of this element.
+  /// 
+  /// If [rotation] is not null, this is required.
   final Offset? rotationAxis;
 
+  /// The tag to indicate correspondence of this element in animation.
+  /// 
+  /// The element list dosen't cares about order and relation, which is different
+  /// from [Segment] list. So to make a best morphing, the two element list only
+  /// need to have the same tags set.
   final String? tag;
 
+  /// Indicates how this element is drawn.
   @protected
   void draw(Canvas canvas);
 
+  /// Paints this element on [canvas].
   void paint(Canvas canvas) {
     if (rotation == null) {
       draw(canvas);
@@ -52,6 +69,7 @@ abstract class MarkElement<S extends ElementStyle> {
     }
   }
 
+  /// Linearly interpolate between this element and [from].
   MarkElement<S> lerpFrom(covariant MarkElement<S> from, double t);
 
   @override
@@ -63,6 +81,7 @@ abstract class MarkElement<S extends ElementStyle> {
       tag == other.tag;
 }
 
+/// Linearly interpolate dash lists.
 List<double>? _lerpDash(List<double>? a, List<double>? b, double t) {
   if (a == null || b == null || a.length != b.length) {
     return b;
@@ -74,7 +93,9 @@ List<double>? _lerpDash(List<double>? a, List<double>? b, double t) {
   return rst;
 }
 
+/// The style of [PrimitiveElement].
 class PaintStyle extends ElementStyle {
+  /// Creates a paint style.
   PaintStyle({
     this.fillColor,
     this.fillGradient,
@@ -109,36 +130,85 @@ class PaintStyle extends ElementStyle {
             ? null
             : fillColor ?? (strokeColor ?? const Color(0xFF000000));
 
+  /// The color to fill the shape.
+  /// 
+  /// Only one of [fillColor], [fillGradient], [fillShader] can be set.
   final Color? fillColor;
 
+  /// The gradient to fill the shape.
+  /// 
+  /// Only one of [fillColor], [fillGradient], [fillShader] can be set.
   final painting.Gradient? fillGradient;
 
-  final Shader? fillShader; // won't lerp
+  /// The shader to fill the shape.
+  /// 
+  /// It won't be interpolated in animation.
+  /// 
+  /// Only one of [fillColor], [fillGradient], [fillShader] can be set.
+  final Shader? fillShader;
 
+  /// The color for shape's outlines.
+  /// 
+  /// Only one of [strokeColor], [strokeGradient], [strokeShader] can be set.
   final Color? strokeColor;
 
+  /// The gradient for shape's outlines.
+  /// 
+  /// Only one of [strokeColor], [strokeGradient], [strokeShader] can be set.
   final painting.Gradient? strokeGradient;
 
-  final Shader? strokeShader; // won't lerp
+  /// The shader for shape's outlines.
+  /// 
+  /// It won't be interpolated in animation.
+  /// 
+  /// Only one of [strokeColor], [strokeGradient], [strokeShader] can be set.
+  final Shader? strokeShader;
 
+  /// The bounds of [fillGradient] and [strokeGradient].
   final Rect? gradientBounds;
 
+  /// The blend mode of the shape.
   final BlendMode? blendMode;
 
+  /// Width of the shape's outlines.
+  /// 
+  /// It can only be set when [strokeColor], [strokeGradient], or [strokeShader]
+  /// is not null.
   final double? strokeWidth;
 
+  /// The kind of finish to place on the end of the shape's outlines.
+  /// 
+  /// It can only be set when [strokeColor], [strokeGradient], or [strokeShader]
+  /// is not null.
   final StrokeCap? strokeCap;
 
+  /// The kind of finish to place on the joins between segments of the shape's outlines.
+  /// 
+  /// It can only be set when [strokeColor], [strokeGradient], or [strokeShader]
+  /// is not null.
   final StrokeJoin? strokeJoin;
 
+  /// The limit for miters to be drawn on segments of the shape's outlines.
+  /// 
+  /// It can only be set when [strokeColor], [strokeGradient], or [strokeShader]
+  /// is not null.
   final double? strokeMiterLimit;
 
+  /// The elevation of the shape's shadow.
   final double? elevation;
 
+  /// The color of the shape's shadow.
+  /// 
+  /// It can only be set when [elevation] is not null. If null, it will be same
+  /// as [fillColor] (if fillColor is set) or Color(0xFF000000).
   final Color? shadowColor;
 
+  /// The dash list of the shape's outlines.
   final List<double>? dash;
 
+  /// The dash offset of the shape's outlines.
+  /// 
+  /// It can only be set when [dash] is not null.
   final DashOffset? dashOffset;
 
   @override
@@ -186,7 +256,9 @@ class PaintStyle extends ElementStyle {
       dashOffset == other.dashOffset;
 }
 
+/// The graphical primitive element of a basic shape.
 abstract class PrimitiveElement extends MarkElement<PaintStyle> {
+  /// Creates a primitive element.
   PrimitiveElement({
     required PaintStyle style,
     double? rotation,
@@ -249,20 +321,25 @@ abstract class PrimitiveElement extends MarkElement<PaintStyle> {
     }
 
     if (style.dash != null) {
-      _dathPath = dashPath(path,
+      _dashPath = dashPath(path,
           dashArray: CircularIntervalList(style.dash!),
           dashOffset: style.dashOffset);
     }
   }
 
+  /// The path of this shape.
   final path = Path();
 
+  /// The paint to fill the shape.
   Paint? _fillPaint;
 
+  /// The paint of the shape's outlines.
   Paint? _strokePaint;
 
-  Path? _dathPath;
+  /// The dash path converted from [path].
+  Path? _dashPath;
 
+  /// How to draw [path] of this shape.
   void drawPath(Path path);
 
   @override
@@ -276,35 +353,38 @@ abstract class PrimitiveElement extends MarkElement<PaintStyle> {
     }
 
     if (_strokePaint != null) {
-      canvas.drawPath(_dathPath ?? path, _strokePaint!);
+      canvas.drawPath(_dashPath ?? path, _strokePaint!);
     }
   }
 
   @override
   PrimitiveElement lerpFrom(covariant PrimitiveElement from, double t);
 
+  /// Converts this shape to path segments.
   List<Segment> toSegments();
 
   @override
   bool operator ==(Object other) => other is PrimitiveElement && super == other;
 }
 
+/// The style of a [BlockElement].
 abstract class BlockStyle extends ElementStyle {
+  /// Creates a block style.
   BlockStyle({
     this.offset,
     this.rotation,
     this.align,
   }) : super();
 
-  /// The offset of the box from the anchor.
+  /// The offset of the block element from the anchor.
   final Offset? offset;
 
-  /// The rotation of the box.
+  /// The rotation of the block element.
   ///
   /// The rotation axis is the anchor point with [offset].
   final double? rotation;
 
-  /// How the box align to the anchor point.
+  /// How the block element align to the anchor point.
   final painting.Alignment? align;
 
   @override
@@ -330,7 +410,9 @@ Offset getBlockPaintPoint(
       axis.dy - (height / 2) + ((height / 2) * align.y),
     );
 
+/// The element displayed in a block.
 abstract class BlockElement<S extends BlockStyle> extends MarkElement<S> {
+  /// Creates a block element.
   BlockElement({
     required this.anchor,
     required this.defaultAlign,
@@ -343,8 +425,13 @@ abstract class BlockElement<S extends BlockStyle> extends MarkElement<S> {
           tag: tag,
         );
 
+  /// The anchor position of this block.
   final Offset anchor;
 
+  /// The default align of this block to anchor when [BlockStyle.align] is not set.
+  /// 
+  /// This is useful because a block may need different default aligns for different
+  /// anchor position.
   painting.Alignment defaultAlign;
 
   @protected
@@ -358,7 +445,7 @@ abstract class BlockElement<S extends BlockStyle> extends MarkElement<S> {
       defaultAlign == other.defaultAlign;
 }
 
-// No predicate, call only when needed.
+/// Normalizes two [PrimitiveElement]s to a pair of [PathElement]s.
 List<PathElement> _nomalizeShape(PrimitiveElement from, PrimitiveElement to) {
   final segmentsPair = nomalizeSegments(from.toSegments(), to.toSegments());
   return [
@@ -375,6 +462,7 @@ List<PathElement> _nomalizeShape(PrimitiveElement from, PrimitiveElement to) {
   ];
 }
 
+/// Normalizes two [MarkElement]s into same runtimeType for lerping.
 List<MarkElement> nomalizeElement(MarkElement from, MarkElement to) {
   if (from is GroupElement && to is GroupElement) {
     final elementsPair = nomalizeElementList(from.elements, to.elements);
@@ -390,7 +478,7 @@ List<MarkElement> nomalizeElement(MarkElement from, MarkElement to) {
     ];
   }
 
-  // use runtimeType because of PathElemnet's sub classes.
+  // Using runtimeType instead of is because there may be PathElemnet's sub classes.
   if (from.runtimeType == PathElement && to.runtimeType == PathElement) {
     return _nomalizeShape(from as PathElement, to as PathElement);
   }
@@ -406,6 +494,9 @@ List<MarkElement> nomalizeElement(MarkElement from, MarkElement to) {
   return [to, to];
 }
 
+/// Normalizes two element list into same corresponding item runtimeTypes for lerping.
+/// 
+/// The [from] may be reorded by tags to match [to].
 List<List<MarkElement>> nomalizeElementList(
     List<MarkElement> from, List<MarkElement> to) {
   final fromRst = <MarkElement>[];

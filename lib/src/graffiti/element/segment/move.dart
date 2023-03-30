@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'segment.dart';
 import 'cubic.dart';
 
+/// A move segment like [Path.moveTo].
 class MoveSegment extends Segment {
+  /// Creates a move segment.
   MoveSegment({
     required this.end,
     String? tag,
@@ -11,6 +13,7 @@ class MoveSegment extends Segment {
           tag: tag,
         );
 
+  /// The end point of this move.
   final Offset end;
 
   @override

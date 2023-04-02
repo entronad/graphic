@@ -11,6 +11,24 @@ Graphic is a grammar of data visualization and Flutter charting library.
 - **Interaction**: With the *event* and *selection* definition, the chart is highly interactive, such as highlighting selected items, popping a tooltip, or scaling the coordinate.
 - **Animation**: Mark transition animation can be set when a chart is built or changed. The entrance animation has various forms.
 
+## What's new in v2.0
+
+- Add feature of transition animation, see details in `Mark.transition`. And thus the rendering engine is rewrited. The imperative `Figure` classes are changed to declarative `MarkElement` classes. See details in this folder: https://github.com/entronad/graphic/tree/main/lib/src/graffiti/element
+
+- Update terminology to keep same with modern mainstream data visualization libraries. Some class names have changed:
+
+  `GeomElement -> Mark`
+
+  `Attr -> Encode`
+
+  `Signal -> Event`
+
+  `Channel -> Stream`
+
+  `Figure -> MarkElement`
+
+  And thus some properties related are also changed, like `elements -> marks`.
+
 ## Documentation
 
 See in the [documentation](https://pub.dev/documentation/graphic/latest/graphic/graphic-library.html).
@@ -31,18 +49,6 @@ Example of charts can be seen in the [Example App](https://github.com/entronad/g
 ![examples](https://github.com/entronad/graphic/raw/main/devdoc/examples.jpg)
 
 ## Tutorials
-
-> **Note**: Some of the class names in there articles have been changed:
->
-> GeomElement -> Mark
->
-> Attr -> Encode
->
-> Signal -> Event
->
-> Channel -> Stream
->
-> Figure -> MarkElement
 
 [The Versatility of the Grammar of Graphics](https://medium.com/@entronad/the-versatility-of-the-grammar-of-graphics-d1366760424d)
 

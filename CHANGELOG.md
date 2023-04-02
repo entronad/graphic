@@ -1,20 +1,22 @@
-## 1.1.0
+## 2.0.0
 
-**2023-03-30**
+**2023-04-02**
 
-- Add feature of transition animation, see details in `Mark.transition`.
+- Add feature of transition animation, see details in `Mark.transition`. And thus the rendering engine is rewrited. The imperative `Figure` classes are changed to declarative `MarkElement` classes. See details in this folder: https://github.com/entronad/graphic/tree/main/lib/src/graffiti/element
 
-- Update terminology, some class names have changed:
+- Update terminology to keep same with modern mainstream data visualization libraries. Some class names have changed:
 
-  GeomElement -> Mark
+  `GeomElement -> Mark`
 
-  Attr -> Encode
+  `Attr -> Encode`
 
-  Signal -> Event
+  `Signal -> Event`
 
-  Channel -> Stream
+  `Channel -> Stream`
 
-  Figure -> MarkElement
+  `Figure -> MarkElement`
+
+  And thus some properties related are also changed, like `elements -> marks`.
 
 - Fix diposing functions.
 

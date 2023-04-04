@@ -85,7 +85,7 @@ class BasicAreaShape extends AreaShape {
 
     final primitives = <MarkElement>[];
 
-    final style = getPaintStyle(group.first, false, 0, coord.region);
+    final style = getPaintStyle(group.first, false, 0, coord.region, null);
 
     for (var contour in contours) {
       final starts = <Offset>[];

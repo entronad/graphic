@@ -25,7 +25,7 @@ class TriangleShape extends IntervalShape {
         }
       }
 
-      final style = getPaintStyle(item, false, 0);
+      final style = getPaintStyle(item, false, 0, null, null);
 
       final start = coord.convert(item.position[0]);
       final end = coord.convert(item.position[1]);

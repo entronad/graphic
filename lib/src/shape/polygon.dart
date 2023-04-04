@@ -75,7 +75,7 @@ class HeatmapShape extends PolygonShape {
     for (var item in group) {
       assert(item.shape is HeatmapShape);
 
-      final style = getPaintStyle(item, false, 0, coord.region);
+      final style = getPaintStyle(item, false, 0, null, null);
 
       final point = item.position.last;
       if (coord is RectCoordConv) {

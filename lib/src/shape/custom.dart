@@ -61,7 +61,7 @@ class CandlestickShape extends Shape {
     for (var item in group) {
       assert(item.shape is CandlestickShape);
 
-      final style = getPaintStyle(item, hollow, strokeWidth);
+      final style = getPaintStyle(item, hollow, strokeWidth, null, null);
 
       // Candle stick shape dosen't allow NaN value.
       final points = item.position.map((p) => coord.convert(p)).toList();

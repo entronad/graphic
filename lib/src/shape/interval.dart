@@ -353,7 +353,7 @@ class RectShape extends IntervalShape {
   ) {
     assert(item.shape is RectShape);
 
-    final style = getPaintStyle(item, false, 0, coord.region);
+    final style = getPaintStyle(item, false, 0, coord.region, null);
 
     return RectElement(rect: rect, borderRadius: borderRadius, style: style, tag: item.tag);
   }
@@ -387,7 +387,7 @@ class RectShape extends IntervalShape {
   ) {
     assert(item.shape is RectShape);
 
-    final style = getPaintStyle(item, false, 0, coord.region);
+    final style = getPaintStyle(item, false, 0, coord.region, null);
 
     return SectorElement(
         center: coord.center,
@@ -480,7 +480,7 @@ class FunnelShape extends IntervalShape {
       coord.convert(Offset(bandStart, position[0].dy)),
     ];
     rst.add(PolygonElement(
-        points: corners, style: getPaintStyle(item, false, 0, coord.region), tag: item.tag));
+        points: corners, style: getPaintStyle(item, false, 0, coord.region, null), tag: item.tag));
     // Middle items.
     for (var i = 1; i < group.length - 1; i++) {
       item = group[i];
@@ -496,7 +496,7 @@ class FunnelShape extends IntervalShape {
         coord.convert(Offset(bandStart, position[0].dy)),
       ];
       rst.add(PolygonElement(
-          points: corners, style: getPaintStyle(item, false, 0, coord.region), tag: item.tag));
+          points: corners, style: getPaintStyle(item, false, 0, coord.region, null), tag: item.tag));
     }
     // Last item.
     item = group.last;
@@ -513,7 +513,7 @@ class FunnelShape extends IntervalShape {
       coord.convert(Offset(bandStart, position[0].dy)),
     ];
     rst.add(PolygonElement(
-        points: corners, style: getPaintStyle(item, false, 0, coord.region), tag: item.tag));
+        points: corners, style: getPaintStyle(item, false, 0, coord.region, null), tag: item.tag));
 
     return rst;
   }

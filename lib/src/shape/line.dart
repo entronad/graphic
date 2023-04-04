@@ -106,7 +106,7 @@ class BasicLineShape extends LineShape {
 
     final represent = group.first;
     final style = getPaintStyle(
-        represent, true, represent.size ?? defaultSize, coord.region);
+        represent, true, represent.size ?? defaultSize, coord.region, dash);
 
     for (var contour in contours) {
       if (smooth) {

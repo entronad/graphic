@@ -1,3 +1,9 @@
+## 2.0.1
+
+**2023-04-04**
+
+- Fix LineShape dash: https://github.com/entronad/graphic/issues/212
+
 ## 2.0.0
 
 **2023-04-02**

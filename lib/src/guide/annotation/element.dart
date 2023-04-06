@@ -1,4 +1,4 @@
-import 'dart:ui' hide Scene;
+import 'dart:ui';
 
 import 'package:flutter/painting.dart';
 import 'package:graphic/src/graffiti/element/rect.dart';
@@ -103,8 +103,8 @@ class ElementAnnotCalcAnchorOp extends Operator<Offset> {
 class ElementAnnotRenderOp extends AnnotRenderOp {
   ElementAnnotRenderOp(
     Map<String, dynamic> params,
-    Scene scene,
-    View view,
+    MarkScene scene,
+    ChartView view,
   ) : super(params, scene, view);
 
   @override

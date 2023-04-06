@@ -282,8 +282,8 @@ class PolarCoordConvOp extends CoordConvOp<PolarCoordConv> {
 class PolarRegionColorRenderOp extends RegionBackgroundRenderOp {
   PolarRegionColorRenderOp(
     Map<String, dynamic> params,
-    Scene scene,
-    View view,
+    MarkScene scene,
+    ChartView view,
   ) : super(params, scene, view);
 
   @override
@@ -306,8 +306,8 @@ class PolarRegionColorRenderOp extends RegionBackgroundRenderOp {
 class PolarRegionGradientRenderOp extends RegionBackgroundRenderOp {
   PolarRegionGradientRenderOp(
     Map<String, dynamic> params,
-    Scene scene,
-    View view,
+    MarkScene scene,
+    ChartView view,
   ) : super(params, scene, view);
 
   @override

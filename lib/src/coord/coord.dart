@@ -133,7 +133,7 @@ class RegionOp extends Operator<Rect> {
 abstract class RegionBackgroundRenderOp extends Render {
   RegionBackgroundRenderOp(
     Map<String, dynamic> params,
-    Scene scene,
-    View view,
+    MarkScene scene,
+    ChartView view,
   ) : super(params, scene, view);
 }

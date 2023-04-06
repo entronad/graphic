@@ -7,11 +7,11 @@ import 'transition.dart';
 import 'graffiti.dart';
 
 /// A scene for graffiti to paint graphical elements.
-class Scene {
+class MarkScene {
   /// Creates a scnene.
   /// 
   /// You should use [Graffiti.createScene] to get a scene.
-  Scene({
+  MarkScene({
     required this.layer,
     required this.builtinLayer,
     this.transition,

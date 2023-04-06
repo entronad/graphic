@@ -244,8 +244,8 @@ class TickInfoOp extends Operator<List<TickInfo>> {
 class AxisRenderOp extends Render {
   AxisRenderOp(
     Map<String, dynamic> params,
-    Scene scene,
-    View view,
+    MarkScene scene,
+    ChartView view,
   ) : super(params, scene, view);
 
   @override
@@ -301,7 +301,7 @@ class AxisRenderOp extends Render {
 
 /// The axis grid render operator.
 class GridRenderOp extends Render {
-  GridRenderOp(Map<String, dynamic> params, Scene scene, View view)
+  GridRenderOp(Map<String, dynamic> params, MarkScene scene, ChartView view)
       : super(params, scene, view);
 
   @override

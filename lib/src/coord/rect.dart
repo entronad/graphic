@@ -171,8 +171,8 @@ class RectCoordConvOp extends CoordConvOp<RectCoordConv> {
 class RectRegionColorRenderOp extends RegionBackgroundRenderOp {
   RectRegionColorRenderOp(
     Map<String, dynamic> params,
-    Scene scene,
-    View view,
+    MarkScene scene,
+    ChartView view,
   ) : super(params, scene, view);
 
   @override
@@ -188,8 +188,8 @@ class RectRegionColorRenderOp extends RegionBackgroundRenderOp {
 class RectRegionGradientRenderOp extends RegionBackgroundRenderOp {
   RectRegionGradientRenderOp(
     Map<String, dynamic> params,
-    Scene scene,
-    View view,
+    MarkScene scene,
+    ChartView view,
   ) : super(params, scene, view);
 
   @override

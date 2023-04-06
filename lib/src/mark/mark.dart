@@ -251,8 +251,8 @@ class GroupOp extends Operator<AttributesGroups> {
 class MarkPrimitiveRenderOp extends Render {
   MarkPrimitiveRenderOp(
     Map<String, dynamic> params,
-    Scene scene,
-    View view,
+    MarkScene scene,
+    ChartView view,
   ) : super(params, scene, view);
 
   @override
@@ -296,8 +296,8 @@ class MarkPrimitiveRenderOp extends Render {
 class MarkLabelRenderOp extends Render {
   MarkLabelRenderOp(
     Map<String, dynamic> params,
-    Scene scene,
-    View view,
+    MarkScene scene,
+    ChartView view,
   ) : super(params, scene, view);
 
   @override

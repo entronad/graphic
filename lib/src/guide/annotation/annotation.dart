@@ -22,7 +22,7 @@ abstract class Annotation {
 abstract class AnnotRenderOp extends Render {
   AnnotRenderOp(
     Map<String, dynamic> params,
-    Scene scene,
-    View view,
+    MarkScene scene,
+    ChartView view,
   ) : super(params, scene, view);
 }

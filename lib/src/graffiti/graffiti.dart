@@ -20,15 +20,15 @@ class Graffiti {
   final void Function() repaint;
 
   /// The scenes to paint.
-  final _scenes = <Scene>[];
+  final _scenes = <MarkScene>[];
 
   /// Creates a scene, add it to graffiti, and returns this scene.
-  Scene createScene({
+  MarkScene createScene({
     int layer = 0,
     int builtinLayer = 0,
     Transition? transition,
   }) {
-    final scene = Scene(
+    final scene = MarkScene(
         layer: layer,
         builtinLayer: builtinLayer,
         transition: transition,
@@ -40,7 +40,7 @@ class Graffiti {
 
   /// Sorts [_scenes].
   ///
-  /// The priority of comparing is [Scene.layer] > [Scene.builtinLayer].
+  /// The priority of comparing is [MarkScene.layer] > [MarkScene.builtinLayer].
   void sort() {
     for (var i = 0; i < _scenes.length; i++) {
       _scenes[i].preIndex = i;

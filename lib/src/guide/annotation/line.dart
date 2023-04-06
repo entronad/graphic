@@ -1,4 +1,4 @@
-import 'dart:ui' hide Scene;
+import 'dart:ui';
 
 import 'package:graphic/src/chart/view.dart';
 import 'package:graphic/src/common/dim.dart';
@@ -56,8 +56,8 @@ class LineAnnotation extends Annotation {
 class LineAnnotRenderOp extends AnnotRenderOp {
   LineAnnotRenderOp(
     Map<String, dynamic> params,
-    Scene scene,
-    View view,
+    MarkScene scene,
+    ChartView view,
   ) : super(params, scene, view);
 
   @override

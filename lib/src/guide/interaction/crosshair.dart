@@ -78,8 +78,8 @@ class CrosshairGuide {
 class CrosshairRenderOp extends Render {
   CrosshairRenderOp(
     Map<String, dynamic> params,
-    Scene scene,
-    View view,
+    MarkScene scene,
+    ChartView view,
   ) : super(params, scene, view);
 
   @override

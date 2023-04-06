@@ -20,7 +20,7 @@ abstract class ElementStyle {
   bool operator ==(Object other) => other is ElementStyle;
 }
 
-/// The basic element to compose graphics on [Scene]s.
+/// The basic element to compose graphics on [MarkScene]s.
 abstract class MarkElement<S extends ElementStyle> {
   /// Creates an element.
   MarkElement({

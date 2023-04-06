@@ -186,7 +186,7 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
   /// The view that controlls the data visualization.
   ///
   /// For a chart widget, to "rebuild" means to create a new [view].
-  View<D>? view;
+  ChartView<D>? view;
 
   /// Size of the chart widget.
   ///
@@ -745,7 +745,7 @@ class _ChartLayoutDelegate<D> extends SingleChildLayoutDelegate {
       // to create a new view. A view is and only is created in _ChartLayoutDelegate.getPositionForChild
       // because it needs the current size.
 
-      state.view = View<D>(
+      state.view = ChartView<D>(
         state.widget,
         size,
         state,

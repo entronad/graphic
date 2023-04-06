@@ -262,8 +262,8 @@ class SelectorOp extends Operator<Map<String, Selector>?> {
 class SelectorRenderOp extends Render {
   SelectorRenderOp(
     Map<String, dynamic> params,
-    Scene scene,
-    View view,
+    MarkScene scene,
+    ChartView view,
   ) : super(params, scene, view);
 
   @override

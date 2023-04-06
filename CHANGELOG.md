@@ -1,3 +1,13 @@
+## 2.0.2
+
+**2023-04-06**
+
+- Change name the following names to avoid conflict with dart/flutter built-in libraries (https://github.com/entronad/graphic/issues/193, https://github.com/entronad/graphic/pull/200):
+
+  `View -> ChartView`
+
+  `Scene -> MarkScene`
+
 ## 2.0.1
 
 **2023-04-04**

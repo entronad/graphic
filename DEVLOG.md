@@ -501,3 +501,5 @@ elements个数不一样的情况太复杂，数据个数不一样时tag也往往
 tagEncode 先不要搞默认值了，变量情况复杂不要弄巧成拙，只有在手动改变了data顺序对应被打乱了才要
 
 内部工具函数，尽量保留位置参数或必选参数，哪怕填null，减少错误
+
+dart似乎有这样一个规定：当import一般lib（import “library: ... 或文件)时，类名不能冲突。但一个是基础库（例如ui）一个是一般lib时没关系，以一般lib优先。ui.Gradient 和 painting.Gradient 是这种情况，ui.Scene 和 graphic.Scene 是这种情况。原则：凡是和官方库（ui，flutter，painting）冲突的命名都要避免，因此这里也要避免。主要采用增加前缀的方法。因此 View 改为 ChartView，Scene改为MarkScene。至于引擎里的Mark一词是否准确，现在先不想了，这里如果要变体系要变，后面3.0再说吧，这里就这样

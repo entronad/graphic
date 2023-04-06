@@ -12,8 +12,8 @@ import 'chart.dart';
 import 'size.dart';
 
 /// The dataflow graph of a chart.
-class View<D> extends Dataflow {
-  View(
+class ChartView<D> extends Dataflow {
+  ChartView(
     Chart<D> spec,
     Size size,
     TickerProvider tickerProvider,
@@ -38,17 +38,17 @@ class View<D> extends Dataflow {
 
   /// The gesture event stream.
   ///
-  /// This is generated in [parse] and hold by [View] for internal interactions.
+  /// This is generated in [parse] and hold by [ChartView] for internal interactions.
   late StreamController<GestureEvent> gestureStream;
 
   /// The resize event stream.
   ///
-  /// This is generated in [parse] and hold by [View] for internal interactions.
+  /// This is generated in [parse] and hold by [ChartView] for internal interactions.
   late StreamController<ResizeEvent> resizeStream;
 
   /// The changeData event stream.
   ///
-  /// This is generated in [parse] and hold by [View] for internal interactions.
+  /// This is generated in [parse] and hold by [ChartView] for internal interactions.
   late StreamController<ChangeDataEvent<D>> changeDataStream;
 
   /// Emits a gesture event.

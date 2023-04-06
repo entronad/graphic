@@ -69,8 +69,8 @@ class RegionAnnotation extends Annotation {
 class RegionAnnotRenderOp extends AnnotRenderOp {
   RegionAnnotRenderOp(
     Map<String, dynamic> params,
-    Scene scene,
-    View view,
+    MarkScene scene,
+    ChartView view,
   ) : super(params, scene, view);
 
   @override

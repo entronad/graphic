@@ -20,7 +20,7 @@ final routes = {
   '/examples/Animation': (context) => const AnimationPage(),
   '/examples/Bigdata': (context) => BigdataPage(),
   '/examples/Echarts': (context) => EchartsPage(),
-  '/examples/Debug': (context) => const DebugPage(),
+  '/examples/Debug': (context) => DebugPage(),
 };
 
 class MyApp extends StatelessWidget {

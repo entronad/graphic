@@ -28,7 +28,7 @@ class JitterModifier extends Modifier {
   bool equalTo(Object other) => other is JitterModifier && ratio == other.ratio;
 
   @override
-  void modify(
+  AttributesGroups modify(
       AttributesGroups groups,
       Map<String, ScaleConv<dynamic, num>> scales,
       AlgForm form,
@@ -41,16 +41,21 @@ class JitterModifier extends Modifier {
 
     final random = Random();
 
+    final AttributesGroups rst = [];
     for (var group in groups) {
+      final groupRst = <Attributes>[];
       for (var attributes in group) {
         final oldPosition = attributes.position;
         final bias = ratio * band * (random.nextDouble() - 0.5);
-        attributes.position = oldPosition
+        groupRst.add(attributes.withPosition(oldPosition
             .map(
               (point) => Offset(point.dx + bias, point.dy),
             )
-            .toList();
+            .toList()));
       }
+      rst.add(groupRst);
     }
+
+    return rst;
   }
 }

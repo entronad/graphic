@@ -502,7 +502,7 @@ void parse<D>(
       'coord': coord,
       'origin': origin,
       'transition': markSpec.transition,
-      'entrance': markSpec.entrance ?? {MarkEntrance.alpha},
+      'entrance': markSpec.entrance ?? {MarkEntrance.opacity},
     }, markPrimitiveScene, view));
 
     final markLabelScene = view.graffiti.createScene(
@@ -514,7 +514,7 @@ void parse<D>(
       'coord': coord,
       'origin': origin,
       'transition': markSpec.transition,
-      'entrance': markSpec.entrance ?? {MarkEntrance.alpha},
+      'entrance': markSpec.entrance ?? {MarkEntrance.opacity},
     }, markLabelScene, view));
   }
 

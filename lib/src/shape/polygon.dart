@@ -11,6 +11,7 @@ import 'package:graphic/src/graffiti/element/rect.dart';
 import 'package:graphic/src/graffiti/element/sector.dart';
 import 'package:graphic/src/mark/polygon.dart';
 import 'package:graphic/src/graffiti/element/element.dart';
+import 'package:graphic/src/util/collection.dart';
 
 import 'util/style.dart';
 import 'partition.dart';
@@ -23,11 +24,16 @@ import 'partition.dart';
 abstract class PolygonShape extends PartitionShape {}
 
 /// A heatmap shape.
+/// 
+/// The rule of generating the tile size is: 1. all tiles have the same size. 2.
+/// tries to inflate all the coordinate space. If there may be too few data items
+/// (like only one in a dimension) to infer the size, [tileCounts] should be set.
 class HeatmapShape extends PolygonShape {
   /// Creates a heatmap.
   HeatmapShape({
     this.sector = false,
     this.borderRadius,
+    this.tileCounts,
   });
 
   /// The border radius of the rectangle or sector.
@@ -41,11 +47,17 @@ class HeatmapShape extends PolygonShape {
   /// Wheather the tiles are sectors or polygons in a polar coordinate.
   final bool sector;
 
+  /// Total tile counts of each dimension.
+  /// 
+  /// If any one is null, the time size of that dimension will be infered from data.
+  final List<int?>? tileCounts;
+
   @override
   bool equalTo(Object other) =>
       other is HeatmapShape &&
       sector == other.sector &&
-      borderRadius == other.borderRadius;
+      borderRadius == other.borderRadius &&
+      deepCollectionEquals(tileCounts, other.tileCounts);
 
   @override
   List<MarkElement> drawGroupPrimitives(
@@ -53,22 +65,37 @@ class HeatmapShape extends PolygonShape {
     CoordConv coord,
     Offset origin,
   ) {
-    var stepX = double.infinity;
-    var stepY = double.infinity;
-    for (var i = 0; i < group.length - 1; i++) {
-      final point = group[i].position.last;
-      final nextPoint = group[i + 1].position.last;
-      final dx = (nextPoint.dx - point.dx).abs();
-      final dy = (nextPoint.dy - point.dy).abs();
-      if (dx != 0) {
-        stepX = min(stepX, dx);
+    double? stepXRst =  tileCounts?[0] == null ? null : 1 / tileCounts![0]!;
+    double? stepYRst =  tileCounts?[1] == null ? null : 1 / tileCounts![1]!;
+
+    if (stepXRst == null || stepYRst == null) {
+      var stepX = double.infinity;
+      var stepY = double.infinity;
+      for (var i = 0; i < group.length - 1; i++) {
+        final point = group[i].position.last;
+        final nextPoint = group[i + 1].position.last;
+        final dx = (nextPoint.dx - point.dx).abs();
+        final dy = (nextPoint.dy - point.dy).abs();
+        if (dx != 0) {
+          stepX = min(stepX, dx);
+        }
+        if (dy != 0) {
+          stepY = min(stepY, dy);
+        }
       }
-      if (dy != 0) {
-        stepY = min(stepY, dy);
+      if (!stepX.isFinite) {
+        stepX = 1;
       }
+      if (!stepY.isFinite) {
+        stepY = 1;
+      }
+
+      stepXRst = stepXRst ?? stepX;
+      stepYRst = stepYRst ?? stepY;
     }
-    final biasX = stepX / 2;
-    final biasY = stepY / 2;
+
+    final biasX = stepXRst / 2;
+    final biasY = stepYRst / 2;
 
     final rst = <MarkElement>[];
 

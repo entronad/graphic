@@ -503,3 +503,11 @@ tagEncode 先不要搞默认值了，变量情况复杂不要弄巧成拙，只�
 内部工具函数，尽量保留位置参数或必选参数，哪怕填null，减少错误
 
 dart似乎有这样一个规定：当import一般lib（import “library: ... 或文件)时，类名不能冲突。但一个是基础库（例如ui）一个是一般lib时没关系，以一般lib优先。ui.Gradient 和 painting.Gradient 是这种情况，ui.Scene 和 graphic.Scene 是这种情况。原则：凡是和官方库（ui，flutter，painting）冲突的命名都要避免，因此这里也要避免。主要采用增加前缀的方法。因此 View 改为 ChartView，Scene改为MarkScene。至于引擎里的Mark一词是否准确，现在先不想了，这里如果要变体系要变，后面3.0再说吧，这里就这样
+
+Tuple value 应该还是不接受null：1.这是dart null-safety 倡导的原则，2.已经有了accessor这个处理环节
+
+现在这种修改式的 Modifier 实现是不行的，非幂等，https://github.com/entronad/graphic/issues/206 就是非幂等引起的。整个dataflow op的原则必须是函数式的，幂等的。其它倒不是原则性问题，要求幂等正是为了避免其它问题。
+
+类方法的参数，与类成员名字冲突时，将类方法的参数用缩写，特别是含义明确的 withXX，参考Color.withAlpha
+
+至少目前，参数定义的原则涉及多个维度的还是以list定义为主，而不是分开 aaX, aaY这样，比如 CrosshairCuide, list 成员可以为null，以达到一个设置一个不设置的效果，不要搞单独元素指代两个相同这种，取数用 [0] [1]。

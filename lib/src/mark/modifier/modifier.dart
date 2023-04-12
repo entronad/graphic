@@ -16,11 +16,17 @@ import 'package:graphic/src/shape/shape.dart';
 /// Modifiers could be customized by extending this class. Although all aesthetic
 /// encodes can be modified in a modifier, only the position is recommended.
 /// Rendering customization should be in the [Shape].
+/// 
+/// Note that the modifier should be functional, which means to return a new groups
+/// list as result, not to change the input groups.
 abstract class Modifier extends CustomizableSpec {
   /// Modifies the position of mark items.
   ///
   /// The aesthetic encodes are in the [groups].
-  void modify(
+  /// 
+  /// Note that the modifier should be functional, which means to return a new groups
+  /// list as result, not to change the input groups.
+  AttributesGroups modify(
     AttributesGroups groups,
     Map<String, ScaleConv> scales,
     AlgForm form,
@@ -42,8 +48,6 @@ class ModifyOp extends Operator<AttributesGroups> {
     final coord = params['coord'] as CoordConv;
     final origin = params['origin'] as Offset;
 
-    modifier.modify(groups, scales, form, coord, origin);
-
-    return groups;
+    return modifier.modify(groups, scales, form, coord, origin);
   }
 }

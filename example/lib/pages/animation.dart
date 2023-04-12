@@ -373,13 +373,13 @@ class AnimationPageState extends State<AnimationPage> {
                         Defaults.colors10.first.withAlpha(10),
                       ])),
                       transition: Transition(duration: Duration(seconds: 2)),
-                      entrance: {MarkEntrance.x, MarkEntrance.y, MarkEntrance.alpha},
+                      entrance: {MarkEntrance.x, MarkEntrance.y, MarkEntrance.opacity},
                     ),
                     LineMark(
                       shape: ShapeEncode(value: BasicLineShape(smooth: true)),
                       size: SizeEncode(value: 0.5),
                       transition: Transition(duration: Duration(seconds: 2)),
-                      entrance: {MarkEntrance.x, MarkEntrance.y, MarkEntrance.alpha},
+                      entrance: {MarkEntrance.x, MarkEntrance.y, MarkEntrance.opacity},
                     ),
                   ],
                   axes: [

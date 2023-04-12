@@ -1,3 +1,11 @@
+## 2.0.3
+
+**2023-04-12**
+
+- Fix the Modifier error when updating: https://github.com/entronad/graphic/issues/206
+- Rename enum property `MarkEntrance.alpha` to `MarkEntrance.opacity`.
+- Fix polygon shape when there is only one datum or one value in a dim: https://github.com/entronad/graphic/issues/166
+
 ## 2.0.2
 
 **2023-04-06**

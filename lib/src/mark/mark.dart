@@ -52,7 +52,7 @@ enum MarkEntrance {
   size,
 
   /// Mark will be transparent.
-  alpha,
+  opacity,
 }
 
 /// The specification of a geometry mark.
@@ -164,7 +164,7 @@ abstract class Mark<S extends Shape> {
   /// 
   /// That means which encode attributes are zero at the begining of animation.
   /// 
-  /// If null, a default {MarkEntrance.alpha} is set.
+  /// If null, a default {MarkEntrance.opacity} is set.
   Set<MarkEntrance>? entrance;
 
   /// Tags for each mark element.

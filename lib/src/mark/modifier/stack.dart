@@ -21,7 +21,7 @@ class StackModifier extends Modifier {
   bool equalTo(Object other) => other is StackModifier;
 
   @override
-  void modify(
+  AttributesGroups modify(
       AttributesGroups groups,
       Map<String, ScaleConv<dynamic, num>> scales,
       AlgForm form,
@@ -29,9 +29,13 @@ class StackModifier extends Modifier {
       Offset origin) {
     final normalZero = origin.dy;
 
+    // The first group need no change.
+    final AttributesGroups rst = [groups.first];
     for (var i = 1; i < groups.length; i++) {
       final group = groups[i];
-      final preGroup = groups[i - 1];
+      // The stacking is accumulative, so refers to the pre one from rst.
+      final preGroup = rst[i - 1];
+      final groupRst = <Attributes>[];
       for (var j = 0; j < group.length; j++) {
         final position = group[j].position;
         final prePosition = preGroup[j].position;
@@ -46,13 +50,11 @@ class StackModifier extends Modifier {
           }
         }
 
-        for (var k = 0; k < position.length; k++) {
-          position[k] = Offset(
-            position[k].dx,
-            position[k].dy + (preTop - normalZero),
-          );
-        }
+        groupRst.add(group[j].withPosition(position.map((point) => Offset(point.dx, point.dy + (preTop - normalZero),)).toList()));
       }
+      rst.add(groupRst);
     }
+
+    return rst;
   }
 }

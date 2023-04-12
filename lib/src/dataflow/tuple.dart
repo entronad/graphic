@@ -3,6 +3,7 @@ import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/graffiti/element/label.dart';
 import 'package:graphic/src/mark/mark.dart';
+import 'package:graphic/src/mark/modifier/modifier.dart';
 import 'package:graphic/src/scale/scale.dart';
 import 'package:graphic/src/shape/shape.dart';
 import 'package:graphic/src/util/assert.dart';
@@ -53,29 +54,47 @@ class Attributes {
   /// The count of points is determined by the geometry mark type. The values
   /// of each point dimension is scaled and normalized value of `[0, 1]`. the position
   /// points can be converted to canvas points by [CoordConv].
-  List<Offset> position;
+  final List<Offset> position;
 
   /// The shape of the tuple.
-  Shape shape;
+  final Shape shape;
 
   /// The color of the tuple.
-  Color? color;
+  final Color? color;
 
   /// The gradient of the tuple.
-  Gradient? gradient;
+  final Gradient? gradient;
 
   /// The shadow elevation of the tuple.
-  double? elevation;
+  final double? elevation;
 
   /// The label of the tuple.
-  Label? label;
+  final Label? label;
 
   /// The size of the tuple.
-  double? size;
+  final double? size;
 
   /// The represent point of [position] points.
   Offset get representPoint => shape.representPoint(position);
 
+  /// Returns a new attributes that matches this attributes with the position replaced
+  /// with [p].
+  ///
+  /// This method is mainly used for [Modifier]s.
+  Attributes withPosition(List<Offset> p) => Attributes(
+    index: index,
+    tag: tag,
+    position: p,
+    shape: shape,
+    color: color,
+    gradient: gradient,
+    elevation: elevation,
+    label: label,
+    size: size,
+  );
+
+  /// Returns the original state of an item attributes in animation according to
+  /// [entrance] type.
   Attributes deflate(Set<MarkEntrance> entrance) {
     var rst = this;
 
@@ -121,7 +140,7 @@ class Attributes {
       );
     }
 
-    if (entrance.contains(MarkEntrance.alpha)) {
+    if (entrance.contains(MarkEntrance.opacity)) {
       final labelColor = rst.label?.style.textStyle?.color;
       final labelRst = labelColor == null
           ? rst.label

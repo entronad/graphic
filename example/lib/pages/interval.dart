@@ -276,6 +276,9 @@ class IntervalPage extends StatelessWidget {
                       modifiers: [StackModifier()],
                     )
                   ],
+                  coord: RectCoord(
+                    horizontalRangeUpdater: Defaults.horizontalRangeEvent,
+                  ),
                   axes: [
                     Defaults.horizontalAxis,
                     Defaults.verticalAxis,

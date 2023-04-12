@@ -36,7 +36,7 @@ class DodgeModifier extends Modifier {
       symmetric == other.symmetric;
 
   @override
-  void modify(
+  AttributesGroups modify(
       AttributesGroups groups,
       Map<String, ScaleConv<dynamic, num>> scales,
       AlgForm form,
@@ -52,16 +52,21 @@ class DodgeModifier extends Modifier {
     // If symmetric, negtively shifts half of the total bias.
     var accumulated = symmetric ? -bias * (groups.length - 1) / 2 : 0.0;
 
+    final AttributesGroups rst = [];
     for (var group in groups) {
+      final groupRst = <Attributes>[];
       for (var attributes in group) {
         final oldPosition = attributes.position;
-        attributes.position = oldPosition
+        groupRst.add(attributes.withPosition(oldPosition
             .map(
               (point) => Offset(point.dx + accumulated, point.dy),
             )
-            .toList();
+            .toList()));
       }
+      rst.add(groupRst);
       accumulated += bias;
     }
+
+    return rst;
   }
 }

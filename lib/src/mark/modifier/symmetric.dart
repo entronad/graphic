@@ -22,7 +22,7 @@ class SymmetricModifier extends Modifier {
   bool equalTo(Object other) => other is SymmetricModifier && super == other;
 
   @override
-  void modify(
+  AttributesGroups modify(
       AttributesGroups groups,
       Map<String, ScaleConv<dynamic, num>> scales,
       AlgForm form,
@@ -30,6 +30,7 @@ class SymmetricModifier extends Modifier {
       Offset origin) {
     final normalZero = origin.dy;
 
+    final AttributesGroups rst = groups.map((_) => <Attributes>[]).toList();
     for (var i = 0; i < groups.first.length; i++) {
       var minY = double.infinity;
       var maxY = double.negativeInfinity;
@@ -45,15 +46,17 @@ class SymmetricModifier extends Modifier {
       }
 
       final symmetricBias = normalZero - (minY + maxY) / 2;
-      for (var group in groups) {
-        final attributes = group[i];
+      for (var j = 0; j < groups.length; j++) {
+        final attributes = groups[j][i];
         final oldPosition = attributes.position;
-        attributes.position = oldPosition
-            .map(
-              (point) => Offset(point.dx, point.dy + symmetricBias),
-            )
-            .toList();
+        rst[j].add(attributes.withPosition(oldPosition
+          .map(
+            (point) => Offset(point.dx, point.dy + symmetricBias),
+          )
+          .toList()));
       }
     }
+
+    return rst;
   }
 }

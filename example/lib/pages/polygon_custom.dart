@@ -548,6 +548,9 @@ class PolygonCustomPage extends StatelessWidget {
                       modifiers: [DodgeModifier(ratio: 0.1)],
                     )
                   ],
+                  coord: RectCoord(
+                    horizontalRangeUpdater: Defaults.horizontalRangeEvent,
+                  ),
                   axes: [
                     Defaults.horizontalAxis..tickLine = TickLine(),
                     Defaults.verticalAxis,
@@ -695,6 +698,9 @@ class PolygonCustomPage extends StatelessWidget {
                       modifiers: [DodgeSizeModifier()],
                     )
                   ],
+                  coord: RectCoord(
+                    horizontalRangeUpdater: Defaults.horizontalRangeEvent,
+                  ),
                   axes: [
                     Defaults.horizontalAxis..tickLine = TickLine(),
                     Defaults.verticalAxis,
@@ -807,7 +813,7 @@ const _kMinBarSize = 4.0;
 @immutable
 class DodgeSizeModifier extends Modifier {
   @override
-  void modify(
+  AttributesGroups modify(
       AttributesGroups groups,
       Map<String, ScaleConv<dynamic, num>> scales,
       AlgForm form,
@@ -836,19 +842,33 @@ class DodgeSizeModifier extends Modifier {
     // Negatively shift half of the total bias.
     var accumulated = -bias * (numGroups + 1) / 2;
 
+    final AttributesGroups rst = [];
     for (final group in groups) {
+      final groupRst = <Attributes>[];
       for (final attributes in group) {
         final oldPosition = attributes.position;
-        attributes.position = oldPosition
+
+        groupRst.add(Attributes(
+          index: attributes.index,
+          tag: attributes.tag,
+          position: oldPosition
             .map(
               (point) => Offset(point.dx + accumulated + bias, point.dy),
             )
-            .toList();
-
-        attributes.size = size;
+            .toList(),
+          shape: attributes.shape,
+          color: attributes.color,
+          gradient: attributes.gradient,
+          elevation: attributes.elevation,
+          label: attributes.label,
+          size: size,
+        ));
       }
+      rst.add(groupRst);
       accumulated += bias;
     }
+
+    return rst;
   }
 
   @override

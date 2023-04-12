@@ -3,95 +3,104 @@ import 'package:graphic/graphic.dart';
 
 import '../data.dart';
 
-const adjustData = [
-  {"type": "Email", "index": 0, "value": 120},
-  {"type": "Email", "index": 1, "value": 132},
-  {"type": "Email", "index": 2, "value": 101},
-  {"type": "Email", "index": 3, "value": 134},
-  {"type": "Email", "index": 4, "value": 90},
-  {"type": "Email", "index": 5, "value": 230},
-  {"type": "Email", "index": 6, "value": 210},
-  {"type": "Affiliate", "index": 0, "value": 220},
-  {"type": "Affiliate", "index": 1, "value": 182},
-  {"type": "Affiliate", "index": 2, "value": 191},
-  {"type": "Affiliate", "index": 3, "value": 234},
-  {"type": "Affiliate", "index": 4, "value": 290},
-  {"type": "Affiliate", "index": 5, "value": 330},
-  {"type": "Affiliate", "index": 6, "value": 310},
-  {"type": "Video", "index": 0, "value": 150},
-  {"type": "Video", "index": 1, "value": 232},
-  {"type": "Video", "index": 2, "value": 201},
-  {"type": "Video", "index": 3, "value": 154},
-  {"type": "Video", "index": 4, "value": 190},
-  {"type": "Video", "index": 5, "value": 330},
-  {"type": "Video", "index": 6, "value": 410},
-  {"type": "Direct", "index": 0, "value": 320},
-  {"type": "Direct", "index": 1, "value": 332},
-  {"type": "Direct", "index": 2, "value": 301},
-  {"type": "Direct", "index": 3, "value": 334},
-  {"type": "Direct", "index": 4, "value": 390},
-  {"type": "Direct", "index": 5, "value": 330},
-  {"type": "Direct", "index": 6, "value": 320},
-  {"type": "Search", "index": 0, "value1": 320},
-  {"type": "Search", "index": 1, "value1": 432},
-  {"type": "Search", "index": 2, "value1": 401},
-  {"type": "Search", "index": 3, "value1": 434},
-  {"type": "Search", "index": 4, "value1": 390},
-  {"type": "Search", "index": 5, "value1": 430},
-  {"type": "Search", "index": 6, "value1": 420},
-];
-
 class DebugPage extends StatelessWidget {
-  const DebugPage({Key? key}) : super(key: key);
+  DebugPage({Key? key}) : super(key: key);
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Container(
-          margin: const EdgeInsets.only(top: 10),
-          width: 350,
-          height: 300,
-          child: Chart(
-            rebuild: true,
-            data: basicData,
-            variables: {
-              'genre': Variable(
-                accessor: (Map map) => map['genre'] as String,
-              ),
-              'sold': Variable(
-                accessor: (Map map) => map['sold'] as num,
-              ),
-            },
-            marks: [
-              IntervalMark(
-                label: LabelEncode(
-                    encoder: (tuple) => Label(tuple['sold'].toString())),
-                elevation: ElevationEncode(value: 0, updaters: {
-                  'tap': {true: (_) => 5}
-                }),
-                color: ColorEncode(value: Defaults.primaryColor, updaters: {
-                  'tap': {false: (color) => color.withAlpha(100)}
-                }),
-                selected: {
-                  'tap': {0}
-                },
-              )
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: const Text('Rectangle Interval Mark'),
+      ),
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: <Widget>[
+              
+             buildChart('single point', [Data(0, 5, 1)]),
+            buildChart('2 points in the same sector at different radiuses',
+                [Data(0, 5, 1), Data(0, 6, 2)]),
+            buildChart('2 points with different sector and radius',
+                [Data(0, 5, 1), Data(4, 6, 2)]),
+            buildChart('3 points with different everything',
+                [Data(0, 5, 1), Data(1, 6, 2), Data(2, 7, 3)]),
+            buildChart('3 points with a duplicate',
+                [Data(0, 5, 1), Data(1, 6, 2), Data(1, 6, 2)]),
+              
+              
             ],
-            axes: [
-              Defaults.horizontalAxis,
-              Defaults.verticalAxis,
-            ],
-            selections: {'tap': PointSelection(dim: Dim.x)},
-            tooltip: TooltipGuide(),
-            crosshair: CrosshairGuide(),
           ),
         ),
       ),
     );
   }
 }
+Widget buildChart(String name, List<Data> data) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(width: 300, child: Text(name)),
+          SizedBox(width: 100),
+          Container(
+            width: 150,
+            height: 150,
+            child: Chart(
+              data: data,
+              variables: {
+                'sector': Variable(
+                  accessor: (Data d) => d.sector.toString(),
+                  scale: OrdinalScale(
+                    values: List<int>.generate(10, (i) => i++)
+                        .map((s) => s.toString())
+                        .toList(),
+                  ),
+                ),
+                'radius': Variable(
+                  accessor: (Data d) => d.radius,
+                  scale: LinearScale(
+                    min: 0,
+                    max: 10,
+                  ),
+                ),
+                'value': Variable(
+                  accessor: (Data d) => d.value,
+                  scale: LinearScale(
+                    min: 0,
+                    max: 10,
+                  ),
+                ),
+              },
+              marks: [
+                PolygonMark(
+                  shape: ShapeEncode(value: HeatmapShape(sector: true, tileCounts: [10, 10])),
+                  color: ColorEncode(
+                    variable: 'value',
+                    values: [Colors.blue, Colors.red],
+                  ),
+                )
+              ],
+              coord: PolarCoord(),
+              axes: [
+                Defaults.circularAxis,
+                Defaults.radialAxis,
+              ],
+            ),
+          ),
+            ],
+            
+          );
+       
 
+class Data {
+  final int sector;
+  final double radius;
+  final double value;
+
+  Data(this.sector, this.radius, this.value);
+}
 // class DebugPage extends StatefulWidget {
 //   const DebugPage({Key? key}) : super(key: key);
 

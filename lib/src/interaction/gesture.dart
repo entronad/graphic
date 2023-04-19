@@ -511,6 +511,7 @@ class Gesture {
     this.localPosition,
     this.chartSize,
     this.details, {
+    this.key,
     this.localMoveStart,
     this.preScaleDetail,
   });
@@ -534,6 +535,11 @@ class Gesture {
   /// They may be different class types or null according to [type] (See corresponding
   /// relations in [GestureType]).
   final dynamic details;
+
+  /// The key of the emitting chart.
+  ///
+  /// The key may be null, e.g. if the gesture is manually created.
+  final Key? key;
 
   /// The local position of pointer when a scale or long press starts.
   ///

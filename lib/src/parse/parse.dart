@@ -109,7 +109,8 @@ void parse<D>(
 
   if (coordSpec.color != null) {
     final regionBackgroundScene = view.graffiti.createScene(
-        layer: coordSpec.layer ?? 0, builtinLayer: BuiltinLayers.regionBackground);
+        layer: coordSpec.layer ?? 0,
+        builtinLayer: BuiltinLayers.regionBackground);
     if (coordSpec is RectCoord) {
       view.add(RectRegionColorRenderOp({
         'region': region,
@@ -123,7 +124,8 @@ void parse<D>(
     }
   } else if (coordSpec.gradient != null) {
     final regionBackgroundScene = view.graffiti.createScene(
-        layer: coordSpec.layer ?? 0, builtinLayer: BuiltinLayers.regionBackground);
+        layer: coordSpec.layer ?? 0,
+        builtinLayer: BuiltinLayers.regionBackground);
     if (coordSpec is RectCoord) {
       view.add(RectRegionGradientRenderOp({
         'region': region,
@@ -566,7 +568,8 @@ void parse<D>(
         final variable =
             annotSpec.variable ?? firstVariables![dim == Dim.x ? 0 : 1];
         final annotScene = view.graffiti.createScene(
-            layer: annotSpec.layer ?? 0, builtinLayer: BuiltinLayers.regionAnnot);
+            layer: annotSpec.layer ?? 0,
+            builtinLayer: BuiltinLayers.regionAnnot);
         view.add(RegionAnnotRenderOp({
           'dim': dim,
           'variable': variable,
@@ -626,7 +629,8 @@ void parse<D>(
         }
 
         final annotScene = view.graffiti.createScene(
-            layer: annotSpec.layer ?? 0, builtinLayer: BuiltinLayers.elementAnnot);
+            layer: annotSpec.layer ?? 0,
+            builtinLayer: BuiltinLayers.elementAnnot);
         view.add(ElementAnnotRenderOp({
           'elements': annot,
           'clip': annotSpec.clip ?? false,

@@ -511,7 +511,7 @@ class Gesture {
     this.localPosition,
     this.chartSize,
     this.details, {
-    this.key,
+    this.chartKey,
     this.localMoveStart,
     this.preScaleDetail,
   });
@@ -538,14 +538,16 @@ class Gesture {
 
   /// The key of the emitting chart.
   ///
+  /// This is mainly used to know where a gesture originated from when multiple
+  /// charts share a gesture stream.
+  ///
   /// The key may be null, e.g. if the gesture is manually created.
-  final Key? key;
+  final Key? chartKey;
 
   /// The local position of pointer when a scale or long press starts.
   ///
-  /// It is usefull when calculating movement spans in [GestureType.scaleUpdate],
-  /// [GestureType.longPressMoveUpdate], [GestureType.secondaryLongPressMoveUpdate],
-  /// and [GestureType.tertiaryLongPressMoveUpdate].
+  /// The update and end events of scale and long presses have this propertiy. It
+  /// is usefull when calculating movement spans.
   final Offset? localMoveStart;
 
   // By hacking the scale start, Scale update always has it.

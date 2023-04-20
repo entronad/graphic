@@ -511,3 +511,5 @@ Tuple value 应该还是不接受null：1.这是dart null-safety 倡导的原则
 类方法的参数，与类成员名字冲突时，将类方法的参数用缩写，特别是含义明确的 withXX，参考Color.withAlpha
 
 至少目前，参数定义的原则涉及多个维度的还是以list定义为主，而不是分开 aaX, aaY这样，比如 CrosshairCuide, list 成员可以为null，以达到一个设置一个不设置的效果，不要搞单独元素指代两个相同这种，取数用 [0] [1]。
+
+之前 scaleEnd 和 longPressEnd 是不含 localMoveStart 的，可能是因为当时为了和flutter的习惯一致。现在的原则是参数尽量给到，而且这里也似乎确实有用。但是它的类目太多太杂，也不用都加上，就update和end加上。

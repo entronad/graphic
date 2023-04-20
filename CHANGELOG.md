@@ -1,3 +1,10 @@
+## 2.1.0
+
+**2023-04-20**
+
+- Add `Gesture.chartKey`: https://github.com/entronad/graphic/pull/217
+- Add `localMoveStart` for both update and end events in scale and long presses.
+
 ## 2.0.3
 
 **2023-04-12**

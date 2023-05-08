@@ -240,10 +240,12 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
       child: MouseRegion(
         child: Listener(
           child: GestureDetector(
-            child: CustomPaint(
-              // Make sure the Listener and the GestureDetector inflate the container.
-              size: Size.infinite,
-              painter: _ChartPainter<D>(this),
+            child: RepaintBoundary(
+              child: CustomPaint(
+                // Make sure the Listener and the GestureDetector inflate the container.
+                size: Size.infinite,
+                painter: _ChartPainter<D>(this),
+              ),
             ),
             onDoubleTap: () {
               view!.gesture(Gesture(

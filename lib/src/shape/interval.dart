@@ -282,7 +282,7 @@ class RectShape extends IntervalShape {
           final end = coord.convert(item.position[1]);
           rst.add(_drawRectLabel(
             item,
-            start + (end - start) * labelPosition,
+            start + (end - start) * (item.shape as RectShape).labelPosition,
             coord,
           ));
         }
@@ -300,7 +300,7 @@ class RectShape extends IntervalShape {
               rst.add(_drawSectorLabel(
                 item,
                 coord.convert(Offset(
-                  labelPosition,
+                  (item.shape as RectShape).labelPosition,
                   (position[1].dy + position[0].dy) / 2,
                 )),
                 coord,
@@ -313,15 +313,17 @@ class RectShape extends IntervalShape {
           for (var item in group) {
             if (item.label != null && item.label!.haveText) {
               final position = item.position;
-              final labelAnchor = coord.convert(
-                  position[0] + (position[1] - position[0]) * labelPosition);
+              final labelAnchor = coord.convert(position[0] +
+                  (position[1] - position[0]) *
+                      (item.shape as RectShape).labelPosition);
               final anchorOffset = labelAnchor - coord.center;
               rst.add(LabelElement(
-                  text: item.label!.text!,
-                  anchor: labelAnchor,
-                  defaultAlign: radialLabelAlign(anchorOffset) * -1,
-                  style: item.label!.style,
-                  tag: item.tag,));
+                text: item.label!.text!,
+                anchor: labelAnchor,
+                defaultAlign: radialLabelAlign(anchorOffset) * -1,
+                style: item.label!.style,
+                tag: item.tag,
+              ));
             }
           }
         }
@@ -333,7 +335,8 @@ class RectShape extends IntervalShape {
             rst.add(_drawSectorLabel(
                 item,
                 coord.convert(item.position[0] +
-                    (item.position[1] - item.position[0]) * labelPosition),
+                    (item.position[1] - item.position[0]) *
+                        (item.shape as RectShape).labelPosition),
                 coord));
           }
         }
@@ -355,7 +358,11 @@ class RectShape extends IntervalShape {
 
     final style = getPaintStyle(item, false, 0, coord.region, null);
 
-    return RectElement(rect: rect, borderRadius: borderRadius, style: style, tag: item.tag);
+    return RectElement(
+        rect: rect,
+        borderRadius: (item.shape as RectShape).borderRadius,
+        style: style,
+        tag: item.tag);
   }
 
   MarkElement _drawRectLabel(
@@ -368,10 +375,11 @@ class RectShape extends IntervalShape {
     return LabelElement(
         text: item.label!.text!,
         anchor: labelAnchor,
-        defaultAlign: labelPosition.equalTo(1)
+        defaultAlign: (item.shape as RectShape).labelPosition.equalTo(1)
             ? (coord.transposed ? Alignment.centerRight : Alignment.topCenter)
             : Alignment.center,
-        style: item.label!.style, tag: item.tag);
+        style: item.label!.style,
+        tag: item.tag);
   }
 
   /// Renders a sector interval item.
@@ -390,14 +398,15 @@ class RectShape extends IntervalShape {
     final style = getPaintStyle(item, false, 0, coord.region, null);
 
     return SectorElement(
-        center: coord.center,
-        endRadius: r,
-        startRadius: r0,
-        startAngle: startAngle,
-        endAngle: endAngle,
-        borderRadius: borderRadius,
-        style: style,
-        tag: item.tag,);
+      center: coord.center,
+      endRadius: r,
+      startRadius: r0,
+      startAngle: startAngle,
+      endAngle: endAngle,
+      borderRadius: (item.shape as RectShape).borderRadius,
+      style: style,
+      tag: item.tag,
+    );
   }
 
   MarkElement _drawSectorLabel(
@@ -408,7 +417,7 @@ class RectShape extends IntervalShape {
     assert(item.shape is RectShape);
 
     Alignment defaultAlign;
-    if (labelPosition == 1) {
+    if ((item.shape as RectShape).labelPosition == 1) {
       // Calculate default alignment according to anchor's quadrant.
       final anchorOffset = labelAnchor - coord.center;
       defaultAlign = Alignment(
@@ -424,10 +433,12 @@ class RectShape extends IntervalShape {
     }
 
     return LabelElement(
-        text: item.label!.text!,
-        anchor: labelAnchor,
-        defaultAlign: defaultAlign,
-        style: item.label!.style, tag: item.tag,);
+      text: item.label!.text!,
+      anchor: labelAnchor,
+      defaultAlign: defaultAlign,
+      style: item.label!.style,
+      tag: item.tag,
+    );
   }
 }
 
@@ -480,7 +491,9 @@ class FunnelShape extends IntervalShape {
       coord.convert(Offset(bandStart, position[0].dy)),
     ];
     rst.add(PolygonElement(
-        points: corners, style: getPaintStyle(item, false, 0, coord.region, null), tag: item.tag));
+        points: corners,
+        style: getPaintStyle(item, false, 0, coord.region, null),
+        tag: item.tag));
     // Middle items.
     for (var i = 1; i < group.length - 1; i++) {
       item = group[i];
@@ -496,7 +509,9 @@ class FunnelShape extends IntervalShape {
         coord.convert(Offset(bandStart, position[0].dy)),
       ];
       rst.add(PolygonElement(
-          points: corners, style: getPaintStyle(item, false, 0, coord.region, null), tag: item.tag));
+          points: corners,
+          style: getPaintStyle(item, false, 0, coord.region, null),
+          tag: item.tag));
     }
     // Last item.
     item = group.last;
@@ -513,7 +528,9 @@ class FunnelShape extends IntervalShape {
       coord.convert(Offset(bandStart, position[0].dy)),
     ];
     rst.add(PolygonElement(
-        points: corners, style: getPaintStyle(item, false, 0, coord.region, null), tag: item.tag));
+        points: corners,
+        style: getPaintStyle(item, false, 0, coord.region, null),
+        tag: item.tag));
 
     return rst;
   }
@@ -528,20 +545,21 @@ class FunnelShape extends IntervalShape {
     for (var item in group) {
       if (item.label != null) {
         final labelAnchor = coord.convert(item.position[0] +
-            (item.position[1] - item.position[0]) * labelPosition);
+            (item.position[1] - item.position[0]) *
+                (item.shape as FunnelShape).labelPosition);
         rst.add(LabelElement(
-            text: item.label!.text!,
-            anchor: labelAnchor,
-            defaultAlign: labelPosition.equalTo(1)
-                ? (coord.transposed
-                    ? Alignment.centerRight
-                    : Alignment.topCenter)
-                : labelPosition.equalTo(0)
-                    ? (coord.transposed
-                        ? Alignment.centerLeft
-                        : Alignment.bottomCenter)
-                    : Alignment.center,
-            style: item.label!.style, tag: item.tag,));
+          text: item.label!.text!,
+          anchor: labelAnchor,
+          defaultAlign: (item.shape as FunnelShape).labelPosition.equalTo(1)
+              ? (coord.transposed ? Alignment.centerRight : Alignment.topCenter)
+              : (item.shape as FunnelShape).labelPosition.equalTo(0)
+                  ? (coord.transposed
+                      ? Alignment.centerLeft
+                      : Alignment.bottomCenter)
+                  : Alignment.center,
+          style: item.label!.style,
+          tag: item.tag,
+        ));
       }
     }
 

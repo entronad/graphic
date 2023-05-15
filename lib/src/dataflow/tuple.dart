@@ -82,16 +82,16 @@ class Attributes {
   ///
   /// This method is mainly used for [Modifier]s.
   Attributes withPosition(List<Offset> p) => Attributes(
-    index: index,
-    tag: tag,
-    position: p,
-    shape: shape,
-    color: color,
-    gradient: gradient,
-    elevation: elevation,
-    label: label,
-    size: size,
-  );
+        index: index,
+        tag: tag,
+        position: p,
+        shape: shape,
+        color: color,
+        gradient: gradient,
+        elevation: elevation,
+        label: label,
+        size: size,
+      );
 
   /// Returns the original state of an item attributes in animation according to
   /// [entrance] type.
@@ -102,7 +102,9 @@ class Attributes {
       rst = Attributes(
         index: rst.index,
         tag: rst.tag,
-        position: rst.position.map((p) => Offset(p.dx.isFinite ? 0 : p.dx, p.dy)).toList(),
+        position: rst.position
+            .map((p) => Offset(p.dx.isFinite ? 0 : p.dx, p.dy))
+            .toList(),
         shape: rst.shape,
         color: rst.color,
         gradient: rst.gradient,
@@ -116,7 +118,9 @@ class Attributes {
       rst = Attributes(
         index: rst.index,
         tag: rst.tag,
-        position: rst.position.map((p) => Offset(p.dx, p.dy.isFinite ? 0 : p.dy)).toList(),
+        position: rst.position
+            .map((p) => Offset(p.dx, p.dy.isFinite ? 0 : p.dy))
+            .toList(),
         shape: rst.shape,
         color: rst.color,
         gradient: rst.gradient,

@@ -24,7 +24,7 @@ import 'partition.dart';
 abstract class PolygonShape extends PartitionShape {}
 
 /// A heatmap shape.
-/// 
+///
 /// The rule of generating the tile size is: 1. all tiles have the same size. 2.
 /// tries to inflate all the coordinate space. If there may be too few data items
 /// (like only one in a dimension) to infer the size, [tileCounts] should be set.
@@ -48,7 +48,7 @@ class HeatmapShape extends PolygonShape {
   final bool sector;
 
   /// Total tile counts of each dimension.
-  /// 
+  ///
   /// If any one is null, the time size of that dimension will be infered from data.
   final List<int?>? tileCounts;
 
@@ -65,8 +65,8 @@ class HeatmapShape extends PolygonShape {
     CoordConv coord,
     Offset origin,
   ) {
-    double? stepXRst =  tileCounts?[0] == null ? null : 1 / tileCounts![0]!;
-    double? stepYRst =  tileCounts?[1] == null ? null : 1 / tileCounts![1]!;
+    double? stepXRst = tileCounts?[0] == null ? null : 1 / tileCounts![0]!;
+    double? stepYRst = tileCounts?[1] == null ? null : 1 / tileCounts![1]!;
 
     if (stepXRst == null || stepYRst == null) {
       var stepX = double.infinity;
@@ -108,12 +108,14 @@ class HeatmapShape extends PolygonShape {
       if (coord is RectCoordConv) {
         assert(!sector);
         rst.add(RectElement(
-            rect: Rect.fromPoints(
-              coord.convert(Offset(point.dx - biasX, point.dy + biasY)),
-              coord.convert(Offset(point.dx + biasX, point.dy - biasY)),
-            ),
-            borderRadius: borderRadius,
-            style: style, tag: item.tag,));
+          rect: Rect.fromPoints(
+            coord.convert(Offset(point.dx - biasX, point.dy + biasY)),
+            coord.convert(Offset(point.dx + biasX, point.dy - biasY)),
+          ),
+          borderRadius: (item.shape as HeatmapShape).borderRadius,
+          style: style,
+          tag: item.tag,
+        ));
       } else {
         if (sector) {
           coord as PolarCoordConv;
@@ -129,11 +131,12 @@ class HeatmapShape extends PolygonShape {
             startRadius: coord.convertRadius(r0),
             startAngle: coord.convertAngle(startAngle),
             endAngle: coord.convertAngle(endAngle),
-            borderRadius: borderRadius,
-            style: style, tag: item.tag,
+            borderRadius: (item.shape as HeatmapShape).borderRadius,
+            style: style,
+            tag: item.tag,
           ));
         } else {
-          assert(borderRadius == null);
+          assert((item.shape as HeatmapShape).borderRadius == null);
 
           // [topLeft, topRight, bottomRight, bottomLeft]
           final vertices = [
@@ -143,7 +146,9 @@ class HeatmapShape extends PolygonShape {
             Offset(point.dx - biasX, point.dy - biasY),
           ];
           rst.add(PolygonElement(
-              points: vertices.map(coord.convert).toList(), style: style, tag: item.tag));
+              points: vertices.map(coord.convert).toList(),
+              style: style,
+              tag: item.tag));
         }
       }
     }
@@ -159,10 +164,12 @@ class HeatmapShape extends PolygonShape {
       if (item.label != null && item.label!.haveText) {
         final point = item.position.last;
         rst.add(LabelElement(
-            text: item.label!.text!,
-            anchor: coord.convert(point),
-            defaultAlign: Alignment.center,
-            style: item.label!.style, tag: item.tag,));
+          text: item.label!.text!,
+          anchor: coord.convert(point),
+          defaultAlign: Alignment.center,
+          style: item.label!.style,
+          tag: item.tag,
+        ));
       }
     }
 

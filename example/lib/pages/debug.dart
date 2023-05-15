@@ -20,18 +20,15 @@ class DebugPage extends StatelessWidget {
         child: Center(
           child: Column(
             children: <Widget>[
-              
-             buildChart('single point', [Data(0, 5, 1)]),
-            buildChart('2 points in the same sector at different radiuses',
-                [Data(0, 5, 1), Data(0, 6, 2)]),
-            buildChart('2 points with different sector and radius',
-                [Data(0, 5, 1), Data(4, 6, 2)]),
-            buildChart('3 points with different everything',
-                [Data(0, 5, 1), Data(1, 6, 2), Data(2, 7, 3)]),
-            buildChart('3 points with a duplicate',
-                [Data(0, 5, 1), Data(1, 6, 2), Data(1, 6, 2)]),
-              
-              
+              buildChart('single point', [Data(0, 5, 1)]),
+              buildChart('2 points in the same sector at different radiuses',
+                  [Data(0, 5, 1), Data(0, 6, 2)]),
+              buildChart('2 points with different sector and radius',
+                  [Data(0, 5, 1), Data(4, 6, 2)]),
+              buildChart('3 points with different everything',
+                  [Data(0, 5, 1), Data(1, 6, 2), Data(2, 7, 3)]),
+              buildChart('3 points with a duplicate',
+                  [Data(0, 5, 1), Data(1, 6, 2), Data(1, 6, 2)]),
             ],
           ),
         ),
@@ -39,60 +36,60 @@ class DebugPage extends StatelessWidget {
     );
   }
 }
+
 Widget buildChart(String name, List<Data> data) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(width: 300, child: Text(name)),
-          SizedBox(width: 100),
-          Container(
-            width: 150,
-            height: 150,
-            child: Chart(
-              data: data,
-              variables: {
-                'sector': Variable(
-                  accessor: (Data d) => d.sector.toString(),
-                  scale: OrdinalScale(
-                    values: List<int>.generate(10, (i) => i++)
-                        .map((s) => s.toString())
-                        .toList(),
-                  ),
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(width: 300, child: Text(name)),
+        SizedBox(width: 100),
+        Container(
+          width: 150,
+          height: 150,
+          child: Chart(
+            data: data,
+            variables: {
+              'sector': Variable(
+                accessor: (Data d) => d.sector.toString(),
+                scale: OrdinalScale(
+                  values: List<int>.generate(10, (i) => i++)
+                      .map((s) => s.toString())
+                      .toList(),
                 ),
-                'radius': Variable(
-                  accessor: (Data d) => d.radius,
-                  scale: LinearScale(
-                    min: 0,
-                    max: 10,
-                  ),
+              ),
+              'radius': Variable(
+                accessor: (Data d) => d.radius,
+                scale: LinearScale(
+                  min: 0,
+                  max: 10,
                 ),
-                'value': Variable(
-                  accessor: (Data d) => d.value,
-                  scale: LinearScale(
-                    min: 0,
-                    max: 10,
-                  ),
+              ),
+              'value': Variable(
+                accessor: (Data d) => d.value,
+                scale: LinearScale(
+                  min: 0,
+                  max: 10,
                 ),
-              },
-              marks: [
-                PolygonMark(
-                  shape: ShapeEncode(value: HeatmapShape(sector: true, tileCounts: [10, 10])),
-                  color: ColorEncode(
-                    variable: 'value',
-                    values: [Colors.blue, Colors.red],
-                  ),
-                )
-              ],
-              coord: PolarCoord(),
-              axes: [
-                Defaults.circularAxis,
-                Defaults.radialAxis,
-              ],
-            ),
-          ),
+              ),
+            },
+            marks: [
+              PolygonMark(
+                shape: ShapeEncode(
+                    value: HeatmapShape(sector: true, tileCounts: [10, 10])),
+                color: ColorEncode(
+                  variable: 'value',
+                  values: [Colors.blue, Colors.red],
+                ),
+              )
             ],
-            
-          );
-       
+            coord: PolarCoord(),
+            axes: [
+              Defaults.circularAxis,
+              Defaults.radialAxis,
+            ],
+          ),
+        ),
+      ],
+    );
 
 class Data {
   final int sector;

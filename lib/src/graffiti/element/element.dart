@@ -37,12 +37,12 @@ abstract class MarkElement<S extends ElementStyle> {
   final double? rotation;
 
   /// The rotation axis of this element.
-  /// 
+  ///
   /// If [rotation] is not null, this is required.
   final Offset? rotationAxis;
 
   /// The tag to indicate correspondence of this element in animation.
-  /// 
+  ///
   /// The element list dosen't cares about order and relation, which is different
   /// from [Segment] list. So to make a best morphing, the two element list only
   /// need to have the same tags set.
@@ -131,36 +131,36 @@ class PaintStyle extends ElementStyle {
             : fillColor ?? (strokeColor ?? const Color(0xFF000000));
 
   /// The color to fill the shape.
-  /// 
+  ///
   /// Only one of [fillColor], [fillGradient], [fillShader] can be set.
   final Color? fillColor;
 
   /// The gradient to fill the shape.
-  /// 
+  ///
   /// Only one of [fillColor], [fillGradient], [fillShader] can be set.
   final painting.Gradient? fillGradient;
 
   /// The shader to fill the shape.
-  /// 
+  ///
   /// It won't be interpolated in animation.
-  /// 
+  ///
   /// Only one of [fillColor], [fillGradient], [fillShader] can be set.
   final Shader? fillShader;
 
   /// The color for shape's outlines.
-  /// 
+  ///
   /// Only one of [strokeColor], [strokeGradient], [strokeShader] can be set.
   final Color? strokeColor;
 
   /// The gradient for shape's outlines.
-  /// 
+  ///
   /// Only one of [strokeColor], [strokeGradient], [strokeShader] can be set.
   final painting.Gradient? strokeGradient;
 
   /// The shader for shape's outlines.
-  /// 
+  ///
   /// It won't be interpolated in animation.
-  /// 
+  ///
   /// Only one of [strokeColor], [strokeGradient], [strokeShader] can be set.
   final Shader? strokeShader;
 
@@ -171,25 +171,25 @@ class PaintStyle extends ElementStyle {
   final BlendMode? blendMode;
 
   /// Width of the shape's outlines.
-  /// 
+  ///
   /// It can only be set when [strokeColor], [strokeGradient], or [strokeShader]
   /// is not null.
   final double? strokeWidth;
 
   /// The kind of finish to place on the end of the shape's outlines.
-  /// 
+  ///
   /// It can only be set when [strokeColor], [strokeGradient], or [strokeShader]
   /// is not null.
   final StrokeCap? strokeCap;
 
   /// The kind of finish to place on the joins between segments of the shape's outlines.
-  /// 
+  ///
   /// It can only be set when [strokeColor], [strokeGradient], or [strokeShader]
   /// is not null.
   final StrokeJoin? strokeJoin;
 
   /// The limit for miters to be drawn on segments of the shape's outlines.
-  /// 
+  ///
   /// It can only be set when [strokeColor], [strokeGradient], or [strokeShader]
   /// is not null.
   final double? strokeMiterLimit;
@@ -198,7 +198,7 @@ class PaintStyle extends ElementStyle {
   final double? elevation;
 
   /// The color of the shape's shadow.
-  /// 
+  ///
   /// It can only be set when [elevation] is not null. If null, it will be same
   /// as [fillColor] (if fillColor is set) or Color(0xFF000000).
   final Color? shadowColor;
@@ -207,7 +207,7 @@ class PaintStyle extends ElementStyle {
   final List<double>? dash;
 
   /// The dash offset of the shape's outlines.
-  /// 
+  ///
   /// It can only be set when [dash] is not null.
   final DashOffset? dashOffset;
 
@@ -429,7 +429,7 @@ abstract class BlockElement<S extends BlockStyle> extends MarkElement<S> {
   final Offset anchor;
 
   /// The default align of this block to anchor when [BlockStyle.align] is not set.
-  /// 
+  ///
   /// This is useful because a block may need different default aligns for different
   /// anchor position.
   painting.Alignment defaultAlign;
@@ -495,7 +495,7 @@ List<MarkElement> nomalizeElement(MarkElement from, MarkElement to) {
 }
 
 /// Normalizes two element list into same corresponding item runtimeTypes for lerping.
-/// 
+///
 /// The [from] may be reorded by tags to match [to].
 List<List<MarkElement>> nomalizeElementList(
     List<MarkElement> from, List<MarkElement> to) {

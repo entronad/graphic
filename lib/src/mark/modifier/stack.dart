@@ -50,7 +50,12 @@ class StackModifier extends Modifier {
           }
         }
 
-        groupRst.add(group[j].withPosition(position.map((point) => Offset(point.dx, point.dy + (preTop - normalZero),)).toList()));
+        groupRst.add(group[j].withPosition(position
+            .map((point) => Offset(
+                  point.dx,
+                  point.dy + (preTop - normalZero),
+                ))
+            .toList()));
       }
       rst.add(groupRst);
     }

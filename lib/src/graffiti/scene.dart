@@ -9,7 +9,7 @@ import 'graffiti.dart';
 /// A scene for graffiti to paint graphical elements.
 class MarkScene {
   /// Creates a scnene.
-  /// 
+  ///
   /// You should use [Graffiti.createScene] to get a scene.
   MarkScene({
     required this.layer,
@@ -60,7 +60,7 @@ class MarkScene {
   final int layer;
 
   /// The built-in layer index of this scene.
-  /// 
+  ///
   /// It decides the order of scenes with same [layer].
   final int builtinLayer;
 
@@ -68,7 +68,7 @@ class MarkScene {
   final Transition? transition;
 
   /// The previous index in [Graffiti._scenes] of this scene.
-  /// 
+  ///
   /// This is for stable sorting of scenes with same [layer].
   late int preIndex;
 
@@ -79,17 +79,17 @@ class MarkScene {
   List<MarkElement>? _preElements;
 
   /// The start elements in animation.
-  /// 
+  ///
   /// It is normalized from [_preElements].
   List<MarkElement>? _startElements;
 
   /// The end elements in animation.
-  /// 
+  ///
   /// It is normalized from [_currentElements].
   List<MarkElement>? _endElements;
 
   /// The elements for painting.
-  /// 
+  ///
   /// It is directly set if there is no animation or interpolated from [_startElements]
   /// and [_endElements] otherwise.
   List<MarkElement>? _elements;
@@ -101,17 +101,17 @@ class MarkScene {
   PrimitiveElement? _preClip;
 
   /// The start clip in animation.
-  /// 
+  ///
   /// It is normalized from [_preClip].
   PrimitiveElement? _startClip;
 
   /// The end clip in animation.
-  /// 
+  ///
   /// It is normalized from [_endClip].
   PrimitiveElement? _endClip;
 
   /// The clip for painting.
-  /// 
+  ///
   /// It is directly set if there is no animation or interpolated from [_startClip]
   /// and [_endClip] otherwise.
   PrimitiveElement? _clip;
@@ -129,7 +129,7 @@ class MarkScene {
   late bool _animateClip;
 
   /// Whether there are elements to paint in current cycle.
-  /// 
+  ///
   /// This is for complemention elements in animation.
   bool get hasCurrent =>
       _currentElements != null && _currentElements!.isNotEmpty;
@@ -156,10 +156,10 @@ class MarkScene {
   }
 
   /// Updates this scnene.
-  /// 
+  ///
   /// Directly notifys graffiti to repaint if there is no animation or prepares
   /// and starts an animation otherwise.
-  /// 
+  ///
   /// It should only be called by graffiti.
   void update() {
     if (_animateElements) {

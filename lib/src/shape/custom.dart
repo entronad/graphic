@@ -61,7 +61,8 @@ class CandlestickShape extends Shape {
     for (var item in group) {
       assert(item.shape is CandlestickShape);
 
-      final style = getPaintStyle(item, hollow, strokeWidth, null, null);
+      final style = getPaintStyle(item, (item.shape as CandlestickShape).hollow,
+          (item.shape as CandlestickShape).strokeWidth, null, null);
 
       // Candle stick shape dosen't allow NaN value.
       final points = item.position.map((p) => coord.convert(p)).toList();
@@ -73,7 +74,7 @@ class CandlestickShape extends Shape {
       final bottomEdge = ys[2];
       final bottom = ys[3];
 
-      if (hollow) {
+      if ((item.shape as CandlestickShape).hollow) {
         primitives.add(PathElement(segments: [
           MoveSegment(end: Offset(x, top)),
           LineSegment(end: Offset(x, topEdge)),
@@ -88,7 +89,7 @@ class CandlestickShape extends Shape {
       } else {
         // If the stoke style is fill, the lines created by Path.lineTo will not
         // be rendered.
-        final strokeBias = strokeWidth / 2;
+        final strokeBias = (item.shape as CandlestickShape).strokeWidth / 2;
         primitives.add(PathElement(segments: [
           MoveSegment(end: Offset(x + strokeBias, top)),
           LineSegment(end: Offset(x + strokeBias, topEdge)),

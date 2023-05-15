@@ -39,7 +39,7 @@ import 'point.dart';
 import 'polygon.dart';
 
 /// Strategies for mark elements to enter in initialization.
-/// 
+///
 /// That means which encode attribute is zero at the begining of animation.
 enum MarkEntrance {
   /// All key points will have a zero value in x direction.
@@ -161,18 +161,18 @@ abstract class Mark<S extends Shape> {
   Transition? transition;
 
   /// The stratage for mark elements to enter in initialization if there is animation.
-  /// 
+  ///
   /// That means which encode attributes are zero at the begining of animation.
-  /// 
+  ///
   /// If null, a default {MarkEntrance.opacity} is set.
   Set<MarkEntrance>? entrance;
 
   /// Tags for each mark element.
-  /// 
+  ///
   /// Tags are used to indicate correspondence of mark elements in animation. Transition
   /// animation happens between elements with the same tag in different frames.
   /// Make sure mark elements in diffrent frames have same tag set.
-  /// 
+  ///
   /// If null, correspondence of mark elements will accord to list indexes.
   String? Function(Tuple)? tag;
 
@@ -192,7 +192,7 @@ abstract class Mark<S extends Shape> {
       selectionStream == other.selectionStream &&
       transition == other.transition &&
       deepCollectionEquals(entrance, other.entrance);
-      // tag is a function.
+  // tag is a function.
 }
 
 /// The operator to group attributes.

@@ -76,7 +76,9 @@ class AnimationPageState extends State<AnimationPage> {
           {'genre': 'Other', 'sold': rdm.nextInt(300)},
         ];
 
-        scatterAnimData = scatterAnimData.map((d) => [d[0], d[1], d[2], d[3], -1 * d[4]]).toList();
+        scatterAnimData = scatterAnimData
+            .map((d) => [d[0], d[1], d[2], d[3], -1 * d[4]])
+            .toList();
       });
     });
 
@@ -97,7 +99,12 @@ class AnimationPageState extends State<AnimationPage> {
         title: const Text('Animation'),
       ),
       backgroundColor: Colors.white,
-      floatingActionButton: FloatingActionButton(onPressed: () => setState(() {rebuild = true;}), child: Icon(Icons.refresh),),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => setState(() {
+          rebuild = true;
+        }),
+        child: Icon(Icons.refresh),
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
@@ -132,13 +139,18 @@ class AnimationPageState extends State<AnimationPage> {
                       scale: LinearScale(min: 0),
                     ),
                   },
-                  transforms: [Sort(compare: (tuple1, tuple2) => tuple1['sold'] - tuple2['sold'])],
+                  transforms: [
+                    Sort(
+                        compare: (tuple1, tuple2) =>
+                            tuple1['sold'] - tuple2['sold'])
+                  ],
                   marks: [
                     IntervalMark(
-                        transition: Transition(duration: Duration(seconds: 1)),
-                        entrance: {MarkEntrance.y},
-                        label: LabelEncode(encoder: (tuple) => Label(tuple['sold'].toString())),
-                        tag: (tuple) => tuple['genre'].toString(),
+                      transition: Transition(duration: Duration(seconds: 1)),
+                      entrance: {MarkEntrance.y},
+                      label: LabelEncode(
+                          encoder: (tuple) => Label(tuple['sold'].toString())),
+                      tag: (tuple) => tuple['genre'].toString(),
                     )
                   ],
                   axes: [
@@ -147,8 +159,6 @@ class AnimationPageState extends State<AnimationPage> {
                   ],
                 ),
               ),
-              
-              
               Container(
                 padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
@@ -198,14 +208,15 @@ class AnimationPageState extends State<AnimationPage> {
                       color: ColorEncode(
                           variable: 'name', values: Defaults.colors10),
                       elevation: ElevationEncode(value: 5),
-                      transition: Transition(duration: Duration(seconds: 2), curve: Curves.elasticOut),
+                      transition: Transition(
+                          duration: Duration(seconds: 2),
+                          curve: Curves.elasticOut),
                       entrance: {MarkEntrance.y},
                     )
                   ],
                   coord: PolarCoord(startRadius: 0.15),
                 ),
               ),
-
               Container(
                 padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
@@ -231,9 +242,8 @@ class AnimationPageState extends State<AnimationPage> {
                       accessor: (List datum) => datum[2] as num,
                     ),
                     '4': Variable(
-                      accessor: (List datum) => datum[4].toString(),
-                      scale: OrdinalScale(values: ['-1', '1'])
-                    ),
+                        accessor: (List datum) => datum[4].toString(),
+                        scale: OrdinalScale(values: ['-1', '1'])),
                   },
                   marks: [
                     PointMark(
@@ -273,7 +283,6 @@ class AnimationPageState extends State<AnimationPage> {
                   coord: PolarCoord(),
                 ),
               ),
-
               Container(
                 padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
@@ -368,18 +377,27 @@ class AnimationPageState extends State<AnimationPage> {
                   marks: [
                     AreaMark(
                       shape: ShapeEncode(value: BasicAreaShape(smooth: true)),
-                      gradient: GradientEncode(value: LinearGradient(colors: [
+                      gradient: GradientEncode(
+                          value: LinearGradient(colors: [
                         Defaults.colors10.first.withAlpha(80),
                         Defaults.colors10.first.withAlpha(10),
                       ])),
                       transition: Transition(duration: Duration(seconds: 2)),
-                      entrance: {MarkEntrance.x, MarkEntrance.y, MarkEntrance.opacity},
+                      entrance: {
+                        MarkEntrance.x,
+                        MarkEntrance.y,
+                        MarkEntrance.opacity
+                      },
                     ),
                     LineMark(
                       shape: ShapeEncode(value: BasicLineShape(smooth: true)),
                       size: SizeEncode(value: 0.5),
                       transition: Transition(duration: Duration(seconds: 2)),
-                      entrance: {MarkEntrance.x, MarkEntrance.y, MarkEntrance.opacity},
+                      entrance: {
+                        MarkEntrance.x,
+                        MarkEntrance.y,
+                        MarkEntrance.opacity
+                      },
                     ),
                   ],
                   axes: [

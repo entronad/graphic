@@ -7,7 +7,7 @@ import 'segment/move.dart';
 import 'segment/arc.dart';
 
 /// Gets the arc point by [angle] on an [oval].
-/// 
+///
 /// The algrithom is from https://blog.csdn.net/chenlu5201314/article/details/99678398
 Offset getArcPoint(Rect oval, double angle) {
   final a = oval.width / 2;

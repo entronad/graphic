@@ -12,7 +12,7 @@ class Graffiti {
   });
 
   /// The ticker provider for animation.
-  /// 
+  ///
   /// It is the widget state with [TickerProviderStateMixin].
   final TickerProvider tickerProvider;
 
@@ -61,7 +61,7 @@ class Graffiti {
   }
 
   /// Updates all scenes.
-  /// 
+  ///
   /// Call this method when all scene settings are down and notify widget for the next frame.
   void update() {
     for (var scene in _scenes) {

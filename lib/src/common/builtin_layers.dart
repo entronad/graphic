@@ -1,5 +1,5 @@
 /// Built-in layer orders of chart components.
-/// 
+///
 /// It works when components have same layer.
 abstract class BuiltinLayers {
   static const regionBackground = 0;

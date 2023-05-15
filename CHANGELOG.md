@@ -1,3 +1,10 @@
+## 2.2.0
+
+**2023-05-15**
+
+- Add `RepaintBoundary` to reduce chart repainting: https://github.com/entronad/graphic/pull/220
+- Fix that all items use the same shape params: https://github.com/entronad/graphic/issues/221
+
 ## 2.1.0
 
 **2023-04-20**

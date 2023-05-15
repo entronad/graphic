@@ -852,10 +852,10 @@ class DodgeSizeModifier extends Modifier {
           index: attributes.index,
           tag: attributes.tag,
           position: oldPosition
-            .map(
-              (point) => Offset(point.dx + accumulated + bias, point.dy),
-            )
-            .toList(),
+              .map(
+                (point) => Offset(point.dx + accumulated + bias, point.dy),
+              )
+              .toList(),
           shape: attributes.shape,
           color: attributes.color,
           gradient: attributes.gradient,

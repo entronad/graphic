@@ -50,10 +50,10 @@ class SymmetricModifier extends Modifier {
         final attributes = groups[j][i];
         final oldPosition = attributes.position;
         rst[j].add(attributes.withPosition(oldPosition
-          .map(
-            (point) => Offset(point.dx, point.dy + symmetricBias),
-          )
-          .toList()));
+            .map(
+              (point) => Offset(point.dx, point.dy + symmetricBias),
+            )
+            .toList()));
       }
     }
 

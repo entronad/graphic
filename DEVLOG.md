@@ -513,3 +513,11 @@ Tuple value 应该还是不接受null：1.这是dart null-safety 倡导的原则
 至少目前，参数定义的原则涉及多个维度的还是以list定义为主，而不是分开 aaX, aaY这样，比如 CrosshairCuide, list 成员可以为null，以达到一个设置一个不设置的效果，不要搞单独元素指代两个相同这种，取数用 [0] [1]。
 
 之前 scaleEnd 和 longPressEnd 是不含 localMoveStart 的，可能是因为当时为了和flutter的习惯一致。现在的原则是参数尽量给到，而且这里也似乎确实有用。但是它的类目太多太杂，也不用都加上，就update和end加上。
+
+vis lib 的核心价值？核心需求？满足奇怪的vis设计需求
+
+echarts的top是放的components, series, global settings。当它setting时，通过key来进行diff，数据也是通过key来进行diff
+
+坐标系的关联？比如一个直接坐标系上再放一个极坐标系，极坐标系的圆心与直角坐标系
+
+item.shape 属性提示我们，似乎还是应该搞个绘制单个的方法，以强调每个数据项图形的独特性？

@@ -13,35 +13,35 @@ PaintStyle getPaintStyle(
   if (hollow) {
     if (attributes.gradient != null) {
       return PaintStyle(
-          strokeGradient: attributes.gradient,
-          strokeWidth: strokeWidth,
-          elevation: attributes.elevation,
-          gradientBounds: gradientBounds,
-          dash: dash,
-          );
+        strokeGradient: attributes.gradient,
+        strokeWidth: strokeWidth,
+        elevation: attributes.elevation,
+        gradientBounds: gradientBounds,
+        dash: dash,
+      );
     } else {
       return PaintStyle(
-          strokeColor: attributes.color,
-          strokeWidth: strokeWidth,
-          elevation: attributes.elevation,
-          gradientBounds: gradientBounds,
-          dash: dash,
-          );
+        strokeColor: attributes.color,
+        strokeWidth: strokeWidth,
+        elevation: attributes.elevation,
+        gradientBounds: gradientBounds,
+        dash: dash,
+      );
     }
   } else {
     if (attributes.gradient != null) {
       return PaintStyle(
-          fillGradient: attributes.gradient,
-          elevation: attributes.elevation,
-          gradientBounds: gradientBounds,
-          dash: dash,
-          );
+        fillGradient: attributes.gradient,
+        elevation: attributes.elevation,
+        gradientBounds: gradientBounds,
+        dash: dash,
+      );
     } else {
       return PaintStyle(
-          fillColor: attributes.color,
-          elevation: attributes.elevation,
-          gradientBounds: gradientBounds,
-          dash: dash,
+        fillColor: attributes.color,
+        elevation: attributes.elevation,
+        gradientBounds: gradientBounds,
+        dash: dash,
       );
     }
   }

@@ -111,7 +111,7 @@
 ///
 /// They include [Axis] specified by [Chart.axes], [Tooltip] specified by [Chart.tooltip],
 /// [Crosshair] specified by [Chart.crosshair], and [Annotation]s specified by [Chart.annotations],
-/// 
+///
 /// ## Animation
 /// Marks can specify transition animation by [Mark.transition] on entrance or changed.
 /// [Mark.entrance] defines which encode attributes are zero at the begining of

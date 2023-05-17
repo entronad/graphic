@@ -1,4 +1,4 @@
-import 'package:graphic/src/chart/view.dart';
+import 'package:graphic/src/chart/chart_view.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/graffiti/element/element.dart';
 import 'package:graphic/src/graffiti/scene.dart';

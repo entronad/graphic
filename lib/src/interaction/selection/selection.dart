@@ -2,14 +2,14 @@ import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/encode/encode.dart';
-import 'package:graphic/src/chart/view.dart';
+import 'package:graphic/src/chart/chart_view.dart';
 import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/common/label.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
+import 'package:graphic/src/encode/encode.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/gesture.dart';
 import 'package:graphic/src/shape/shape.dart';

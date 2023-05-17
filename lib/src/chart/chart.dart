@@ -19,7 +19,7 @@ import 'package:graphic/src/util/collection.dart';
 import 'package:graphic/src/variable/transform/transform.dart';
 import 'package:graphic/src/variable/variable.dart';
 
-import 'view.dart';
+import 'chart_view.dart';
 
 /// A widget to display the chart.
 ///

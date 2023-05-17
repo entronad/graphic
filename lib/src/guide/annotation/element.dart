@@ -4,7 +4,7 @@ import 'package:flutter/painting.dart';
 import 'package:graphic/src/graffiti/element/rect.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/util/collection.dart';
-import 'package:graphic/src/chart/view.dart';
+import 'package:graphic/src/chart/chart_view.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/dataflow/operator.dart';
 import 'package:graphic/src/graffiti/element/element.dart';

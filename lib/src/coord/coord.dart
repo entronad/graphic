@@ -1,5 +1,5 @@
 import 'package:flutter/painting.dart';
-import 'package:graphic/src/chart/view.dart';
+import 'package:graphic/src/chart/chart_view.dart';
 import 'package:graphic/src/common/converter.dart';
 import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/common/operators/render.dart';

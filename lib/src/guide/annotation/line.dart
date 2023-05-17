@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:graphic/src/chart/view.dart';
+import 'package:graphic/src/chart/chart_view.dart';
 import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';

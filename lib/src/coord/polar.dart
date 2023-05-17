@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:graphic/src/chart/view.dart';
+import 'package:graphic/src/chart/chart_view.dart';
 import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/graffiti/element/circle.dart';
 import 'package:graphic/src/graffiti/element/element.dart';

@@ -5,7 +5,7 @@ import 'package:graphic/src/graffiti/element/sector.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/util/assert.dart';
 import 'package:graphic/src/util/collection.dart';
-import 'package:graphic/src/chart/view.dart';
+import 'package:graphic/src/chart/chart_view.dart';
 import 'package:graphic/src/coord/coord.dart';
 import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';

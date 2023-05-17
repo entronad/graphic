@@ -1,4 +1,4 @@
-import 'package:graphic/src/chart/view.dart';
+import 'package:graphic/src/chart/chart_view.dart';
 import 'package:graphic/src/common/operators/render.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 

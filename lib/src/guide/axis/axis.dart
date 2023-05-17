@@ -1,5 +1,5 @@
 import 'package:graphic/src/chart/chart.dart';
-import 'package:graphic/src/chart/view.dart';
+import 'package:graphic/src/chart/chart_view.dart';
 import 'package:graphic/src/common/defaults.dart';
 import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/common/operators/render.dart';

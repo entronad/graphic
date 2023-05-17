@@ -1,11 +1,11 @@
-import 'package:graphic/src/chart/view.dart';
+import 'package:flutter/painting.dart';
+import 'package:graphic/src/chart/chart_view.dart';
 import 'package:graphic/src/common/dim.dart';
 import 'package:graphic/src/graffiti/element/element.dart';
 import 'package:graphic/src/graffiti/element/rect.dart';
 import 'package:graphic/src/graffiti/scene.dart';
-import 'package:graphic/src/util/collection.dart';
-import 'package:flutter/painting.dart';
 import 'package:graphic/src/interaction/event.dart';
+import 'package:graphic/src/util/collection.dart';
 
 import 'coord.dart';
 

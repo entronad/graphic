@@ -4,17 +4,18 @@ version: 1.0.1
 homepage: https://github.com/entronad/graphic
 
 environment:
-  sdk: '>=2.13.0 <3.0.0'
-  flutter: '>=2.6.0'
+  sdk: '>=2.19.0 <4.0.0'
+  flutter: '>=3.7.12'
 
 dependencies:
-  collection: ^1.15.0
   flutter:
     sdk: flutter
-  vector_math: ^2.1.0
-  path_drawing: ^1.0.0
+
+  collection: ^1.17.0
+  vector_math: ^2.1.4
+  path_drawing: ^1.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.1
+  flutter_lints: ^2.0.3

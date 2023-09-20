@@ -415,4 +415,12 @@ class SelectionUpdateOp extends Operator<AttributesGroups> {
     }
     return rst;
   }
+
+  ///Need to provide a semantic equality comparison since
+  ///AttributesGroups are really just an alias to a list
+  @override
+  bool equalValue(AttributesGroups a, AttributesGroups b){
+    return deepCollectionEquals(a, b);
+  }
+
 }

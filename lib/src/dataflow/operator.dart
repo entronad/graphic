@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:graphic/src/interaction/event.dart';
+import 'package:graphic/src/util/collection.dart';
 
 import 'dataflow.dart';
 
@@ -116,8 +117,9 @@ abstract class Operator<V> {
   /// Checks whether the new [value]s is modifed to the old one.
   ///
   /// This method should be determind by the trait of [V], not the role of this operator.
+  /// Collections will be checked deeply, and for classes [V] should override the [==].
   @protected
-  bool equalValue(V a, V b) => a == b;
+  bool equalValue(V a, V b) => deepCollectionEquals(a, b);
 
   /// Update the operator [value] and returns whether the [value] is modified.
   ///

@@ -1,3 +1,10 @@
+## 2.2.1
+
+**2023-09-26**
+
+- Operator value use deep equality: https://github.com/entronad/graphic/pull/262
+
+
 ## 2.2.0
 
 **2023-05-15**

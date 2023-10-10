@@ -33,6 +33,10 @@ Graphic is a grammar of data visualization and Flutter charting library.
 
 See in the [documentation](https://pub.dev/documentation/graphic/latest/graphic/graphic-library.html).
 
+## Migration Guide to 2.0
+
+// To do ...
+
 ## Examples
 
 Example of charts can be seen in the [Example App](https://github.com/entronad/graphic/tree/main/example). Please clone this repository and run the example project in example directory.

@@ -35,7 +35,29 @@ See in the [documentation](https://pub.dev/documentation/graphic/latest/graphic/
 
 ## Migration Guide to 2.0
 
-// To do ...
+Some of the terminalogy has been changed in v2.0. Please follow the below guide to migrate your code.
+
+| old code      | new code |
+| ----------- | ----------- |
+| GeomElement      | Mark       |
+| Attr   | Encode        |
+| Signal   | Event        |
+| Channel   | Stream        |
+| Figure   | MarkElement        |
+| element:   | marks:        |
+| ColorAttr   | ColorEncode        |
+| ShapeAttr   | ShapeEncode        |
+| element:   | marks:        |
+| IntervalElement | IntervalMark |
+| PointElement | PointMark |
+| LabelAttr | LabelEncode |
+| color | fillColor |
+| strokeStyle | PaintStyle |
+
+
+
+
+
 
 ## Examples
 

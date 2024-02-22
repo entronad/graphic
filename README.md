@@ -97,3 +97,5 @@ Graphic is [MIT License](https://github.com/entronad/graphic/blob/main/LICENSE).
 [Medium](https://medium.com/@entronad)
 
 [Zhihu](https://www.zhihu.com/people/entronad)
+
+Thanks for reading.

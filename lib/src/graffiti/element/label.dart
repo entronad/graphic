@@ -207,6 +207,9 @@ class LabelElement extends BlockElement<LabelStyle> {
   /// The text painter.
   late final TextPainter _painter;
 
+  /// The text size.
+  Size get _textSize => _painter.size;
+
   @override
   void draw(Canvas canvas) => _painter.paint(canvas, paintPoint);
 
@@ -222,4 +225,14 @@ class LabelElement extends BlockElement<LabelStyle> {
   @override
   bool operator ==(Object other) =>
       other is LabelElement && super == other && text == other.text;
+
+  Rect getTextRect() {
+    const horizontalSpacing = 1;
+    final left = paintPoint.dx - horizontalSpacing;
+    final top = paintPoint.dy - 1;
+    final width = _textSize.width + 2 * horizontalSpacing;
+    final height = _textSize.height;
+
+    return Rect.fromLTWH(left, top, width, height);
+  }
 }

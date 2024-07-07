@@ -538,6 +538,8 @@ void parse<D>(
         'labelMapper': axisSpec.labelMapper,
         'grid': axisSpec.grid,
         'gridMapper': axisSpec.gridMapper,
+        'labelBackground': axisSpec.labelBackground,
+        'labelBackgroundMapper': axisSpec.labelBackgroundMapper,
       }));
 
       final axisScene = view.graffiti.createScene(

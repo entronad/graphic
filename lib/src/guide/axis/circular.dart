@@ -4,6 +4,7 @@ import 'package:graphic/src/graffiti/element/arc.dart';
 import 'package:graphic/src/graffiti/element/element.dart';
 import 'package:graphic/src/graffiti/element/label.dart';
 import 'package:graphic/src/graffiti/element/line.dart';
+import 'package:graphic/src/graffiti/element/rect.dart';
 import 'package:graphic/src/util/math.dart';
 
 import 'axis.dart';
@@ -50,11 +51,21 @@ List<MarkElement>? renderCircularAxis(
                   : anchorOffset.dy / anchorOffset.dy.abs(),
             ) *
             flipSign;
-        rst.add(LabelElement(
+
+        final lineElement = LabelElement(
             text: tick.text!,
             anchor: labelAnchor,
             defaultAlign: defaultAlign,
-            style: tick.label!));
+            style: tick.label!);
+
+        if (tick.haveLabelBackground) {
+          rst.add(RectElement(
+            rect: lineElement.getTextRect(),
+            style: tick.labelBackground!,
+          ));
+        }
+
+        rst.add(lineElement);
       }
     }
   }

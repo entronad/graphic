@@ -3,6 +3,7 @@ import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/graffiti/element/element.dart';
 import 'package:graphic/src/graffiti/element/label.dart';
 import 'package:graphic/src/graffiti/element/line.dart';
+import 'package:graphic/src/graffiti/element/rect.dart';
 
 import 'axis.dart';
 
@@ -39,11 +40,20 @@ List<MarkElement>? renderVerticalAxis(
             style: tick.tickLine!.style));
       }
       if (tick.haveLabel) {
-        rst.add(LabelElement(
+        final lineElement = LabelElement(
             text: tick.text!,
             anchor: Offset(x, y),
             defaultAlign: flip ? Alignment.centerRight : Alignment.centerLeft,
-            style: tick.label!));
+            style: tick.label!);
+
+        if (tick.haveLabelBackground) {
+          rst.add(RectElement(
+            rect: lineElement.getTextRect(),
+            style: tick.labelBackground!,
+          ));
+        }
+
+        rst.add(lineElement);
       }
     }
   }

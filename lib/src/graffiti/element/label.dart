@@ -184,7 +184,7 @@ class LabelElement extends BlockElement<LabelStyle> {
           : this.style.span!(text),
       textAlign: this.style.textAlign ?? TextAlign.start,
       textDirection: this.style.textDirection ?? TextDirection.ltr,
-      textScaleFactor: this.style.textScaleFactor ?? 1.0,
+      textScaler: TextScaler.linear(this.style.textScaleFactor ?? 1.0),
       maxLines: this.style.maxLines,
       ellipsis: this.style.ellipsis,
       locale: this.style.locale,

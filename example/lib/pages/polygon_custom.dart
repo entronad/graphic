@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
-import 'package:graphic/src/graffiti/element/element.dart';
 
 import '../data.dart';
 

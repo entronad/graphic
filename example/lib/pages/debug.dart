@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
 
-import '../data.dart';
-
 class DebugPage extends StatelessWidget {
   DebugPage({Key? key}) : super(key: key);
 

@@ -39,7 +39,7 @@ Widget buildChart(String name, List<Data> data) => Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(width: 300, child: Text(name)),
-        SizedBox(width: 100),
+        const SizedBox(width: 100),
         Container(
           width: 150,
           height: 150,

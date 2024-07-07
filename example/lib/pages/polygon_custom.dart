@@ -571,7 +571,7 @@ class PolygonCustomPage extends StatelessWidget {
                                   style: PaintStyle(
                                       fillColor: Defaults.colors10[0]))
                             ],
-                        anchor: (p0) => Offset(0, 0)),
+                        anchor: (p0) => const Offset(0, 0)),
                     TagAnnotation(
                       label: Label(
                         'Email',
@@ -589,7 +589,7 @@ class PolygonCustomPage extends StatelessWidget {
                                   style: PaintStyle(
                                       fillColor: Defaults.colors10[1]))
                             ],
-                        anchor: (p0) => Offset(0, 0)),
+                        anchor: (p0) => const Offset(0, 0)),
                     TagAnnotation(
                       label: Label(
                         'Affiliate',
@@ -607,7 +607,7 @@ class PolygonCustomPage extends StatelessWidget {
                                   style: PaintStyle(
                                       fillColor: Defaults.colors10[2]))
                             ],
-                        anchor: (p0) => Offset(0, 0)),
+                        anchor: (p0) => const Offset(0, 0)),
                     TagAnnotation(
                       label: Label(
                         'Video',
@@ -625,7 +625,7 @@ class PolygonCustomPage extends StatelessWidget {
                                   style: PaintStyle(
                                       fillColor: Defaults.colors10[3]))
                             ],
-                        anchor: (p0) => Offset(0, 0)),
+                        anchor: (p0) => const Offset(0, 0)),
                     TagAnnotation(
                       label: Label(
                         'Direct',
@@ -643,7 +643,7 @@ class PolygonCustomPage extends StatelessWidget {
                                   style: PaintStyle(
                                       fillColor: Defaults.colors10[4]))
                             ],
-                        anchor: (p0) => Offset(0, 0)),
+                        anchor: (p0) => const Offset(0, 0)),
                     TagAnnotation(
                       label: Label(
                         'Search',

@@ -14,7 +14,7 @@ class LabelStyle extends BlockStyle {
     this.span,
     this.textAlign,
     this.textDirection,
-    this.textScaleFactor,
+    this.textScaler,
     this.maxLines,
     this.ellipsis,
     this.locale,
@@ -68,11 +68,12 @@ class LabelStyle extends BlockStyle {
   /// should be regarded as "default".**
   final TextDirection? textDirection;
 
-  /// The number of font pixels for each logical pixel.
+  /// The font scaling strategy to use when laying out and rendering the text.
   ///
-  /// For example, if the text scale factor is 1.5, text will be 50% larger than
-  /// the specified font size.
-  final double? textScaleFactor;
+  /// The value usually comes from [MediaQuery.textScalerOf],
+  /// which typically reflects the user-specified text scaling value in the platform's accessibility settings.
+  /// The [TextStyle.fontSize] of the text will be adjusted by the [TextScaler] before the text is laid out and rendered.
+  final TextScaler? textScaler;
 
   /// An optional maximum number of lines for the text to span, wrapping if
   /// necessary.
@@ -134,7 +135,7 @@ class LabelStyle extends BlockStyle {
       span: span,
       textAlign: textAlign,
       textDirection: textDirection,
-      textScaleFactor: lerpDouble(from.textScaleFactor, textScaleFactor, t),
+      textScaler: textScaler,
       maxLines: lerpDouble(from.maxLines, maxLines, t)?.toInt(),
       ellipsis: ellipsis,
       locale: locale,
@@ -152,7 +153,7 @@ class LabelStyle extends BlockStyle {
       // span is a function.
       textAlign == other.textAlign &&
       textDirection == other.textDirection &&
-      textScaleFactor == other.textScaleFactor &&
+      textScaler == other.textScaler &&
       maxLines == other.maxLines &&
       ellipsis == other.ellipsis &&
       locale == other.locale &&
@@ -184,7 +185,7 @@ class LabelElement extends BlockElement<LabelStyle> {
           : this.style.span!(text),
       textAlign: this.style.textAlign ?? TextAlign.start,
       textDirection: this.style.textDirection ?? TextDirection.ltr,
-      textScaler: TextScaler.linear(this.style.textScaleFactor ?? 1.0),
+      textScaler: this.style.textScaler ?? TextScaler.noScaling,
       maxLines: this.style.maxLines,
       ellipsis: this.style.ellipsis,
       locale: this.style.locale,

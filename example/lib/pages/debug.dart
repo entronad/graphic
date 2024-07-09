@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
 
-import '../data.dart';
-
 class DebugPage extends StatelessWidget {
   DebugPage({Key? key}) : super(key: key);
 
@@ -40,9 +38,9 @@ class DebugPage extends StatelessWidget {
 Widget buildChart(String name, List<Data> data) => Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(width: 300, child: Text(name)),
-        SizedBox(width: 100),
-        Container(
+        SizedBox(width: 300, child: Text(name)),
+        const SizedBox(width: 100),
+        SizedBox(
           width: 150,
           height: 150,
           child: Chart(

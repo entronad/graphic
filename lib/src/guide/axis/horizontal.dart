@@ -40,7 +40,7 @@ List<MarkElement>? renderHorizontalAxis(
             style: tick.tickLine!.style));
       }
       if (tick.haveLabel) {
-        final lineElement = LabelElement(
+        final babel = LabelElement(
             text: tick.text!,
             anchor: Offset(x, y),
             defaultAlign: flip ? Alignment.topCenter : Alignment.bottomCenter,
@@ -48,12 +48,12 @@ List<MarkElement>? renderHorizontalAxis(
 
         if (tick.haveLabelBackground) {
           rst.add(RectElement(
-            rect: lineElement.getTextRect(),
+            rect: babel.getBlock(),
             style: tick.labelBackground!,
           ));
         }
 
-        rst.add(lineElement);
+        rst.add(babel);
       }
     }
   }

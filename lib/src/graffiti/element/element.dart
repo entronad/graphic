@@ -434,6 +434,7 @@ abstract class BlockElement<S extends BlockStyle> extends MarkElement<S> {
   /// anchor position.
   painting.Alignment defaultAlign;
 
+  /// The real painting offset point of this block.
   @protected
   late final Offset paintPoint;
 

@@ -1,14 +1,21 @@
 name: graphic
 description: A grammar of data visualization and Flutter charting library.
-version: 2.2.1
+version: 2.3.0
 homepage: https://github.com/entronad/graphic
+
+topics:
+  - chart
+  - charts
+  - visualization
+  - diagram
+  - plot
 
 environment:
   sdk: '>=2.13.0 <4.0.0'
   flutter: '>=3.16.0'
 
 dependencies:
-  collection: ^1.15.0
+  collection: ^1.18.0
   flutter:
     sdk: flutter
   vector_math: ^2.1.0
@@ -17,4 +24,4 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.1
+  flutter_lints: ^4.0.0

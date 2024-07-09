@@ -92,7 +92,7 @@ List<MarkElement>? renderRadialAxis(
   final labelAlign = radialLabelAlign(featureOffset) * flipSign;
   for (var index in labelAnchors.keys) {
     final tick = ticks[index];
-    final lineElement = LabelElement(
+    final babel = LabelElement(
         text: tick.text!,
         anchor: labelAnchors[index]!,
         defaultAlign: labelAlign,
@@ -100,12 +100,12 @@ List<MarkElement>? renderRadialAxis(
 
     if (tick.haveLabelBackground) {
       rst.add(RectElement(
-        rect: lineElement.getTextRect(),
+        rect: babel.getBlock(),
         style: tick.labelBackground!,
       ));
     }
 
-    rst.add(lineElement);
+    rst.add(babel);
   }
 
   return rst.isEmpty ? null : rst;

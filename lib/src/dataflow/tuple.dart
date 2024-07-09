@@ -47,6 +47,7 @@ class Attributes {
   /// The index of the tuple in all tuples list.
   final int index;
 
+  /// The tag of the tuple.
   final String? tag;
 
   /// Position points of the tuple.

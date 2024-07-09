@@ -52,7 +52,7 @@ List<MarkElement>? renderCircularAxis(
             ) *
             flipSign;
 
-        final lineElement = LabelElement(
+        final label = LabelElement(
             text: tick.text!,
             anchor: labelAnchor,
             defaultAlign: defaultAlign,
@@ -60,12 +60,12 @@ List<MarkElement>? renderCircularAxis(
 
         if (tick.haveLabelBackground) {
           rst.add(RectElement(
-            rect: lineElement.getTextRect(),
+            rect: label.getBlock(),
             style: tick.labelBackground!,
           ));
         }
 
-        rst.add(lineElement);
+        rst.add(label);
       }
     }
   }

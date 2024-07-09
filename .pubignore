@@ -1,7 +1,19 @@
 # Pub
 DEVLOG.md
 devdoc/
-example/
+example/android
+example/ios
+example/web
+example/windows
+example/linux
+example/macos
+example/fuchsia
+example/lib
+example/test
+example/gitignore
+example/pubspec.yaml
+example/.metadata
+example/analysis_options.yaml
 
 # Miscellaneous
 *.class

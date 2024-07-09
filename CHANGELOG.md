@@ -1,3 +1,10 @@
+## 2.3.0
+
+**2024-07-09**
+
+- Add `AxisGuide.labelBackground` and `AxisGuid.labelBackgroundMapper`: https://github.com/entronad/graphic/pull/301
+- Change `LabelStyle.textScaleFactor` to `LabelStyle.textScaler` to be consist with `TextPainter`: https://github.com/entronad/graphic/pull/300. Although this is a breaking change, only minor version is upgraded for this prop is rarely used.
+
 ## 2.2.1
 
 **2023-09-26**

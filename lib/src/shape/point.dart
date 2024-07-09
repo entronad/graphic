@@ -30,6 +30,7 @@ abstract class PointShape extends FunctionShape {
       hollow == other.hollow &&
       strokeWidth == other.strokeWidth;
 
+  /// Draw each element of this point shape.
   MarkElement drawPoint(Attributes item, CoordConv coord);
 
   @override

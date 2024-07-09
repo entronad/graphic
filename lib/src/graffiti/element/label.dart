@@ -227,7 +227,7 @@ class LabelElement extends BlockElement<LabelStyle> {
   bool operator ==(Object other) =>
       other is LabelElement && super == other && text == other.text;
 
-  Rect getTextRect() {
+  Rect getBlock() {
     const horizontalSpacing = 1;
     final left = paintPoint.dx - horizontalSpacing;
     final top = paintPoint.dy - 1;

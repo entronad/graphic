@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:graphic/src/graffiti/element/arc.dart';
@@ -247,6 +248,28 @@ class CrosshairRenderOp extends Render {
             start: polarCoord.polarToOffset(angle, coord.startRadius),
             end: polarCoord.polarToOffset(angle, coord.endRadius),
             style: canvasStyleX));
+
+        if (showLabel[0] && labelStyleX != null && !followPointer[0]) {
+          final fieldX = coord.transposed ? fields[2] : fields[0];
+          final scaleX = scales[fieldX];
+          final text = scaleX?.format(tuple[fieldX]) ?? '';
+          final diagonal = _getLabelDiagonal(text: text, style: labelStyleX);
+
+          final label = LabelElement(
+            text: text,
+            anchor: polarCoord.polarToOffset(angle, coord.endRadius + diagonal / 2),
+            style: labelStyleX,
+          );
+
+          if (labelBackgroundStyleX != null) {
+            elements.add(RectElement(
+              rect: label.getBlock(),
+              style: labelBackgroundStyleX,
+            ));
+          }
+
+          elements.add(label);
+        }
       }
       if (canvasStyleY != null) {
         final r = polarCoord
@@ -256,6 +279,29 @@ class CrosshairRenderOp extends Render {
             startAngle: coord.startAngle,
             endAngle: coord.endAngle,
             style: canvasStyleY));
+
+        if (showLabel[1] && labelStyleY != null && !followPointer[1]) {
+          final fieldY = coord.transposed ? fields[0] : fields[2];
+          final scaleY = scales[fieldY];
+          final value = scaleY?.invert(polarCoord.transposed ? cross.dx : cross.dy);
+          final text = scaleY?.format(value) ?? '';
+          final rect = _getLabelBlock(text: text, style: labelStyleY);
+
+          final label = LabelElement(
+            text: text,
+            anchor: Offset(coord.center.dx - rect.width / 2, coord.center.dy - r),
+            style: labelStyleY,
+          );
+
+          if (labelBackgroundStyleY != null) {
+            elements.add(RectElement(
+              rect: label.getBlock(),
+              style: labelBackgroundStyleY,
+            ));
+          }
+
+          elements.add(label);
+        }
       }
     }
 
@@ -271,4 +317,10 @@ class CrosshairRenderOp extends Render {
         anchor: const Offset(0, 0),
         style: style,
       ).getBlock();
+
+  double _getLabelDiagonal({required String text, required LabelStyle style}) {
+    final rect = _getLabelBlock(text: text, style: style);
+
+    return sqrt(pow(rect.height, 2) + pow(rect.width, 2));
+  }
 }

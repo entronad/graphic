@@ -12,8 +12,10 @@ import 'package:graphic/src/coord/polar.dart';
 import 'package:graphic/src/coord/rect.dart';
 import 'package:graphic/src/dataflow/tuple.dart';
 import 'package:graphic/src/graffiti/element/element.dart';
+import 'package:graphic/src/graffiti/element/label.dart';
 import 'package:graphic/src/graffiti/scene.dart';
 import 'package:graphic/src/interaction/selection/selection.dart';
+import 'package:graphic/src/scale/scale.dart';
 
 /// The specification of a crosshair
 ///
@@ -24,6 +26,9 @@ class CrosshairGuide {
   CrosshairGuide({
     this.selections,
     this.styles,
+    this.labelStyles,
+    this.labelBackgroundStyles,
+    this.showLabel,
     this.followPointer,
     this.layer,
     this.mark,
@@ -43,6 +48,17 @@ class CrosshairGuide {
   /// If null a default `[PaintStyle(strokeColor: Color(0xffbfbfbf)), PaintStyle(strokeColor: Color(0xffbfbfbf))]`
   /// is set.
   List<PaintStyle?>? styles;
+
+  /// The label styles of crosshair lines for each dimension.
+  List<LabelStyle?>? labelStyles;
+
+  /// The labelBackground styles of crosshair lines for each dimension.
+  List<PaintStyle?>? labelBackgroundStyles;
+
+  /// Whether to show label on axis.
+  ///
+  /// If null, a default `[false, false]` is set.
+  List<bool>? showLabel;
 
   /// Whether the position for each dimension follows the pointer or stick to selected
   /// points.
@@ -69,6 +85,9 @@ class CrosshairGuide {
       other is CrosshairGuide &&
       deepCollectionEquals(selections, other.selections) &&
       deepCollectionEquals(styles, other.styles) &&
+      deepCollectionEquals(labelStyles, other.labelStyles) &&
+      deepCollectionEquals(labelBackgroundStyles, other.labelBackgroundStyles) &&
+      deepCollectionEquals(showLabel, other.showLabel) &&
       deepCollectionEquals(followPointer, other.followPointer) &&
       layer == other.layer &&
       mark == other.mark;
@@ -89,8 +108,13 @@ class CrosshairRenderOp extends Render {
     final selected = params['selected'] as Selected?;
     final coord = params['coord'] as CoordConv;
     final groups = params['groups'] as AttributesGroups;
+    final tuples = params['tuples'] as List<Tuple>;
     final styles = params['styles'] as List<PaintStyle?>;
+    final labelStyles = params['labelStyles'] as List<LabelStyle?>;
+    final labelBackgroundStyles = params['labelBackgroundStyles'] as List<PaintStyle?>;
+    final showLabel = params['showLabel'] as List<bool>;
     final followPointer = params['followPointer'] as List<bool>;
+    final scales = params['scales'] as Map<String, ScaleConv>;
 
     // The main indicator is selected, if no selector, takes selectedPoint for pointer.
     final name = singleIntersection(selected?.keys, selections);
@@ -99,6 +123,11 @@ class CrosshairRenderOp extends Render {
     if (selects == null || selects.isEmpty) {
       scene.set(null);
       return;
+    }
+
+    final selectedTuples = <int, Tuple>{};
+    for (var index in selects) {
+      selectedTuples[index] = tuples[index];
     }
 
     Offset selectedPoint = Offset.zero;
@@ -134,6 +163,14 @@ class CrosshairRenderOp extends Render {
     final region = coord.region;
     final canvasStyleX = coord.transposed ? styles[1] : styles[0];
     final canvasStyleY = coord.transposed ? styles[0] : styles[1];
+    final labelStyleX = coord.transposed ? labelStyles[1] : labelStyles[0];
+    final labelStyleY = coord.transposed ? labelStyles[0] : labelStyles[1];
+    final labelBackgroundStyleX = coord.transposed ? labelBackgroundStyles[1] : labelBackgroundStyles[0];
+    final labelBackgroundStyleY = coord.transposed ? labelBackgroundStyles[0] : labelBackgroundStyles[1];
+    final fields = scales.keys.toList();
+    final selectedTupleList = selectedTuples.values;
+    final tuple = selectedTupleList.last;
+
     if (coord is RectCoordConv) {
       final canvasCross = coord.convert(cross);
       if (canvasStyleX != null) {
@@ -141,12 +178,65 @@ class CrosshairRenderOp extends Render {
             start: Offset(canvasCross.dx, region.top),
             end: Offset(canvasCross.dx, region.bottom),
             style: canvasStyleX));
+
+        if (showLabel[0] && !canvasCross.dx.isNaN && labelStyleX != null && !followPointer[0]) {
+          final fieldX = coord.transposed ? fields[1] : fields[0];
+          final scaleX = scales[fieldX];
+          final text = scaleX?.format(tuple[fieldX]) ?? '';
+          final rect = _getLabelBlock(text: text, style: labelStyleX);
+
+          double posX = canvasCross.dx;
+          if (posX - rect.width / 2 <= region.left) {
+            posX = region.left + rect.width / 2;
+          }
+
+          if (posX + rect.width / 2 >= region.right) {
+            posX = region.right - rect.width / 2;
+          }
+
+          final label = LabelElement(
+            text: text,
+            anchor: Offset(posX, region.bottom + rect.height / 2),
+            style: labelStyleX,
+          );
+
+          if (labelBackgroundStyleX != null) {
+            elements.add(RectElement(
+              rect: label.getBlock(),
+              style: labelBackgroundStyleX,
+            ));
+          }
+
+          elements.add(label);
+        }
       }
       if (canvasStyleY != null) {
         elements.add(LineElement(
             start: Offset(region.left, canvasCross.dy),
             end: Offset(region.right, canvasCross.dy),
             style: canvasStyleY));
+
+        if (showLabel[1] && !canvasCross.dy.isNaN && labelStyleY != null && !followPointer[1]) {
+          final fieldY = coord.transposed ? fields[0] : fields[1];
+          final scaleY = scales[fieldY];
+          final text = scaleY?.format(tuple[fieldY]) ?? '';
+          final rect = _getLabelBlock(text: text, style: labelStyleY);
+
+          final label = LabelElement(
+            text: text,
+            anchor: Offset(region.left - rect.width / 2, canvasCross.dy),
+            style: labelStyleY,
+          );
+
+          if (labelBackgroundStyleY != null) {
+            elements.add(RectElement(
+              rect: label.getBlock(),
+              style: labelBackgroundStyleY,
+            ));
+          }
+
+          elements.add(label);
+        }
       }
     } else {
       final polarCoord = coord as PolarCoordConv;
@@ -169,6 +259,16 @@ class CrosshairRenderOp extends Render {
       }
     }
 
-    scene.set(elements, RectElement(rect: coord.region, style: PaintStyle()));
+    if (showLabel.any((show) => show) && !followPointer.any((follow) => follow)) {
+      scene.set(elements);
+    } else {
+      scene.set(elements, RectElement(rect: coord.region, style: PaintStyle()));
+    }
   }
+
+  Rect _getLabelBlock({required String text, required LabelStyle style}) => LabelElement(
+        text: text,
+        anchor: const Offset(0, 0),
+        style: style,
+      ).getBlock();
 }

@@ -230,7 +230,7 @@ class LabelElement extends BlockElement<LabelStyle> {
   Rect getBlock() {
     const horizontalSpacing = 1;
     final left = paintPoint.dx - horizontalSpacing;
-    final top = paintPoint.dy - 1;
+    final top = paintPoint.dy;
     final width = _textSize.width + 2 * horizontalSpacing;
     final height = _textSize.height;
 

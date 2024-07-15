@@ -40,7 +40,7 @@ List<MarkElement>? renderVerticalAxis(
             style: tick.tickLine!.style));
       }
       if (tick.haveLabel) {
-        final babel = LabelElement(
+        final label = LabelElement(
             text: tick.text!,
             anchor: Offset(x, y),
             defaultAlign: flip ? Alignment.centerRight : Alignment.centerLeft,
@@ -48,12 +48,12 @@ List<MarkElement>? renderVerticalAxis(
 
         if (tick.haveLabelBackground) {
           rst.add(RectElement(
-            rect: babel.getBlock(),
+            rect: label.getBlock(),
             style: tick.labelBackground!,
           ));
         }
 
-        rst.add(babel);
+        rst.add(label);
       }
     }
   }

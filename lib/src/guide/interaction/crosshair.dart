@@ -175,18 +175,20 @@ class CrosshairRenderOp extends Render {
     if (coord is RectCoordConv) {
       final canvasCross = coord.convert(cross);
       if (canvasStyleX != null) {
+        final canvasCrossX = max(min(canvasCross.dx, region.right), region.left);
         elements.add(LineElement(
-            start: Offset(canvasCross.dx, region.top),
-            end: Offset(canvasCross.dx, region.bottom),
-            style: canvasStyleX));
+          start: Offset(canvasCrossX, region.top),
+          end: Offset(canvasCrossX, region.bottom),
+          style: canvasStyleX,
+        ));
 
-        if (showLabel[0] && !canvasCross.dx.isNaN && labelStyleX != null && !followPointer[0]) {
+        if (showLabel[0] && !canvasCross.dx.isNaN && labelStyleX != null) {
           final fieldX = coord.transposed ? fields[1] : fields[0];
           final scaleX = scales[fieldX];
-          final text = scaleX?.format(tuple[fieldX]) ?? '';
+          final text = scaleX?.format(scaleX.invert(cross.dx)) ?? '';
           final rect = _getLabelBlock(text: text, style: labelStyleX);
 
-          double posX = canvasCross.dx;
+          double posX = canvasCrossX;
           if (posX - rect.width / 2 <= region.left) {
             posX = region.left + rect.width / 2;
           }
@@ -212,20 +214,31 @@ class CrosshairRenderOp extends Render {
         }
       }
       if (canvasStyleY != null) {
+        final canvasCrossY = max(min(canvasCross.dy, region.bottom), region.top);
         elements.add(LineElement(
-            start: Offset(region.left, canvasCross.dy),
-            end: Offset(region.right, canvasCross.dy),
-            style: canvasStyleY));
+          start: Offset(region.left, canvasCrossY),
+          end: Offset(region.right, canvasCrossY),
+          style: canvasStyleY,
+        ));
 
-        if (showLabel[1] && !canvasCross.dy.isNaN && labelStyleY != null && !followPointer[1]) {
+        if (showLabel[1] && !canvasCross.dy.isNaN && labelStyleY != null) {
           final fieldY = coord.transposed ? fields[0] : fields[1];
           final scaleY = scales[fieldY];
-          final text = scaleY?.format(tuple[fieldY]) ?? '';
+          final text = scaleY?.format(scaleY.invert(cross.dy)) ?? '';
           final rect = _getLabelBlock(text: text, style: labelStyleY);
+
+          double posY = canvasCrossY;
+          if (posY - rect.height / 2 <= region.top) {
+            posY = region.top + rect.height / 2;
+          }
+
+          if (posY + rect.height / 2 >= region.bottom) {
+            posY = region.bottom - rect.height / 2;
+          }
 
           final label = LabelElement(
             text: text,
-            anchor: Offset(region.left - rect.width / 2, canvasCross.dy),
+            anchor: Offset(region.left - rect.width / 2, posY),
             style: labelStyleY,
           );
 
@@ -242,14 +255,13 @@ class CrosshairRenderOp extends Render {
     } else {
       final polarCoord = coord as PolarCoordConv;
       if (canvasStyleX != null) {
-        final angle = polarCoord
-            .convertAngle(polarCoord.transposed ? cross.dy : cross.dx);
+        final angle = polarCoord.convertAngle(polarCoord.transposed ? cross.dy : cross.dx);
         elements.add(LineElement(
             start: polarCoord.polarToOffset(angle, coord.startRadius),
             end: polarCoord.polarToOffset(angle, coord.endRadius),
             style: canvasStyleX));
 
-        if (showLabel[0] && labelStyleX != null && !followPointer[0]) {
+        if (showLabel[0] && labelStyleX != null) {
           final fieldX = coord.transposed ? fields[2] : fields[0];
           final scaleX = scales[fieldX];
           final text = scaleX?.format(tuple[fieldX]) ?? '';
@@ -272,18 +284,18 @@ class CrosshairRenderOp extends Render {
         }
       }
       if (canvasStyleY != null) {
-        final r = polarCoord
-            .convertRadius(polarCoord.transposed ? cross.dx : cross.dy);
+        final abstractRadius = min(polarCoord.transposed ? cross.dx : cross.dy, 1.0);
+        final r = polarCoord.convertRadius(abstractRadius);
         elements.add(ArcElement(
             oval: Rect.fromCircle(center: coord.center, radius: r),
             startAngle: coord.startAngle,
             endAngle: coord.endAngle,
             style: canvasStyleY));
 
-        if (showLabel[1] && labelStyleY != null && !followPointer[1]) {
+        if (showLabel[1] && labelStyleY != null) {
           final fieldY = coord.transposed ? fields[0] : fields[2];
           final scaleY = scales[fieldY];
-          final value = scaleY?.invert(polarCoord.transposed ? cross.dx : cross.dy);
+          final value = scaleY?.invert(abstractRadius);
           final text = scaleY?.format(value) ?? '';
           final rect = _getLabelBlock(text: text, style: labelStyleY);
 
@@ -305,11 +317,7 @@ class CrosshairRenderOp extends Render {
       }
     }
 
-    if (showLabel.any((show) => show) && !followPointer.any((follow) => follow)) {
-      scene.set(elements);
-    } else {
-      scene.set(elements, RectElement(rect: coord.region, style: PaintStyle()));
-    }
+    scene.set(elements);
   }
 
   Rect _getLabelBlock({required String text, required LabelStyle style}) => LabelElement(

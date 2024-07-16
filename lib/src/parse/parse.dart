@@ -663,8 +663,14 @@ void parse<D>(
       'tuples': tuples,
       'styles': crosshairSpec.styles ??
           [
-            PaintStyle(strokeColor: showLabel[0] ? const Color(0xff000000) : const Color(0xffbfbfbf)),
-            PaintStyle(strokeColor: showLabel[1] ? const Color(0xff000000) : const Color(0xffbfbfbf)),
+            PaintStyle(
+                strokeColor: showLabel[0]
+                    ? const Color(0xff000000)
+                    : const Color(0xffbfbfbf)),
+            PaintStyle(
+                strokeColor: showLabel[1]
+                    ? const Color(0xff000000)
+                    : const Color(0xffbfbfbf)),
           ],
       'labelStyles': crosshairSpec.labelStyles ??
           [

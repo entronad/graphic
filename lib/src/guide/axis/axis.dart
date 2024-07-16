@@ -54,7 +54,8 @@ typedef GridMapper = PaintStyle? Function(String? text, int index, int total);
 /// Gets an axis labelBackground style form an axis value text.
 ///
 /// [index] and [total] is current and total count of all ticks respectively.
-typedef LabelBackgroundMapper = PaintStyle? Function(String? text, int index, int total);
+typedef LabelBackgroundMapper = PaintStyle? Function(
+    String? text, int index, int total);
 
 /// The specification of an axis.
 ///
@@ -80,7 +81,8 @@ class AxisGuide<V> {
   })  : assert(isSingle([tickLine, tickLineMapper], allowNone: true)),
         assert(isSingle([label, labelMapper], allowNone: true)),
         assert(isSingle([grid, gridMapper], allowNone: true)),
-        assert(isSingle([labelBackground, labelBackgroundMapper], allowNone: true));
+        assert(isSingle([labelBackground, labelBackgroundMapper],
+            allowNone: true));
 
   /// The dimension where this axis lies.
   ///
@@ -214,7 +216,8 @@ class TickInfo {
   bool get haveLabel => label != null && text != null && text!.isNotEmpty;
 
   /// Whether this tick has a labelBackground to render.
-  bool get haveLabelBackground => labelBackground != null && text != null && text!.isNotEmpty;
+  bool get haveLabelBackground =>
+      labelBackground != null && text != null && text!.isNotEmpty;
 }
 
 /// The operator to create tick informations.
@@ -234,7 +237,8 @@ class TickInfoOp extends Operator<List<TickInfo>> {
     final grid = params['grid'] as PaintStyle?;
     final gridMapper = params['gridMapper'] as GridMapper?;
     final labelBackground = params['labelBackground'] as PaintStyle?;
-    final labelBackgroundMapper = params['labelBackgroundMapper'] as LabelBackgroundMapper?;
+    final labelBackgroundMapper =
+        params['labelBackgroundMapper'] as LabelBackgroundMapper?;
 
     final scale = scales[variable]!;
 

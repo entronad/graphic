@@ -178,7 +178,12 @@ export 'src/shape/util/style.dart' show getPaintStyle;
 
 export 'src/graffiti/transition.dart' show Transition;
 export 'src/graffiti/element/element.dart'
-    show MarkElement, ElementStyle, PaintStyle, PrimitiveElement, getBlockPaintPoint;
+    show
+        MarkElement,
+        ElementStyle,
+        PaintStyle,
+        PrimitiveElement,
+        getBlockPaintPoint;
 export 'src/graffiti/element/arc.dart' show ArcElement;
 export 'src/graffiti/element/circle.dart' show CircleElement;
 export 'src/graffiti/element/group.dart' show GroupElement;

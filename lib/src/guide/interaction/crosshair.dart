@@ -87,7 +87,8 @@ class CrosshairGuide {
       deepCollectionEquals(selections, other.selections) &&
       deepCollectionEquals(styles, other.styles) &&
       deepCollectionEquals(labelStyles, other.labelStyles) &&
-      deepCollectionEquals(labelBackgroundStyles, other.labelBackgroundStyles) &&
+      deepCollectionEquals(
+          labelBackgroundStyles, other.labelBackgroundStyles) &&
       deepCollectionEquals(showLabel, other.showLabel) &&
       deepCollectionEquals(followPointer, other.followPointer) &&
       layer == other.layer &&
@@ -112,7 +113,8 @@ class CrosshairRenderOp extends Render {
     final tuples = params['tuples'] as List<Tuple>;
     final styles = params['styles'] as List<PaintStyle?>;
     final labelStyles = params['labelStyles'] as List<LabelStyle?>;
-    final labelBackgroundStyles = params['labelBackgroundStyles'] as List<PaintStyle?>;
+    final labelBackgroundStyles =
+        params['labelBackgroundStyles'] as List<PaintStyle?>;
     final showLabel = params['showLabel'] as List<bool>;
     final followPointer = params['followPointer'] as List<bool>;
     final scales = params['scales'] as Map<String, ScaleConv>;
@@ -166,8 +168,10 @@ class CrosshairRenderOp extends Render {
     final canvasStyleY = coord.transposed ? styles[0] : styles[1];
     final labelStyleX = coord.transposed ? labelStyles[1] : labelStyles[0];
     final labelStyleY = coord.transposed ? labelStyles[0] : labelStyles[1];
-    final labelBackgroundStyleX = coord.transposed ? labelBackgroundStyles[1] : labelBackgroundStyles[0];
-    final labelBackgroundStyleY = coord.transposed ? labelBackgroundStyles[0] : labelBackgroundStyles[1];
+    final labelBackgroundStyleX =
+        coord.transposed ? labelBackgroundStyles[1] : labelBackgroundStyles[0];
+    final labelBackgroundStyleY =
+        coord.transposed ? labelBackgroundStyles[0] : labelBackgroundStyles[1];
     final fields = scales.keys.toList();
     final selectedTupleList = selectedTuples.values;
     final tuple = selectedTupleList.last;
@@ -175,7 +179,8 @@ class CrosshairRenderOp extends Render {
     if (coord is RectCoordConv) {
       final canvasCross = coord.convert(cross);
       if (canvasStyleX != null) {
-        final canvasCrossX = max(min(canvasCross.dx, region.right), region.left);
+        final canvasCrossX =
+            max(min(canvasCross.dx, region.right), region.left);
         elements.add(LineElement(
           start: Offset(canvasCrossX, region.top),
           end: Offset(canvasCrossX, region.bottom),
@@ -214,7 +219,8 @@ class CrosshairRenderOp extends Render {
         }
       }
       if (canvasStyleY != null) {
-        final canvasCrossY = max(min(canvasCross.dy, region.bottom), region.top);
+        final canvasCrossY =
+            max(min(canvasCross.dy, region.bottom), region.top);
         elements.add(LineElement(
           start: Offset(region.left, canvasCrossY),
           end: Offset(region.right, canvasCrossY),
@@ -255,7 +261,8 @@ class CrosshairRenderOp extends Render {
     } else {
       final polarCoord = coord as PolarCoordConv;
       if (canvasStyleX != null) {
-        final angle = polarCoord.convertAngle(polarCoord.transposed ? cross.dy : cross.dx);
+        final angle = polarCoord
+            .convertAngle(polarCoord.transposed ? cross.dy : cross.dx);
         elements.add(LineElement(
             start: polarCoord.polarToOffset(angle, coord.startRadius),
             end: polarCoord.polarToOffset(angle, coord.endRadius),
@@ -269,7 +276,8 @@ class CrosshairRenderOp extends Render {
 
           final label = LabelElement(
             text: text,
-            anchor: polarCoord.polarToOffset(angle, coord.endRadius + diagonal / 2),
+            anchor:
+                polarCoord.polarToOffset(angle, coord.endRadius + diagonal / 2),
             style: labelStyleX,
           );
 
@@ -284,7 +292,8 @@ class CrosshairRenderOp extends Render {
         }
       }
       if (canvasStyleY != null) {
-        final abstractRadius = min(polarCoord.transposed ? cross.dx : cross.dy, 1.0);
+        final abstractRadius =
+            min(polarCoord.transposed ? cross.dx : cross.dy, 1.0);
         final r = polarCoord.convertRadius(abstractRadius);
         elements.add(ArcElement(
             oval: Rect.fromCircle(center: coord.center, radius: r),
@@ -301,7 +310,8 @@ class CrosshairRenderOp extends Render {
 
           final label = LabelElement(
             text: text,
-            anchor: Offset(coord.center.dx - rect.width / 2, coord.center.dy - r),
+            anchor:
+                Offset(coord.center.dx - rect.width / 2, coord.center.dy - r),
             style: labelStyleY,
           );
 
@@ -320,7 +330,8 @@ class CrosshairRenderOp extends Render {
     scene.set(elements);
   }
 
-  Rect _getLabelBlock({required String text, required LabelStyle style}) => LabelElement(
+  Rect _getLabelBlock({required String text, required LabelStyle style}) =>
+      LabelElement(
         text: text,
         anchor: const Offset(0, 0),
         style: style,

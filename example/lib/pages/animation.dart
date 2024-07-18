@@ -146,7 +146,8 @@ class AnimationPageState extends State<AnimationPage> {
                   ],
                   marks: [
                     IntervalMark(
-                      transition: Transition(duration: const Duration(seconds: 1)),
+                      transition:
+                          Transition(duration: const Duration(seconds: 1)),
                       entrance: {MarkEntrance.y},
                       label: LabelEncode(
                           encoder: (tuple) => Label(tuple['sold'].toString())),
@@ -259,7 +260,8 @@ class AnimationPageState extends State<AnimationPage> {
                         CircleShape(),
                         SquareShape(),
                       ]),
-                      transition: Transition(duration: const Duration(seconds: 1)),
+                      transition:
+                          Transition(duration: const Duration(seconds: 1)),
                     )
                   ],
                   axes: [
@@ -329,7 +331,8 @@ class AnimationPageState extends State<AnimationPage> {
                       color: ColorEncode(
                           variable: 'genre', values: Defaults.colors10),
                       modifiers: [StackModifier()],
-                      transition: Transition(duration: const Duration(seconds: 2)),
+                      transition:
+                          Transition(duration: const Duration(seconds: 2)),
                       entrance: {MarkEntrance.y},
                     )
                   ],
@@ -382,7 +385,8 @@ class AnimationPageState extends State<AnimationPage> {
                         Defaults.colors10.first.withAlpha(80),
                         Defaults.colors10.first.withAlpha(10),
                       ])),
-                      transition: Transition(duration: const Duration(seconds: 2)),
+                      transition:
+                          Transition(duration: const Duration(seconds: 2)),
                       entrance: {
                         MarkEntrance.x,
                         MarkEntrance.y,
@@ -392,7 +396,8 @@ class AnimationPageState extends State<AnimationPage> {
                     LineMark(
                       shape: ShapeEncode(value: BasicLineShape(smooth: true)),
                       size: SizeEncode(value: 0.5),
-                      transition: Transition(duration: const Duration(seconds: 2)),
+                      transition:
+                          Transition(duration: const Duration(seconds: 2)),
                       entrance: {
                         MarkEntrance.x,
                         MarkEntrance.y,

@@ -1,3 +1,9 @@
+## 2.4.0
+
+**2024-07-18**
+
+- add label and labelBackground on crosshair: https://github.com/entronad/graphic/pull/303
+
 ## 2.3.0
 
 **2024-07-09**

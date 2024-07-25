@@ -1,6 +1,6 @@
 import 'dart:math';
-import 'dart:ui';
 
+import 'package:flutter/rendering.dart';
 import 'package:graphic/src/graffiti/element/arc.dart';
 import 'package:graphic/src/graffiti/element/line.dart';
 import 'package:graphic/src/graffiti/element/rect.dart';
@@ -33,6 +33,7 @@ class CrosshairGuide {
     this.followPointer,
     this.layer,
     this.mark,
+    this.expandEdges,
   });
 
   /// The selections this crosshair reacts to.
@@ -81,6 +82,15 @@ class CrosshairGuide {
   /// If null, the first mark series is set by default.
   int? mark;
 
+  /// Indicates whether the crosshair should expand in each of the four directions (left, top, right, bottom).
+  ///
+  /// This property is applicable only for [RectCoord] and determines if the crosshair should extend
+  /// in the respective directions. The list contains four boolean values corresponding to left, top,
+  /// right, and bottom expansion respectively.
+  ///
+  /// If null, a default `[false, false, false, false]` is set.
+  List<bool>? expandEdges;
+
   @override
   bool operator ==(Object other) =>
       other is CrosshairGuide &&
@@ -91,6 +101,7 @@ class CrosshairGuide {
           labelBackgroundStyles, other.labelBackgroundStyles) &&
       deepCollectionEquals(showLabel, other.showLabel) &&
       deepCollectionEquals(followPointer, other.followPointer) &&
+      deepCollectionEquals(expandEdges, other.expandEdges) &&
       layer == other.layer &&
       mark == other.mark;
 }
@@ -118,6 +129,9 @@ class CrosshairRenderOp extends Render {
     final showLabel = params['showLabel'] as List<bool>;
     final followPointer = params['followPointer'] as List<bool>;
     final scales = params['scales'] as Map<String, ScaleConv>;
+    final size = params['size'] as Size;
+    final padding = params['padding'] as EdgeInsets Function(Size);
+    final expandEdges = params['expandEdges'] as List<bool>;
 
     // The main indicator is selected, if no selector, takes selectedPoint for pointer.
     final name = singleIntersection(selected?.keys, selections);
@@ -181,9 +195,15 @@ class CrosshairRenderOp extends Render {
       if (canvasStyleX != null) {
         final canvasCrossX =
             max(min(canvasCross.dx, region.right), region.left);
+
+        double startY = region.top;
+        double endY = region.bottom;
+        if (expandEdges[1]) startY -= padding(size).top;
+        if (expandEdges[3]) endY += padding(size).bottom;
+
         elements.add(LineElement(
-          start: Offset(canvasCrossX, region.top),
-          end: Offset(canvasCrossX, region.bottom),
+          start: Offset(canvasCrossX, startY),
+          end: Offset(canvasCrossX, endY),
           style: canvasStyleX,
         ));
 
@@ -221,9 +241,15 @@ class CrosshairRenderOp extends Render {
       if (canvasStyleY != null) {
         final canvasCrossY =
             max(min(canvasCross.dy, region.bottom), region.top);
+
+        double startX = region.left;
+        double endX = region.right;
+        if (expandEdges[0]) startX -= padding(size).left;
+        if (expandEdges[2]) endX += padding(size).right;
+
         elements.add(LineElement(
-          start: Offset(region.left, canvasCrossY),
-          end: Offset(region.right, canvasCrossY),
+          start: Offset(startX, canvasCrossY),
+          end: Offset(endX, canvasCrossY),
           style: canvasStyleY,
         ));
 

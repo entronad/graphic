@@ -212,7 +212,13 @@ export 'src/coord/polar.dart' show PolarCoord, PolarCoordConv;
 export 'src/coord/rect.dart' show RectCoord, RectCoordConv;
 
 export 'src/guide/axis/axis.dart'
-    show TickLine, TickLineMapper, LabelMapper, GridMapper, AxisGuide;
+    show
+        TickLine,
+        TickLineMapper,
+        LabelMapper,
+        LabelBackgroundMapper,
+        GridMapper,
+        AxisGuide;
 export 'src/guide/interaction/tooltip.dart' show TooltipGuide, TooltipRenderer;
 export 'src/guide/interaction/crosshair.dart' show CrosshairGuide;
 export 'src/guide/annotation/annotation.dart' show Annotation;

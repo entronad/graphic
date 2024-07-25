@@ -210,7 +210,8 @@ class CrosshairRenderOp extends Render {
         if (showLabel[0] && !canvasCross.dx.isNaN && labelStyleX != null) {
           final fieldX = coord.transposed ? fields[1] : fields[0];
           final scaleX = scales[fieldX];
-          final text = scaleX?.format(scaleX.invert(cross.dx)) ?? '';
+          final denormalize = scaleX?.denormalize(cross.dx) ?? -1;
+          final text = scaleX?.format(scaleX.invert(denormalize)) ?? '';
           final rect = _getLabelBlock(text: text, style: labelStyleX);
 
           double posX = canvasCrossX;
@@ -256,7 +257,8 @@ class CrosshairRenderOp extends Render {
         if (showLabel[1] && !canvasCross.dy.isNaN && labelStyleY != null) {
           final fieldY = coord.transposed ? fields[0] : fields[1];
           final scaleY = scales[fieldY];
-          final text = scaleY?.format(scaleY.invert(cross.dy)) ?? '';
+          final denormalize = scaleY?.denormalize(cross.dy) ?? -1;
+          final text = scaleY?.format(scaleY.invert(denormalize)) ?? '';
           final rect = _getLabelBlock(text: text, style: labelStyleY);
 
           double posY = canvasCrossY;
@@ -330,7 +332,8 @@ class CrosshairRenderOp extends Render {
         if (showLabel[1] && labelStyleY != null) {
           final fieldY = coord.transposed ? fields[0] : fields[2];
           final scaleY = scales[fieldY];
-          final value = scaleY?.invert(abstractRadius);
+          final denormalize = scaleY?.denormalize(abstractRadius) ?? 0;
+          final value = scaleY?.invert(denormalize);
           final text = scaleY?.format(value) ?? '';
           final rect = _getLabelBlock(text: text, style: labelStyleY);
 

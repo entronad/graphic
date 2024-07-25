@@ -685,6 +685,7 @@ void parse<D>(
             PaintStyle(fillColor: const Color(0xff000000)),
           ],
       'showLabel': showLabel,
+      'formatter': crosshairSpec.formatter ?? [null, null],
       'followPointer': crosshairSpec.followPointer ?? [false, false],
       'scales': scales,
       'size': size,

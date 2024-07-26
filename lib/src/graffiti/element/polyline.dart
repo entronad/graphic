@@ -37,7 +37,7 @@ class PolylineElement extends PrimitiveElement {
     double? rotation,
     Offset? rotationAxis,
     String? tag,
-  })  : assert(points.length >= 2),
+  })  : assert(points.isNotEmpty),
         super(
           style: style,
           rotation: rotation,

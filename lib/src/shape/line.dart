@@ -105,11 +105,15 @@ class BasicLineShape extends LineShape {
     final primitives = <MarkElement>[];
 
     final represent = group.first;
-    final style = getPaintStyle(
-        represent, true, represent.size ?? defaultSize, coord.region, dash);
+    final strokeWidth = represent.size ?? defaultSize;
+    final style =
+        getPaintStyle(represent, true, strokeWidth, coord.region, dash);
 
     for (var contour in contours) {
-      if (smooth) {
+      if (contour.length == 1) {
+        primitives.add(CircleElement(
+            center: contour[0], radius: strokeWidth / 2, style: style));
+      } else if (smooth) {
         primitives.add(SplineElement(
             start: contour.first,
             cubics: getCubicControls(contour, false, true),

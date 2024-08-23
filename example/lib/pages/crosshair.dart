@@ -17,6 +17,8 @@ class CrosshairPageState extends State<CrosshairPage> {
 
   final priceVolumeStream = StreamController<GestureEvent>.broadcast();
 
+  static const _labelPadding = 6.0;
+
   /// Price parameters
 
   final List<PaintStyle?> _showCrosshairOnPrice = [
@@ -28,6 +30,8 @@ class CrosshairPageState extends State<CrosshairPage> {
 
   final List<bool> _followPointerOnPrice = [false, false];
 
+  final List<double> _labelPaddingOnPrice = [0.0, 0.0];
+
   /// Volume parameters
 
   final List<PaintStyle?> _showCrosshairOnVolume = [
@@ -38,6 +42,8 @@ class CrosshairPageState extends State<CrosshairPage> {
   final List<bool> _showLabelOnVolume = [false, false];
 
   final List<bool> _followPointerOnVolume = [false, false];
+
+  final List<double> _labelPaddingOnVolume = [0.0, 0.0];
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +108,7 @@ class CrosshairPageState extends State<CrosshairPage> {
                     )
                   },
                   crosshair: CrosshairGuide(
+                    labelPaddings: _labelPaddingOnPrice,
                     showLabel: _showLabelOnPrice,
                     followPointer: _followPointerOnPrice,
                     styles: _showCrosshairOnPrice,
@@ -146,6 +153,7 @@ class CrosshairPageState extends State<CrosshairPage> {
                     )
                   },
                   crosshair: CrosshairGuide(
+                    labelPaddings: _labelPaddingOnVolume,
                     showLabel: _showLabelOnVolume,
                     followPointer: _followPointerOnVolume,
                     styles: _showCrosshairOnVolume,
@@ -218,6 +226,25 @@ class CrosshairPageState extends State<CrosshairPage> {
                       valueY: _showLabelOnVolume[1],
                       onChangedY: (isOn) =>
                           setState(() => _showLabelOnVolume[1] = isOn),
+                    ),
+                    const Divider(),
+                    _SwitchPair(
+                      title: '• show label padding on price',
+                      valueX: _labelPaddingOnPrice[0] != 0.0,
+                      onChangedX: (isOn) =>
+                          setState(() => _labelPaddingOnPrice[0] = isOn ? _labelPadding : 0.0),
+                      valueY: _labelPaddingOnPrice[1] != 0.0,
+                      onChangedY: (isOn) =>
+                          setState(() => _labelPaddingOnPrice[1] = isOn ? _labelPadding : 0.0),
+                    ),
+                    _SwitchPair(
+                      title: '• show label padding on volume',
+                      valueX: _labelPaddingOnVolume[0] != 0.0,
+                      onChangedX: (isOn) =>
+                          setState(() => _labelPaddingOnVolume[0] = isOn ? _labelPadding : 0.0),
+                      valueY: _labelPaddingOnVolume[1] != 0.0,
+                      onChangedY: (isOn) =>
+                          setState(() => _labelPaddingOnVolume[1] = isOn ? _labelPadding : 0.0),
                     ),
                   ],
                 ),

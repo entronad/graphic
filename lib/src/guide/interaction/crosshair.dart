@@ -29,6 +29,7 @@ class CrosshairGuide {
     this.styles,
     this.labelStyles,
     this.labelBackgroundStyles,
+    this.labelPaddings,
     this.showLabel,
     this.formatter,
     this.followPointer,
@@ -57,6 +58,9 @@ class CrosshairGuide {
 
   /// The labelBackground styles of crosshair lines for each dimension.
   List<PaintStyle?>? labelBackgroundStyles;
+
+  /// The padding between label and axis.
+  List<double>? labelPaddings;
 
   /// Whether to show label on axis.
   ///
@@ -105,6 +109,7 @@ class CrosshairGuide {
       deepCollectionEquals(labelStyles, other.labelStyles) &&
       deepCollectionEquals(
           labelBackgroundStyles, other.labelBackgroundStyles) &&
+      deepCollectionEquals(labelPaddings, other.labelPaddings) &&
       deepCollectionEquals(showLabel, other.showLabel) &&
       deepCollectionEquals(followPointer, other.followPointer) &&
       deepCollectionEquals(expandEdges, other.expandEdges) &&
@@ -132,6 +137,7 @@ class CrosshairRenderOp extends Render {
     final labelStyles = params['labelStyles'] as List<LabelStyle?>;
     final labelBackgroundStyles =
         params['labelBackgroundStyles'] as List<PaintStyle?>;
+    final labelPaddings = params['labelPaddings'] as List<double>;
     final showLabel = params['showLabel'] as List<bool>;
     final formatter = params['formatter'] as List<String? Function(dynamic)?>;
     final followPointer = params['followPointer'] as List<bool>;
@@ -193,6 +199,10 @@ class CrosshairRenderOp extends Render {
         coord.transposed ? labelBackgroundStyles[1] : labelBackgroundStyles[0];
     final labelBackgroundStyleY =
         coord.transposed ? labelBackgroundStyles[0] : labelBackgroundStyles[1];
+    final labelPaddingX =
+        coord.transposed ? labelPaddings[1] : labelPaddings[0];
+    final labelPaddingY =
+        coord.transposed ? labelPaddings[0] : labelPaddings[1];
     final fields = scales.keys.toList();
     final selectedTupleList = selectedTuples.values;
     final tuple = selectedTupleList.last;
@@ -204,7 +214,7 @@ class CrosshairRenderOp extends Render {
             max(min(canvasCross.dx, region.right), region.left);
 
         double startY = region.top;
-        double endY = region.bottom;
+        double endY = region.bottom + labelPaddingX;
         if (expandEdges[1]) startY -= padding(size).top;
         if (expandEdges[3]) endY += padding(size).bottom;
 
@@ -234,7 +244,7 @@ class CrosshairRenderOp extends Render {
 
           final label = LabelElement(
             text: text,
-            anchor: Offset(posX, region.bottom + rect.height / 2),
+            anchor: Offset(posX, endY + rect.height / 2),
             style: labelStyleX,
           );
 
@@ -252,7 +262,7 @@ class CrosshairRenderOp extends Render {
         final canvasCrossY =
             max(min(canvasCross.dy, region.bottom), region.top);
 
-        double startX = region.left;
+        double startX = region.left - labelPaddingY;
         double endX = region.right;
         if (expandEdges[0]) startX -= padding(size).left;
         if (expandEdges[2]) endX += padding(size).right;

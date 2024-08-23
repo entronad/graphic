@@ -55,11 +55,115 @@ class CrosshairPageState extends State<CrosshairPage> {
         title: const Text('Crosshair'),
       ),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: <Widget>[
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Center(
+              child: Column(
+                children: <Widget>[
+                  const SizedBox(height: 300),
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(24, 32, 24, 32),
+                    alignment: Alignment.centerLeft,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _SwitchPair(
+                          title: '• show crosshair on price',
+                          valueX: _showCrosshairOnPrice[0] != null,
+                          onChangedX: (isOn) => setState(() =>
+                              _showCrosshairOnPrice[0] =
+                                  isOn ? crosshairPaintStyle : null),
+                          valueY: _showCrosshairOnPrice[1] != null,
+                          onChangedY: (isOn) => setState(() =>
+                              _showCrosshairOnPrice[1] =
+                                  isOn ? crosshairPaintStyle : null),
+                        ),
+                        _SwitchPair(
+                          title: '• show crosshair on volume',
+                          valueX: _showCrosshairOnVolume[0] != null,
+                          onChangedX: (isOn) => setState(() =>
+                              _showCrosshairOnVolume[0] =
+                                  isOn ? crosshairPaintStyle : null),
+                          valueY: _showCrosshairOnVolume[1] != null,
+                          onChangedY: (isOn) => setState(() =>
+                              _showCrosshairOnVolume[1] =
+                                  isOn ? crosshairPaintStyle : null),
+                        ),
+                        const Divider(),
+                        _SwitchPair(
+                          title: '• follow pointer on price',
+                          valueX: _followPointerOnPrice[0],
+                          onChangedX: (isOn) =>
+                              setState(() => _followPointerOnPrice[0] = isOn),
+                          valueY: _followPointerOnPrice[1],
+                          onChangedY: (isOn) =>
+                              setState(() => _followPointerOnPrice[1] = isOn),
+                        ),
+                        _SwitchPair(
+                          title: '• follow pointer on volume',
+                          valueX: _followPointerOnVolume[0],
+                          onChangedX: (isOn) =>
+                              setState(() => _followPointerOnVolume[0] = isOn),
+                          valueY: _followPointerOnVolume[1],
+                          onChangedY: (isOn) =>
+                              setState(() => _followPointerOnVolume[1] = isOn),
+                        ),
+                        const Divider(),
+                        _SwitchPair(
+                          title: '• show label on price',
+                          valueX: _showLabelOnPrice[0],
+                          onChangedX: (isOn) =>
+                              setState(() => _showLabelOnPrice[0] = isOn),
+                          valueY: _showLabelOnPrice[1],
+                          onChangedY: (isOn) =>
+                              setState(() => _showLabelOnPrice[1] = isOn),
+                        ),
+                        _SwitchPair(
+                          title: '• show label on volume',
+                          valueX: _showLabelOnVolume[0],
+                          onChangedX: (isOn) =>
+                              setState(() => _showLabelOnVolume[0] = isOn),
+                          valueY: _showLabelOnVolume[1],
+                          onChangedY: (isOn) =>
+                              setState(() => _showLabelOnVolume[1] = isOn),
+                        ),
+                        const Divider(),
+                        _SwitchPair(
+                          title: '• show label padding on price',
+                          valueX: _labelPaddingOnPrice[0] != 0.0,
+                          onChangedX: (isOn) => setState(() =>
+                              _labelPaddingOnPrice[0] =
+                                  isOn ? _labelPadding : 0.0),
+                          valueY: _labelPaddingOnPrice[1] != 0.0,
+                          onChangedY: (isOn) => setState(() =>
+                              _labelPaddingOnPrice[1] =
+                                  isOn ? _labelPadding : 0.0),
+                        ),
+                        _SwitchPair(
+                          title: '• show label padding on volume',
+                          valueX: _labelPaddingOnVolume[0] != 0.0,
+                          onChangedX: (isOn) => setState(() =>
+                              _labelPaddingOnVolume[0] =
+                                  isOn ? _labelPadding : 0.0),
+                          valueY: _labelPaddingOnVolume[1] != 0.0,
+                          onChangedY: (isOn) => setState(() =>
+                              _labelPaddingOnVolume[1] =
+                                  isOn ? _labelPadding : 0.0),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          ListView(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
               Container(
+                color: Colors.white,
                 padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
                   'Demo crosshair feature',
@@ -67,7 +171,8 @@ class CrosshairPageState extends State<CrosshairPage> {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.only(top: 10),
+                padding: const EdgeInsets.only(top: 10),
+                color: Colors.white,
                 width: 350,
                 height: 150,
                 child: Chart(
@@ -120,6 +225,7 @@ class CrosshairPageState extends State<CrosshairPage> {
                 margin: const EdgeInsets.only(top: 0),
                 width: 350,
                 height: 80,
+                color: Colors.white,
                 child: Chart(
                   padding: (_) => const EdgeInsets.fromLTRB(40, 0, 10, 20),
                   rebuild: false,
@@ -161,97 +267,9 @@ class CrosshairPageState extends State<CrosshairPage> {
                   gestureStream: priceVolumeStream,
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                alignment: Alignment.centerLeft,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _SwitchPair(
-                      title: '• show crosshair on price',
-                      valueX: _showCrosshairOnPrice[0] != null,
-                      onChangedX: (isOn) => setState(() =>
-                          _showCrosshairOnPrice[0] =
-                              isOn ? crosshairPaintStyle : null),
-                      valueY: _showCrosshairOnPrice[1] != null,
-                      onChangedY: (isOn) => setState(() =>
-                          _showCrosshairOnPrice[1] =
-                              isOn ? crosshairPaintStyle : null),
-                    ),
-                    _SwitchPair(
-                      title: '• show crosshair on volume',
-                      valueX: _showCrosshairOnVolume[0] != null,
-                      onChangedX: (isOn) => setState(() =>
-                          _showCrosshairOnVolume[0] =
-                              isOn ? crosshairPaintStyle : null),
-                      valueY: _showCrosshairOnVolume[1] != null,
-                      onChangedY: (isOn) => setState(() =>
-                          _showCrosshairOnVolume[1] =
-                              isOn ? crosshairPaintStyle : null),
-                    ),
-                    const Divider(),
-                    _SwitchPair(
-                      title: '• follow pointer on price',
-                      valueX: _followPointerOnPrice[0],
-                      onChangedX: (isOn) =>
-                          setState(() => _followPointerOnPrice[0] = isOn),
-                      valueY: _followPointerOnPrice[1],
-                      onChangedY: (isOn) =>
-                          setState(() => _followPointerOnPrice[1] = isOn),
-                    ),
-                    _SwitchPair(
-                      title: '• follow pointer on volume',
-                      valueX: _followPointerOnVolume[0],
-                      onChangedX: (isOn) =>
-                          setState(() => _followPointerOnVolume[0] = isOn),
-                      valueY: _followPointerOnVolume[1],
-                      onChangedY: (isOn) =>
-                          setState(() => _followPointerOnVolume[1] = isOn),
-                    ),
-                    const Divider(),
-                    _SwitchPair(
-                      title: '• show label on price',
-                      valueX: _showLabelOnPrice[0],
-                      onChangedX: (isOn) =>
-                          setState(() => _showLabelOnPrice[0] = isOn),
-                      valueY: _showLabelOnPrice[1],
-                      onChangedY: (isOn) =>
-                          setState(() => _showLabelOnPrice[1] = isOn),
-                    ),
-                    _SwitchPair(
-                      title: '• show label on volume',
-                      valueX: _showLabelOnVolume[0],
-                      onChangedX: (isOn) =>
-                          setState(() => _showLabelOnVolume[0] = isOn),
-                      valueY: _showLabelOnVolume[1],
-                      onChangedY: (isOn) =>
-                          setState(() => _showLabelOnVolume[1] = isOn),
-                    ),
-                    const Divider(),
-                    _SwitchPair(
-                      title: '• show label padding on price',
-                      valueX: _labelPaddingOnPrice[0] != 0.0,
-                      onChangedX: (isOn) =>
-                          setState(() => _labelPaddingOnPrice[0] = isOn ? _labelPadding : 0.0),
-                      valueY: _labelPaddingOnPrice[1] != 0.0,
-                      onChangedY: (isOn) =>
-                          setState(() => _labelPaddingOnPrice[1] = isOn ? _labelPadding : 0.0),
-                    ),
-                    _SwitchPair(
-                      title: '• show label padding on volume',
-                      valueX: _labelPaddingOnVolume[0] != 0.0,
-                      onChangedX: (isOn) =>
-                          setState(() => _labelPaddingOnVolume[0] = isOn ? _labelPadding : 0.0),
-                      valueY: _labelPaddingOnVolume[1] != 0.0,
-                      onChangedY: (isOn) =>
-                          setState(() => _labelPaddingOnVolume[1] = isOn ? _labelPadding : 0.0),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }

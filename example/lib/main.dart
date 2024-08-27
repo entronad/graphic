@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:graphic_example/pages/crosshair.dart';
 
 import 'home.dart';
 import 'pages/bigdata.dart';
@@ -21,7 +20,6 @@ final routes = {
   '/examples/Animation': (context) => const AnimationPage(),
   '/examples/Bigdata': (context) => BigdataPage(),
   '/examples/Echarts': (context) => EchartsPage(),
-  '/examples/Crosshair': (context) => const CrosshairPage(),
   '/examples/Debug': (context) => DebugPage(),
 };
 

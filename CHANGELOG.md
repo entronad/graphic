@@ -1,3 +1,15 @@
+## 2.5.0
+
+**2024-08-29**
+
+- Expand crosshair on edges: https://github.com/entronad/graphic/pull/304
+
+- Custom crosshair labels formatter: https://github.com/entronad/graphic/pull/305
+
+- Add one point support for line mark: https://github.com/entronad/graphic/pull/306
+
+- Add crosshair paddings: https://github.com/entronad/graphic/pull/314
+
 ## 2.4.0
 
 **2024-07-18**

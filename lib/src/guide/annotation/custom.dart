@@ -27,7 +27,8 @@ class CustomAnnotation extends ElementAnnotation {
   List<MarkElement> Function(Offset, Size) renderer;
 
   @override
-  bool operator ==(Object other) => other is CustomAnnotation && super == other;
+  bool operator ==(Object other) =>
+      other is CustomAnnotation && super == other && values == other.values;
 }
 
 /// The custom element annotation operator.

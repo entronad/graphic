@@ -304,7 +304,7 @@ class RectShape extends IntervalShape {
               rst.add(_drawSectorLabel(
                 item,
                 coord.convert(Offset(
-                  (item.shape as RectShape).labelPosition,
+                  0, // For pie chart, the label radius position is controlled by PolarCoord.dimFill, labelPosition will not work.
                   (position[1].dy + position[0].dy) / 2,
                 )),
                 coord,

@@ -46,6 +46,8 @@ abstract class Coord {
   /// It is a normalized value of `[0, 1]`.
   ///
   /// If null, a default 0.5 is set, which means in the middle of the dimension.
+  /// 
+  /// Note for pie chart, the label radius position is controlled by PolarCoord.dimFill, labelPosition will not work.
   double? dimFill;
 
   /// Weither to transpose domain dimension and measure dimension.

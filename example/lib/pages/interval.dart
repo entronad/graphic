@@ -345,6 +345,13 @@ class IntervalPage extends StatelessWidget {
                 ),
               ),
               Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  '- For pie chart, the label radius position is controlled by PolarCoord.dimFill, labelPosition will not work.',
+                ),
+              ),
+              Container(
                 margin: const EdgeInsets.only(top: 10),
                 width: 350,
                 height: 300,
@@ -370,14 +377,13 @@ class IntervalPage extends StatelessWidget {
                       label: LabelEncode(
                           encoder: (tuple) => Label(
                                 tuple['sold'].toString(),
-                                LabelStyle(textStyle: Defaults.runeStyle),
                               )),
                       color: ColorEncode(
                           variable: 'genre', values: Defaults.colors10),
                       modifiers: [StackModifier()],
                     )
                   ],
-                  coord: PolarCoord(transposed: true, dimCount: 1),
+                  coord: PolarCoord(transposed: true, dimCount: 1, dimFill: 1.05),
                 ),
               ),
               Container(

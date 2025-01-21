@@ -1,5 +1,5 @@
 /// Graphic provides a Flutter charting library for data visualization. it has a
-/// chart widget, classes for specification, and some util classes and funtions
+/// chart widget, classes for specification, and some util classes and functions
 /// for customization.
 ///
 /// To use this charting library, you only need to do one thing: to create a [Chart]

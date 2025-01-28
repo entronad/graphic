@@ -216,7 +216,9 @@ class ChartState<D> extends State<Chart<D>> with TickerProviderStateMixin {
 
   /// Asks the chart state to trigger a repaint.
   void repaint() {
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override

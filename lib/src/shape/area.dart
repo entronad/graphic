@@ -32,6 +32,7 @@ class BasicAreaShape extends AreaShape {
   BasicAreaShape({
     this.smooth = false,
     this.loop = false,
+    this.stepped = false,
   });
 
   /// Whether the surface lines of this area are smooth.
@@ -42,9 +43,15 @@ class BasicAreaShape extends AreaShape {
   /// It is usefull in the polar coordinate.
   final bool loop;
 
+  /// Whether the surface lines of this area are stepped.
+  final bool stepped;
+
   @override
   bool equalTo(Object other) =>
-      other is BasicAreaShape && smooth == other.smooth && loop == other.loop;
+      other is BasicAreaShape &&
+      smooth == other.smooth &&
+      loop == other.loop &&
+      stepped == other.stepped;
 
   @override
   List<MarkElement> drawGroupPrimitives(
@@ -103,8 +110,9 @@ class BasicAreaShape extends AreaShape {
           segments.add(CubicSegment(control1: c[0], control2: c[1], end: c[2]));
         }
       } else {
-        for (var point in ends) {
-          segments.add(LineSegment(end: point));
+        final pointsList = stepped ? getSteppedPoints(ends) : ends;
+        for (var p in pointsList) {
+          segments.add(LineSegment(end: p));
         }
       }
       segments.add(LineSegment(end: starts.last));
@@ -115,8 +123,9 @@ class BasicAreaShape extends AreaShape {
           segments.add(CubicSegment(control1: c[0], control2: c[1], end: c[2]));
         }
       } else {
-        for (var point in reversedStarts) {
-          segments.add(LineSegment(end: point));
+        final pointsList = stepped ? getSteppedPoints(reversedStarts) : reversedStarts;
+        for (var p in pointsList) {
+          segments.add(LineSegment(end: p));
         }
       }
       segments.add(CloseSegment());

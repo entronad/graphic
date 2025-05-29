@@ -7,10 +7,18 @@ import '../data.dart';
 
 final _monthDayFormat = DateFormat('MM-dd');
 
-class LineAreaPointPage extends StatelessWidget {
-  LineAreaPointPage({Key? key}) : super(key: key);
+class LineAreaPointPage extends StatefulWidget {
+  const LineAreaPointPage({Key? key}) : super(key: key);
 
+  @override
+  State<LineAreaPointPage> createState() => _LineAreaPointPageState();
+}
+
+class _LineAreaPointPageState extends State<LineAreaPointPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  var _smooth = false;
+  var _stepped = false;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +32,31 @@ class LineAreaPointPage extends StatelessWidget {
         child: Center(
           child: Column(
             children: <Widget>[
+              Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
+                child: const Text(
+                  'Options',
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+              CheckboxListTile(
+                value: _smooth,
+                onChanged: (value) {
+                  setState(() {
+                    _smooth = value ?? false;
+                  });
+                },
+                title: const Text('Smooth'),
+              ),
+              CheckboxListTile(
+                value: _stepped,
+                onChanged: (value) {
+                  setState(() {
+                    _stepped = value ?? false;
+                  });
+                },
+                title: const Text('Stepped'),
+              ),
               Container(
                 padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
@@ -85,7 +118,7 @@ class LineAreaPointPage extends StatelessWidget {
                   },
                   marks: [
                     LineMark(
-                      shape: ShapeEncode(value: BasicLineShape(dash: [5, 2])),
+                      shape: ShapeEncode(value: BasicLineShape(smooth: _smooth, stepped: _stepped, dash: [5, 2])),
                       selected: {
                         'touchMove': {1}
                       },
@@ -117,7 +150,7 @@ class LineAreaPointPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(
-                  'Smooth Line and Area chart',
+                  'Area chart',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
@@ -153,12 +186,12 @@ class LineAreaPointPage extends StatelessWidget {
                   },
                   marks: [
                     AreaMark(
-                      shape: ShapeEncode(value: BasicAreaShape(smooth: true)),
+                      shape: ShapeEncode(value: BasicAreaShape(smooth: _smooth, stepped: _stepped)),
                       color: ColorEncode(
                           value: Defaults.colors10.first.withAlpha(80)),
                     ),
                     LineMark(
-                      shape: ShapeEncode(value: BasicLineShape(smooth: true)),
+                      shape: ShapeEncode(value: BasicLineShape(smooth: _smooth, stepped: _stepped)),
                       size: SizeEncode(value: 0.5),
                     ),
                   ],
@@ -235,7 +268,7 @@ class LineAreaPointPage extends StatelessWidget {
                     LineMark(
                       position:
                           Varset('date') * Varset('points') / Varset('name'),
-                      shape: ShapeEncode(value: BasicLineShape(smooth: true)),
+                      shape: ShapeEncode(value: BasicLineShape(smooth: _smooth, stepped: _stepped)),
                       size: SizeEncode(value: 0.5),
                       color: ColorEncode(
                         variable: 'name',

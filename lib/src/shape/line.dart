@@ -43,6 +43,7 @@ class BasicLineShape extends LineShape {
   BasicLineShape({
     this.smooth = false,
     this.loop = false,
+    this.stepped = false,
     this.dash,
   });
 
@@ -53,6 +54,9 @@ class BasicLineShape extends LineShape {
   ///
   /// It is usefull in the polar coordinate.
   final bool loop;
+
+  /// Whether this line is stepped.
+  final bool stepped;
 
   /// The circular array of dash offsets and lengths.
   ///
@@ -67,6 +71,7 @@ class BasicLineShape extends LineShape {
       other is BasicLineShape &&
       smooth == other.smooth &&
       loop == other.loop &&
+      stepped == other.stepped &&
       deepCollectionEquals(dash, other.dash);
 
   @override
@@ -112,14 +117,18 @@ class BasicLineShape extends LineShape {
     for (var contour in contours) {
       if (contour.length == 1) {
         primitives.add(CircleElement(
-            center: contour[0], radius: strokeWidth / 2, style: style));
+            center: contour[0],
+            radius: strokeWidth / 2,
+            style: style));
       } else if (smooth) {
         primitives.add(SplineElement(
             start: contour.first,
             cubics: getCubicControls(contour, false, true),
             style: style));
       } else {
-        primitives.add(PolylineElement(points: contour, style: style));
+        primitives.add(PolylineElement(
+            points: stepped ? getSteppedPoints(contour) : contour,
+            style: style));
       }
     }
 

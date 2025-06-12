@@ -121,3 +121,21 @@ List<List<Offset>> getCubicControls(
 
   return rst;
 }
+
+/// Produces a stepped polyline.
+List<Offset> getSteppedPoints(
+  List<Offset> points,
+) {
+  final rst = <Offset>[];
+
+  if (points.isNotEmpty) {
+    rst.add(points[0]);
+  }
+
+  for (var i = 1; i < points.length; i++) {
+    rst.add(Offset(points[i].dx, points[i - 1].dy));
+    rst.add(points[i]);
+  }
+
+  return rst;
+}

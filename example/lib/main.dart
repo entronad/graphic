@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:graphic_example/pages/crosshair.dart';
 
 import 'home.dart';
 import 'pages/bigdata.dart';
+import 'pages/crosshair.dart';
 import 'pages/debug.dart';
 import 'pages/echarts.dart';
 import 'pages/interaction_stream_dynamic.dart';
@@ -14,7 +14,7 @@ import 'pages/animation.dart';
 final routes = {
   '/': (context) => const HomePage(),
   '/examples/Interval': (context) => IntervalPage(),
-  '/examples/Line,Area,Point': (context) => LineAreaPointPage(),
+  '/examples/Line,Area,Point': (context) => const LineAreaPointPage(),
   '/examples/Polygon,Custom': (context) => PolygonCustomPage(),
   '/examples/Interaction Stream, Dynamic': (context) =>
       const InteractionStreamDynamicPage(),

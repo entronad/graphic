@@ -872,6 +872,6 @@ class DodgeSizeModifier extends Modifier {
 
   @override
   bool equalTo(Object other) {
-    return super == other;
+    return other is DodgeSizeModifier;
   }
 }

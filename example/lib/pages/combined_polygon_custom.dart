@@ -1,7 +1,9 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' ;
 import 'package:graphic/graphic.dart';
+//name conflit TextDirection with material.dart
+import 'package:intl/intl.dart' as p_intl;
 
 import '../data.dart';
 
@@ -170,8 +172,8 @@ List<MarkElement> centralPieLabel(
   return [titleElement, valueElement];
 }
 
-class PolygonCustomPage extends StatelessWidget {
-  PolygonCustomPage({Key? key}) : super(key: key);
+class CombinedPolygonCustomPage extends StatelessWidget {
+  CombinedPolygonCustomPage({Key? key}) : super(key: key);
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -187,6 +189,112 @@ class PolygonCustomPage extends StatelessWidget {
         child: Center(
           child: Column(
             children: <Widget>[
+            Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
+                child: const Text(
+                  'Combined Bar/Line Chart',
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  '- With fixed scale so that bar and line use the same scale.',
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  '- With rotated and formatted labels.',
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                width: 350,
+                height: 300,
+                child: Chart(
+            data: combinedBarLineData,
+            variables: {
+              "date_information": Variable(
+                accessor: (Map map) => map["dateInformation"] as String,
+              ),
+              "kCalIntake": Variable(
+                accessor: (Map map) => map["kCalIntake"] as num,
+                scale: LinearScale(
+                  max: 3000,
+                  min: 0,
+                  //value is num/double, this removes the decimal separator on y axis label.
+                  formatter: (value) => p_intl.NumberFormat(null, 'en',).format(value.toInt()),
+                ),
+              ),
+              "kCalTarget": Variable(
+                accessor: (Map map) => map["kCalTarget"] as num,
+                scale: LinearScale(max: 3000, min: 0),
+              ),
+            },
+            marks: [
+              IntervalMark(
+                size: SizeEncode(value: 5),
+                label: LabelEncode(
+                  encoder: (tuple) => Label(
+                    p_intl.NumberFormat(null, 'en',).format(tuple["kCalIntake"]),
+                    LabelStyle(
+                      textStyle: const TextStyle(
+                        fontSize: 10,
+                        color: Color(0xff808080),
+                      ),
+                      offset: const Offset(6, -15),
+                      rotation: 4.72,
+                    ),
+                  ),
+                ),
+                color: ColorEncode(
+                  value: const Color(0xff1890ff),
+                ),
+              ),
+              LineMark(
+                position: Varset("date_information") * Varset("kCalTarget"),
+                size: SizeEncode(value: 1.5),
+                color: ColorEncode(
+                  value: const Color(0xff0050b3),
+                ),
+              ),
+            ],
+            axes: [
+              AxisGuide(
+                dim: Dim.x,
+                line: PaintStyle(
+                  strokeColor: const Color(0xffe8e8e8),
+                  strokeWidth: 1,
+                ),
+                label: LabelStyle(
+                  textStyle: const TextStyle(
+                    fontSize: 10,
+                    color: Color(0xff808080),
+                  ),
+                  offset: const Offset(12, 15),
+                  rotation: 1,
+                ),
+              ),
+              AxisGuide(
+                dim: Dim.y,
+                label: LabelStyle(
+                  textStyle: const TextStyle(
+                    fontSize: 10,
+                    color: Color(0xff808080),
+                  ),
+                  offset: const Offset(-7.5, 0),
+                ),
+                grid: PaintStyle(
+                  strokeColor: const Color(0xffe8e8e8),
+                  strokeWidth: 1,
+                ),
+              ),
+            ],
+          ),
+              ),
               Container(
                 padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
                 child: const Text(

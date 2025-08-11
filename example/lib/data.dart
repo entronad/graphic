@@ -297,6 +297,39 @@ const heatmapData = [
   [9, 4, 91]
 ];
 
+const combinedBarLineData = [
+  {'dateInformation': '10.Aug', 'kCalIntake': 2300, 'kCalTarget': 2400},
+  {'dateInformation': '9.Aug', 'kCalIntake': 2700, 'kCalTarget': 2400},
+  {'dateInformation': '8.Aug', 'kCalIntake': 2600, 'kCalTarget': 2400},
+  {'dateInformation': '7.Aug', 'kCalIntake': 2000, 'kCalTarget': 2400},
+  {'dateInformation': '6.Aug', 'kCalIntake': 2250, 'kCalTarget': 2400},
+  {'dateInformation': '5.Aug', 'kCalIntake': 2300, 'kCalTarget': 2400},
+  {'dateInformation': '4.Aug', 'kCalIntake': 2700, 'kCalTarget': 2400},
+  {'dateInformation': '3.Aug', 'kCalIntake': 2600, 'kCalTarget': 2400},
+  {'dateInformation': '2.Aug', 'kCalIntake': 2650, 'kCalTarget': 2400},
+  {'dateInformation': '1.Aug', 'kCalIntake': 2250, 'kCalTarget': 2400},
+  {'dateInformation': '31.Jul', 'kCalIntake': 2300, 'kCalTarget': 2500},
+  {'dateInformation': '30.Jul', 'kCalIntake': 2700, 'kCalTarget': 2500},
+  {'dateInformation': '29.Jul', 'kCalIntake': 2600, 'kCalTarget': 2500},
+  {'dateInformation': '28.Jul', 'kCalIntake': 2250, 'kCalTarget': 2500},
+  {'dateInformation': '27.Jul', 'kCalIntake': 2250, 'kCalTarget': 2500},
+  {'dateInformation': '26.Jul', 'kCalIntake': 2300, 'kCalTarget': 2500},
+  {'dateInformation': '25.Jul', 'kCalIntake': 2700, 'kCalTarget': 2500},
+  {'dateInformation': '24.Jul', 'kCalIntake': 2550, 'kCalTarget': 2500},
+  {'dateInformation': '23.Jul', 'kCalIntake': 2650, 'kCalTarget': 2500},
+  {'dateInformation': '22.Jul', 'kCalIntake': 2250, 'kCalTarget': 2500},
+  {'dateInformation': '21.Jul', 'kCalIntake': 2300, 'kCalTarget': 2500},
+  {'dateInformation': '20.Jul', 'kCalIntake': 2700, 'kCalTarget': 2500},
+  {'dateInformation': '19.Jul', 'kCalIntake': 2600, 'kCalTarget': 2500},
+  {'dateInformation': '18.Jul', 'kCalIntake': 2650, 'kCalTarget': 2500},
+  {'dateInformation': '17.Jul', 'kCalIntake': 2250, 'kCalTarget': 2500},
+  {'dateInformation': '16.Jul', 'kCalIntake': 2300, 'kCalTarget': 2500},
+  {'dateInformation': '15.Jul', 'kCalIntake': 2700, 'kCalTarget': 2500},
+  {'dateInformation': '14.Jul', 'kCalIntake': 2600, 'kCalTarget': 2500},
+  {'dateInformation': '13.Jul', 'kCalIntake': 2000, 'kCalTarget': 2500},
+  {'dateInformation': '12.Jul', 'kCalIntake': 2250, 'kCalTarget': 2500},
+];
+
 const boxData = [
   {'x': 'Oceania', 'low': 1, 'q1': 9, 'median': 16, 'q3': 22, 'high': 24},
   {'x': 'East Europe', 'low': 1, 'q1': 5, 'median': 8, 'q3': 12, 'high': 16},

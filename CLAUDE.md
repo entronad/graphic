@@ -2,133 +2,66 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Language Requirements
-All content in this project (including code, comments, and documentation) must be in English.
-
 ## Project Overview
-Graphic is a Flutter charting library implementing a grammar of graphics for data visualization. The library provides a declarative API for creating interactive and animated charts with customizable shapes and visual elements.
 
-## Common Development Commands
+Graphic is a Flutter charting library for data visualization based on Leland Wilkinson's *Grammar of Graphics* theory. It is a single-package Flutter library (not a monorepo) published to pub.dev.
 
-### Running Tests
+- **SDK constraints**: Dart >=2.13.0 <4.0.0, Flutter >=3.16.0
+- **Entry point**: `lib/graphic.dart` (exports all public API)
+- **Only public Widget**: `Chart<D>` — all chart configuration is declarative via constructor parameters
+
+## Common Commands
+
 ```bash
-# Run all tests
-flutter test
-
-# Run a specific test file
-flutter test test/algebra/varset_test.dart
-
-# Run tests with coverage
-flutter test --coverage
+flutter pub get              # Install dependencies
+flutter test                 # Run all tests
+flutter test test/path.dart  # Run a single test file
+dart format .                # Format code (CI enforces --set-exit-if-changed)
+flutter analyze .            # Static analysis
+cd example && flutter run    # Run the example app
 ```
 
-### Linting and Code Analysis
-```bash
-# Run Flutter analyzer to check for issues
-flutter analyze
+## Architecture
 
-# Lint the code with dart formatter
-dart format lib/ test/ --set-exit-if-changed
+### Data Processing Pipeline
+
+```
+data → Variable → Tuple → Scale → Encode → Shape → MarkElement
 ```
 
-### Example Application
-```bash
-# Navigate to example directory
-cd example
+Each layer is independently composable following Grammar of Graphics principles.
 
-# Install dependencies
-flutter pub get
+### Key Modules (`lib/src/`)
 
-# Run the example app
-flutter run
+| Directory | Purpose |
+|-----------|---------|
+| `chart/` | `Chart` StatefulWidget and `ChartView` (extends `Dataflow`, the reactive computation graph) |
+| `dataflow/` | Reactive dataflow engine — `Operator<V>` nodes form a DAG evaluated via priority queue |
+| `parse/` | `parse()` converts Chart spec into a network of Operators in the Dataflow graph |
+| `mark/` | Geometry mark types: Area, Line, Point, Interval, Polygon, Custom, Function, Partition |
+| `encode/` | Aesthetic encodings: Color, Size, Shape, Label, Gradient, Elevation, Position |
+| `scale/` | Scales: Linear, Ordinal, Time (with nice numbers utilities) |
+| `coord/` | Coordinate systems: RectCoord (Cartesian), PolarCoord (polar/radial) |
+| `shape/` | Shape renderers — each Mark type has corresponding Shape implementations |
+| `graffiti/` | Low-level rendering engine: Graffiti → MarkScene → MarkElement, with transition animations |
+| `guide/` | Axis, Tooltip, Crosshair, Annotation components |
+| `interaction/` | Gesture handling, Selection (Point/Interval), events |
+| `algebra/` | `Varset` with cross (`*`), blend (`+`), nest (`/`) operators for variable arrangement |
+| `variable/` | Variable definitions and data transforms (Filter, Map, Proportion, Sort) |
 
-# Build for specific platforms
-flutter build ios
-flutter build android
-flutter build web
-```
+### Core Design Patterns
 
-### Publishing
-```bash
-# Dry run to check if package is ready for publishing
-flutter pub publish --dry-run
+- **Spec/Conv separation**: Spec classes (e.g., `Scale`, `Coord`) are declarative configuration; Conv classes (e.g., `ScaleConv`, `CoordConv`) are runtime converters
+- **Dataflow reactivity**: Interactions (gesture, resize, data change) flow through `StreamController` → Operator DAG re-evaluation → re-render
+- **CustomPaint rendering**: All drawing uses Flutter `Canvas` API directly, not higher-level Widgets
+- **Animation interpolation**: `MarkElement.lerpFrom()` enables transition animations between states
+- **Deep equality**: `deepCollectionEquals` used to avoid unnecessary recomputation in Operators
 
-# Publish to pub.dev (requires authentication)
-flutter pub publish
-```
+## Code Conventions
 
-## Architecture Overview
-
-### Core Concepts Flow
-```
-variable -> scale -> aesthetic -> shape
-   |         |          |          |
-data -> tuples -> scaled tuples -> aesthetic encodes -> elements
-```
-
-### Key Modules
-
-1. **Chart Widget** (`lib/src/chart/`)
-   - Entry point for the library
-   - Manages data visualization lifecycle
-   - Handles resize events and data changes
-
-2. **Data Processing** (`lib/src/data/`, `lib/src/variable/`)
-   - Variables define tuple fields and data transformations
-   - DataSet manages the raw data
-   - Transforms include filter, map, proportion, and sort operations
-
-3. **Algebra System** (`lib/src/algebra/`)
-   - Varset defines how variable values map to position dimensions
-   - Implements the graphic algebra for position assignment
-
-4. **Scales** (`lib/src/scale/`)
-   - Convert tuple values to scaled values
-   - Types: Linear, Ordinal, Time, Discrete, Continuous
-   - Includes utilities for nice numbers and ranges
-
-5. **Marks** (`lib/src/mark/`)
-   - Visual representations: Area, Interval, Line, Point, Polygon, Custom
-   - Modifiers: Dodge, Stack, Jitter, Symmetric
-   - Each mark type has corresponding shape implementations
-
-6. **Shapes** (`lib/src/shape/`)
-   - Render tuples with aesthetic attributes
-   - Create MarkElements for the rendering engine
-   - Custom shapes extend base shape classes
-
-7. **Encoding** (`lib/src/encode/`)
-   - Aesthetic encodings: Color, Size, Shape, Label, Gradient, Elevation
-   - Channel encoding for mapping data to visual properties
-
-8. **Coordinates** (`lib/src/coord/`)
-   - RectCoord for Cartesian coordinates
-   - PolarCoord for polar coordinates
-   - Determines position mapping on canvas
-
-9. **Guides** (`lib/src/guide/`)
-   - Axes (horizontal, vertical, circular, radial)
-   - Annotations (line, region, tag, custom)
-   - Interactive components (tooltip, crosshair)
-
-10. **Interactions** (`lib/src/interaction/`)
-    - Event handling for gestures, resize, and data changes
-    - Selection system for point and interval selections
-    - Event and selection updaters
-
-11. **Rendering** (`lib/src/graffiti/`)
-    - Low-level drawing elements and primitives
-    - Transition animations
-    - Scene management
-
-### Extension Points
-
-- **Custom Marks**: Extend `Mark` class in `lib/src/mark/`
-- **Custom Shapes**: Extend `Shape` class in `lib/src/shape/`
-- **Custom Scales**: Extend `Scale` class in `lib/src/scale/`
-- **Custom Annotations**: Extend `Annotation` class in `lib/src/guide/annotation/`
-
-### Testing Strategy
-- Unit tests in `test/` mirror the library structure
-- Focus on algebra, scale utilities, and data transformations
-- Example app in `example/` serves as integration testing
+- Uses `flutter_lints` ruleset with `hash_and_equals` disabled (many classes override `==` without `hashCode`)
+- CI requires `dart format` compliance
+- Function-typed properties are always treated as "unchanged" in equality comparisons
+- `Mark.tag` is used for element correspondence matching during animations
+- Modifiers (Dodge, Stack, Jitter, Symmetric) work with the algebra nest (`/`) operator
+- Custom shapes extend `CustomizableSpec` and must implement `equalTo()`

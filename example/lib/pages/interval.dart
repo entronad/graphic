@@ -529,6 +529,67 @@ class IntervalPage extends StatelessWidget {
                   ],
                 ),
               ),
+              Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
+                child: const Text(
+                  'Gauge / Progress Indicator',
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                width: 350,
+                height: 300,
+                child: Chart(
+                  data: const [
+                    {
+                      'type': '100_percent', 
+                      'percent': 100},
+                    {
+                      'type': 'current_prcent',
+                      'percent': 60,
+                    },
+                  ],
+                  variables: {
+                    'type': Variable(
+                      accessor: (Map map) => map['type'] as String,
+                    ),
+                    'percent': Variable(
+                      accessor: (Map map) => map['percent'] as num,
+                      scale: LinearScale(min: 0, max: 100)
+                    ),
+                  },
+                  marks: [
+                    IntervalMark(
+                      label: LabelEncode(
+                        encoder: (tuple) => Label(
+                          tuple['percent'].toString(),
+                          LabelStyle(
+                              textStyle: const TextStyle(color: Color(0xFF2F00FF))),
+                        ),
+                      ),
+                      shape: ShapeEncode(
+                        value: RectShape(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(8),
+                          ),
+                        ),
+                      ),
+                      color: ColorEncode(
+                        variable: 'type',
+                        values: Defaults.colors10,
+                      ),
+                    ),
+                  ],
+                  coord: PolarCoord(
+                    transposed: true,
+                    startAngle: 2.5,
+                    endAngle: 6.93,
+                    startRadius: 0.9,
+                    endRadius: 0.9,
+                  ),
+                ),
+              ),
             ],
           ),
         ),

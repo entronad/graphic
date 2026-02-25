@@ -11,9 +11,21 @@ Graphic is a grammar of data visualization and Flutter charting library.
 - **Interaction**: With the *event* and *selection* definition, the chart is highly interactive, such as highlighting selected items, popping a tooltip, or scaling the coordinate.
 - **Animation**: Mark transition animation can be set when a chart is built or changed. The entrance animation has various forms.
 
+## Skill for AI coding
+
+Add the following skill, and your coding agent will be an expert of charting with this library:
+
+```
+npx skills add https://github.com/entronad/graphic --skill flutter-chart
+```
+
+Or you can find the skill in `/skills/flutter-chart` of this repository.
+
 ## Documentation
 
 See in the [documentation](https://pub.dev/documentation/graphic/latest/graphic/graphic-library.html).
+
+(But in fact, I would prefer you to use the *skill* above for your coding agent.)
 
 ## Examples
 

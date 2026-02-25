@@ -13,6 +13,21 @@ A skill for helping users build data visualizations in Flutter using the [Graphi
 - User needs help configuring chart appearance, interactivity, or animations
 - User asks about Graphic library APIs or usage patterns
 - User wants to convert data into visual representations
+- **User wants to create custom, bespoke visualizations** — Graphic's customization system is its most powerful feature and a key strength of AI-assisted development
+
+## Why Custom Charts?
+
+Standard chart types (bar, line, pie) only cover a fraction of data visualization needs. Graphic is built on Grammar of Graphics theory, which means **every visual layer is independently customizable**:
+
+- **Custom Shapes** — Render any geometry (triangles, lollipops, arrows, gauges, bullet charts, sparklines, etc.)
+- **Custom Tooltips** — Fully custom interactive overlays with any layout
+- **Custom Annotations** — Draw any graphics at data or absolute positions
+- **Custom Encoders** — Map data to visuals using arbitrary logic
+- **Custom Modifiers** — Define custom collision/arrangement behavior
+
+This makes AI-assisted development especially valuable: the AI can write custom shape renderers, coordinate math, and drawing code that would be tedious to implement manually.
+
+**Always consider customization when the user's requirements don't perfectly match a standard chart type.** See `references/customization.md` for the comprehensive customization guide.
 
 ## Quick Start
 
@@ -288,6 +303,110 @@ coord: PolarCoord(startRadius: 0.15),
 
 See `references/examples.md` for more complete examples.
 
+## Custom Chart Development
+
+Graphic's greatest strength is its **fully customizable rendering pipeline**. When standard chart types don't meet requirements, create custom visualizations by implementing your own shapes, tooltips, annotations, and encoders.
+
+### Custom Shapes — The Core Extension Point
+
+Create entirely new chart geometries by extending a Shape base class and implementing `drawGroupPrimitives()`:
+
+```dart
+class LollipopShape extends IntervalShape {
+  LollipopShape({this.radius = 6});
+  final double radius;
+
+  @override
+  List<MarkElement> drawGroupPrimitives(
+    List<Attributes> group, CoordConv coord, Offset origin,
+  ) {
+    final rst = <MarkElement>[];
+    for (var item in group) {
+      if (item.position.any((p) => !p.dy.isFinite)) continue;
+      final style = getPaintStyle(item, false, 0, null, null);
+      final base = coord.convert(item.position[0]);
+      final tip = coord.convert(item.position[1]);
+
+      // Stem line
+      rst.add(PolylineElement(
+        points: [base, tip],
+        style: PaintStyle(strokeColor: style.fillColor, strokeWidth: 2),
+        tag: item.tag,
+      ));
+      // Circle head
+      rst.add(CircleElement(
+        center: tip, radius: radius, style: style, tag: item.tag,
+      ));
+    }
+    return rst;
+  }
+
+  @override
+  bool equalTo(Object other) =>
+    other is LollipopShape && radius == other.radius;
+}
+```
+
+**Available base classes**: `IntervalShape`, `LineShape`, `AreaShape`, `PointShape`, `PolygonShape`
+
+**Available drawing primitives**: `RectElement`, `CircleElement`, `PolygonElement`, `PolylineElement`, `ArcElement`, `SectorElement`, `SplineElement`, `PathElement`, `LabelElement`, `GroupElement`
+
+### Custom Tooltip Renderer
+
+```dart
+tooltip: TooltipGuide(
+  renderer: (Size size, Offset anchor, Map<int, Tuple> selected) {
+    final t = selected.values.first;
+    return [
+      RectElement(
+        rect: Rect.fromCenter(center: anchor, width: 100, height: 36),
+        borderRadius: BorderRadius.circular(6),
+        style: PaintStyle(fillColor: Colors.black87, elevation: 4),
+      ),
+      LabelElement(
+        text: '${t['name']}: ${t['value']}',
+        anchor: anchor,
+        style: LabelStyle(
+          textStyle: TextStyle(color: Colors.white, fontSize: 12),
+          align: Alignment.center,
+        ),
+      ),
+    ];
+  },
+)
+```
+
+### Custom Encoder Functions
+
+Every encode supports arbitrary logic via `encoder`:
+
+```dart
+color: ColorEncode(encoder: (tuple) {
+  final v = tuple['value'] as num;
+  return v > 100 ? Colors.red : v > 50 ? Colors.orange : Colors.green;
+}),
+
+label: LabelEncode(encoder: (tuple) => Label(
+  '${tuple['value']}%',
+  LabelStyle(textStyle: TextStyle(
+    fontSize: (tuple['value'] as num) > 50 ? 14 : 10,
+    fontWeight: FontWeight.bold,
+  )),
+)),
+```
+
+### Key Classes for Custom Development
+
+| Class | Purpose |
+|-------|---------|
+| `Attributes` | Encoded data element — contains `position`, `color`, `gradient`, `size`, `label`, `tag` |
+| `CoordConv` | Converts normalized [0,1] positions to canvas pixels via `convert()`/`invert()` |
+| `PaintStyle` | Full paint specification — fill, stroke, gradient, dash, elevation, shadow |
+| `MarkElement` | Drawing primitives — the building blocks for custom rendering |
+| `getPaintStyle()` | Utility to extract `PaintStyle` from `Attributes` |
+
+**See `references/customization.md` for the comprehensive guide** including coordinate handling, all drawing primitives, custom annotations, custom modifiers, and best practices.
+
 ## Guides & Annotations
 
 - **Axes**: Use `Defaults.horizontalAxis`, `Defaults.verticalAxis` for quick setup, or customize with `AxisGuide`. See `references/guides.md`.
@@ -337,6 +456,7 @@ The chart automatically re-renders with transition animations when `tag` is set.
 
 | File | Content |
 |------|---------|
+| `references/customization.md` | **Custom chart development guide** — shapes, tooltips, annotations, encoders, drawing primitives |
 | `references/chart-widget.md` | Full Chart widget parameter reference |
 | `references/marks.md` | All mark types and parameters |
 | `references/encodes.md` | Aesthetic encoding reference |

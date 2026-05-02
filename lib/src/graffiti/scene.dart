@@ -123,10 +123,10 @@ class MarkScene {
   late final AnimationController? _controller;
 
   /// Whether to animate elements.
-  late bool _animateElements;
+  bool _animateElements = false;
 
   /// Whether to animate the clip.
-  late bool _animateClip;
+  bool _animateClip = false;
 
   /// Whether there are elements to paint in current cycle.
   ///
